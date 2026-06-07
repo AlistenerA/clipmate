@@ -4,55 +4,32 @@ MCP File Reader Server
 解析结果以纯文本形式返回，供 DeepSeek 等模型使用
 """
 import asyncio
-import base64
 import io
-import os
+import logging
+import tempfile
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=True)
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 import mcp.types as types
-from PIL import Image
-from zhipuai import ZhipuAI
 
-api_key = os.environ.get("ZHIPUAI_API_KEY")
-if not api_key:
-    raise RuntimeError("ZHIPUAI_API_KEY environment variable is not set")
+from common import (
+    DEFAULT_VISION_PROMPT,
+    SUPPORTED_IMG,
+    call_glm_vision,
+    get_client,
+    parse_page_range,
+    pdf_page_to_vision_text,
+    validate_image_path,
+)
 
-client = ZhipuAI(api_key=api_key)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("file-reader")
 
 server = Server("file-reader")
 
-
-def image_to_base64_url(image_path: str) -> str:
-    path = Path(image_path)
-    ext = path.suffix.lower().lstrip(".")
-    mime_map = {"jpg": "jpeg", "jpeg": "jpeg", "png": "png",
-                "webp": "webp", "gif": "gif", "bmp": "bmp"}
-    mime = mime_map.get(ext, "jpeg")
-    with open(path, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode("utf-8")
-    return f"data:image/{mime};base64,{b64}"
-
-
-def call_glm_vision(image_paths: list[str], prompt: str) -> str:
-    content = []
-    for p in image_paths:
-        content.append({
-            "type": "image_url",
-            "image_url": {"url": image_to_base64_url(p)}
-        })
-    content.append({"type": "text", "text": prompt})
-
-    response = client.chat.completions.create(
-        model="glm-4.6v",
-        messages=[{"role": "user", "content": content}],
-        max_tokens=4096,
-        temperature=0.1,
-    )
-    return response.choices[0].message.content or ""
+# 确保 API client 在启动时就初始化好
+get_client()
 
 
 @server.list_tools()
@@ -78,11 +55,7 @@ async def list_tools() -> list[types.Tool]:
                     "prompt": {
                         "type": "string",
                         "description": "可选的提示词",
-                        "default": (
-                            "请详细描述这张图片的所有内容，"
-                            "包括文字、数字、图表、布局结构等。"
-                            "如果有表格，以 Markdown 格式输出。"
-                        )
+                        "default": DEFAULT_VISION_PROMPT,
                     }
                 },
                 "required": ["file_path"]
@@ -142,31 +115,23 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
         elif name == "read_docx":
             return await _handle_read_docx(arguments)
         else:
-            return [types.TextContent(type="text",
-                    text=f"Unknown tool: {name}")]
+            return [types.TextContent(type="text", text=f"Unknown tool: {name}")]
+    except FileNotFoundError as e:
+        return [types.TextContent(type="text", text=str(e))]
+    except ValueError as e:
+        return [types.TextContent(type="text", text=str(e))]
     except Exception as e:
-        return [types.TextContent(type="text",
-                text=f"Error: {str(e)}")]
+        logger.exception("Unexpected error in tool %s", name)
+        return [types.TextContent(type="text", text=f"Error: {e}")]
 
 
 async def _handle_read_image(args: dict) -> list[types.TextContent]:
     file_path = args["file_path"]
-    prompt = args.get("prompt",
-        "请详细描述这张图片的所有内容，"
-        "包括文字、数字、图表、布局结构等。如果有表格，以 Markdown 格式输出。")
+    prompt = args.get("prompt", DEFAULT_VISION_PROMPT)
 
-    p = Path(file_path)
-    if not p.exists():
-        return [types.TextContent(type="text",
-                text=f"File not found: {file_path}")]
+    p = validate_image_path(file_path)
 
-    supported = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"}
-    if p.suffix.lower() not in supported:
-        return [types.TextContent(type="text",
-                text=f"Unsupported format: {p.suffix}. "
-                     f"Supported: {', '.join(sorted(supported))}")]
-
-    result = call_glm_vision([str(p)], prompt)
+    result = await asyncio.to_thread(call_glm_vision, [str(p)], prompt)
     return [types.TextContent(type="text", text=result)]
 
 
@@ -177,8 +142,7 @@ async def _handle_read_pdf(args: dict) -> list[types.TextContent]:
 
     p = Path(file_path)
     if not p.exists():
-        return [types.TextContent(type="text",
-                text=f"File not found: {file_path}")]
+        return [types.TextContent(type="text", text=f"File not found: {file_path}")]
 
     import pdfplumber
 
@@ -187,27 +151,22 @@ async def _handle_read_pdf(args: dict) -> list[types.TextContent]:
         if page_range == "all":
             indices = list(range(total))
         else:
-            indices = _parse_page_range(page_range, total)
+            try:
+                indices = parse_page_range(page_range, total)
+            except ValueError as e:
+                return [types.TextContent(type="text", text=str(e))]
+
+        if not indices:
+            return [types.TextContent(type="text", text="No pages matched the given range.")]
 
         results = []
         if use_vision:
+            tmpdir = tempfile.gettempdir()
             for i in indices:
-                page = pdf.pages[i]
-                img = page.to_image(resolution=150)
-                buf = io.BytesIO()
-                img.save(buf, format="PNG")
-                tmp_path = p.parent / f"_page_{i + 1}.png"
-                with open(tmp_path, "wb") as f:
-                    f.write(buf.getvalue())
-                try:
-                    text = call_glm_vision(
-                        [str(tmp_path)],
-                        f"这是 PDF 的第 {i + 1}/{total} 页。"
-                        f"请提取并描述本页的全部内容。"
-                    )
-                    results.append(f"=== Page {i + 1}/{total} ===\n{text}")
-                finally:
-                    tmp_path.unlink(missing_ok=True)
+                text = await asyncio.to_thread(
+                    pdf_page_to_vision_text, pdf, i, total, tmpdir
+                )
+                results.append(text)
         else:
             for i in indices:
                 text = pdf.pages[i].extract_text()
@@ -228,8 +187,7 @@ async def _handle_read_docx(args: dict) -> list[types.TextContent]:
 
     p = Path(file_path)
     if not p.exists():
-        return [types.TextContent(type="text",
-                text=f"File not found: {file_path}")]
+        return [types.TextContent(type="text", text=f"File not found: {file_path}")]
 
     import docx
 
@@ -248,23 +206,6 @@ async def _handle_read_docx(args: dict) -> list[types.TextContent]:
 
     text = "\n\n".join(paragraphs)
     return [types.TextContent(type="text", text=text)]
-
-
-def _parse_page_range(text: str, total: int) -> list[int]:
-    indices = []
-    for part in text.split(","):
-        part = part.strip()
-        if "-" in part:
-            a, b = part.split("-", 1)
-            start, end = int(a.strip()), int(b.strip())
-            for i in range(start, end + 1):
-                if 1 <= i <= total:
-                    indices.append(i - 1)
-        else:
-            i = int(part)
-            if 1 <= i <= total:
-                indices.append(i - 1)
-    return sorted(set(indices))
 
 
 async def main():
