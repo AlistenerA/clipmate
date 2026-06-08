@@ -173,3 +173,55 @@ Bing 搜索 URL 模式     → https://www.bing.com/search?q={关键词}
 |------|:---:|:---:|
 | WebFetch | ~500-2,000 | 80% 场景 |
 | Playwright | ~5,000-15,000 | 20% 场景（仅交互） |
+
+---
+
+## Token 用量与费用查询
+
+本项目安装了 `token-monitor` 插件，在后台静默追踪每次 AI 对话的 Token 消耗。
+
+### 数据位置
+
+统计文件：`%USERPROFILE%\.config\opencode\token-stats.json`
+
+```json
+{
+  "totalTokens": 2591176,
+  "totalCostRmb": 8.67,
+  "sessionCount": 22,
+  "sessions": {
+    "ses_xxx": {
+      "model": "deepseek/deepseek-v4-pro",
+      "usage": { "input": 963968, "output": 42752, "reasoning": 55554 },
+      "costRmb": 3.48,
+      "messageCount": 143
+    }
+  }
+}
+```
+
+### 触发规则
+
+| 触发条件 | 动作 |
+|----------|------|
+| 用户说"查看 tokens"、"费用多少"、"token 统计"等 | **直接用 Read 工具读 `token-stats.json`**，无需 bash |
+| 用户询问当前会话消耗 | 从 `sessions` 中找最新的或匹配 title 的条目 |
+| 用户问历史累计 | 使用顶层的 `totalTokens` / `totalCostRmb` |
+
+### 费用计算
+
+基于 DeepSeek 官方 RMB 定价：
+
+| 模型 | 输入/百万 | 输出/百万 |
+|------|:---:|:---:|
+| deepseek-v4-pro | ¥3.00 | ¥6.00 |
+| deepseek-v4-flash | ¥1.00 | ¥2.00 |
+
+**注意**：`tokens_cache_read` 不是缓存命中的 token 数（比 input 大十多倍），**不用于计费**。费用按全价输入 +（输出+思考）× 输出价计算。
+
+### 禁止事项
+
+| 禁止 | 原因 |
+|------|------|
+| 用 bash/Python 直接查 SQLite 数据库 | 需要额外审批步骤，`token-stats.json` 已包含相同数据 |
+| 假设 `tokens_cache_read` 是缓存命中数 | 该字段实际含义是 context KV-cache 读取量，与定价无关 |
