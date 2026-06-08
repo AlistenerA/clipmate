@@ -2,11 +2,6 @@ import { Database } from "bun:sqlite"
 import { join } from "path"
 import { homedir } from "os"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
-// Try loading the tool helper, gracefully degrade if unavailable
-let toolHelper: ((def: unknown) => unknown) | null = null
-try {
-  toolHelper = (await import("@opencode-ai/plugin")).tool
-} catch { /* @opencode-ai/plugin not installed, tool will use plain object */ }
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -80,15 +75,15 @@ function getPricing(modelId: string): ModelPricing {
   return DEFAULT_PRICING
 }
 
-function calculateCost(modelId: string, input: number, output: number, cacheRead: number): number {
+function calculateCost(modelId: string, input: number, output: number, reasoning: number): number {
   const p = getPricing(modelId)
-  const cacheHit = Math.min(cacheRead, input)
-  const cacheMiss = input - cacheHit
-
+  // Use full input price (no cache-hit discount since opencode's tokens_cache_read
+  // is NOT the same as DeepSeek's cache-hit tokens — it's context KV cache reads)
+  // Reasoning tokens are billed at the same rate as output tokens per DeepSeek
+  const totalOutput = output + reasoning
   return Math.round(
-    ((cacheHit / 1_000_000) * p.inputCacheHitPerM +
-     (cacheMiss / 1_000_000) * p.inputCacheMissPerM +
-     (output / 1_000_000) * p.outputPerM) * 100000
+    ((input / 1_000_000) * p.inputCacheMissPerM +
+     (totalOutput / 1_000_000) * p.outputPerM) * 100000
   ) / 100000
 }
 
@@ -151,7 +146,7 @@ function updateStats(
   const existing = stats.sessions[sessionId]
   const isNewSession = !existing
 
-  const costRmb = calculateCost(model, tokensInput, tokensOutput, tokensCacheRead)
+  const costRmb = calculateCost(model, tokensInput, tokensOutput, tokensReasoning)
 
   stats.sessions[sessionId] = {
     sessionId,
@@ -262,122 +257,28 @@ function querySession(sessionId: string): {
   }
 }
 
-// ─── Plugin ────────────────────────────────────────────────
+// ─── Plugin (Silent Tracking) ────────────────────────────────
 
 let currentSessionId = ""
-let lastToastTime = 0
-const TOAST_INTERVAL = 4000 // ms between toasts
 
-export const TokenMonitor = async ({ client }: {
-  client: { tui: { showToast: (opts: { body: { message: string; variant: string } }) => Promise<unknown> } }
-  [key: string]: unknown
-}) => {
-  const maybeToast = async (message: string): Promise<void> => {
-    const now = Date.now()
-    if (now - lastToastTime < TOAST_INTERVAL) return
-    lastToastTime = now
-    try {
-      await client.tui.showToast({ body: { message, variant: "info" } })
-    } catch { /* ignore */ }
-  }
-
+export const TokenMonitor = async () => {
   const refresh = async (sid: string): Promise<void> => {
     if (!sid) return
     const data = querySession(sid)
     if (!data) return
 
-    const { costRmb } = updateStats(
+    const totalTokens = data.tokensInput + data.tokensOutput + data.tokensReasoning
+    if (totalTokens === 0) return
+
+    updateStats(
       sid, data.title, data.model,
       data.tokensInput, data.tokensOutput, data.tokensReasoning,
       data.tokensCacheRead, data.tokensCacheWrite,
       data.messageCount,
     )
-
-    const total = data.tokensInput + data.tokensOutput
-    if (total === 0) return
-
-    const stats = readStats()
-    const modelShort = data.model.replace("deepseek/", "")
-
-    const parts: string[] = [
-      `${modelShort}  ${fmtTokens(total)}t  ${fmtRmb(costRmb)}`,
-    ]
-    if (data.tokensCacheRead > 0) {
-      parts.push(`缓存命中 ${fmtTokens(data.tokensCacheRead)}t`)
-    }
-    parts.push(`累计 ${fmtRmb(stats.totalCostRmb)}`)
-
-    await maybeToast(parts.join("  "))
-  }
-
-  const tokensToolDef = {
-    description: "显示 Token 消耗统计和费用（人民币），基于 DeepSeek 官方定价",
-    args: {} as Record<string, never>,
-    async execute(_args: Record<string, never>, _ctx: unknown): Promise<string> {
-      const stats = readStats()
-      const sessions = Object.values(stats.sessions)
-        .sort((a, b) => b.lastUpdated - a.lastUpdated)
-
-      const lines: string[] = [
-        "",
-        "Token Monitor 统计",
-        "=".repeat(55),
-      ]
-
-      // Current session
-      if (currentSessionId && stats.sessions[currentSessionId]) {
-        const s = stats.sessions[currentSessionId]!
-        lines.push("")
-        lines.push("当前会话")
-        lines.push(`  模型: ${s.model}`)
-        lines.push(`  消息数: ${s.messageCount}`)
-        lines.push(`  输入: ${fmtTokens(s.usage.input)}t`)
-        if (s.usage.cacheRead > 0) lines.push(`  缓存命中: ${fmtTokens(s.usage.cacheRead)}t`)
-        if (s.usage.reasoning > 0) lines.push(`  思考: ${fmtTokens(s.usage.reasoning)}t`)
-        lines.push(`  输出: ${fmtTokens(s.usage.output)}t`)
-        lines.push(`  费用: ${fmtRmb(s.costRmb)}`)
-      }
-
-      // All-time
-      lines.push("")
-      lines.push("历史累计")
-      lines.push(`  总 Tokens: ${fmtTokens(stats.totalTokens)}`)
-      lines.push(`  输入: ${fmtTokens(stats.totalInputTokens)}t`)
-      lines.push(`  输出: ${fmtTokens(stats.totalOutputTokens)}t`)
-      lines.push(`  总费用: ${fmtRmb(stats.totalCostRmb)}`)
-      lines.push(`  会话数: ${stats.sessionCount}`)
-
-      // Recent sessions
-      if (sessions.length > 1) {
-        lines.push("")
-        lines.push("最近会话 (Top 5)")
-        for (const s of sessions.slice(0, 5)) {
-          const id = s.sessionId.slice(0, 8)
-          const title = s.title || id
-          const date = new Date(s.lastUpdated).toLocaleString("zh-CN", {
-            month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
-          })
-          const name = title.length > 22 ? title.slice(0, 22) + "..." : title
-          lines.push(`  ${name.padEnd(25)} ${fmtRmb(s.costRmb).padStart(10)}  ${date}`)
-        }
-      }
-
-      // Pricing reference
-      lines.push("")
-      lines.push("DeepSeek 官方定价参考 (RMB/百万tokens)")
-      lines.push("  deepseek-v4-pro:   输入 3.00  缓存命中 0.025  输出 6.00")
-      lines.push("  deepseek-v4-flash: 输入 1.00  缓存命中 0.02   输出 2.00")
-      lines.push("")
-
-      return lines.join("\n")
-    },
   }
 
   return {
-    tool: {
-      tokens: toolHelper ? toolHelper(tokensToolDef) : tokensToolDef,
-    },
-
     event: async ({ event }: {
       event: { type: string; properties?: { info?: { id?: string } } }
     }) => {
@@ -410,4 +311,5 @@ export const TokenMonitor = async ({ client }: {
   }
 }
 
+export const server = TokenMonitor
 export default TokenMonitor
