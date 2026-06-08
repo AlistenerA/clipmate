@@ -1,0 +1,280 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]
+        - generic [ref=e16]:
+          - button "一个包含更多选项的菜单" [ref=e20] [cursor=pointer]:
+            - img [ref=e23]
+          - generic [ref=e30]:
+            - button "Google 应用" [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+            - link "登录" [ref=e38] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/detail/writing-assistant/icfibfjidabjcklhikmodelmopjmghgj?hl%3Dzh-CN&followup=https://chromewebstore.google.com/detail/writing-assistant/icfibfjidabjcklhikmodelmopjmghgj?hl%3Dzh-CN&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e42]:
+        - generic [ref=e45]:
+          - tab "探索" [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [selected] [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - main [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic "警告" [ref=e56]:
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e62]: 在无痕模式或访客模式下，您无法添加或移除产品
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img "“写作助手”的产品徽标图片" [ref=e66]
+            - heading "写作助手" [level=1] [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e72] [cursor=pointer]:
+                - img [ref=e75]
+                - link "遵循了针对 Chrome 扩展程序的推荐做法。了解详情。" [ref=e78]:
+                  - /url: https://support.google.com/chrome_webstore/?hl=zh-CN&p=cws_badges
+              - generic [ref=e79]: 精选
+            - generic [ref=e80]:
+              - generic [ref=e81]:
+                - generic [ref=e82]: "3.3"
+                - img [ref=e83]
+                - generic [ref=e85]:
+                  - text: (
+                  - link "4 个评分" [ref=e86] [cursor=pointer]:
+                    - /url: ./detail/%E5%86%99%E4%BD%9C%E5%8A%A9%E6%89%8B/icfibfjidabjcklhikmodelmopjmghgj/reviews
+                    - paragraph [ref=e87]: 4 个评分
+                  - text: )
+              - button "评分每天更新一次，未必反映最新评价。" [ref=e89] [cursor=pointer]:
+                - img [ref=e92]
+            - button "分享" [ref=e98] [cursor=pointer]:
+              - img [ref=e101]
+              - generic [ref=e103]: 分享
+          - generic [ref=e104]:
+            - link "扩展程序" [ref=e105] [cursor=pointer]:
+              - /url: ./category/extensions
+            - link "工作流程与规划" [ref=e106] [cursor=pointer]:
+              - /url: ./category/extensions/productivity/workflow
+            - text: 3,000 用户
+          - generic [ref=e109]:
+            - button "添加至 Chrome" [disabled]:
+              - generic: 添加至 Chrome
+      - region "媒体轮播界面" [ref=e111]:
+        - generic [ref=e113]:
+          - button "写作助手的项目媒体 1（屏幕截图）" [ref=e115] [cursor=pointer]:
+            - img "写作助手的项目媒体 1（屏幕截图）" [ref=e116]
+          - button "写作助手的项目媒体 2（屏幕截图）" [ref=e118] [cursor=pointer]:
+            - img "写作助手的项目媒体 2（屏幕截图）" [ref=e119]
+      - generic [ref=e120]:
+        - heading "概述" [level=2] [ref=e122]:
+          - generic [ref=e123]: 概述
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: 科学家和专业人士的英语写作助手 - 告别中式英语，轻松写出专业地道的英语论文、文书和信函。
+          - paragraph [ref=e127]: 写作助手是一款为科学家和专业人士设计的工具，旨在提高他们的英语写作水平。无论你当前的英语水平如何，写作助手都可以帮助你将你的写作转化为专业水平的英语。它还可以直接将你的母语（例如西班牙语、日语、中文和许多其他语言）翻译成英语。它可以改写句子或整段文字。 目前，许多来自哈佛大学、斯坦福大学、加州理工学院和Clariant等大学和公司的研究人员和专业人士正在使用写作助手来改善他们的手稿、技术报告和电子邮件中的英语表达。 使用此扩展程序需要一个帐户，部分功能需要高级订阅。欲了解更多信息，请访问https://www.storkapp.me/writeassistant/。如有问题和建议，请通过https://www.storkapp.me/contact.php与我们联系。
+      - generic [ref=e130]:
+        - heading "3.3 星（5 星制） 3.3 星（最高为 5 星） 4 个评分• 详细了解结果和评价。" [level=2] [ref=e132]:
+          - generic [ref=e133]:
+            - text: 3.3 星（5 星制）
+            - img "3.3 星（最高为 5 星）" [ref=e134]:
+              - generic [ref=e135]:
+                - generic [ref=e136]:
+                  - img [ref=e137]
+                  - img [ref=e140]
+                  - img [ref=e143]
+                  - img [ref=e146]
+                  - img [ref=e149]
+                - generic [ref=e152]:
+                  - img [ref=e153]
+                  - img [ref=e155]
+                  - img [ref=e157]
+                  - img [ref=e159]
+                  - img [ref=e161]
+          - text: 4 个评分•
+          - paragraph [ref=e163]:
+            - link "详细了解结果和评价。" [ref=e164] [cursor=pointer]:
+              - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results
+        - generic [ref=e166] [cursor=pointer]:
+          - generic [ref=e167]: 查看所有评价
+          - link "查看所有评价" [ref=e168]:
+            - /url: ./detail/%E5%86%99%E4%BD%9C%E5%8A%A9%E6%89%8B/icfibfjidabjcklhikmodelmopjmghgj/reviews
+      - generic [ref=e169]:
+        - heading "详情" [level=2] [ref=e171]
+        - list [ref=e173]:
+          - listitem [ref=e174]:
+            - generic [ref=e175]: 版本
+            - generic [ref=e176]: 2.0.1
+          - listitem [ref=e177]:
+            - generic [ref=e178]: 上次更新日期
+            - generic [ref=e179]: 2024年11月4日
+          - listitem [ref=e180]:
+            - generic [ref=e181]: 功能
+            - generic [ref=e182]: 提供应用内购商品
+          - listitem [ref=e183]:
+            - link "举报问题" [ref=e185] [cursor=pointer]:
+              - /url: ./detail/icfibfjidabjcklhikmodelmopjmghgj/report
+          - listitem [ref=e186]:
+            - generic [ref=e187]: 提供方
+            - generic [ref=e188]: Stork
+          - listitem [ref=e189]:
+            - generic [ref=e190]: 大小
+            - generic [ref=e191]: 163KiB
+          - listitem [ref=e192]:
+            - generic [ref=e193]: 语言
+            - generic [ref=e195]:
+              - text: 2 种语言
+              - button "显示更多语言" [ref=e197] [cursor=pointer]:
+                - img [ref=e200]
+          - listitem [ref=e203]:
+            - generic [ref=e204]: 开发者
+            - generic [ref=e206]:
+              - generic [ref=e207]:
+                - text: Stork
+                - text: 177 Park Ave suite 200 San Jose, CA 95113 US
+              - group [ref=e208]:
+                - generic "邮箱" [ref=e209]:
+                  - img [ref=e210]
+                  - text: 邮箱
+                  - img [ref=e212]
+          - listitem [ref=e214]:
+            - generic [ref=e215]: 非交易者
+            - generic [ref=e216]: 该开发者尚未将自己标识为交易者。欧盟地区消费者须知：消费者权利可能不适用于您与该开发者达成的合约。
+      - generic [ref=e217]:
+        - heading "隐私权" [level=2] [ref=e219]
+        - generic [ref=e221]:
+          - generic [ref=e222]:
+            - paragraph [ref=e223]:
+              - text: “写作助手”已就收集和使用用户数据披露了以下信息。 如需了解详情，请查看开发者的
+              - link "privacy policy" [ref=e224] [cursor=pointer]:
+                - /url: https://www.storkapp.me/privacy.txt
+              - text: 。
+            - heading "写作助手会处理以下数据：" [level=3] [ref=e225]
+            - generic [ref=e226]:
+              - generic [ref=e227]:
+                - img [ref=e229]
+                - generic [ref=e236]: 个人身份信息
+              - generic [ref=e237]:
+                - img [ref=e239]
+                - generic [ref=e244]: 身份验证信息
+              - generic [ref=e245]:
+                - img [ref=e247]
+                - generic [ref=e250]: 个人通讯
+            - generic [ref=e253] [cursor=pointer]:
+              - generic [ref=e254]: 查看详情
+              - link "查看详情" [ref=e255]:
+                - /url: ./detail/icfibfjidabjcklhikmodelmopjmghgj/privacy
+          - generic [ref=e257]:
+            - heading "该开发者已声明，您的数据：" [level=2] [ref=e258]
+            - list [ref=e259]:
+              - listitem [ref=e260]:
+                - text: 不会因未获
+                - link "批准的用途" [ref=e261] [cursor=pointer]:
+                  - /url: https://developer.chrome.com/docs/webstore/program-policies/limited-use/
+                - text: 出售给第三方
+              - listitem [ref=e262]: 不会为实现与产品核心功能无关的目的而使用或转移
+              - listitem [ref=e263]: 不会为确定信用度或放贷目的而使用或转移
+      - generic [ref=e264]:
+        - heading "支持" [level=2] [ref=e266]
+        - paragraph [ref=e267]:
+          - text: 若有任何疑问、建议或问题，请访问开发者的
+          - link "支持网站" [ref=e268] [cursor=pointer]:
+            - /url: https://www.storkapp.me/contact.php
+      - generic [ref=e269]:
+        - heading "相关" [level=2] [ref=e270]
+        - region "相关产品轮播界面" [ref=e273]:
+          - button "上一张幻灯片" [ref=e275] [cursor=pointer]:
+            - img [ref=e278]
+          - region "相关产品幻灯片" [ref=e282]:
+            - generic [ref=e283]:
+              - generic [ref=e285]:
+                - 'link "Writewiz: AI Content Creator & Writing Tool" [ref=e286] [cursor=pointer]':
+                  - /url: ./detail/writewiz-ai-content-creat/nikfnkpdalalkollmjgjkgmfblfmlpbd
+                - generic [ref=e287]:
+                  - 'heading "Writewiz: AI Content Creator & Writing Tool" [level=3] [ref=e288]'
+                  - generic [ref=e289]:
+                    - img "平均评分为 5 星（最高为 5 星）。" [ref=e290]:
+                      - generic [ref=e291]: "5.0"
+                      - img [ref=e292]
+                    - generic [ref=e295] [cursor=pointer]:
+                      - img [ref=e298]
+                      - 'link "详细了解“Writewiz: AI Content Creator & Writing Tool”的结果和评价。" [ref=e300]':
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e301]: Elevate your writing with a contextually-aware AI assistant tailored to your distinct persona.
+              - generic [ref=e303]:
+                - 'link "Write Brain: AI Writing Assistant" [ref=e304] [cursor=pointer]':
+                  - /url: ./detail/write-brain-ai-writing-as/hoifabdggfdbeejjnachknneilikeobk
+                - generic [ref=e305]:
+                  - 'heading "Write Brain: AI Writing Assistant" [level=3] [ref=e306]'
+                  - generic [ref=e307]:
+                    - img "平均评分为 5 星（最高为 5 星）。" [ref=e308]:
+                      - generic [ref=e309]: "5.0"
+                      - img [ref=e310]
+                    - generic [ref=e313] [cursor=pointer]:
+                      - img [ref=e316]
+                      - 'link "详细了解“Write Brain: AI Writing Assistant”的结果和评价。" [ref=e318]':
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e319]: Fix your grammar and other writing tools on every website with the help of AI
+              - generic [ref=e321]:
+                - link "Research AI" [ref=e322] [cursor=pointer]:
+                  - /url: ./detail/research-ai/fmnhdkfoogelicfgjoidhpbljplebmjo
+                - generic [ref=e323]:
+                  - heading "Research AI" [level=3] [ref=e324]
+                  - generic [ref=e325]:
+                    - img "平均评分为 5 星（最高为 5 星）。" [ref=e326]:
+                      - generic [ref=e327]: "5.0"
+                      - img [ref=e328]
+                    - generic [ref=e331] [cursor=pointer]:
+                      - img [ref=e334]
+                      - link "详细了解“Research AI”的结果和评价。" [ref=e336]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e337]: Research AI - Helps you write marketing content, blog articles, website copies, ecommerce product descriptions and more 10x faster.
+              - generic [ref=e339]:
+                - 'link "Briskine: Email templates for Gmail™" [ref=e340] [cursor=pointer]':
+                  - /url: ./detail/briskine-email-templates/lmcngpkjkplipamgflhioabnhnopeabf
+                - generic [ref=e341]:
+                  - 'heading "Briskine: Email templates for Gmail™" [level=3] [ref=e342]'
+                  - generic [ref=e343]:
+                    - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e344]:
+                      - generic [ref=e345]: "4.5"
+                      - img [ref=e346]
+                    - generic [ref=e349] [cursor=pointer]:
+                      - img [ref=e352]
+                      - 'link "详细了解“Briskine: Email templates for Gmail™”的结果和评价。" [ref=e354]':
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e355]: Write emails faster! Increase your productivity with templates and keyboard shortcuts on Gmail™, Outlook, or LinkedIn.
+          - button "下一张幻灯片" [ref=e357] [cursor=pointer]:
+            - img [ref=e360]
+  - contentinfo [ref=e363]:
+    - list [ref=e364]:
+      - listitem [ref=e365]:
+        - link "关于 Chrome 应用商店" [ref=e366] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e367]:
+        - link "开发者信息中心" [ref=e368] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e369]:
+        - link "隐私权政策" [ref=e370] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e371]:
+        - link "服务条款" [ref=e372] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e373]:
+        - link "帮助" [ref=e374] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN

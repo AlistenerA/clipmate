@@ -1,0 +1,290 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]
+        - generic [ref=e16]:
+          - button "一个包含更多选项的菜单" [ref=e20] [cursor=pointer]:
+            - img [ref=e23]
+          - generic [ref=e30]:
+            - button "Google 应用" [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+            - link "登录" [ref=e38] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/detail/notion-web-clipper/knheggckgoiihginacbkhaalnibhilkk?hl%3Dzh-CN&followup=https://chromewebstore.google.com/detail/notion-web-clipper/knheggckgoiihginacbkhaalnibhilkk?hl%3Dzh-CN&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e42]:
+        - generic [ref=e45]:
+          - tab "探索" [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [selected] [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - main [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic "警告" [ref=e56]:
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e62]: 在无痕模式或访客模式下，您无法添加或移除产品
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img "“Notion Web Clipper”的产品徽标图片" [ref=e66]
+            - heading "Notion Web Clipper" [level=1] [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e72] [cursor=pointer]:
+                - img [ref=e75]
+                - link "该发布者信誉良好，没有任何违规记录。了解详情。" [ref=e78]:
+                  - /url: https://support.google.com/chrome_webstore/?hl=zh-CN&p=cws_badges
+              - link "Notion Labs, Inc." [ref=e79] [cursor=pointer]:
+                - /url: ./publisher/notion-labs-inc/u2fd0ab1b7a73832e5e23f8a81f789e83
+            - generic [ref=e80]:
+              - generic [ref=e81]:
+                - generic [ref=e82]: "3.3"
+                - img [ref=e83]
+                - generic [ref=e85]:
+                  - text: (
+                  - link "615 个评分" [ref=e86] [cursor=pointer]:
+                    - /url: ./detail/notion-web-clipper/knheggckgoiihginacbkhaalnibhilkk/reviews
+                    - paragraph [ref=e87]: 615 个评分
+                  - text: )
+              - button "评分每天更新一次，未必反映最新评价。" [ref=e89] [cursor=pointer]:
+                - img [ref=e92]
+            - button "分享" [ref=e98] [cursor=pointer]:
+              - img [ref=e101]
+              - generic [ref=e103]: 分享
+          - generic [ref=e104]:
+            - link "扩展程序" [ref=e105] [cursor=pointer]:
+              - /url: ./category/extensions
+            - link "工作流程与规划" [ref=e106] [cursor=pointer]:
+              - /url: ./category/extensions/productivity/workflow
+            - text: 1,000,000 用户
+          - generic [ref=e109]:
+            - button "添加至 Chrome" [disabled]:
+              - generic: 添加至 Chrome
+      - generic [ref=e110]:
+        - region "媒体轮播界面" [ref=e111]:
+          - button "上一张幻灯片" [ref=e113] [cursor=pointer]:
+            - img [ref=e116]
+          - generic [ref=e120]:
+            - button "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e122] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e123]
+            - button "Notion Web Clipper的项目媒体 3（屏幕截图）" [ref=e125] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 3（屏幕截图）" [ref=e126]
+            - button "Notion Web Clipper的项目媒体 1（屏幕截图）" [ref=e128] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 1（屏幕截图）" [ref=e129]
+            - button "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e131] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e132]
+            - button "Notion Web Clipper的项目媒体 3（屏幕截图）" [ref=e134] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 3（屏幕截图）" [ref=e135]
+            - button "Notion Web Clipper的项目媒体 1（屏幕截图）" [ref=e137] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 1（屏幕截图）" [ref=e138]
+            - button "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e140] [cursor=pointer]:
+              - img "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e141]
+          - button "下一张幻灯片" [ref=e143] [cursor=pointer]:
+            - img [ref=e146]
+        - generic [ref=e149]:
+          - button "Notion Web Clipper的预览幻灯片 1" [ref=e150] [cursor=pointer]:
+            - img "Notion Web Clipper的项目媒体 1（屏幕截图）" [ref=e152]
+          - button "Notion Web Clipper的预览幻灯片 2" [ref=e154] [cursor=pointer]:
+            - img "Notion Web Clipper的项目媒体 2（屏幕截图）" [ref=e156]
+          - button "Notion Web Clipper的预览幻灯片 3" [ref=e158] [cursor=pointer]:
+            - img "Notion Web Clipper的项目媒体 3（屏幕截图）" [ref=e160]
+      - generic [ref=e162]:
+        - heading "概述" [level=2] [ref=e164]:
+          - generic [ref=e165]: 概述
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - paragraph [ref=e168]: Use our Web Clipper to save any website into Notion.
+            - paragraph [ref=e169]: Notion is your all-in-one workspace, where you can write, plan, collaborate and get organized. Take notes, keep databases, build a wiki, project manage your team — all with one tool. We launched Notion Web Clipper so you can save any page on the web to your Notion workspace. Capture and organize all the articles, research and inspiration you want, and we’ll help you turn them into action. SAVE WITH ONE CLICK. If you come across something you want to keep, just hit the Notion button on the top right of your browser! ORGANIZE IMMEDIATELY. Choose exactly where you want to save your web pages. Add research to projects, articles to reading lists, etc. TAG, SHARE, COMMENT. Don't just store web pages and forget them. Notion makes it easy to turn them into action items, link them to projects, assign them to teammates, and more. You can read the pages you clip on any device, online or off. Happy clipping! ✂️
+          - button "查看更多" [ref=e170] [cursor=pointer]
+      - generic [ref=e173]:
+        - heading "3.3 星（5 星制） 3.3 星（最高为 5 星） 615 个评分• 详细了解结果和评价。" [level=2] [ref=e175]:
+          - generic [ref=e176]:
+            - text: 3.3 星（5 星制）
+            - img "3.3 星（最高为 5 星）" [ref=e177]:
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - img [ref=e180]
+                  - img [ref=e183]
+                  - img [ref=e186]
+                  - img [ref=e189]
+                  - img [ref=e192]
+                - generic [ref=e195]:
+                  - img [ref=e196]
+                  - img [ref=e198]
+                  - img [ref=e200]
+                  - img [ref=e202]
+                  - img [ref=e204]
+          - text: 615 个评分•
+          - paragraph [ref=e206]:
+            - link "详细了解结果和评价。" [ref=e207] [cursor=pointer]:
+              - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results
+        - generic [ref=e209] [cursor=pointer]:
+          - generic [ref=e210]: 查看所有评价
+          - link "查看所有评价" [ref=e211]:
+            - /url: ./detail/notion-web-clipper/knheggckgoiihginacbkhaalnibhilkk/reviews
+      - generic [ref=e212]:
+        - heading "详情" [level=2] [ref=e214]
+        - list [ref=e216]:
+          - listitem [ref=e217]:
+            - generic [ref=e218]: 版本
+            - generic [ref=e219]: 0.2.12
+          - listitem [ref=e220]:
+            - generic [ref=e221]: 上次更新日期
+            - generic [ref=e222]: 2026年6月1日
+          - listitem [ref=e223]:
+            - link "举报问题" [ref=e225] [cursor=pointer]:
+              - /url: ./detail/knheggckgoiihginacbkhaalnibhilkk/report
+          - listitem [ref=e226]:
+            - generic [ref=e227]: 大小
+            - generic [ref=e228]: 4.36MiB
+          - listitem [ref=e229]:
+            - generic [ref=e230]: 语言
+            - generic [ref=e232]:
+              - text: 2 种语言
+              - button "显示更多语言" [ref=e234] [cursor=pointer]:
+                - img [ref=e237]
+          - listitem [ref=e240]:
+            - generic [ref=e241]: 开发者
+            - generic [ref=e243]:
+              - generic [ref=e244]:
+                - text: Notion Labs, Inc.
+                - text: 685 Market St Ste 300 San Francisco, CA 94105-4201 US
+              - link "网站" [ref=e245] [cursor=pointer]:
+                - /url: http://notion.so/
+                - img [ref=e246]
+                - text: 网站
+              - group [ref=e248]:
+                - generic "邮箱" [ref=e249]:
+                  - img [ref=e250]
+                  - text: 邮箱
+                  - img [ref=e252]
+              - group [ref=e254]:
+                - generic "电话" [ref=e255]:
+                  - img [ref=e256]
+                  - text: 电话
+                  - img [ref=e258]
+          - listitem [ref=e260]:
+            - generic [ref=e261]: 交易者
+            - generic [ref=e262]: 此开发者已根据欧盟的定义将自己标识为交易者，并承诺仅提供符合欧盟法律要求的产品或服务。
+          - listitem [ref=e263]:
+            - generic [ref=e264]:
+              - text: D-U-N-S
+              - button "详细了解结果和评价" [ref=e266] [cursor=pointer]:
+                - img [ref=e269]
+            - generic [ref=e272]: "080279513"
+      - generic [ref=e273]:
+        - heading "隐私权" [level=2] [ref=e275]
+        - generic [ref=e277]:
+          - generic [ref=e278]:
+            - img [ref=e279]
+            - generic [ref=e282]: 该开发者已披露，此产品不会收集或使用您的数据。
+          - generic [ref=e283]:
+            - heading "该开发者已声明，您的数据：" [level=2] [ref=e284]
+            - list [ref=e285]:
+              - listitem [ref=e286]:
+                - text: 不会因未获
+                - link "批准的用途" [ref=e287] [cursor=pointer]:
+                  - /url: https://developer.chrome.com/docs/webstore/program-policies/limited-use/
+                - text: 出售给第三方
+              - listitem [ref=e288]: 不会为实现与产品核心功能无关的目的而使用或转移
+              - listitem [ref=e289]: 不会为确定信用度或放贷目的而使用或转移
+      - generic [ref=e290]:
+        - heading "相关" [level=2] [ref=e291]
+        - region "相关产品轮播界面" [ref=e294]:
+          - button "上一张幻灯片" [ref=e296] [cursor=pointer]:
+            - img [ref=e299]
+          - region "相关产品幻灯片" [ref=e303]:
+            - generic [ref=e304]:
+              - generic [ref=e306]:
+                - link "Save to Notion" [ref=e307] [cursor=pointer]:
+                  - /url: ./detail/save-to-notion/ldmmifpegigmeammaeckplhnjbbpccmm
+                - generic [ref=e308]:
+                  - heading "Save to Notion" [level=3] [ref=e310]
+                  - generic [ref=e311]:
+                    - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e312]:
+                      - generic [ref=e313]: "4.3"
+                      - img [ref=e314]
+                    - generic [ref=e317] [cursor=pointer]:
+                      - img [ref=e320]
+                      - link "详细了解“Save to Notion”的结果和评价。" [ref=e322]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e323]: Save the Web to Notion
+              - generic [ref=e325]:
+                - link "Notion Boost" [ref=e326] [cursor=pointer]:
+                  - /url: ./detail/notion-boost/eciepnnimnjaojlkcpdpcgbfkpcagahd
+                - generic [ref=e327]:
+                  - heading "Notion Boost" [level=3] [ref=e328]
+                  - generic [ref=e329]:
+                    - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e330]:
+                      - generic [ref=e331]: "4.6"
+                      - img [ref=e332]
+                    - generic [ref=e335] [cursor=pointer]:
+                      - img [ref=e338]
+                      - link "详细了解“Notion Boost”的结果和评价。" [ref=e340]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e341]: Boost Notion productivity with 20+ customizations like outline, small text full width for all, back to top button etc
+              - generic [ref=e343]:
+                - link "Web Clipper" [ref=e344] [cursor=pointer]:
+                  - /url: ./detail/web-clipper/mhfbofiokmppgdliakminbgdgcmbhbac
+                - generic [ref=e345]:
+                  - heading "Web Clipper" [level=3] [ref=e347]
+                  - generic [ref=e348]:
+                    - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e349]:
+                      - generic [ref=e350]: "4.5"
+                      - img [ref=e351]
+                    - generic [ref=e354] [cursor=pointer]:
+                      - img [ref=e357]
+                      - link "详细了解“Web Clipper”的结果和评价。" [ref=e359]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e360]: Web Clipper is an open source extension.You can save anything on the web to anywhere.And you can easily to add any platform. Web…
+              - generic [ref=e362]:
+                - link "Chat to Notion" [ref=e363] [cursor=pointer]:
+                  - /url: ./detail/chat-to-notion/oojndninaelbpllebamcojkdecjjhcle
+                - generic [ref=e364]:
+                  - heading "Chat to Notion" [level=3] [ref=e365]
+                  - generic [ref=e366]:
+                    - img "平均评分为 3.7 星（最高为 5 星）。" [ref=e367]:
+                      - generic [ref=e368]: "3.7"
+                      - img [ref=e369]
+                    - generic [ref=e372] [cursor=pointer]:
+                      - img [ref=e375]
+                      - link "详细了解“Chat to Notion”的结果和评价。" [ref=e377]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e378]: Save your discussions with ChatGPT, Deepseek, Claude and Mistral directly into Notion!
+          - button "下一张幻灯片" [ref=e380] [cursor=pointer]:
+            - img [ref=e383]
+  - contentinfo [ref=e386]:
+    - list [ref=e387]:
+      - listitem [ref=e388]:
+        - link "关于 Chrome 应用商店" [ref=e389] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e390]:
+        - link "开发者信息中心" [ref=e391] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e392]:
+        - link "隐私权政策" [ref=e393] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e394]:
+        - link "服务条款" [ref=e395] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e396]:
+        - link "帮助" [ref=e397] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN

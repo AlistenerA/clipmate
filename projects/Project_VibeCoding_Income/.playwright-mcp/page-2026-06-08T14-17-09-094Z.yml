@@ -1,0 +1,296 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]
+        - generic [ref=e16]:
+          - button "一个包含更多选项的菜单" [ref=e20] [cursor=pointer]:
+            - img [ref=e23]
+          - generic [ref=e30]:
+            - button "Google 应用" [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+            - link "登录" [ref=e38] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/detail/pdf-translator-translate/ffcpkmljebfmlihmhedcalhkmipaohea?hl%3Dzh-CN&followup=https://chromewebstore.google.com/detail/pdf-translator-translate/ffcpkmljebfmlihmhedcalhkmipaohea?hl%3Dzh-CN&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e42]:
+        - generic [ref=e45]:
+          - tab "探索" [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [selected] [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - main [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic "警告" [ref=e56]:
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e62]: 在无痕模式或访客模式下，您无法添加或移除产品
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img "“PDF Translator - 在线翻译 PDF”的产品徽标图片" [ref=e66]
+            - heading "PDF Translator - 在线翻译 PDF" [level=1] [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e72] [cursor=pointer]:
+                - img [ref=e75]
+                - link "由所列网站的所有者创建。这个发布者无不良记录，未曾有过任何违规行为。了解详情。" [ref=e78]:
+                  - /url: https://support.google.com/chrome_webstore/?hl=zh-CN&p=cws_badges
+              - link "https://www.livepolls.app/chrome_addons/" [ref=e79] [cursor=pointer]:
+                - /url: https://www.livepolls.app/chrome_addons/
+            - generic [ref=e80]:
+              - generic [ref=e83] [cursor=pointer]:
+                - img [ref=e86]
+                - link "遵循了针对 Chrome 扩展程序的推荐做法。了解详情。" [ref=e89]:
+                  - /url: https://support.google.com/chrome_webstore/?hl=zh-CN&p=cws_badges
+              - generic [ref=e90]: 精选
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - generic [ref=e93]: "3.2"
+                - img [ref=e94]
+                - generic [ref=e96]:
+                  - text: (
+                  - link "61 个评分" [ref=e97] [cursor=pointer]:
+                    - /url: ./detail/pdf-translator-%E5%9C%A8%E7%BA%BF%E7%BF%BB%E8%AF%91-pdf/ffcpkmljebfmlihmhedcalhkmipaohea/reviews
+                    - paragraph [ref=e98]: 61 个评分
+                  - text: )
+              - button "评分每天更新一次，未必反映最新评价。" [ref=e100] [cursor=pointer]:
+                - img [ref=e103]
+            - button "分享" [ref=e109] [cursor=pointer]:
+              - img [ref=e112]
+              - generic [ref=e114]: 分享
+          - generic [ref=e115]:
+            - link "扩展程序" [ref=e116] [cursor=pointer]:
+              - /url: ./category/extensions
+            - link "工作流程与规划" [ref=e117] [cursor=pointer]:
+              - /url: ./category/extensions/productivity/workflow
+            - text: 20,000 用户
+          - generic [ref=e120]:
+            - button "添加至 Chrome" [disabled]:
+              - generic: 添加至 Chrome
+      - generic [ref=e121]:
+        - region "媒体轮播界面" [ref=e122]:
+          - button "上一张幻灯片" [ref=e124] [cursor=pointer]:
+            - img [ref=e127]
+          - generic [ref=e131]:
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 3（屏幕截图）" [ref=e133] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 3（屏幕截图）" [ref=e134]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 4（屏幕截图）" [ref=e136] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 4（屏幕截图）" [ref=e137]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 1（屏幕截图）" [ref=e139] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 1（屏幕截图）" [ref=e140]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 2（屏幕截图）" [ref=e142] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 2（屏幕截图）" [ref=e143]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 3（屏幕截图）" [ref=e145] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 3（屏幕截图）" [ref=e146]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 4（屏幕截图）" [ref=e148] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 4（屏幕截图）" [ref=e149]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 1（屏幕截图）" [ref=e151] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 1（屏幕截图）" [ref=e152]
+            - button "PDF Translator - 在线翻译 PDF的项目媒体 2（屏幕截图）" [ref=e154] [cursor=pointer]:
+              - img "PDF Translator - 在线翻译 PDF的项目媒体 2（屏幕截图）" [ref=e155]
+          - button "下一张幻灯片" [ref=e157] [cursor=pointer]:
+            - img [ref=e160]
+        - generic [ref=e163]:
+          - button "PDF Translator - 在线翻译 PDF的预览幻灯片 1" [ref=e164] [cursor=pointer]:
+            - img "PDF Translator - 在线翻译 PDF的项目媒体 1（屏幕截图）" [ref=e166]
+          - button "PDF Translator - 在线翻译 PDF的预览幻灯片 2" [ref=e168] [cursor=pointer]:
+            - img "PDF Translator - 在线翻译 PDF的项目媒体 2（屏幕截图）" [ref=e170]
+          - button "PDF Translator - 在线翻译 PDF的预览幻灯片 3" [ref=e172] [cursor=pointer]:
+            - img "PDF Translator - 在线翻译 PDF的项目媒体 3（屏幕截图）" [ref=e174]
+          - button "PDF Translator - 在线翻译 PDF的预览幻灯片 4" [ref=e176] [cursor=pointer]:
+            - img "PDF Translator - 在线翻译 PDF的项目媒体 4（屏幕截图）" [ref=e178]
+      - generic [ref=e180]:
+        - heading "概述" [level=2] [ref=e182]:
+          - generic [ref=e183]: 概述
+        - generic [ref=e184]:
+          - generic [ref=e185]:
+            - paragraph [ref=e186]: 只需一键翻译 PDF、Excel、Word、PowerPoint 和其他文档。
+            - paragraph [ref=e187]: 适用于办公和教育场景中的多种文档，如论文、合同、行业报告、产品文档、书籍、文件、演示文稿等，并提供高精度文档布局恢复能力。 - 支持上传翻译文件，并保存到Google Drive或下载到本地。 - 支持Word/PPT/Excel/PDF/PowerPoint等格式。 - 200 多种语言之间的互译，包括英语、西班牙语、法语、德语、阿拉伯语、俄语等等。 翻译准确，操作快捷。 - 该服务将保留所述文档的原始格式和布局。 即时结果。 - PDF翻译器，PPT翻译器，PowerPoint翻译器，Word翻译器，Excel翻译器，翻译PPT，翻译PowerPoint，翻译Word，翻译Excel。 目前，它通过 Google Translate 进行翻译，未来将支持批处理模式。 隐私政策 根据设计，您的数据始终保留在您的 Google 帐户中，而不是保存在我们的数据库中。 您的数据不会与任何人共享，包括附加组件所有者。 我们遵守隐私法（特别是 GDPR 和加州隐私法）来保护您的数据。
+          - button "查看更多" [ref=e188] [cursor=pointer]
+      - generic [ref=e191]:
+        - heading "3.2 星（5 星制） 3.2 星（最高为 5 星） 61 个评分• 详细了解结果和评价。" [level=2] [ref=e193]:
+          - generic [ref=e194]:
+            - text: 3.2 星（5 星制）
+            - img "3.2 星（最高为 5 星）" [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - img [ref=e198]
+                  - img [ref=e201]
+                  - img [ref=e204]
+                  - img [ref=e207]
+                  - img [ref=e210]
+                - generic [ref=e213]:
+                  - img [ref=e214]
+                  - img [ref=e216]
+                  - img [ref=e218]
+                  - img [ref=e220]
+                  - img [ref=e222]
+          - text: 61 个评分•
+          - paragraph [ref=e224]:
+            - link "详细了解结果和评价。" [ref=e225] [cursor=pointer]:
+              - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results
+        - generic [ref=e227] [cursor=pointer]:
+          - generic [ref=e228]: 查看所有评价
+          - link "查看所有评价" [ref=e229]:
+            - /url: ./detail/pdf-translator-%E5%9C%A8%E7%BA%BF%E7%BF%BB%E8%AF%91-pdf/ffcpkmljebfmlihmhedcalhkmipaohea/reviews
+      - generic [ref=e230]:
+        - heading "详情" [level=2] [ref=e232]
+        - list [ref=e234]:
+          - listitem [ref=e235]:
+            - generic [ref=e236]: 版本
+            - generic [ref=e237]: "1.5"
+          - listitem [ref=e238]:
+            - generic [ref=e239]: 上次更新日期
+            - generic [ref=e240]: 2024年7月20日
+          - listitem [ref=e241]:
+            - link "举报问题" [ref=e243] [cursor=pointer]:
+              - /url: ./detail/ffcpkmljebfmlihmhedcalhkmipaohea/report
+          - listitem [ref=e244]:
+            - generic [ref=e245]: 大小
+            - generic [ref=e246]: 140KiB
+          - listitem [ref=e247]:
+            - generic [ref=e248]: 语言
+            - generic [ref=e250]:
+              - text: 54 种语言
+              - button "显示更多语言" [ref=e252] [cursor=pointer]:
+                - img [ref=e255]
+          - listitem [ref=e258]:
+            - generic [ref=e259]: 开发者
+            - generic [ref=e261]:
+              - link "网站" [ref=e262] [cursor=pointer]:
+                - /url: https://www.livepolls.app/chrome_addons/
+                - img [ref=e263]
+                - text: 网站
+              - group [ref=e265]:
+                - generic "邮箱" [ref=e266]:
+                  - img [ref=e267]
+                  - text: 邮箱
+                  - img [ref=e269]
+          - listitem [ref=e271]:
+            - generic [ref=e272]: 非交易者
+            - generic [ref=e273]: 该开发者尚未将自己标识为交易者。欧盟地区消费者须知：消费者权利可能不适用于您与该开发者达成的合约。
+      - generic [ref=e274]:
+        - heading "隐私权" [level=2] [ref=e276]
+        - generic [ref=e278]:
+          - generic [ref=e279]:
+            - img [ref=e280]
+            - generic [ref=e283]:
+              - text: 该开发者已披露，此产品不会收集或使用您的数据。 如需了解详情，请参阅开发者的
+              - link "privacy policy" [ref=e284] [cursor=pointer]:
+                - /url: https://www.livepolls.app/privacy/PDF-Translate
+              - text: 。
+          - generic [ref=e285]:
+            - heading "该开发者已声明，您的数据：" [level=2] [ref=e286]
+            - list [ref=e287]:
+              - listitem [ref=e288]:
+                - text: 不会因未获
+                - link "批准的用途" [ref=e289] [cursor=pointer]:
+                  - /url: https://developer.chrome.com/docs/webstore/program-policies/limited-use/
+                - text: 出售给第三方
+              - listitem [ref=e290]: 不会为实现与产品核心功能无关的目的而使用或转移
+              - listitem [ref=e291]: 不会为确定信用度或放贷目的而使用或转移
+      - generic [ref=e293]:
+        - heading "支持" [level=2] [ref=e294]
+        - generic [ref=e296] [cursor=pointer]:
+          - generic [ref=e297]: 访问支持中心
+          - link "访问支持中心" [ref=e298]:
+            - /url: ./detail/ffcpkmljebfmlihmhedcalhkmipaohea/support
+      - generic [ref=e299]:
+        - heading "相关" [level=2] [ref=e300]
+        - region "相关产品轮播界面" [ref=e303]:
+          - button "上一张幻灯片" [ref=e305] [cursor=pointer]:
+            - img [ref=e308]
+          - region "相关产品幻灯片" [ref=e312]:
+            - generic [ref=e313]:
+              - generic [ref=e315]:
+                - link "PDF Book Translator" [ref=e316] [cursor=pointer]:
+                  - /url: ./detail/pdf-book-translator/chnmnpjdfgbmmhcfckgccdloplddclkk
+                - generic [ref=e317]:
+                  - heading "PDF Book Translator" [level=3] [ref=e318]
+                  - generic [ref=e319]:
+                    - img "平均评分为 3.6 星（最高为 5 星）。" [ref=e320]:
+                      - generic [ref=e321]: "3.6"
+                      - img [ref=e322]
+                    - generic [ref=e325] [cursor=pointer]:
+                      - img [ref=e328]
+                      - link "详细了解“PDF Book Translator”的结果和评价。" [ref=e330]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e331]: Translation of PDF book into another language.
+              - generic [ref=e333]:
+                - link "Document Translator - 在线翻译 PDF、PPT" [ref=e334] [cursor=pointer]:
+                  - /url: ./detail/document-translator-%E5%9C%A8%E7%BA%BF%E7%BF%BB%E8%AF%91/ekgbhhaimaahdlaiplkafkomhoblilel
+                - generic [ref=e335]:
+                  - heading "Document Translator - 在线翻译 PDF、PPT" [level=3] [ref=e336]
+                  - generic [ref=e337]:
+                    - img "平均评分为 3.6 星（最高为 5 星）。" [ref=e338]:
+                      - generic [ref=e339]: "3.6"
+                      - img [ref=e340]
+                    - generic [ref=e343] [cursor=pointer]:
+                      - img [ref=e346]
+                      - link "详细了解“Document Translator - 在线翻译 PDF、PPT”的结果和评价。" [ref=e348]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e349]: 在线翻译 PDF、Word、Excel、PowerPoint。基于AI，保留原始文档布局，支持扫描文档。
+              - generic [ref=e351]:
+                - link "AnyDoc翻译器｜免费翻译网站和PDF" [ref=e352] [cursor=pointer]:
+                  - /url: ./detail/anydoc%E7%BF%BB%E8%AF%91%E5%99%A8%EF%BD%9C%E5%85%8D%E8%B4%B9%E7%BF%BB%E8%AF%91%E7%BD%91%E7%AB%99%E5%92%8Cpdf/aopddeflghjljihihabdclejbojaomaf
+                - generic [ref=e353]:
+                  - heading "AnyDoc翻译器｜免费翻译网站和PDF" [level=3] [ref=e354]
+                  - generic [ref=e355]:
+                    - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e356]:
+                      - generic [ref=e357]: "4.6"
+                      - img [ref=e358]
+                    - generic [ref=e361] [cursor=pointer]:
+                      - img [ref=e364]
+                      - link "详细了解“AnyDoc翻译器｜免费翻译网站和PDF”的结果和评价。" [ref=e366]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e367]: 支持网页、文件、电子书、学术论文、图片和文本的全能 AI 翻译器
+              - generic [ref=e369]:
+                - link "沉浸式翻译 - AI 双语网页翻译 | PDF翻译 | 视频翻译 | 漫画翻译" [ref=e370] [cursor=pointer]:
+                  - /url: ./detail/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%BF%BB%E8%AF%91-ai-%E5%8F%8C%E8%AF%AD%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91-pdf%E7%BF%BB%E8%AF%91-%E8%A7%86%E9%A2%91%E7%BF%BB/bpoadfkcbjbfhfodiogcnhhhpibjhbnh
+                - generic [ref=e371]:
+                  - heading "沉浸式翻译 - AI 双语网页翻译 | PDF翻译 | 视频翻译 | 漫画翻译" [level=3] [ref=e372]
+                  - generic [ref=e373]:
+                    - img "平均评分为 4.1 星（最高为 5 星）。" [ref=e374]:
+                      - generic [ref=e375]: "4.1"
+                      - img [ref=e376]
+                    - generic [ref=e379] [cursor=pointer]:
+                      - img [ref=e382]
+                      - link "详细了解“沉浸式翻译 - AI 双语网页翻译 | PDF翻译 | 视频翻译 | 漫画翻译”的结果和评价。" [ref=e384]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e385]: 【沉浸式翻译】免费的（原文/译文）双语对照网页翻译插件，支持PDF翻译（保留排版），视频双语字幕翻译（Youtube, Netflix），EPUB电子书翻译；支持人工智能AI翻译大模型（OpenAI (ChatGPT)、DeepL、Gemini(Bard) 等）
+          - button "下一张幻灯片" [ref=e387] [cursor=pointer]:
+            - img [ref=e390]
+  - contentinfo [ref=e393]:
+    - list [ref=e394]:
+      - listitem [ref=e395]:
+        - link "关于 Chrome 应用商店" [ref=e396] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e397]:
+        - link "开发者信息中心" [ref=e398] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e399]:
+        - link "隐私权政策" [ref=e400] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e401]:
+        - link "服务条款" [ref=e402] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e403]:
+        - link "帮助" [ref=e404] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN

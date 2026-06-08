@@ -75,7 +75,7 @@
         "--headless",
         "--isolated"
       ],
-      "enabled": true,
+      "enabled": false,
       "timeout": 60000
     },
 
@@ -109,7 +109,7 @@
   },
 
   "tools": {
-    "playwright_*": true,
+    "playwright_*": false,
     "npm_*": false,
     "docker_*": false
   },
@@ -117,6 +117,8 @@
   "experimental": {
     "mcp_timeout": 60000
   },
+
+  "plugin": [],
 
   "permission": {
     "edit": "ask",

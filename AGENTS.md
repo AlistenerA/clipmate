@@ -111,3 +111,65 @@ API Key 同时配置在以下两处：
 | MCP 工具未出现在工具列表 | `opencode.json` 中 `environment` 传了空 `ZHIPUAI_API_KEY` 覆盖了 `.env` | 已修复：`environment` 设为空对象 `{}`，`load_dotenv(override=True)` |
 | 图片读取乱码 | PowerShell 默认编码非 UTF-8 | 将输出写入文件后用 Read 工具读取 |
 | CLI 报找不到 API Key | `.env` 路径不对 | 检查 `read_file.py` 中 `load_dotenv` 的路径是否为 `Path(__file__).parent.parent / ".env"` |
+
+---
+
+## 网页调研工具选择规则
+
+> 2026-06-08 实测结论：WebFetch 对大部分场景已足够，Playwright 仅用于交互式操作。
+
+### 工具优先级
+
+```
+需要浏览网页获取信息？
+       ↓
+   是 SSR 渲染的页面？
+   （Chrome 应用商店、文档站、博客、新闻等）
+       ↓
+   YES → WebFetch（Token 低 5-10 倍）
+   NO  → 需要点击、滚动、填表？
+          ↓
+         YES → Playwright
+         NO  → 尝试 WebFetch，失败再 fallback
+```
+
+### 决策矩阵
+
+| 场景 | 使用工具 | 原因 |
+|------|---------|------|
+| Chrome 应用商店搜索/详情页 | **WebFetch** | SSR 渲染，文本包含评分、用户数等全部关键数据 |
+| 阅读技术文档（MDN/Next.js docs） | **WebFetch** | 静态渲染 |
+| 阅读博客/新闻文章 | **WebFetch** | 静态渲染 |
+| Google/Bing 搜索 | **WebFetch** | 搜索引擎返回 HTML 即可解析 |
+| 纯 JS 渲染的 SPA | Playwright | WebFetch 拿不到内容 |
+| 需要点击"加载更多" | Playwright | 需要交互 |
+| 需要滚动加载的无限列表 | Playwright | 需要交互 |
+| 需要填写表单后提交 | Playwright | 需要交互 |
+| 需要截图说明问题 | Playwright | WebFetch 无截图能力 |
+| 需要阅读 Chrome 插件评价 | WebFetch 尝试详情页 → Playwright 备用 | 部分渲染但可能需点击 |
+
+### Playwright 使用规范
+
+#### 搜索引擎
+由于网络环境限制，**使用 Playwright 时优先用 Bing（`https://www.bing.com`）**，而不是 Google：
+
+```
+导航到 Bing            → https://www.bing.com
+Bing 搜索 URL 模式     → https://www.bing.com/search?q={关键词}
+```
+
+#### 避免行为
+
+| 禁止 | 替代方案 |
+|------|---------|
+| 用 Playwright 爬取静态文档 | 用 WebFetch |
+| 用 Playwright 访问 Chrome 应用商店搜索页 | 用 WebFetch |
+| 用 Playwright 访问 Chrome 应用商店详情页 | 用 WebFetch（已验证文本数据完整） |
+| 在循环中多次 page.goto() 同一站点 | 合并为一次导航 + evaluate 获取数据 |
+
+#### Token 参考数据
+
+| 工具 | 单页 Token | 适用比例 |
+|------|:---:|:---:|
+| WebFetch | ~500-2,000 | 80% 场景 |
+| Playwright | ~5,000-15,000 | 20% 场景（仅交互） |

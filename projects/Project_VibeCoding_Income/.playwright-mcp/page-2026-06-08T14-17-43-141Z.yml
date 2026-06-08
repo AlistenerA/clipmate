@@ -1,0 +1,272 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]: web to notion
+            - button "清除搜索条件" [ref=e17] [cursor=pointer]:
+              - img [ref=e18]
+        - generic [ref=e20]:
+          - button "一个包含更多选项的菜单" [ref=e24] [cursor=pointer]:
+            - img [ref=e27]
+          - generic [ref=e34]:
+            - button "Google 应用" [ref=e38] [cursor=pointer]:
+              - img [ref=e39]
+            - link "登录" [ref=e42] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/search/web%2520to%2520notion?hl%3Dzh-CN%26category%3Dextensions&followup=https://chromewebstore.google.com/search/web%2520to%2520notion?hl%3Dzh-CN%26category%3Dextensions&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e46]:
+        - generic [ref=e49]:
+          - tab "探索" [ref=e50] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [ref=e51] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e52] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - generic [ref=e56]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - heading "类型" [level=2] [ref=e60]
+        - toolbar "按扩展程序类型筛选产品" [ref=e61]:
+          - button "扩展程序" [ref=e64] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e66]: 扩展程序
+          - button "主题" [ref=e69] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e71]: 主题
+      - generic [ref=e72]:
+        - heading "过滤条件" [level=2] [ref=e73]
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - checkbox "精选扩展程序" [ref=e77]
+            - generic:
+              - img
+          - generic [ref=e79]: 精选扩展程序
+        - generic [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]:
+            - checkbox "知名发布者" [ref=e83]
+            - generic:
+              - img
+          - generic [ref=e85]: 知名发布者
+      - generic [ref=e86]:
+        - heading "评分" [level=2] [ref=e87]
+        - radiogroup "评分" [ref=e88]:
+          - radio "5 星" [ref=e89]
+          - radio "4 星及以上" [ref=e95]:
+            - generic [ref=e102]: 及以上
+          - radio "3 星及以上" [ref=e103]:
+            - generic [ref=e111]: 及以上
+          - radio "2 星及以上" [ref=e112]:
+            - generic [ref=e121]: 及以上
+      - generic [ref=e123]:
+        - button "“清除所有过滤条件”按钮。" [disabled] [ref=e124]:
+          - generic [ref=e126]: 全部清除
+        - tooltip [ref=e127]: 重置您的过滤选项。
+    - main [ref=e128]:
+      - generic [ref=e129]:
+        - heading "搜索结果" [level=1] [ref=e130]
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - link "Save to Notion" [ref=e133] [cursor=pointer]:
+              - /url: ./detail/save-to-notion/ldmmifpegigmeammaeckplhnjbbpccmm
+            - generic [ref=e135]:
+              - heading "Save to Notion" [level=2] [ref=e137]
+              - paragraph [ref=e138]:
+                - img "“精选”徽章" [ref=e139]
+                - generic [ref=e142]: 精选
+              - generic [ref=e143]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e144]:
+                  - generic [ref=e145]: "4.3"
+                  - img [ref=e146]
+                - generic [ref=e149] [cursor=pointer]:
+                  - img [ref=e152]
+                  - link "详细了解“Save to Notion”的结果和评价。" [ref=e154]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e155]: Save the Web to Notion
+          - generic [ref=e156]:
+            - link "Notion Web Clipper" [ref=e157] [cursor=pointer]:
+              - /url: ./detail/notion-web-clipper/knheggckgoiihginacbkhaalnibhilkk
+            - generic [ref=e159]:
+              - heading "Notion Web Clipper" [level=2] [ref=e161]
+              - paragraph [ref=e162]:
+                - img "由经过验证的发布者发布" [ref=e163]
+                - generic [ref=e166]: notion.so/
+              - generic [ref=e167]:
+                - img "平均评分为 3.3 星（最高为 5 星）。" [ref=e168]:
+                  - generic [ref=e169]: "3.3"
+                  - img [ref=e170]
+                - generic [ref=e173] [cursor=pointer]:
+                  - img [ref=e176]
+                  - link "详细了解“Notion Web Clipper”的结果和评价。" [ref=e178]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e179]: Use our Web Clipper to save any website into Notion.
+          - generic [ref=e180]:
+            - 'link "Notix: Notion Web Clipper" [ref=e181] [cursor=pointer]':
+              - /url: ./detail/notix-notion-web-clipper/fmnbhafoldgblmdmhflflnjlfjcgpnog
+            - generic [ref=e183]:
+              - 'heading "Notix: Notion Web Clipper" [level=2] [ref=e185]'
+              - paragraph [ref=e186]:
+                - img "由经过验证的发布者发布" [ref=e187]
+                - generic [ref=e190]: notix.so
+                - img "“精选”徽章" [ref=e191]
+                - generic [ref=e194]: 精选
+              - generic [ref=e195]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e196]:
+                  - generic [ref=e197]: "4.6"
+                  - img [ref=e198]
+                - generic [ref=e201] [cursor=pointer]:
+                  - img [ref=e204]
+                  - 'link "详细了解“Notix: Notion Web Clipper”的结果和评价。" [ref=e206]':
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e207]: Save the Web to Notion. Use AI to create summaries and auto-prefills. Easily create how-to guides with screenshots in Notion.
+          - generic [ref=e208]:
+            - 'link "Copy To Notion: Clip anything to Notion" [ref=e209] [cursor=pointer]':
+              - /url: ./detail/copy-to-notion-clip-anyth/jbeooomlnkgbokicnpcabkpnacabjnbm
+            - generic [ref=e211]:
+              - 'heading "Copy To Notion: Clip anything to Notion" [level=2] [ref=e213]'
+              - paragraph [ref=e214]:
+                - img "由经过验证的发布者发布" [ref=e215]
+                - generic [ref=e218]: copytonotion.com
+                - img "“精选”徽章" [ref=e219]
+                - generic [ref=e222]: 精选
+              - generic [ref=e223]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e224]:
+                  - generic [ref=e225]: "4.7"
+                  - img [ref=e226]
+                - generic [ref=e229] [cursor=pointer]:
+                  - img [ref=e232]
+                  - 'link "详细了解“Copy To Notion: Clip anything to Notion”的结果和评价。" [ref=e234]':
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e235]: Easily capture, organize, and access all your online clips directly in Notion.
+          - generic [ref=e236]:
+            - link "notionClipper - 概念网页剪辑器" [ref=e237] [cursor=pointer]:
+              - /url: ./detail/notionclipper-%E6%A6%82%E5%BF%B5%E7%BD%91%E9%A1%B5%E5%89%AA%E8%BE%91%E5%99%A8/hpjilhicpmofjnjehgnojaldkaoalmpg
+            - generic [ref=e239]:
+              - heading "notionClipper - 概念网页剪辑器" [level=2] [ref=e241]
+              - paragraph [ref=e242]:
+                - img "由经过验证的发布者发布" [ref=e243]
+                - generic [ref=e246]: noterail.co
+              - generic [ref=e247]:
+                - img "平均评分为 5 星（最高为 5 星）。" [ref=e248]:
+                  - generic [ref=e249]: "5.0"
+                  - img [ref=e250]
+                - generic [ref=e253] [cursor=pointer]:
+                  - img [ref=e256]
+                  - link "详细了解“notionClipper - 概念网页剪辑器”的结果和评价。" [ref=e258]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e259]: notionClipper 将剪辑的网页内容直接插入现有或新的概念页面。屏幕截图和荧光笔。
+          - generic [ref=e260]:
+            - link "Notion 网页剪藏" [ref=e261] [cursor=pointer]:
+              - /url: ./detail/notion-%E7%BD%91%E9%A1%B5%E5%89%AA%E8%97%8F/biiilcmpbeipakdmolgnkmliepobjnni
+            - generic [ref=e263]:
+              - heading "Notion 网页剪藏" [level=2] [ref=e265]
+              - paragraph [ref=e266]:
+                - img "由经过验证的发布者发布" [ref=e267]
+                - generic [ref=e270]: aluo.app
+              - generic [ref=e271]:
+                - img "平均评分为 3.4 星（最高为 5 星）。" [ref=e272]:
+                  - generic [ref=e273]: "3.4"
+                  - img [ref=e274]
+                - generic [ref=e277] [cursor=pointer]:
+                  - img [ref=e280]
+                  - link "详细了解“Notion 网页剪藏”的结果和评价。" [ref=e282]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e283]: 一键保存网页内容到 Notion - 让信息收集更轻松
+          - generic [ref=e284]:
+            - link "notion-enhancer" [ref=e285] [cursor=pointer]:
+              - /url: ./detail/notion-enhancer/dndcmiicjbkfcbpjincpefjkagflbbnl
+            - generic [ref=e287]:
+              - heading "notion-enhancer" [level=2] [ref=e289]
+              - paragraph
+              - generic [ref=e290]:
+                - img "平均评分为 3.9 星（最高为 5 星）。" [ref=e291]:
+                  - generic [ref=e292]: "3.9"
+                  - img [ref=e293]
+                - generic [ref=e296] [cursor=pointer]:
+                  - img [ref=e299]
+                  - link "详细了解“notion-enhancer”的结果和评价。" [ref=e301]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e302]: An enhancer/customiser for the all-in-one productivity workspace Notion
+          - generic [ref=e303]:
+            - link "Web Clipper for Notion" [ref=e304] [cursor=pointer]:
+              - /url: ./detail/web-clipper-for-notion/kelcojhndmaleeiigecnokjkafpepbik
+            - generic [ref=e306]:
+              - heading "Web Clipper for Notion" [level=2] [ref=e308]
+              - paragraph
+              - generic [ref=e309]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e310]:
+                  - generic [ref=e311]: "0.0"
+                  - img [ref=e312]
+                - generic [ref=e315] [cursor=pointer]:
+                  - img [ref=e318]
+                  - link "详细了解“Web Clipper for Notion”的结果和评价。" [ref=e320]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e321]: Save current page to Notion as a link or full text snapshot.
+          - generic [ref=e322]:
+            - 'link "Flylighter: Capture Articles and Highlights to Notion" [ref=e323] [cursor=pointer]':
+              - /url: ./detail/flylighter-capture-articl/dlmdffmkcggiicjbfnjcnikkpahgplmd
+            - generic [ref=e325]:
+              - 'heading "Flylighter: Capture Articles and Highlights to Notion" [level=2] [ref=e327]'
+              - paragraph [ref=e328]:
+                - img "由经过验证的发布者发布" [ref=e329]
+                - generic [ref=e332]: flylighter.com
+              - generic [ref=e333]:
+                - img "平均评分为 3.5 星（最高为 5 星）。" [ref=e334]:
+                  - generic [ref=e335]: "3.5"
+                  - img [ref=e336]
+                - generic [ref=e339] [cursor=pointer]:
+                  - img [ref=e342]
+                  - 'link "详细了解“Flylighter: Capture Articles and Highlights to Notion”的结果和评价。" [ref=e344]':
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e345]: Capture bookmarks, article, and highlights with Flylighter – your new favorite web clipper for Notion.
+          - generic [ref=e346]:
+            - link "Text to Notion" [ref=e347] [cursor=pointer]:
+              - /url: ./detail/text-to-notion/gbbfjpcgipipdknhhdhaigjbjlkkaomb
+            - generic [ref=e349]:
+              - heading "Text to Notion" [level=2] [ref=e351]
+              - paragraph
+              - generic [ref=e352]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e353]:
+                  - generic [ref=e354]: "4.7"
+                  - img [ref=e355]
+                - generic [ref=e358] [cursor=pointer]:
+                  - img [ref=e361]
+                  - link "详细了解“Text to Notion”的结果和评价。" [ref=e363]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e364]: Boost your productivity with this powerful Chrome extension designed to streamline your research and content organization process.…
+          - button "加载更多" [ref=e367] [cursor=pointer]:
+            - generic [ref=e369]: 加载更多
+  - contentinfo [ref=e370]:
+    - list [ref=e371]:
+      - listitem [ref=e372]:
+        - link "关于 Chrome 应用商店" [ref=e373] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e374]:
+        - link "开发者信息中心" [ref=e375] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e376]:
+        - link "隐私权政策" [ref=e377] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e378]:
+        - link "服务条款" [ref=e379] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e380]:
+        - link "帮助" [ref=e381] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN
+  - generic [ref=e382]: 此页面已加载完毕。

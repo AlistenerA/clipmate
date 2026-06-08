@@ -1,0 +1,244 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]
+        - generic [ref=e16]:
+          - button "一个包含更多选项的菜单" [ref=e20] [cursor=pointer]:
+            - img [ref=e23]
+          - generic [ref=e30]:
+            - button "Google 应用" [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+            - link "登录" [ref=e38] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/detail/large-pdf-translator/ikedjddgafbllegfhehnigikflgmehfn?hl%3Dzh-CN&followup=https://chromewebstore.google.com/detail/large-pdf-translator/ikedjddgafbllegfhehnigikflgmehfn?hl%3Dzh-CN&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e42]:
+        - generic [ref=e45]:
+          - tab "探索" [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [selected] [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - main [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic "警告" [ref=e56]:
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e62]: 在无痕模式或访客模式下，您无法添加或移除产品
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - img "“Large PDF Translator”的产品徽标图片" [ref=e66]
+            - heading "Large PDF Translator" [level=1] [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - generic [ref=e71]: "3.0"
+                - img [ref=e72]
+                - generic [ref=e74]:
+                  - text: (
+                  - link "6 个评分" [ref=e75] [cursor=pointer]:
+                    - /url: ./detail/large-pdf-translator/ikedjddgafbllegfhehnigikflgmehfn/reviews
+                    - paragraph [ref=e76]: 6 个评分
+                  - text: )
+              - button "评分每天更新一次，未必反映最新评价。" [ref=e78] [cursor=pointer]:
+                - img [ref=e81]
+            - button "分享" [ref=e87] [cursor=pointer]:
+              - img [ref=e90]
+              - generic [ref=e92]: 分享
+          - generic [ref=e93]:
+            - link "扩展程序" [ref=e94] [cursor=pointer]:
+              - /url: ./category/extensions
+            - link "工作流程与规划" [ref=e95] [cursor=pointer]:
+              - /url: ./category/extensions/productivity/workflow
+            - text: 2,000 用户
+          - generic [ref=e98]:
+            - button "添加至 Chrome" [disabled]:
+              - generic: 添加至 Chrome
+      - button "Large PDF Translator的项目媒体 1（屏幕截图）" [ref=e101] [cursor=pointer]:
+        - img "Large PDF Translator的项目媒体 1（屏幕截图）" [ref=e102]
+      - generic [ref=e103]:
+        - heading "概述" [level=2] [ref=e105]:
+          - generic [ref=e106]: 概述
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - paragraph [ref=e109]: Easily translate long PDF files as large as 2000 pages or 400 MB to more than 130+ languages
+            - paragraph [ref=e110]: "Introducing Large PDF Translator - The Efficient PDF Translation Chrome Extension! Large PDF Translator is a powerful Chrome extension that allows you to translate large PDF files quickly and easily. With the ability to process PDFs as long as 2000 pages or 400 MB, this extension provides you with translations to any language in seconds. Features: Translate Large PDFs: Select any PDF file and let Large PDF Translator translate the content for you. Supports 130+ Languages: Translate your PDF to more than 130 languages, including Right-to-Left (RTL) languages. Preserve Layout & Formatting: Ensure that the original layout and formatting of your PDF are maintained in the translation. Scanned PDFs (OCR) Supported: Translate scanned PDFs with the integrated OCR technology. Unlimited Translation: Enjoy unlimited translation capabilities without any limitations. Read or Download Translations: Access your generated translation within the extension for easy reading or download it for offline use. Trusted by Professionals: Large PDF Translator is trusted by a wide range of professionals, including companies, law firms, government agencies, and academic institutions. Our software has been praised for its ability to save time and provide quick translations of large documents. Privacy and Security: We prioritize your privacy. Large PDF Translator ensures that your PDFs and translated content remain secure and protected. Unlimited Translation: Large PDF Translator offers unlimited translation capabilities. You can translate as many PDFs as you want without any limitations. Discover Large PDF Translator now and unlock the ability to translate PDFs with ease. Simplify your document analysis and save valuable time. Get started with Large PDF Translator today!"
+          - button "查看更多" [ref=e111] [cursor=pointer]
+      - generic [ref=e114]:
+        - heading "3 星（5 星制） 3 星（最高为 5 星） 6 个评分• 详细了解结果和评价。" [level=2] [ref=e116]:
+          - generic [ref=e117]:
+            - text: 3 星（5 星制）
+            - img "3 星（最高为 5 星）" [ref=e118]:
+              - generic [ref=e119]:
+                - generic [ref=e120]:
+                  - img [ref=e121]
+                  - img [ref=e124]
+                  - img [ref=e127]
+                  - img [ref=e130]
+                  - img [ref=e133]
+                - generic [ref=e136]:
+                  - img [ref=e137]
+                  - img [ref=e139]
+                  - img [ref=e141]
+                  - img [ref=e143]
+                  - img [ref=e145]
+          - text: 6 个评分•
+          - paragraph [ref=e147]:
+            - link "详细了解结果和评价。" [ref=e148] [cursor=pointer]:
+              - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results
+        - generic [ref=e150] [cursor=pointer]:
+          - generic [ref=e151]: 查看所有评价
+          - link "查看所有评价" [ref=e152]:
+            - /url: ./detail/large-pdf-translator/ikedjddgafbllegfhehnigikflgmehfn/reviews
+      - generic [ref=e153]:
+        - heading "详情" [level=2] [ref=e155]
+        - list [ref=e157]:
+          - listitem [ref=e158]:
+            - generic [ref=e159]: 版本
+            - generic [ref=e160]: "1.0"
+          - listitem [ref=e161]:
+            - generic [ref=e162]: 上次更新日期
+            - generic [ref=e163]: 2024年6月28日
+          - listitem [ref=e164]:
+            - link "举报问题" [ref=e166] [cursor=pointer]:
+              - /url: ./detail/ikedjddgafbllegfhehnigikflgmehfn/report
+          - listitem [ref=e167]:
+            - generic [ref=e168]: 提供方
+            - generic [ref=e169]: Aditya
+          - listitem [ref=e170]:
+            - generic [ref=e171]: 大小
+            - generic [ref=e172]: 18.81KiB
+          - listitem [ref=e173]:
+            - generic [ref=e174]: 语言
+            - generic [ref=e176]: English (United States)
+          - listitem [ref=e177]:
+            - generic [ref=e178]: 开发者
+            - group [ref=e181]:
+              - generic "邮箱" [ref=e182]:
+                - img [ref=e183]
+                - text: 邮箱
+                - img [ref=e185]
+          - listitem [ref=e187]:
+            - generic [ref=e188]: 非交易者
+            - generic [ref=e189]: 该开发者尚未将自己标识为交易者。欧盟地区消费者须知：消费者权利可能不适用于您与该开发者达成的合约。
+      - generic [ref=e190]:
+        - heading "隐私权" [level=2] [ref=e192]
+        - generic [ref=e194]:
+          - generic [ref=e195]:
+            - img [ref=e196]
+            - generic [ref=e199]: 该开发者已披露，此产品不会收集或使用您的数据。
+          - generic [ref=e200]:
+            - heading "该开发者已声明，您的数据：" [level=2] [ref=e201]
+            - list [ref=e202]:
+              - listitem [ref=e203]:
+                - text: 不会因未获
+                - link "批准的用途" [ref=e204] [cursor=pointer]:
+                  - /url: https://developer.chrome.com/docs/webstore/program-policies/limited-use/
+                - text: 出售给第三方
+              - listitem [ref=e205]: 不会为实现与产品核心功能无关的目的而使用或转移
+              - listitem [ref=e206]: 不会为确定信用度或放贷目的而使用或转移
+      - generic [ref=e208]:
+        - heading "支持" [level=2] [ref=e209]
+        - generic [ref=e211] [cursor=pointer]:
+          - generic [ref=e212]: 访问支持中心
+          - link "访问支持中心" [ref=e213]:
+            - /url: ./detail/ikedjddgafbllegfhehnigikflgmehfn/support
+      - generic [ref=e214]:
+        - heading "相关" [level=2] [ref=e215]
+        - region "相关产品轮播界面" [ref=e218]:
+          - button "上一张幻灯片" [ref=e220] [cursor=pointer]:
+            - img [ref=e223]
+          - region "相关产品幻灯片" [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e230]:
+                - link "AnyDoc翻译器｜免费翻译网站和PDF" [ref=e231] [cursor=pointer]:
+                  - /url: ./detail/anydoc%E7%BF%BB%E8%AF%91%E5%99%A8%EF%BD%9C%E5%85%8D%E8%B4%B9%E7%BF%BB%E8%AF%91%E7%BD%91%E7%AB%99%E5%92%8Cpdf/aopddeflghjljihihabdclejbojaomaf
+                - generic [ref=e232]:
+                  - heading "AnyDoc翻译器｜免费翻译网站和PDF" [level=3] [ref=e233]
+                  - generic [ref=e234]:
+                    - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e235]:
+                      - generic [ref=e236]: "4.6"
+                      - img [ref=e237]
+                    - generic [ref=e240] [cursor=pointer]:
+                      - img [ref=e243]
+                      - link "详细了解“AnyDoc翻译器｜免费翻译网站和PDF”的结果和评价。" [ref=e245]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e246]: 支持网页、文件、电子书、学术论文、图片和文本的全能 AI 翻译器
+              - generic [ref=e248]:
+                - link "翻译PDF" [ref=e249] [cursor=pointer]:
+                  - /url: ./detail/%E7%BF%BB%E8%AF%91pdf/kncacaikbpopfpjohcaiepmjlgnippjk
+                - generic [ref=e250]:
+                  - heading "翻译PDF" [level=3] [ref=e251]
+                  - generic [ref=e252]:
+                    - img "平均评分为 5 星（最高为 5 星）。" [ref=e253]:
+                      - generic [ref=e254]: "5.0"
+                      - img [ref=e255]
+                    - generic [ref=e258] [cursor=pointer]:
+                      - img [ref=e261]
+                      - link "详细了解“翻译PDF”的结果和评价。" [ref=e263]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e264]: 轻松翻译PDF。将您的DOC、PDF或PPT文件放入AI翻译文档工具中，以获得准确的文件翻译结果。
+              - generic [ref=e266]:
+                - link "Translify - Translate Web & PDF" [ref=e267] [cursor=pointer]:
+                  - /url: ./detail/translify-translate-web-p/ddkllalmpmdnhbgnkaiogfodeflmlgia
+                - generic [ref=e268]:
+                  - heading "Translify - Translate Web & PDF" [level=3] [ref=e269]
+                  - generic [ref=e270]:
+                    - img "平均评分为 5 星（最高为 5 星）。" [ref=e271]:
+                      - generic [ref=e272]: "5.0"
+                      - img [ref=e273]
+                    - generic [ref=e276] [cursor=pointer]:
+                      - img [ref=e279]
+                      - link "详细了解“Translify - Translate Web & PDF”的结果和评价。" [ref=e281]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e282]: Translify - Free Translate Website, Translate PDF & Epub eBook, Translate Video Subtitles in Bilingual
+              - generic [ref=e284]:
+                - link "DocTranslator - Google Translate PDF, Large PDF Translator" [ref=e285] [cursor=pointer]:
+                  - /url: ./detail/doctranslator-google-tran/ienefakpiibnlikglpalhnieoaghlfdg
+                - generic [ref=e286]:
+                  - heading "DocTranslator - Google Translate PDF, Large PDF Translator" [level=3] [ref=e287]
+                  - generic [ref=e288]:
+                    - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e289]:
+                      - generic [ref=e290]: "4.5"
+                      - img [ref=e291]
+                    - generic [ref=e294] [cursor=pointer]:
+                      - img [ref=e297]
+                      - link "详细了解“DocTranslator - Google Translate PDF, Large PDF Translator”的结果和评价。" [ref=e299]:
+                        - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+                  - paragraph [ref=e300]: Translate Large PDF Documents, Excel files, PowerPoint slides in 120+ languages with AI Document Translator.
+          - button "下一张幻灯片" [ref=e302] [cursor=pointer]:
+            - img [ref=e305]
+  - contentinfo [ref=e308]:
+    - list [ref=e309]:
+      - listitem [ref=e310]:
+        - link "关于 Chrome 应用商店" [ref=e311] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e312]:
+        - link "开发者信息中心" [ref=e313] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e314]:
+        - link "隐私权政策" [ref=e315] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e316]:
+        - link "服务条款" [ref=e317] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e318]:
+        - link "帮助" [ref=e319] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN

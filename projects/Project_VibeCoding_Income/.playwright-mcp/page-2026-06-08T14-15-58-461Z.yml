@@ -1,0 +1,851 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]
+        - generic [ref=e16]:
+          - button "一个包含更多选项的菜单" [ref=e20] [cursor=pointer]:
+            - img [ref=e23]
+          - generic [ref=e30]:
+            - button "Google 应用" [ref=e34] [cursor=pointer]:
+              - img [ref=e35]
+            - link "登录" [ref=e38] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/&followup=https://chromewebstore.google.com/&ec=GAZApQM
+      - tablist [ref=e42]:
+        - generic [ref=e45]:
+          - tab "探索" [selected] [ref=e46] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [ref=e47] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e48] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - main [ref=e52]:
+    - heading "欢迎使用 Chrome 应用商店" [level=1] [ref=e53]
+    - generic [ref=e54]:
+      - region "Chrome 应用商店中的最大型产品" [ref=e55]:
+        - generic [ref=e57]:
+          - heading "未来的写作方式" [level=2] [ref=e58]
+          - paragraph [ref=e59]: 改进写作质量，轻松创作吸睛的优质内容
+          - generic [ref=e60]:
+            - link "JetBrains Grazie Writing Companion" [ref=e61] [cursor=pointer]:
+              - /url: ./detail/jetbrains-grazie-writing/fonaoompfjljjllgccccgjnhnoghohgc
+              - img "JetBrains Grazie Writing Companion" [ref=e62]
+            - 'link "Wordtune: AI Paraphrasing and Grammar Tool" [ref=e63] [cursor=pointer]':
+              - /url: ./detail/wordtune-ai-paraphrasing/nllcnknpjnininklegdoijpljgdjkijc
+              - 'img "Wordtune: AI Paraphrasing and Grammar Tool" [ref=e64]'
+            - 'link "Jetwriter AI: Reply Emails, Ask Page, Summarize, Fix Grammar, and More" [ref=e65] [cursor=pointer]':
+              - /url: ./detail/jetwriter-ai-reply-emails/pdnenlnelpdomajfejgapbdpmjkfpjkp
+              - 'img "Jetwriter AI: Reply Emails, Ask Page, Summarize, Fix Grammar, and More" [ref=e66]'
+            - 'link "Compose AI: AI-powered Writing Tool" [ref=e67] [cursor=pointer]':
+              - /url: ./detail/compose-ai-ai-powered-wri/ddlbpiadoechcolndfeaonajmngmhblj
+              - 'img "Compose AI: AI-powered Writing Tool" [ref=e68]'
+            - 'link "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e69] [cursor=pointer]':
+              - /url: ./detail/grammarly-ai-writing-assi/kbfnbcaeplbcioakkpcpgfkobkghlhen
+              - 'img "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e70]'
+            - 'link "Quillbot: AI Writing Assistant to Grammar Check, Paraphrase & Translate" [ref=e71] [cursor=pointer]':
+              - /url: ./detail/quillbot-ai-writing-assis/iidnbdjijdkbmajdffnidomddglmieko
+              - 'img "Quillbot: AI Writing Assistant to Grammar Check, Paraphrase & Translate" [ref=e72]'
+          - link [ref=e73] [cursor=pointer]:
+            - /url: ./collection/ai_content
+          - generic [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: 查看集合
+            - link "查看“未来的写作方式”集合内的更多产品" [ref=e77]:
+              - /url: ./collection/ai_content
+        - generic "幻灯片 1" [ref=e78]:
+          - generic [ref=e79]:
+            - heading "欢迎使用 Chrome 应用商店" [level=2] [ref=e80]
+            - paragraph [ref=e81]: 使用适用于 Chrome 的扩展程序和主题让浏览器如虎添翼
+            - generic [ref=e82]:
+              - link "Google 翻译" [ref=e83] [cursor=pointer]:
+                - /url: ./detail/google-%E7%BF%BB%E8%AF%91/aapbdbdomjkkjkaonfhkkikfgjllcleb
+                - img "Google 翻译" [ref=e84]
+              - link "Shazam：在浏览器中直接识别歌曲" [ref=e85] [cursor=pointer]:
+                - /url: ./detail/shazam%EF%BC%9A%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9B%B4%E6%8E%A5%E8%AF%86%E5%88%AB%E6%AD%8C%E6%9B%B2/mmioliijnhnoblpgimnlajmefafdfilb
+                - img "Shazam：在浏览器中直接识别歌曲" [ref=e86]
+              - link "Adobe Photoshop" [ref=e87] [cursor=pointer]:
+                - /url: ./detail/adobe-photoshop/kjchkpkjpiloipaonppkmepcbhcncedo
+                - img "Adobe Photoshop" [ref=e88]
+              - link "Click and Clean" [ref=e89] [cursor=pointer]:
+                - /url: ./detail/click-and-clean/mgngmngjioknlgjjaiiamcdbahombpfb
+                - img "Click and Clean" [ref=e90]
+              - 'link "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e91] [cursor=pointer]':
+                - /url: ./detail/grammarly-ai-writing-assi/kbfnbcaeplbcioakkpcpgfkobkghlhen
+                - 'img "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e92]'
+              - link "Adobe Acrobat：PDF 编辑、转化、签名工具" [ref=e93] [cursor=pointer]:
+                - /url: ./detail/adobe-acrobat%EF%BC%9Apdf-%E7%BC%96%E8%BE%91%E3%80%81%E8%BD%AC%E5%8C%96%E3%80%81%E7%AD%BE/efaidnbmnnnibpcajpcglclefindmkaj
+                - img "Adobe Acrobat：PDF 编辑、转化、签名工具" [ref=e94]
+            - link [ref=e95] [cursor=pointer]:
+              - /url: ./collection/get_started
+            - generic [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]: 查看集合
+              - link "查看“扩展程序入门套装”集合内的更多产品" [ref=e99]:
+                - /url: ./collection/get_started
+        - generic "幻灯片 2" [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - heading "2025 年精选集锦" [level=2] [ref=e103]
+              - paragraph [ref=e104]: 探索我们的年度出众 AI 扩展程序
+            - link [ref=e105] [cursor=pointer]:
+              - /url: ./collection/2025_favorites
+            - generic [ref=e107] [cursor=pointer]:
+              - generic [ref=e108]: 查看集合
+              - link "查看“2025 年精选集锦”集合" [ref=e109]:
+                - /url: ./collection/2025_favorites
+        - generic "幻灯片 3" [ref=e110]:
+          - generic [ref=e111]:
+            - heading "每天都是世界地球日" [level=2] [ref=e112]
+            - paragraph [ref=e113]: 种植树木、环保购物等
+            - generic [ref=e114]:
+              - link "Faircado - Second hand shopping" [ref=e115] [cursor=pointer]:
+                - /url: ./detail/faircado-second-hand-shop/gngckpdhcngilcedefiiiapkhocojghm
+                - img "Faircado - Second hand shopping" [ref=e116]
+              - link "Pebble - Digital Carbon Emissions Calculator" [ref=e117] [cursor=pointer]:
+                - /url: ./detail/pebble-digital-carbon-emi/oeamjgnkoelgkegbphiminanlbegaaga
+                - img "Pebble - Digital Carbon Emissions Calculator" [ref=e118]
+              - link "Ecosia - The search engine that plants trees" [ref=e119] [cursor=pointer]:
+                - /url: ./detail/ecosia-the-search-engine/eedlgdlajadkbbjoobobefphmfkcchfk
+                - img "Ecosia - The search engine that plants trees" [ref=e120]
+              - link "Tab for a Cause" [ref=e121] [cursor=pointer]:
+                - /url: ./detail/tab-for-a-cause/gibkoahgjfhphbmeiphbcnhehbfdlcgo
+                - img "Tab for a Cause" [ref=e122]
+              - link "askBelynda | Sustainable Shopping" [ref=e123] [cursor=pointer]:
+                - /url: ./detail/askbelynda-sustainable-sh/pcmbjnfbjkeieekkahdfgchcbjfhhgdi
+                - img "askBelynda | Sustainable Shopping" [ref=e124]
+              - link "Earth View from Google Earth" [ref=e125] [cursor=pointer]:
+                - /url: ./detail/earth-view-from-google-ea/bhloflhklmhfpedakmangadcdofhnnoh
+                - img "Earth View from Google Earth" [ref=e126]
+            - link [ref=e127] [cursor=pointer]:
+              - /url: ./collection/earth_day
+            - generic [ref=e129] [cursor=pointer]:
+              - generic [ref=e130]: 查看集合
+              - link "查看“每天都是世界地球日”集合内的更多产品" [ref=e131]:
+                - /url: ./collection/earth_day
+        - generic "幻灯片 4" [ref=e132]:
+          - generic [ref=e133]:
+            - link [ref=e134] [cursor=pointer]:
+              - /url: ./detail/adobe-photoshop/kjchkpkjpiloipaonppkmepcbhcncedo
+            - generic [ref=e135]:
+              - heading "Adobe Photoshop" [level=2] [ref=e136]
+              - paragraph [ref=e137]: 轻松移除背景、调整颜色等。此外，还可免费使用 Photoshop 网页版 6 个月。
+              - generic [ref=e138]:
+                - img "平均评分为 3.8 星（最高为 5 星）。" [ref=e141]:
+                  - generic [ref=e142]: "3.8"
+                  - img [ref=e143]
+                - generic [ref=e145]:
+                  - generic [ref=e146]: 80万
+                  - generic [ref=e147]: 用户数
+              - generic [ref=e149] [cursor=pointer]:
+                - generic [ref=e150]: 查看详情
+                - link "查看详情“Adobe Photoshop”" [ref=e151]:
+                  - /url: ./detail/adobe-photoshop/kjchkpkjpiloipaonppkmepcbhcncedo
+        - generic "幻灯片 5" [ref=e152]:
+          - generic [ref=e153]:
+            - heading "未来的写作方式" [level=2] [ref=e154]
+            - paragraph [ref=e155]: 改进写作质量，轻松创作吸睛的优质内容
+            - generic [ref=e156]:
+              - link "JetBrains Grazie Writing Companion" [ref=e157] [cursor=pointer]:
+                - /url: ./detail/jetbrains-grazie-writing/fonaoompfjljjllgccccgjnhnoghohgc
+                - img "JetBrains Grazie Writing Companion" [ref=e158]
+              - 'link "Wordtune: AI Paraphrasing and Grammar Tool" [ref=e159] [cursor=pointer]':
+                - /url: ./detail/wordtune-ai-paraphrasing/nllcnknpjnininklegdoijpljgdjkijc
+                - 'img "Wordtune: AI Paraphrasing and Grammar Tool" [ref=e160]'
+              - 'link "Jetwriter AI: Reply Emails, Ask Page, Summarize, Fix Grammar, and More" [ref=e161] [cursor=pointer]':
+                - /url: ./detail/jetwriter-ai-reply-emails/pdnenlnelpdomajfejgapbdpmjkfpjkp
+                - 'img "Jetwriter AI: Reply Emails, Ask Page, Summarize, Fix Grammar, and More" [ref=e162]'
+              - 'link "Compose AI: AI-powered Writing Tool" [ref=e163] [cursor=pointer]':
+                - /url: ./detail/compose-ai-ai-powered-wri/ddlbpiadoechcolndfeaonajmngmhblj
+                - 'img "Compose AI: AI-powered Writing Tool" [ref=e164]'
+              - 'link "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e165] [cursor=pointer]':
+                - /url: ./detail/grammarly-ai-writing-assi/kbfnbcaeplbcioakkpcpgfkobkghlhen
+                - 'img "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e166]'
+              - 'link "Quillbot: AI Writing Assistant to Grammar Check, Paraphrase & Translate" [ref=e167] [cursor=pointer]':
+                - /url: ./detail/quillbot-ai-writing-assis/iidnbdjijdkbmajdffnidomddglmieko
+                - 'img "Quillbot: AI Writing Assistant to Grammar Check, Paraphrase & Translate" [ref=e168]'
+            - link [ref=e169] [cursor=pointer]:
+              - /url: ./collection/ai_content
+            - generic [ref=e171] [cursor=pointer]:
+              - generic [ref=e172]: 查看集合
+              - link "查看“未来的写作方式”集合内的更多产品" [ref=e173]:
+                - /url: ./collection/ai_content
+        - generic [ref=e175]:
+          - heading "欢迎使用 Chrome 应用商店" [level=2] [ref=e176]
+          - paragraph [ref=e177]: 使用适用于 Chrome 的扩展程序和主题让浏览器如虎添翼
+          - generic [ref=e178]:
+            - link "Google 翻译" [ref=e179] [cursor=pointer]:
+              - /url: ./detail/google-%E7%BF%BB%E8%AF%91/aapbdbdomjkkjkaonfhkkikfgjllcleb
+              - img "Google 翻译" [ref=e180]
+            - link "Shazam：在浏览器中直接识别歌曲" [ref=e181] [cursor=pointer]:
+              - /url: ./detail/shazam%EF%BC%9A%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E7%9B%B4%E6%8E%A5%E8%AF%86%E5%88%AB%E6%AD%8C%E6%9B%B2/mmioliijnhnoblpgimnlajmefafdfilb
+              - img "Shazam：在浏览器中直接识别歌曲" [ref=e182]
+            - link "Adobe Photoshop" [ref=e183] [cursor=pointer]:
+              - /url: ./detail/adobe-photoshop/kjchkpkjpiloipaonppkmepcbhcncedo
+              - img "Adobe Photoshop" [ref=e184]
+            - link "Click and Clean" [ref=e185] [cursor=pointer]:
+              - /url: ./detail/click-and-clean/mgngmngjioknlgjjaiiamcdbahombpfb
+              - img "Click and Clean" [ref=e186]
+            - 'link "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e187] [cursor=pointer]':
+              - /url: ./detail/grammarly-ai-writing-assi/kbfnbcaeplbcioakkpcpgfkobkghlhen
+              - 'img "Grammarly: AI Writing Assistant and Grammar Checker App" [ref=e188]'
+            - link "Adobe Acrobat：PDF 编辑、转化、签名工具" [ref=e189] [cursor=pointer]:
+              - /url: ./detail/adobe-acrobat%EF%BC%9Apdf-%E7%BC%96%E8%BE%91%E3%80%81%E8%BD%AC%E5%8C%96%E3%80%81%E7%AD%BE/efaidnbmnnnibpcajpcglclefindmkaj
+              - img "Adobe Acrobat：PDF 编辑、转化、签名工具" [ref=e190]
+          - link [ref=e191] [cursor=pointer]:
+            - /url: ./collection/get_started
+          - generic [ref=e193] [cursor=pointer]:
+            - generic [ref=e194]: 查看集合
+            - link "查看“扩展程序入门套装”集合内的更多产品" [ref=e195]:
+              - /url: ./collection/get_started
+      - generic [ref=e196]:
+        - button "上一张幻灯片" [ref=e197] [cursor=pointer]:
+          - img [ref=e200]
+        - generic "第 1 张幻灯片，共 5 张" [ref=e203]:
+          - generic [ref=e204]: "1"
+          - generic [ref=e205]: /
+          - generic [ref=e206]: "5"
+        - button "下一张幻灯片" [ref=e207] [cursor=pointer]:
+          - img [ref=e210]
+        - button "暂停自动播放" [ref=e213] [cursor=pointer]:
+          - img [ref=e216]
+      - generic [ref=e223]:
+        - heading "热门类别" [level=2] [ref=e224]
+        - generic [ref=e225]:
+          - link "购物" [ref=e226] [cursor=pointer]:
+            - /url: ./category/extensions/lifestyle/shopping
+            - generic [ref=e227]: 购物
+            - img [ref=e229]
+          - link "娱乐" [ref=e233] [cursor=pointer]:
+            - /url: ./category/extensions/lifestyle/entertainment
+            - generic [ref=e234]: 娱乐
+            - img [ref=e236]
+          - link "工具" [ref=e238] [cursor=pointer]:
+            - /url: ./category/extensions/productivity/tools
+            - generic [ref=e239]: 工具
+            - img [ref=e241]
+          - link "艺术与设计" [ref=e244] [cursor=pointer]:
+            - /url: ./category/extensions/lifestyle/art
+            - generic [ref=e245]: 艺术与设计
+            - img [ref=e247]
+      - generic [ref=e250]:
+        - generic [ref=e251]:
+          - heading "为您推荐" [level=2] [ref=e252]
+          - generic [ref=e255] [cursor=pointer]:
+            - generic [ref=e256]: 查看更多
+            - link "查看更多个性化推荐" [ref=e257]:
+              - /url: ./collection/recommended_extensions
+        - generic [ref=e258]:
+          - generic [ref=e259]:
+            - link "Ultimate Car Driving Game" [ref=e260] [cursor=pointer]:
+              - /url: ./detail/ultimate-car-driving-game/aomkpefnllinimbhddlfhelelngakbbn
+            - generic [ref=e261]:
+              - heading "Ultimate Car Driving Game" [level=3] [ref=e262]
+              - generic [ref=e263]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e264]:
+                  - generic [ref=e265]: "4.3"
+                  - img [ref=e266]
+                - generic [ref=e269] [cursor=pointer]:
+                  - img [ref=e272]
+                  - link "详细了解“Ultimate Car Driving Game”的结果和评价。" [ref=e274]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e275]: Enjoy car driving simulator in a big and fascinating city.
+          - generic [ref=e276]:
+            - link "Snake" [ref=e277] [cursor=pointer]:
+              - /url: ./detail/snake/oppflpnigmhkldmdmmbnopidlhahanji
+            - generic [ref=e278]:
+              - heading "Snake" [level=3] [ref=e279]
+              - generic [ref=e280]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e281]:
+                  - generic [ref=e282]: "4.3"
+                  - img [ref=e283]
+                - generic [ref=e286] [cursor=pointer]:
+                  - img [ref=e289]
+                  - link "详细了解“Snake”的结果和评价。" [ref=e291]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e292]: The authentic snake game in a popup. Smooth animations and a saved high score!
+          - generic [ref=e293]:
+            - link "Helix Fruit Jump Arcade Game" [ref=e294] [cursor=pointer]:
+              - /url: ./detail/helix-fruit-jump-arcade-g/jhegmncopobmnnmcdaobcepcamekoomb
+            - generic [ref=e295]:
+              - heading "Helix Fruit Jump Arcade Game" [level=3] [ref=e296]
+              - generic [ref=e297]:
+                - img "平均评分为 4.1 星（最高为 5 星）。" [ref=e298]:
+                  - generic [ref=e299]: "4.1"
+                  - img [ref=e300]
+                - generic [ref=e303] [cursor=pointer]:
+                  - img [ref=e306]
+                  - link "详细了解“Helix Fruit Jump Arcade Game”的结果和评价。" [ref=e308]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e309]: In Helix Fruit Jump game, you have to take the ball to the finish line and complete the level.
+          - generic [ref=e310]:
+            - link "Extreme Car Traffic Racing Game" [ref=e311] [cursor=pointer]:
+              - /url: ./detail/extreme-car-traffic-racin/ghnhfbiidbbolhkiaheaflffnddkmbno
+            - generic [ref=e312]:
+              - heading "Extreme Car Traffic Racing Game" [level=3] [ref=e313]
+              - generic [ref=e314]:
+                - img "平均评分为 4.1 星（最高为 5 星）。" [ref=e315]:
+                  - generic [ref=e316]: "4.1"
+                  - img [ref=e317]
+                - generic [ref=e320] [cursor=pointer]:
+                  - img [ref=e323]
+                  - link "详细了解“Extreme Car Traffic Racing Game”的结果和评价。" [ref=e325]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e326]: If you like car racing games, you must make high scores on highway.
+      - generic [ref=e327]:
+        - heading "排行榜" [level=2] [ref=e328]
+        - generic [ref=e329]:
+          - generic [ref=e330]:
+            - heading "趋势" [level=3] [ref=e331]
+            - generic [ref=e332]:
+              - link "Urban Safe Browsing" [ref=e333] [cursor=pointer]:
+                - /url: ./detail/urban-safe-browsing/efbobpikdmjaaklfkdlgfopochnjadab
+              - generic [ref=e336]:
+                - generic [ref=e337]: Urban Safe Browsing
+                - generic [ref=e338]: 工作流程与规划
+                - generic [ref=e339]:
+                  - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e340]:
+                    - generic [ref=e341]: "4.5"
+                    - img [ref=e342]
+                  - generic [ref=e345] [cursor=pointer]:
+                    - img [ref=e348]
+                    - link "详细了解“Urban Safe Browsing”的结果和评价。" [ref=e350]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e351]:
+              - link "Qwant - Search engine" [ref=e352] [cursor=pointer]:
+                - /url: ./detail/qwant-search-engine/kplfenefaakjhjkklghidleljeocgdap
+              - generic [ref=e355]:
+                - generic [ref=e356]: Qwant - Search engine
+                - generic [ref=e357]: 工具
+                - generic [ref=e358]:
+                  - img "平均评分为 4.4 星（最高为 5 星）。" [ref=e359]:
+                    - generic [ref=e360]: "4.4"
+                    - img [ref=e361]
+                  - generic [ref=e364] [cursor=pointer]:
+                    - img [ref=e367]
+                    - link "详细了解“Qwant - Search engine”的结果和评价。" [ref=e369]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e370]:
+              - link "MaxAI：在浏览时随时向AI提问（GPT、Gemini、Claude、Grok等）" [ref=e371] [cursor=pointer]:
+                - /url: ./detail/maxai%EF%BC%9A%E5%9C%A8%E6%B5%8F%E8%A7%88%E6%97%B6%E9%9A%8F%E6%97%B6%E5%90%91ai%E6%8F%90%E9%97%AE%EF%BC%88gpt%E3%80%81gem/mhnlakgilnojmhinhkckjpncpbhabphi
+              - generic [ref=e374]:
+                - generic [ref=e375]: MaxAI：在浏览时随时向AI提问（GPT、Gemini、Claude、Grok等）
+                - generic [ref=e376]: 工具
+                - generic [ref=e377]:
+                  - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e378]:
+                    - generic [ref=e379]: "4.7"
+                    - img [ref=e380]
+                  - generic [ref=e383] [cursor=pointer]:
+                    - img [ref=e386]
+                    - link "详细了解“MaxAI：在浏览时随时向AI提问（GPT、Gemini、Claude、Grok等）”的结果和评价。" [ref=e388]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e390] [cursor=pointer]:
+              - generic [ref=e391]: 查看更多
+              - link "查看更多“趋势”" [ref=e392]:
+                - /url: ./top-charts/trending
+          - generic [ref=e393]:
+            - heading "热门" [level=3] [ref=e394]
+            - generic [ref=e395]:
+              - link "Volume Master - 音量控制器" [ref=e396] [cursor=pointer]:
+                - /url: ./detail/volume-master-%E9%9F%B3%E9%87%8F%E6%8E%A7%E5%88%B6%E5%99%A8/jghecgabfgfdldnmbfkhmffcabddioke
+              - generic [ref=e399]:
+                - generic [ref=e400]: Volume Master - 音量控制器
+                - generic [ref=e401]: 无障碍
+                - generic [ref=e402]:
+                  - img "平均评分为 4.8 星（最高为 5 星）。" [ref=e403]:
+                    - generic [ref=e404]: "4.8"
+                    - img [ref=e405]
+                  - generic [ref=e408] [cursor=pointer]:
+                    - img [ref=e411]
+                    - link "详细了解“Volume Master - 音量控制器”的结果和评价。" [ref=e413]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e414]:
+              - link "AdBlock - 拦截整个网络的广告" [ref=e415] [cursor=pointer]:
+                - /url: ./detail/adblock-%E6%8B%A6%E6%88%AA%E6%95%B4%E4%B8%AA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%B9%BF%E5%91%8A/gighmmpiobklfepjocnamgkkbiglidom
+              - generic [ref=e418]:
+                - generic [ref=e419]: AdBlock - 拦截整个网络的广告
+                - generic [ref=e420]: 工作流程与规划
+                - generic [ref=e421]:
+                  - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e422]:
+                    - generic [ref=e423]: "4.5"
+                    - img [ref=e424]
+                  - generic [ref=e427] [cursor=pointer]:
+                    - img [ref=e430]
+                    - link "详细了解“AdBlock - 拦截整个网络的广告”的结果和评价。" [ref=e432]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e433]:
+              - link "适用于 Chrome 的免费 VPN - VPN 代理 VeePN" [ref=e434] [cursor=pointer]:
+                - /url: ./detail/%E9%80%82%E7%94%A8%E4%BA%8E-chrome-%E7%9A%84%E5%85%8D%E8%B4%B9-vpn-vpn-%E4%BB%A3%E7%90%86/majdfhpaihoncoakbjgbdhglocklcgno
+              - generic [ref=e437]:
+                - generic [ref=e438]: 适用于 Chrome 的免费 VPN - VPN 代理 VeePN
+                - generic [ref=e439]: 工作流程与规划
+                - generic [ref=e440]:
+                  - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e441]:
+                    - generic [ref=e442]: "4.5"
+                    - img [ref=e443]
+                  - generic [ref=e446] [cursor=pointer]:
+                    - img [ref=e449]
+                    - link "详细了解“适用于 Chrome 的免费 VPN - VPN 代理 VeePN”的结果和评价。" [ref=e451]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e453] [cursor=pointer]:
+              - generic [ref=e454]: 查看更多
+              - link "查看更多“热门”" [ref=e455]:
+                - /url: ./top-charts/popular
+          - generic [ref=e456]:
+            - heading "人气新榜" [level=3] [ref=e457]
+            - generic [ref=e458]:
+              - link "Cat Gatekeeper" [ref=e459] [cursor=pointer]:
+                - /url: ./detail/cat-gatekeeper/elbikiflgfhjdjmficnigpeegjbhdidh
+              - generic [ref=e462]:
+                - generic [ref=e463]: Cat Gatekeeper
+                - generic [ref=e464]: 健康
+                - generic [ref=e465]:
+                  - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e466]:
+                    - generic [ref=e467]: "4.6"
+                    - img [ref=e468]
+                  - generic [ref=e471] [cursor=pointer]:
+                    - img [ref=e474]
+                    - link "详细了解“Cat Gatekeeper”的结果和评价。" [ref=e476]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e477]:
+              - link "Capsule Hub by Tilantra" [ref=e478] [cursor=pointer]:
+                - /url: ./detail/capsule-hub-by-tilantra/ngeoeefidomejcdhiecidpaalfoekjbh
+              - generic [ref=e481]:
+                - generic [ref=e482]: Capsule Hub by Tilantra
+                - generic [ref=e483]: 工具
+                - generic [ref=e484]:
+                  - img "平均评分为 4.1 星（最高为 5 星）。" [ref=e485]:
+                    - generic [ref=e486]: "4.1"
+                    - img [ref=e487]
+                  - generic [ref=e490] [cursor=pointer]:
+                    - img [ref=e493]
+                    - link "详细了解“Capsule Hub by Tilantra”的结果和评价。" [ref=e495]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e496]:
+              - link "Best AdBlocker" [ref=e497] [cursor=pointer]:
+                - /url: ./detail/best-adblocker/dllpkaoladhieehkbjbifonfblhgkoki
+              - generic [ref=e500]:
+                - generic [ref=e501]: Best AdBlocker
+                - generic [ref=e502]: 工具
+                - generic [ref=e503]:
+                  - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e504]:
+                    - generic [ref=e505]: "4.5"
+                    - img [ref=e506]
+                  - generic [ref=e509] [cursor=pointer]:
+                    - img [ref=e512]
+                    - link "详细了解“Best AdBlocker”的结果和评价。" [ref=e514]:
+                      - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+            - generic [ref=e516] [cursor=pointer]:
+              - generic [ref=e517]: 查看更多
+              - link "查看更多“人气新榜”" [ref=e518]:
+                - /url: ./top-charts/notable
+      - generic [ref=e519]:
+        - heading "为您推荐的编辑精选" [level=2] [ref=e520]
+        - paragraph [ref=e521]: 由 Chrome 编辑为您精心挑选
+        - link [ref=e522] [cursor=pointer]:
+          - /url: ./collection/editors_picks_extensions
+        - generic [ref=e524] [cursor=pointer]:
+          - generic [ref=e525]: 查看集合
+          - link "查看“编辑精选扩展程序”集合" [ref=e526]:
+            - /url: ./collection/editors_picks_extensions
+      - generic [ref=e527]:
+        - generic [ref=e528]:
+          - heading "扩展浏览器功能" [level=2] [ref=e529]
+          - generic [ref=e532] [cursor=pointer]:
+            - generic [ref=e533]: 查看更多
+            - link "查看“扩展浏览器功能”集合内的更多产品" [ref=e534]:
+              - /url: ./collection/side_panel
+        - paragraph [ref=e535]: 利用侧边栏扩展程序，体验全新升级的便捷性和自定义功能
+        - generic [ref=e536]:
+          - generic [ref=e537]:
+            - link "Chat with all AI models (Gemini, Claude, DeepSeek…) & AI Agents | AITOPIA" [ref=e538] [cursor=pointer]:
+              - /url: ./detail/chat-with-all-ai-models-g/becfinhbfclcgokjlobojlnldbfillpf
+            - generic [ref=e539]:
+              - heading "Chat with all AI models (Gemini, Claude, DeepSeek…) & AI Agents | AITOPIA" [level=3] [ref=e540]
+              - generic [ref=e541]:
+                - img "平均评分为 4.9 星（最高为 5 星）。" [ref=e542]:
+                  - generic [ref=e543]: "4.9"
+                  - img [ref=e544]
+                - generic [ref=e547] [cursor=pointer]:
+                  - img [ref=e550]
+                  - link "详细了解“Chat with all AI models (Gemini, Claude, DeepSeek…) & AI Agents | AITOPIA”的结果和评价。" [ref=e552]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e553]: AI Agent Marketplace & AI Sidebar with all AI models (Gemini, Claude, DeepSeek & more) and hundreds of AI Agents
+          - generic [ref=e554]:
+            - link "Adobe Photoshop" [ref=e555] [cursor=pointer]:
+              - /url: ./detail/adobe-photoshop/kjchkpkjpiloipaonppkmepcbhcncedo
+            - generic [ref=e556]:
+              - heading "Adobe Photoshop" [level=3] [ref=e557]
+              - generic [ref=e558]:
+                - img "平均评分为 3.8 星（最高为 5 星）。" [ref=e559]:
+                  - generic [ref=e560]: "3.8"
+                  - img [ref=e561]
+                - generic [ref=e564] [cursor=pointer]:
+                  - img [ref=e567]
+                  - link "详细了解“Adobe Photoshop”的结果和评价。" [ref=e569]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e570]: 轻松移除背景、调整颜色等。此外，还可免费使用 Photoshop 网页版 6 个月。
+          - generic [ref=e571]:
+            - 'link "BrowserGPT: ChatGPT-4 中文版 AI Copilot (国内免费直连)" [ref=e572] [cursor=pointer]':
+              - /url: ./detail/browsergpt-chatgpt-4-%E4%B8%AD%E6%96%87%E7%89%88/njggknpmkjapgklcfhaiigafiiebpchm
+            - generic [ref=e573]:
+              - 'heading "BrowserGPT: ChatGPT-4 中文版 AI Copilot (国内免费直连)" [level=3] [ref=e574]'
+              - generic [ref=e575]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e576]:
+                  - generic [ref=e577]: "4.3"
+                  - img [ref=e578]
+                - generic [ref=e581] [cursor=pointer]:
+                  - img [ref=e584]
+                  - 'link "详细了解“BrowserGPT: ChatGPT-4 中文版 AI Copilot (国内免费直连)”的结果和评价。" [ref=e586]':
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e587]: 写作、改写和翻译速度提高 8 倍。单击即可回复电子邮件。适用于 Google 文档、Gmail、YouTube、Twitter、Instagram 等。
+          - generic [ref=e588]:
+            - 'link "Sidebar: ChatGPT, 书签, GPT-4o | Meomni" [ref=e589] [cursor=pointer]':
+              - /url: ./detail/sidebar-chatgpt-%E4%B9%A6%E7%AD%BE-gpt-4o/fnfdomooadjpfohbepiaonnbdmkdjiog
+            - generic [ref=e590]:
+              - 'heading "Sidebar: ChatGPT, 书签, GPT-4o | Meomni" [level=3] [ref=e591]'
+              - generic [ref=e592]:
+                - img "平均评分为 4.9 星（最高为 5 星）。" [ref=e593]:
+                  - generic [ref=e594]: "4.9"
+                  - img [ref=e595]
+                - generic [ref=e598] [cursor=pointer]:
+                  - img [ref=e601]
+                  - 'link "详细了解“Sidebar: ChatGPT, 书签, GPT-4o | Meomni”的结果和评价。" [ref=e603]':
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e604]: 终极侧边栏ChatGPT助理，人工智能书签，日历和任务
+      - generic [ref=e605]:
+        - heading "让屏幕变暗" [level=2] [ref=e606]
+        - paragraph [ref=e607]: 利用我们精选的深色模式扩展程序，调低屏幕亮度
+        - link [ref=e608] [cursor=pointer]:
+          - /url: ./collection/dark_mode
+        - generic [ref=e610] [cursor=pointer]:
+          - generic [ref=e611]: 查看集合
+          - link "查看“让浏览器充满暗黑的神秘感”集合" [ref=e612]:
+            - /url: ./collection/dark_mode
+      - generic [ref=e613]:
+        - heading "Chrome 每月聚焦" [level=2] [ref=e614]
+        - paragraph [ref=e615]: 颇具发展潜力的扩展程序，值得一试
+        - generic [ref=e616]:
+          - 'link "Web Highlights: PDF & Web Highlighter + Notes & AI Summary Productivity Highlighter & Annotation Tool for Websites & PDFs with AI Summary - free, easy to use, no sign-up required." [ref=e617] [cursor=pointer]':
+            - /url: ./detail/web-highlights-pdf-web-hi/hldjnlbobkdkghfidgoecgmklcemanhm
+            - generic [ref=e620]:
+              - 'heading "Web Highlights: PDF & Web Highlighter + Notes & AI Summary" [level=3] [ref=e621]'
+              - paragraph [ref=e622]: Productivity Highlighter & Annotation Tool for Websites & PDFs with AI Summary - free, easy to use, no sign-up required.
+          - link "Moonlight：科研论文的AI同伴 与AI同伴Moonlight对话，快速深入理解论文。解读、摘要、翻译、聊天功能、参考文献搜索——论文阅读所需的一切，一应俱全。" [ref=e623] [cursor=pointer]:
+            - /url: ./detail/moonlight%EF%BC%9A%E7%A7%91%E7%A0%94%E8%AE%BA%E6%96%87%E7%9A%84ai%E5%90%8C%E4%BC%B4/lhipdkibljepmfojllcfflfflhflcbgi
+            - generic [ref=e626]:
+              - heading "Moonlight：科研论文的AI同伴" [level=3] [ref=e627]
+              - paragraph [ref=e628]: 与AI同伴Moonlight对话，快速深入理解论文。解读、摘要、翻译、聊天功能、参考文献搜索——论文阅读所需的一切，一应俱全。
+          - link "Reboost - Track Water Intake and Set Reminders Track your water intake and set custom reminders. Stay hydrated, stay on track, and never miss a break! ✨" [ref=e629] [cursor=pointer]:
+            - /url: ./detail/reboost-track-water-intak/bdlffpdkioakgjjpmgpboogfiaegbpgp
+            - generic [ref=e632]:
+              - heading "Reboost - Track Water Intake and Set Reminders" [level=3] [ref=e633]
+              - paragraph [ref=e634]: Track your water intake and set custom reminders. Stay hydrated, stay on track, and never miss a break! ✨
+      - generic [ref=e635]:
+        - generic [ref=e636]:
+          - heading "与 Gmail 兼容" [level=2] [ref=e637]
+          - generic [ref=e640] [cursor=pointer]:
+            - generic [ref=e641]: 查看更多
+            - link "查看“与 Gmail 兼容”集合内的更多产品" [ref=e642]:
+              - /url: ./collection/gmail_extensions
+        - paragraph [ref=e643]: 提升您的电子邮件处理效率
+        - generic [ref=e644]:
+          - generic [ref=e645]:
+            - link "Boomerang for Gmail" [ref=e646] [cursor=pointer]:
+              - /url: ./detail/boomerang-for-gmail/mdanidgdpmkimeiiojknlnekblgmpdll
+            - generic [ref=e647]:
+              - heading "Boomerang for Gmail" [level=3] [ref=e648]
+              - generic [ref=e649]:
+                - img "平均评分为 4.2 星（最高为 5 星）。" [ref=e650]:
+                  - generic [ref=e651]: "4.2"
+                  - img [ref=e652]
+                - generic [ref=e655] [cursor=pointer]:
+                  - img [ref=e658]
+                  - link "详细了解“Boomerang for Gmail”的结果和评价。" [ref=e660]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e661]: Meeting scheduling and email management tool trusted by millions. Schedule meetings, track responses, send later, and more.
+          - generic [ref=e662]:
+            - link "Checker Plus for Gmail™" [ref=e663] [cursor=pointer]:
+              - /url: ./detail/checker-plus-for-gmail/oeopbcgkkoapgobdbedcemjljbihmemj
+            - generic [ref=e664]:
+              - heading "Checker Plus for Gmail™" [level=3] [ref=e665]
+              - generic [ref=e666]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e667]:
+                  - generic [ref=e668]: "4.7"
+                  - img [ref=e669]
+                - generic [ref=e672] [cursor=pointer]:
+                  - img [ref=e675]
+                  - link "详细了解“Checker Plus for Gmail™”的结果和评价。" [ref=e677]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e678]: 无需打开 Gmail 或 Inbox，即可收到桌面邮件通知，方便地查看、收听或删除邮件，并且支持多账户。
+          - generic [ref=e679]:
+            - link "Mailtrack® 邮件跟踪器" [ref=e680] [cursor=pointer]:
+              - /url: ./detail/mailtrack%C2%AE-%E9%82%AE%E4%BB%B6%E8%B7%9F%E8%B8%AA%E5%99%A8/ndnaehgpjlnokgebbaldlmgkapkpjkkb
+            - generic [ref=e681]:
+              - heading "Mailtrack® 邮件跟踪器" [level=3] [ref=e682]
+              - generic [ref=e683]:
+                - img "平均评分为 4.4 星（最高为 5 星）。" [ref=e684]:
+                  - generic [ref=e685]: "4.4"
+                  - img [ref=e686]
+                - generic [ref=e689] [cursor=pointer]:
+                  - img [ref=e692]
+                  - link "详细了解“Mailtrack® 邮件跟踪器”的结果和评价。" [ref=e694]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e695]: Gmail 的免费无限邮件跟踪，深受数百万用户信赖。精准、可靠，符合 GDPR，并通过 Google 审 核。
+          - generic [ref=e696]:
+            - link "Streak CRM for Gmail" [ref=e697] [cursor=pointer]:
+              - /url: ./detail/streak-crm-for-gmail/pnnfemgpilpdaojpnkjdgfgbnnjojfik
+            - generic [ref=e698]:
+              - heading "Streak CRM for Gmail" [level=3] [ref=e699]
+              - generic [ref=e700]:
+                - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e701]:
+                  - generic [ref=e702]: "4.5"
+                  - img [ref=e703]
+                - generic [ref=e706] [cursor=pointer]:
+                  - img [ref=e709]
+                  - link "详细了解“Streak CRM for Gmail”的结果和评价。" [ref=e711]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e712]: Manage sales and customer relationships directly inside Gmail.
+      - generic [ref=e713]:
+        - heading "趣味休闲" [level=2] [ref=e714]
+        - paragraph [ref=e715]: 让浏览器乐趣多多
+        - link [ref=e716] [cursor=pointer]:
+          - /url: ./collection/fun
+        - generic [ref=e718] [cursor=pointer]:
+          - generic [ref=e719]: 查看集合
+          - link "查看“趣味休闲”集合" [ref=e720]:
+            - /url: ./collection/fun
+      - generic [ref=e721]:
+        - generic [ref=e722]:
+          - heading "学习一门新语言" [level=2] [ref=e723]
+          - generic [ref=e726] [cursor=pointer]:
+            - generic [ref=e727]: 查看更多
+            - link "查看“学习一门新语言”集合内的更多产品" [ref=e728]:
+              - /url: ./collection/language_learning
+        - paragraph [ref=e729]: 在浏览过程中学习
+        - generic [ref=e730]:
+          - generic [ref=e731]:
+            - link "Google 翻译" [ref=e732] [cursor=pointer]:
+              - /url: ./detail/google-%E7%BF%BB%E8%AF%91/aapbdbdomjkkjkaonfhkkikfgjllcleb
+            - generic [ref=e733]:
+              - heading "Google 翻译" [level=3] [ref=e734]
+              - generic [ref=e735]:
+                - img "平均评分为 4.2 星（最高为 5 星）。" [ref=e736]:
+                  - generic [ref=e737]: "4.2"
+                  - img [ref=e738]
+                - generic [ref=e741] [cursor=pointer]:
+                  - img [ref=e744]
+                  - link "详细了解“Google 翻译”的结果和评价。" [ref=e746]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e747]: 浏览网页时可轻松查看翻译版本。由Google翻译小组提供。
+          - generic [ref=e748]:
+            - link "Rememberry - 翻译和记住" [ref=e749] [cursor=pointer]:
+              - /url: ./detail/rememberry-%E7%BF%BB%E8%AF%91%E5%92%8C%E8%AE%B0%E4%BD%8F/dipiagiiohfljcicegpgffpbnjmgjcnf
+            - generic [ref=e750]:
+              - heading "Rememberry - 翻译和记住" [level=3] [ref=e751]
+              - generic [ref=e752]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e753]:
+                  - generic [ref=e754]: "4.6"
+                  - img [ref=e755]
+                - generic [ref=e758] [cursor=pointer]:
+                  - img [ref=e761]
+                  - link "详细了解“Rememberry - 翻译和记住”的结果和评价。" [ref=e763]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e764]: 在浏览网页时翻译单词和短语，并利用间隔重复抽认卡扩充您的外语词汇量。
+          - generic [ref=e765]:
+            - link "DeepL：人工智能翻译器和写作助手" [ref=e766] [cursor=pointer]:
+              - /url: ./detail/deepl%EF%BC%9A%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%BF%BB%E8%AF%91%E5%99%A8%E5%92%8C%E5%86%99%E4%BD%9C%E5%8A%A9%E6%89%8B/cofdbpoegempjloogbagkncekinflcnj
+            - generic [ref=e767]:
+              - heading "DeepL：人工智能翻译器和写作助手" [level=3] [ref=e768]
+              - generic [ref=e769]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e770]:
+                  - generic [ref=e771]: "4.7"
+                  - img [ref=e772]
+                - generic [ref=e775] [cursor=pointer]:
+                  - img [ref=e778]
+                  - link "详细了解“DeepL：人工智能翻译器和写作助手”的结果和评价。" [ref=e780]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e781]: 使用全世界最准确的翻译器——DeepL翻译，在你阅读和写作时进行翻译。
+          - generic [ref=e782]:
+            - link "Relingo - 在浏览网站和观看YouTube时掌握词汇" [ref=e783] [cursor=pointer]:
+              - /url: ./detail/relingo-%E5%9C%A8%E6%B5%8F%E8%A7%88%E7%BD%91%E7%AB%99%E5%92%8C%E8%A7%82%E7%9C%8Byoutube%E6%97%B6%E6%8E%8C/dpphkcfmnbkdpmgneljgdhfnccnhmfig
+            - generic [ref=e784]:
+              - heading "Relingo - 在浏览网站和观看YouTube时掌握词汇" [level=3] [ref=e785]
+              - generic [ref=e786]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e787]:
+                  - generic [ref=e788]: "4.6"
+                  - img [ref=e789]
+                - generic [ref=e792] [cursor=pointer]:
+                  - img [ref=e795]
+                  - link "详细了解“Relingo - 在浏览网站和观看YouTube时掌握词汇”的结果和评价。" [ref=e797]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e798]: Relingo 帮助你在浏览任何网页的时候自动提取生词、划词/划句翻译、全文沉浸式翻译。同时支持 Youtube, Netflix, TED, Coursera 等平台的双语字幕以及 PDF 翻译。帮助你轻松掌握语言和词汇。
+      - generic [ref=e799]:
+        - generic [ref=e800]:
+          - heading "游戏开始" [level=2] [ref=e801]
+          - generic [ref=e804] [cursor=pointer]:
+            - generic [ref=e805]: 查看更多
+            - link "查看“游戏开始”集合内的更多产品" [ref=e806]:
+              - /url: ./collection/games
+        - paragraph [ref=e807]: 在浏览器中畅玩休闲小游戏，打发无聊时光
+        - generic [ref=e808]:
+          - generic [ref=e809]:
+            - link "BattleTabs" [ref=e810] [cursor=pointer]:
+              - /url: ./detail/battletabs/mjcklhnhfiepmofggcoegkmkokbljmjd
+            - generic [ref=e811]:
+              - heading "BattleTabs" [level=3] [ref=e812]
+              - generic [ref=e813]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e814]:
+                  - generic [ref=e815]: "4.7"
+                  - img [ref=e816]
+                - generic [ref=e819] [cursor=pointer]:
+                  - img [ref=e822]
+                  - link "详细了解“BattleTabs”的结果和评价。" [ref=e824]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e825]: Multiplayer Battles in your New Tab
+          - generic [ref=e826]:
+            - link "Tiny Tycoon" [ref=e827] [cursor=pointer]:
+              - /url: ./detail/tiny-tycoon/bamdkjfjhhnjcgcjmmjdnncpglihepoi
+            - generic [ref=e828]:
+              - heading "Tiny Tycoon" [level=3] [ref=e829]
+              - generic [ref=e830]:
+                - img "平均评分为 4.7 星（最高为 5 星）。" [ref=e831]:
+                  - generic [ref=e832]: "4.7"
+                  - img [ref=e833]
+                - generic [ref=e836] [cursor=pointer]:
+                  - img [ref=e839]
+                  - link "详细了解“Tiny Tycoon”的结果和评价。" [ref=e841]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e842]: Build a tiny tycoon on a tiny planet.
+          - generic [ref=e843]:
+            - link "Tower Stacking Blocks Challenge Game" [ref=e844] [cursor=pointer]:
+              - /url: ./detail/tower-stacking-blocks-cha/ebohipfojjgamhnfgdohlfkfagianjim
+            - generic [ref=e845]:
+              - heading "Tower Stacking Blocks Challenge Game" [level=3] [ref=e846]
+              - generic [ref=e847]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e848]:
+                  - generic [ref=e849]: "4.3"
+                  - img [ref=e850]
+                - generic [ref=e853] [cursor=pointer]:
+                  - img [ref=e856]
+                  - link "详细了解“Tower Stacking Blocks Challenge Game”的结果和评价。" [ref=e858]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e859]: Tower Stacking Blocks Challenge Game on your Google Chrome!
+          - generic [ref=e860]:
+            - link "Boxel 3D" [ref=e861] [cursor=pointer]:
+              - /url: ./detail/boxel-3d/mjjgmlmpeaikcaajghilhnioimmaibon
+            - generic [ref=e862]:
+              - heading "Boxel 3D" [level=3] [ref=e863]
+              - generic [ref=e864]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e865]:
+                  - generic [ref=e866]: "4.6"
+                  - img [ref=e867]
+                - generic [ref=e870] [cursor=pointer]:
+                  - img [ref=e873]
+                  - link "详细了解“Boxel 3D”的结果和评价。" [ref=e875]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e876]: Boxel 3D is a speedrunning game packed with challenging levels, custom skins, online multiplayer, and a creative level editor.
+      - generic [ref=e877]:
+        - heading "借助 AI 以“智”取胜" [level=2] [ref=e878]
+        - paragraph [ref=e879]: 借助 AI 赋能的办公类扩展程序自动执行任务，专注于重要事务并保持有条不紊
+        - link [ref=e880] [cursor=pointer]:
+          - /url: ./collection/ai_productivity
+        - generic [ref=e882] [cursor=pointer]:
+          - generic [ref=e883]: 查看集合
+          - link "查看“借助 AI 以“智”取胜”集合" [ref=e884]:
+            - /url: ./collection/ai_productivity
+      - generic [ref=e885]:
+        - generic [ref=e886]:
+          - heading "适合音乐爱好者" [level=2] [ref=e887]
+          - generic [ref=e890] [cursor=pointer]:
+            - generic [ref=e891]: 查看更多
+            - link "查看“适合音乐爱好者”集合内的更多产品" [ref=e892]:
+              - /url: ./collection/music_extensions
+        - paragraph [ref=e893]: 内含均衡器、电台、播放列表等多种资源
+        - generic [ref=e894]:
+          - generic [ref=e895]:
+            - link "Volume Master - 音量控制器" [ref=e896] [cursor=pointer]:
+              - /url: ./detail/volume-master-%E9%9F%B3%E9%87%8F%E6%8E%A7%E5%88%B6%E5%99%A8/jghecgabfgfdldnmbfkhmffcabddioke
+            - generic [ref=e897]:
+              - heading "Volume Master - 音量控制器" [level=3] [ref=e898]
+              - generic [ref=e899]:
+                - img "平均评分为 4.8 星（最高为 5 星）。" [ref=e900]:
+                  - generic [ref=e901]: "4.8"
+                  - img [ref=e902]
+                - generic [ref=e905] [cursor=pointer]:
+                  - img [ref=e908]
+                  - link "详细了解“Volume Master - 音量控制器”的结果和评价。" [ref=e910]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e911]: 音量提升高达600％
+          - generic [ref=e912]:
+            - link "SynQ for Spotify, YouTube, Amazon Music, more" [ref=e913] [cursor=pointer]:
+              - /url: ./detail/synq-for-spotify-youtube/jcdmcpefbebkldopabclefjaggejocff
+            - generic [ref=e914]:
+              - heading "SynQ for Spotify, YouTube, Amazon Music, more" [level=3] [ref=e915]
+              - generic [ref=e916]:
+                - img "平均评分为 4.0 星（最高为 5 星）。" [ref=e917]:
+                  - generic [ref=e918]: "4.0"
+                  - img [ref=e919]
+                - generic [ref=e922] [cursor=pointer]:
+                  - img [ref=e925]
+                  - link "详细了解“SynQ for Spotify, YouTube, Amazon Music, more”的结果和评价。" [ref=e927]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e928]: Mini player with universal music sharing for Spotify, Apple Music, YouTube Music, and Amazon Music.
+          - generic [ref=e929]:
+            - link "Music Mode for YouTube™" [ref=e930] [cursor=pointer]:
+              - /url: ./detail/music-mode-for-youtube/abbpaepbpakcpipajigmlpnhlnbennna
+            - generic [ref=e931]:
+              - heading "Music Mode for YouTube™" [level=3] [ref=e932]
+              - generic [ref=e933]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e934]:
+                  - generic [ref=e935]: "4.6"
+                  - img [ref=e936]
+                - generic [ref=e939] [cursor=pointer]:
+                  - img [ref=e942]
+                  - link "详细了解“Music Mode for YouTube™”的结果和评价。" [ref=e944]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e945]: 隐藏 YouTube 上的视频和缩略图。在 YouTube Music 上屏蔽视频，仅保留音频。
+          - generic [ref=e946]:
+            - link "Smart Mute" [ref=e947] [cursor=pointer]:
+              - /url: ./detail/smart-mute/apadglapdamclpaedknbefnbcajfebgh
+            - generic [ref=e948]:
+              - heading "Smart Mute" [level=3] [ref=e949]
+              - generic [ref=e950]:
+                - img "平均评分为 4.4 星（最高为 5 星）。" [ref=e951]:
+                  - generic [ref=e952]: "4.4"
+                  - img [ref=e953]
+                - generic [ref=e956] [cursor=pointer]:
+                  - img [ref=e959]
+                  - link "详细了解“Smart Mute”的结果和评价。" [ref=e961]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e962]: Listen to audio one tab at a time.
+  - contentinfo [ref=e963]:
+    - list [ref=e964]:
+      - listitem [ref=e965]:
+        - link "关于 Chrome 应用商店" [ref=e966] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e967]:
+        - link "开发者信息中心" [ref=e968] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e969]:
+        - link "隐私权政策" [ref=e970] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e971]:
+        - link "服务条款" [ref=e972] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e973]:
+        - link "帮助" [ref=e974] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN

@@ -1,0 +1,262 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - link "跳到主要内容" [ref=e3] [cursor=pointer]
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Chrome 应用商店的徽标 Chrome 应用商店" [ref=e7] [cursor=pointer]:
+          - /url: ./
+          - img "Chrome 应用商店的徽标" [ref=e8]
+          - generic [ref=e9]: Chrome 应用商店
+        - search "网站级" [ref=e10]:
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - combobox "搜索 Chrome 应用商店" [active] [ref=e15]: screenshot blur
+            - button "清除搜索条件" [ref=e17] [cursor=pointer]:
+              - img [ref=e18]
+        - generic [ref=e20]:
+          - button "一个包含更多选项的菜单" [ref=e24] [cursor=pointer]:
+            - img [ref=e27]
+          - generic [ref=e34]:
+            - button "Google 应用" [ref=e38] [cursor=pointer]:
+              - img [ref=e39]
+            - link "登录" [ref=e42] [cursor=pointer]:
+              - /url: https://accounts.google.com/ServiceLogin?passive=1209600&osid=1&continue=https://chromewebstore.google.com/search/screenshot%2520blur?hl%3Dzh-CN%26category%3Dextensions&followup=https://chromewebstore.google.com/search/screenshot%2520blur?hl%3Dzh-CN%26category%3Dextensions&hl=zh-CN&ec=GAZApQM
+      - tablist [ref=e46]:
+        - generic [ref=e49]:
+          - tab "探索" [ref=e50] [cursor=pointer]:
+            - generic:
+              - generic: 探索
+          - tab "扩展程序" [ref=e51] [cursor=pointer]:
+            - generic:
+              - generic: 扩展程序
+          - tab "主题" [ref=e52] [cursor=pointer]:
+            - generic:
+              - generic: 主题
+  - generic [ref=e56]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - heading "类型" [level=2] [ref=e60]
+        - toolbar "按扩展程序类型筛选产品" [ref=e61]:
+          - button "扩展程序" [ref=e64] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e66]: 扩展程序
+          - button "主题" [ref=e69] [cursor=pointer]:
+            - generic:
+              - img
+            - generic [ref=e71]: 主题
+      - generic [ref=e72]:
+        - heading "过滤条件" [level=2] [ref=e73]
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - checkbox "精选扩展程序" [ref=e77]
+            - generic:
+              - img
+          - generic [ref=e79]: 精选扩展程序
+        - generic [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]:
+            - checkbox "知名发布者" [ref=e83]
+            - generic:
+              - img
+          - generic [ref=e85]: 知名发布者
+      - generic [ref=e86]:
+        - heading "评分" [level=2] [ref=e87]
+        - radiogroup "评分" [ref=e88]:
+          - radio "5 星" [ref=e89]
+          - radio "4 星及以上" [ref=e95]:
+            - generic [ref=e102]: 及以上
+          - radio "3 星及以上" [ref=e103]:
+            - generic [ref=e111]: 及以上
+          - radio "2 星及以上" [ref=e112]:
+            - generic [ref=e121]: 及以上
+      - generic [ref=e123]:
+        - button "“清除所有过滤条件”按钮。" [disabled] [ref=e124]:
+          - generic [ref=e126]: 全部清除
+        - tooltip [ref=e127]: 重置您的过滤选项。
+    - main [ref=e128]:
+      - generic [ref=e129]:
+        - heading "搜索结果" [level=1] [ref=e130]
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - link "Blur. The Image and Video blur extension" [ref=e133] [cursor=pointer]:
+              - /url: ./detail/blur-the-image-and-video/aikjogmpaoaookmacnkbenekcnkjlkmi
+            - generic [ref=e135]:
+              - heading "Blur. The Image and Video blur extension" [level=2] [ref=e137]
+              - paragraph
+              - generic [ref=e138]:
+                - img "平均评分为 4.6 星（最高为 5 星）。" [ref=e139]:
+                  - generic [ref=e140]: "4.6"
+                  - img [ref=e141]
+                - generic [ref=e144] [cursor=pointer]:
+                  - img [ref=e147]
+                  - link "详细了解“Blur. The Image and Video blur extension”的结果和评价。" [ref=e149]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e150]: A browser extension that blurs all images on a page, for when you want to be discreet or don't want to look at certain images.
+          - generic [ref=e151]:
+            - link "Privacy Screenshot - Blur & Redact Images" [ref=e152] [cursor=pointer]:
+              - /url: ./detail/privacy-screenshot-blur-r/bidbmdapgbcledhnblldflndijppenmi
+            - generic [ref=e154]:
+              - heading "Privacy Screenshot - Blur & Redact Images" [level=2] [ref=e156]
+              - paragraph
+              - generic [ref=e157]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e158]:
+                  - generic [ref=e159]: "0.0"
+                  - img [ref=e160]
+                - generic [ref=e163] [cursor=pointer]:
+                  - img [ref=e166]
+                  - link "详细了解“Privacy Screenshot - Blur & Redact Images”的结果和评价。" [ref=e168]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e169]: Blur, pixelate or redact images — paste, screenshot or drag & drop. 100% local, zero tracking. 15 free blurs/day.
+          - generic [ref=e170]:
+            - link "图像上的模糊文字 – 隐藏细节" [ref=e171] [cursor=pointer]:
+              - /url: ./detail/%E5%9B%BE%E5%83%8F%E4%B8%8A%E7%9A%84%E6%A8%A1%E7%B3%8A%E6%96%87%E5%AD%97-%E2%80%93-%E9%9A%90%E8%97%8F%E7%BB%86%E8%8A%82/jfclnhggbanhhdfbgbbojddaafngbnip
+            - generic [ref=e173]:
+              - heading "图像上的模糊文字 – 隐藏细节" [level=2] [ref=e175]
+              - paragraph [ref=e176]:
+                - img "“精选”徽章" [ref=e177]
+                - generic [ref=e180]: 精选
+              - generic [ref=e181]:
+                - img "平均评分为 4.5 星（最高为 5 星）。" [ref=e182]:
+                  - generic [ref=e183]: "4.5"
+                  - img [ref=e184]
+                - generic [ref=e187] [cursor=pointer]:
+                  - img [ref=e190]
+                  - link "详细了解“图像上的模糊文字 – 隐藏细节”的结果和评价。" [ref=e192]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e193]: 使用此工具在线模糊图片和照片。通过我们的模糊器为任何图像或其选定部分添加模糊效果。保护您的隐私安全。
+          - generic [ref=e194]:
+            - link "Smart Screenshot + Blur" [ref=e195] [cursor=pointer]:
+              - /url: ./detail/smart-screenshot-+-blur/maohanhkgfelimlplkijlioobbdadedn
+            - generic [ref=e197]:
+              - heading "Smart Screenshot + Blur" [level=2] [ref=e199]
+              - paragraph
+              - generic [ref=e200]:
+                - img "平均评分为 5 星（最高为 5 星）。" [ref=e201]:
+                  - generic [ref=e202]: "5.0"
+                  - img [ref=e203]
+                - generic [ref=e206] [cursor=pointer]:
+                  - img [ref=e209]
+                  - link "详细了解“Smart Screenshot + Blur”的结果和评价。" [ref=e211]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e212]: Capture screenshots and quickly blur/redact sensitive information with auto-detection of PII. Privacy-first, local-only processing.
+          - generic [ref=e213]:
+            - link "截图与标注 - 模糊处理和整页截图" [ref=e214] [cursor=pointer]:
+              - /url: ./detail/%E6%88%AA%E5%9B%BE%E4%B8%8E%E6%A0%87%E6%B3%A8-%E6%A8%A1%E7%B3%8A%E5%A4%84%E7%90%86%E5%92%8C%E6%95%B4%E9%A1%B5%E6%88%AA%E5%9B%BE/iajiamlngpimkoflanddnhobnphcmkei
+            - generic [ref=e216]:
+              - heading "截图与标注 - 模糊处理和整页截图" [level=2] [ref=e218]
+              - paragraph
+              - generic [ref=e219]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e220]:
+                  - generic [ref=e221]: "0.0"
+                  - img [ref=e222]
+                - generic [ref=e225] [cursor=pointer]:
+                  - img [ref=e228]
+                  - link "详细了解“截图与标注 - 模糊处理和整页截图”的结果和评价。" [ref=e230]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e231]: 截取整页、区域或元素。用箭头、文字、图形进行标注，模糊处理敏感信息。支持导出PNG/JPG。
+          - generic [ref=e232]:
+            - link "Blur & Annotate – Screenshot Editor" [ref=e233] [cursor=pointer]:
+              - /url: ./detail/blur-annotate-%E2%80%93-screensho/nkdnmnnabnmgigfkfjondbcoadhfpdik
+            - generic [ref=e235]:
+              - heading "Blur & Annotate – Screenshot Editor" [level=2] [ref=e237]
+              - paragraph
+              - generic [ref=e238]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e239]:
+                  - generic [ref=e240]: "0.0"
+                  - img [ref=e241]
+                - generic [ref=e244] [cursor=pointer]:
+                  - img [ref=e247]
+                  - link "详细了解“Blur & Annotate – Screenshot Editor”的结果和评价。" [ref=e249]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e250]: A full-page image editor for uploading and editing images.
+          - generic [ref=e251]:
+            - link "滚动屏幕截图工具和屏幕捕获" [ref=e252] [cursor=pointer]:
+              - /url: ./detail/%E6%BB%9A%E5%8A%A8%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%E5%B7%A5%E5%85%B7%E5%92%8C%E5%B1%8F%E5%B9%95%E6%8D%95%E8%8E%B7/mfpiaehgjbbfednooihadalhehabhcjo
+            - generic [ref=e254]:
+              - heading "滚动屏幕截图工具和屏幕捕获" [level=2] [ref=e256]
+              - paragraph [ref=e257]:
+                - img "由经过验证的发布者发布" [ref=e258]
+                - generic [ref=e261]: www.awesomescreenshot.com/
+                - img "“精选”徽章" [ref=e262]
+                - generic [ref=e265]: 精选
+              - generic [ref=e266]:
+                - img "平均评分为 4.3 星（最高为 5 星）。" [ref=e267]:
+                  - generic [ref=e268]: "4.3"
+                  - img [ref=e269]
+                - generic [ref=e272] [cursor=pointer]:
+                  - img [ref=e275]
+                  - link "详细了解“滚动屏幕截图工具和屏幕捕获”的结果和评价。" [ref=e277]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e278]: 滚动屏幕截图工具用于屏幕截图和屏幕共享
+          - generic [ref=e279]:
+            - link "Blur screenshot before sending to Anyone" [ref=e280] [cursor=pointer]:
+              - /url: ./detail/blur-screenshot-before-se/dpopfnhgijldpdmdniipjpjpifnclccd
+            - generic [ref=e282]:
+              - heading "Blur screenshot before sending to Anyone" [level=2] [ref=e284]
+              - paragraph
+              - generic [ref=e285]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e286]:
+                  - generic [ref=e287]: "0.0"
+                  - img [ref=e288]
+                - generic [ref=e291] [cursor=pointer]:
+                  - img [ref=e294]
+                  - link "详细了解“Blur screenshot before sending to Anyone”的结果和评价。" [ref=e296]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e297]: Blur privacy on screenshot before sending/sharing to anyone
+          - generic [ref=e298]:
+            - link "Image Blur Extension" [ref=e299] [cursor=pointer]:
+              - /url: ./detail/image-blur-extension/njjgcapodcfiiofppomncilmenhgdmmc
+            - generic [ref=e301]:
+              - heading "Image Blur Extension" [level=2] [ref=e303]
+              - paragraph [ref=e304]:
+                - img "“精选”徽章" [ref=e305]
+                - generic [ref=e308]: 精选
+              - generic [ref=e309]:
+                - img "平均评分为 5 星（最高为 5 星）。" [ref=e310]:
+                  - generic [ref=e311]: "5.0"
+                  - img [ref=e312]
+                - generic [ref=e315] [cursor=pointer]:
+                  - img [ref=e318]
+                  - link "详细了解“Image Blur Extension”的结果和评价。" [ref=e320]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e321]: A Chrome extension to blur images on web pages
+          - generic [ref=e322]:
+            - link "MyFileKit Blur & Snap" [ref=e323] [cursor=pointer]:
+              - /url: ./detail/myfilekit-blur-snap/chhefcddnoablbeonjjcmhaakhacjnnk
+            - generic [ref=e325]:
+              - heading "MyFileKit Blur & Snap" [level=2] [ref=e327]
+              - paragraph
+              - generic [ref=e328]:
+                - img "平均评分为 0 星（最高为 5 星）。" [ref=e329]:
+                  - generic [ref=e330]: "0.0"
+                  - img [ref=e331]
+                - generic [ref=e334] [cursor=pointer]:
+                  - img [ref=e337]
+                  - link "详细了解“MyFileKit Blur & Snap”的结果和评价。" [ref=e339]:
+                    - /url: https://support.google.com/chrome_webstore/answer/12225786?p=cws_reviews_results&hl=zh-CN
+              - paragraph [ref=e340]: Pixel-perfect screenshot with area blurring using native capture.
+          - button "加载更多" [ref=e343] [cursor=pointer]:
+            - generic [ref=e345]: 加载更多
+  - contentinfo [ref=e346]:
+    - list [ref=e347]:
+      - listitem [ref=e348]:
+        - link "关于 Chrome 应用商店" [ref=e349] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore/answer/1047776?hl=zh-CN
+        - text: •
+      - listitem [ref=e350]:
+        - link "开发者信息中心" [ref=e351] [cursor=pointer]:
+          - /url: https://chrome.google.com/webstore/devconsole/
+        - text: •
+      - listitem [ref=e352]:
+        - link "隐私权政策" [ref=e353] [cursor=pointer]:
+          - /url: https://myaccount.google.com/privacypolicy?hl=zh-CN
+        - text: •
+      - listitem [ref=e354]:
+        - link "服务条款" [ref=e355] [cursor=pointer]:
+          - /url: https://ssl.gstatic.com/chrome/webstore/intl/zh-CN/gallery_tos.html
+        - text: •
+      - listitem [ref=e356]:
+        - link "帮助" [ref=e357] [cursor=pointer]:
+          - /url: https://support.google.com/chrome_webstore?hl=zh-CN
+  - generic [ref=e358]: 此页面已加载完毕。
