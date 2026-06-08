@@ -109,7 +109,7 @@
   },
 
   "tools": {
-    "playwright_*": false,
+    "playwright_*": true,
     "npm_*": false,
     "docker_*": false
   },
