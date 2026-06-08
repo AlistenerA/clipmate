@@ -225,3 +225,40 @@ Bing 搜索 URL 模式     → https://www.bing.com/search?q={关键词}
 |------|------|
 | 用 bash/Python 直接查 SQLite 数据库 | 需要额外审批步骤，`token-stats.json` 已包含相同数据 |
 | 假设 `tokens_cache_read` 是缓存命中数 | 该字段实际含义是 context KV-cache 读取量，与定价无关 |
+
+### 输出范式（必须严格遵守）
+
+当用户查询 Token 统计时，按以下固定模板输出：
+
+```
+会话: <title>  (模型: <model>  ·  消息: <messageCount>)
+输入   <input> tokens  (¥<inputCost>)
+输出   <output> tokens  (¥<outputCost>)
+思考   <reasoning> tokens  (¥<reasoningCost>)
+────────────────────────
+消耗   <total> tokens  ·  ¥<costRmb>
+
+累计   <sessionCount>个会话  ·  <totalTokens> tokens  ·  ¥<totalCostRmb>
+```
+
+**格式规则**：
+- 第一行：会话标题 + 模型简称 + 消息数
+- 第二~四行：输入/输出/思考，各带各自的 ¥ 费用（费用 = 该项 token × 模型单价）
+- 分隔线后：本会话总消耗 + 总费用
+- 最后一行：历史累计（会话数、tokens、费用）
+- Token 采用简洁缩写：`964.0K` / `1.06M`
+- 费用格式：`¥3.48`（小于 1 元保留 4 位：`¥0.0398`）
+- 如果某项为 0（如思考=0），则省略该行
+
+**示例**：
+
+```
+会话: opencode实时token消耗与费用监控插件查找  (deepseek-v4-pro  143消息)
+输入   964.0K tokens  (¥2.89)
+输出   42.8K tokens  (¥0.2565)
+思考   55.6K tokens  (¥0.3333)
+────────────────────────
+消耗   1.06M tokens  ·  ¥3.48
+
+累计   22个会话  ·  2.59M tokens  ·  ¥8.67
+```
