@@ -15,11 +15,15 @@ import mcp.types as types
 
 from common import (
     DEFAULT_VISION_PROMPT,
+    DEFAULT_PDF_NATIVE_PROMPT,
     SUPPORTED_IMG,
+    call_glm_native_file,
     call_glm_vision,
+    format_glm_response,
     get_client,
     parse_page_range,
     pdf_page_to_vision_text,
+    validate_file_path,
     validate_image_path,
 )
 
@@ -28,8 +32,16 @@ logger = logging.getLogger("file-reader")
 
 server = Server("file-reader")
 
-# 确保 API client 在启动时就初始化好
 get_client()
+
+
+def _to_bool(val) -> bool:
+    """将字符串 'true'/'false' 或布尔值统一转换为 bool"""
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, str):
+        return val.lower() in ("true", "1", "yes")
+    return bool(val)
 
 
 @server.list_tools()
@@ -64,8 +76,11 @@ async def list_tools() -> list[types.Tool]:
         types.Tool(
             name="read_pdf",
             description=(
-                "读取 PDF 文件。优先使用本地库提取文本；"
-                "如果 use_vision=True 则用 GLM-4V 理解扫描件/图表。"
+                "读取 PDF 文件。三种模式："
+                "1) 默认：本地 pdfplumber 提取文本（快速、免费）；"
+                "2) use_vision=True：将每页转为图片，用 GLM-4V 视觉理解（适合扫描件/图表）；"
+                "3) use_native=True：将整个 PDF 以 file_url 直接发送给 GLM-4.6V 原生理解（适合复杂文档/跨页逻辑）。"
+                "use_native 无视 page_range，总是处理整份文档。"
             ),
             inputSchema={
                 "type": "object",
@@ -81,7 +96,12 @@ async def list_tools() -> list[types.Tool]:
                     },
                     "use_vision": {
                         "type": "boolean",
-                        "description": "是否使用 GLM-4V 视觉理解",
+                        "description": "使用 GLM-4V 逐页视觉理解（适合扫描件/图表）",
+                        "default": False
+                    },
+                    "use_native": {
+                        "type": "boolean",
+                        "description": "使用 GLM-4.6V 原生文档理解（整个 PDF 直接送入模型）",
                         "default": False
                     }
                 },
@@ -129,20 +149,29 @@ async def _handle_read_image(args: dict) -> list[types.TextContent]:
     file_path = args["file_path"]
     prompt = args.get("prompt", DEFAULT_VISION_PROMPT)
 
-    p = validate_image_path(file_path)
+    validate_image_path(file_path)
 
-    result = await asyncio.to_thread(call_glm_vision, [str(p)], prompt)
-    return [types.TextContent(type="text", text=result)]
+    result = await asyncio.to_thread(call_glm_vision, [file_path], prompt)
+    text = format_glm_response(
+        content=result["content"],
+        reasoning_content=result.get("reasoning_content", ""),
+        usage=result.get("usage"),
+    )
+    return [types.TextContent(type="text", text=text)]
 
 
 async def _handle_read_pdf(args: dict) -> list[types.TextContent]:
     file_path = args["file_path"]
     page_range = args.get("page_range", "all")
-    use_vision = args.get("use_vision", False)
+    use_vision = _to_bool(args.get("use_vision", False))
+    use_native = _to_bool(args.get("use_native", False))
 
     p = Path(file_path)
     if not p.exists():
         return [types.TextContent(type="text", text=f"File not found: {file_path}")]
+
+    if use_native:
+        return await _handle_read_pdf_native(file_path, page_range)
 
     import pdfplumber
 
@@ -175,11 +204,33 @@ async def _handle_read_pdf(args: dict) -> list[types.TextContent]:
                 else:
                     results.append(
                         f"=== Page {i + 1}/{total} ===\n"
-                        f"(no extractable text, try use_vision=true)"
+                        f"(no extractable text, try use_vision=true or use_native=true)"
                     )
 
         output = "\n\n".join(results)
         return [types.TextContent(type="text", text=output)]
+
+
+async def _handle_read_pdf_native(
+    file_path: str, page_range: str = "all"
+) -> list[types.TextContent]:
+    validate_file_path(file_path)
+
+    prompt = DEFAULT_PDF_NATIVE_PROMPT
+    if page_range != "all":
+        prompt = (
+            f"{DEFAULT_PDF_NATIVE_PROMPT} "
+            f"请重点查看第 {page_range} 页的内容。"
+        )
+
+    result = await asyncio.to_thread(call_glm_native_file, file_path, prompt)
+    text = format_glm_response(
+        content=result["content"],
+        reasoning_content=result.get("reasoning_content", ""),
+        usage=result.get("usage"),
+        source_label="[GLM-4.6V Native Document Understanding]",
+    )
+    return [types.TextContent(type="text", text=text)]
 
 
 async def _handle_read_docx(args: dict) -> list[types.TextContent]:
@@ -194,8 +245,7 @@ async def _handle_read_docx(args: dict) -> list[types.TextContent]:
     doc = docx.Document(str(p))
     paragraphs = []
     for para in doc.paragraphs:
-        if para.text.strip():
-            paragraphs.append(para.text)
+        paragraphs.append(para.text)
 
     for table in doc.tables:
         table_text = []

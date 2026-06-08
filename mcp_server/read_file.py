@@ -4,7 +4,7 @@ read_file.py — 独立 CLI 工具，桥接智谱 GLM-4V / GLM-4 API
 
 用法:
   python read_file.py image   <文件路径>
-  python read_file.py pdf     <文件路径> [--vision]
+  python read_file.py pdf     <文件路径> [--vision] [--native]
   python read_file.py docx    <文件路径>
 """
 import argparse
@@ -14,22 +14,34 @@ from pathlib import Path
 
 from common import (
     DEFAULT_VISION_PROMPT,
+    DEFAULT_PDF_NATIVE_PROMPT,
+    call_glm_native_file,
     call_glm_vision,
+    format_glm_response,
     parse_page_range,
     pdf_page_to_vision_text,
+    validate_file_path,
     validate_image_path,
 )
 
 
 def read_image(file_path: str, prompt: str | None = None) -> str:
-    p = validate_image_path(file_path)
-    return call_glm_vision([str(p)], prompt or DEFAULT_VISION_PROMPT)
+    validate_image_path(file_path)
+    result = call_glm_vision([file_path], prompt or DEFAULT_VISION_PROMPT)
+    return format_glm_response(
+        content=result["content"],
+        reasoning_content=result.get("reasoning_content", ""),
+        usage=result.get("usage"),
+    )
 
 
-def read_pdf(file_path: str, use_vision: bool = False, page_range: str = "all") -> str:
+def read_pdf(file_path: str, use_vision: bool = False, use_native: bool = False, page_range: str = "all") -> str:
     p = Path(file_path)
     if not p.exists():
         return f"ERROR: File not found: {file_path}"
+
+    if use_native:
+        return read_pdf_native(file_path, page_range)
 
     try:
         import pdfplumber
@@ -62,10 +74,29 @@ def read_pdf(file_path: str, use_vision: bool = False, page_range: str = "all") 
                     results.append(f"=== Page {i + 1}/{total} ===\n{text}")
                 else:
                     results.append(
-                        f"=== Page {i + 1}/{total} ===\n(no extractable text, try --vision)"
+                        f"=== Page {i + 1}/{total} ===\n(no extractable text, try --vision or --native)"
                     )
 
     return "\n\n".join(results)
+
+
+def read_pdf_native(file_path: str, page_range: str = "all") -> str:
+    validate_file_path(file_path)
+
+    prompt = DEFAULT_PDF_NATIVE_PROMPT
+    if page_range != "all":
+        prompt = (
+            f"{DEFAULT_PDF_NATIVE_PROMPT} "
+            f"请重点查看第 {page_range} 页的内容。"
+        )
+
+    result = call_glm_native_file(file_path, prompt)
+    return format_glm_response(
+        content=result["content"],
+        reasoning_content=result.get("reasoning_content", ""),
+        usage=result.get("usage"),
+        source_label="[GLM-4.6V Native Document Understanding]",
+    )
 
 
 def read_docx(file_path: str) -> str:
@@ -81,8 +112,7 @@ def read_docx(file_path: str) -> str:
     doc = docx.Document(str(p))
     paragraphs = []
     for para in doc.paragraphs:
-        if para.text.strip():
-            paragraphs.append(para.text)
+        paragraphs.append(para.text)
 
     for table in doc.tables:
         table_text = []
@@ -104,6 +134,7 @@ def main():
     pdf = sub.add_parser("pdf", help="Read a PDF file")
     pdf.add_argument("path", help="PDF file path")
     pdf.add_argument("--vision", action="store_true", help="Use GLM-4V vision for scanned PDFs")
+    pdf.add_argument("--native", action="store_true", help="Use GLM-4.6V native document understanding")
 
     docx = sub.add_parser("docx", help="Read a DOCX file")
     docx.add_argument("path", help="DOCX file path")
@@ -114,7 +145,11 @@ def main():
         if args.command == "image":
             result = read_image(args.path)
         elif args.command == "pdf":
-            result = read_pdf(args.path, use_vision=args.vision)
+            result = read_pdf(
+                args.path,
+                use_vision=getattr(args, "vision", False),
+                use_native=getattr(args, "native", False),
+            )
         elif args.command == "docx":
             result = read_docx(args.path)
         else:
@@ -127,7 +162,7 @@ def main():
         result = f"ERROR: {e}"
 
     sys.stdout.reconfigure(encoding="utf-8")
-    print(result)
+    sys.stdout.buffer.write((result + "\n").encode("utf-8", errors="replace"))
 
 
 if __name__ == "__main__":

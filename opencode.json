@@ -10,6 +10,27 @@
     }
   },
 
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+
+  "watcher": {
+    "ignore": [
+      "node_modules/**",
+      ".git/**",
+      "__pycache__/**",
+      "*.pyc",
+      "venv/**",
+      ".venv/**",
+      "dist/**",
+      ".next/**"
+    ]
+  },
+
+  "instructions": ["AGENTS.md"],
+
   "mcp": {
     "file-reader": {
       "type": "local",
@@ -24,7 +45,77 @@
       "enabled": true,
       "timeout": 60000,
       "environment": {}
+    },
+
+    "gh_grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
+      "enabled": true,
+      "timeout": 30000
+    },
+
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true,
+      "timeout": 30000
+    },
+
+    "git": {
+      "type": "local",
+      "command": ["uvx", "mcp-server-git"],
+      "enabled": true,
+      "timeout": 30000
+    },
+
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx", "-y", "@playwright/mcp@latest",
+        "--headless",
+        "--isolated"
+      ],
+      "enabled": true,
+      "timeout": 60000
+    },
+
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true,
+      "timeout": 30000
+    },
+
+    "npm": {
+      "type": "local",
+      "command": ["npx", "-y", "npm-mcp"],
+      "enabled": false,
+      "timeout": 30000
+    },
+
+    "docker": {
+      "type": "local",
+      "command": ["uvx", "mcp-server-docker"],
+      "enabled": false,
+      "timeout": 30000
+    },
+
+    "package-registry": {
+      "type": "local",
+      "command": ["npx", "-y", "package-registry-mcp"],
+      "enabled": true,
+      "timeout": 30000
     }
+  },
+
+  "tools": {
+    "playwright_*": false,
+    "npm_*": false,
+    "docker_*": false
+  },
+
+  "experimental": {
+    "mcp_timeout": 60000
   },
 
   "permission": {
