@@ -1,0 +1,26 @@
+{
+  "lifetime": {
+    "total_tokens_estimated": 446,
+    "total_reads": 12,
+    "total_writes": 1,
+    "total_sessions": 1,
+    "anatomy_hits": 0,
+    "anatomy_misses": 12,
+    "repeated_reads_warned": 0,
+    "estimated_savings_vs_bare": 0
+  },
+  "sessions": [
+    {
+      "id": "session-1780982228692",
+      "started": "2026-06-09T05:17:08.692Z",
+      "ended": "2026-06-09T05:18:21.226Z",
+      "reads": 12,
+      "writes": 1,
+      "tokens_estimated": 446,
+      "anatomy_hits": 0,
+      "anatomy_misses": 12,
+      "repeated_reads_warned": 0,
+      "cerebrum_warnings": 0
+    }
+  ]
+}
