@@ -12,6 +12,8 @@
 ---
 
 ## 选题分析/
+- `选题分析\ClipMate插件技术设计与项目结构.md` -- > 项目代号：ClipMate（暂定名） (~5176 tok)
+- `选题分析\插件开发全流程与付费机制报告.md` -- > 调研日期：2026-06-09 (~1863 tok)
 
 - `Chrome插件选题分析报告.md` -- Chrome Web Store market research: scraped ratings/user counts for writing, screenshot, PDF translate, web-to-notion, and screenshot-blur plugins. Recommends two gold opportunities (AI Web Clipper for Notion/飞书 and AI Document Translator) with pricing, revenue projections, and competitive analysis (~2300 tok)
 - `Notion Web Clipper 选题分析报告.md` -- Deep-dive competitor analysis of Notion Web Clipper (official) from Zhihu/Weibo/Xiaohongshu. Enumerates 7 pros, 7 cons, compares against Save to Notion/简悦/Cubox, and suggests 5 content topic angles for a potential product (~1400 tok)

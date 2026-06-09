@@ -1,11 +1,11 @@
 {
   "lifetime": {
-    "total_tokens_estimated": 446,
-    "total_reads": 12,
-    "total_writes": 1,
-    "total_sessions": 1,
+    "total_tokens_estimated": 15862,
+    "total_reads": 49,
+    "total_writes": 8,
+    "total_sessions": 4,
     "anatomy_hits": 0,
-    "anatomy_misses": 12,
+    "anatomy_misses": 49,
     "repeated_reads_warned": 0,
     "estimated_savings_vs_bare": 0
   },
@@ -19,6 +19,42 @@
       "tokens_estimated": 446,
       "anatomy_hits": 0,
       "anatomy_misses": 12,
+      "repeated_reads_warned": 0,
+      "cerebrum_warnings": 0
+    },
+    {
+      "id": "session-1780982228692",
+      "started": "2026-06-09T05:17:08.692Z",
+      "ended": "2026-06-09T05:19:45.552Z",
+      "reads": 12,
+      "writes": 1,
+      "tokens_estimated": 446,
+      "anatomy_hits": 0,
+      "anatomy_misses": 12,
+      "repeated_reads_warned": 0,
+      "cerebrum_warnings": 0
+    },
+    {
+      "id": "session-1780982228692",
+      "started": "2026-06-09T05:17:08.692Z",
+      "ended": "2026-06-09T05:47:20.871Z",
+      "reads": 12,
+      "writes": 3,
+      "tokens_estimated": 7485,
+      "anatomy_hits": 0,
+      "anatomy_misses": 12,
+      "repeated_reads_warned": 0,
+      "cerebrum_warnings": 0
+    },
+    {
+      "id": "session-1780982228692",
+      "started": "2026-06-09T05:17:08.692Z",
+      "ended": "2026-06-09T05:49:31.182Z",
+      "reads": 13,
+      "writes": 3,
+      "tokens_estimated": 7485,
+      "anatomy_hits": 0,
+      "anatomy_misses": 13,
       "repeated_reads_warned": 0,
       "cerebrum_warnings": 0
     }
