@@ -1,1 +1,1 @@
-// Shared messaging utilities for ClipMate
+export * from './sendMessage'

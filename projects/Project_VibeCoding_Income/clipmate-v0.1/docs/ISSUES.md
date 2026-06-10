@@ -15,10 +15,10 @@
 
 ### I-002：Readability 对复杂网页可能提取失败，需要 fallback
 
-- **状态**：未开始
-- **描述**：Mozilla Readability 对 SPA（如 Notion 自身页面）、中文网页、非标准博客可能失败。
-- **影响**：部分网页无法提取正文。
-- **缓解**：v0.1 使用原始 HTML 作为 fallback；v0.2+ 可考虑截图回退。
+- **状态**：🟡 已实现基础 fallback
+- **描述**：Mozilla Readability 对 SPA（如 Notion 自身页面）、中文网页、非标准博客可能失败。当前已实现 `body.innerText` fallback，但 fallback 质量未经真实页面验证。
+- **影响**：部分网页正文提取可能不精准。
+- **缓解**：v0.1 fallback 使用整个 body innerText（已移除 script/style/noscript/iframe）。v0.2+ 可考虑截图回退。
 
 ### I-003：Edge 审核需要隐私政策和权限说明
 
@@ -33,8 +33,22 @@
 - **影响**：如果需要读取图片/PDF 素材，可能需要使用 CLI fallback 方式。
 - **缓解**：不依赖 MCP 工具完成业务代码开发。
 
+### I-005：Bundle 体积偏大
+
+- **状态**：🟡 待评估
+- **描述**：Content Script bundle 47.73KB (gzip 16.24KB)，主要来自 @mozilla/readability 和 turndown。对于浏览器扩展来说可接受，但后续可考虑代码拆分。
+- **缓解**：v0.1 不优化，v0.2+ 可考虑按需加载或 tree-shaking。
+
 ---
 
 ## 已解决问题
 
-暂无。
+### I-S2-001：turndown 和 jsdom 类型依赖缺失（Session 2）
+✅ 已安装 @types/turndown 和 jsdom。
+
+### I-S2-002：SelectionResult 与 buildContent 参数不匹配（Session 2）
+✅ 已修复：映射 `{ html, text }` → `{ content, textContent }`。
+
+### I-S2-003：turndown strike 标签不在 HTMLElementTagNameMap（Session 2）
+✅ 已修复：移除 `strike` 过滤，仅保留 `del` 和 `s`。
+

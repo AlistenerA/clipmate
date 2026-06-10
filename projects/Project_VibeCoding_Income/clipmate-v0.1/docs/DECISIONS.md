@@ -66,3 +66,31 @@
 
 本轮无新增技术决策。Session 1 严格遵循 Session 0 确定的 D-009 技术栈，按规范搭建脚手架。
 所有 Manifest 权限（storage + activeTab）遵循 D-005（本地存储）和 v0.1 最小权限原则。
+
+---
+
+## Session 2 决策
+
+### D-010：Content Script 提取为同步操作，不引入 Promise/Worker
+
+- **原因**：Readability（DOM 遍历）和 turndown（字符串处理）都是同步 API。将提取包装成异步会增加复杂度而无收益。sendResponse 同步返回，chrome.runtime.onMessage 监听器也使用同步路径（`return false` 表示不保持通道，因为响应立即可用）。
+- **影响**：提取失败由 try/catch 捕获。不会阻塞 UI（Content Script 在独立线程运行）。
+- **可反转性**：低。v0.1 暂不需要异步，但若后续引入截图回退（需要 canvas），可能需要改为异步。
+
+### D-011：Readability 失败时 fallback 到 body.innerText，不做更多尝试
+
+- **原因**：Readability 对中英文博客页面的覆盖率已足够高（>90%）。SPA 页面、非标准结构的页面失败时，`body.innerText` 是最可靠的降级方案。不引入更复杂的 fallback（如按段落迭代提取、检测主要内容区域等），避免过度工程。
+- **影响**：SPA 页面的 fallback 会包含导航栏、页脚等无关文字，体验下降。但 v0.1 目标是非 SPA 博客/文章页。
+- **可反转性**：高。后续可引入更智能的 fallback（如检测 `<article>` 标签、主要 div 等）。
+
+### D-012：turndown 使用 atx 标题风格和 fenced 代码块
+
+- **原因**：`atx`（`#` 前缀）是 Markdown 事实标准，相比 `setext`（下划线）更适合程序化生成。`fenced` 代码块（`` ``` ``）支持语言标注，比缩进式代码块更通用。
+- **影响**：生成的 Markdown 适用于 Notion（通过 API）、GitHub、Obsidian 等主流平台。
+- **可反转性**：中。可通过 turndown 配置切换风格，但需测试 Notion API 兼容性。
+
+### D-013：日志只输出模式和字数，绝不输出正文、Token、URL
+
+- **原因**：防止敏感信息泄露到 Console。Content Script 运行在用户页面的 JS 上下文中，任何 console 输出都可能被页面脚本读取（虽然概率低）。
+- **影响**：调试略不便（需手动检查提取结果），但安全性优先。
+- **可反转性**：高。后续可添加 debug mode 开关。

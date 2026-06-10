@@ -4,6 +4,53 @@
 
 ---
 
+## Session 2：实现 shared 基础层与 Content Script 提取 (2026-06-10)
+
+### 新增文件
+- `src/shared/types/clip.types.ts` — ClipMode, ExtractedContent, ClipDraft, ClipMetadata
+- `src/shared/types/settings.types.ts` — ClipMateSettings 接口
+- `src/shared/types/message.types.ts` — 消息协议类型（ClipMateMessage, ExtractPageResponse 等）
+- `src/shared/constants/messageTypes.ts` — 6 种消息类型常量
+- `src/shared/constants/defaults.ts` — DEFAULT_SETTINGS, STORAGE_KEYS
+- `src/shared/storage/storage.ts` — chrome.storage.local Promise 封装（getSettings/saveSettings/getLastClipDraft/saveLastClipDraft/clearLastClipDraft）
+- `src/shared/messaging/sendMessage.ts` — sendToActiveTab / sendToRuntime 消息工具
+- `src/shared/utils/logger.ts` — 日志工具（仅输出模式+字数，绝不出全文/Token）
+- `src/shared/utils/errors.ts` — ClipMateError 类 + ErrorCodes 常量
+- `src/shared/utils/formatMarkdown.ts` — countWords / snippet 工具函数
+- `src/content/extractors/readabilityExtractor.ts` — @mozilla/readability 全文提取
+- `src/content/extractors/selectionExtractor.ts` — 用户选区提取（组合 getSelectionHtml + getSelectionText）
+- `src/content/extractors/fallbackExtractor.ts` — Readability 失败时降级到 body.innerText
+- `src/content/parser/metaParser.ts` — 元数据解析（OG + 标准 meta）
+- `src/content/parser/htmlToMarkdown.ts` — turndown HTML→Markdown（h1-h6/p/a/img/ul/ol/li/code/del/s）
+- `src/content/parser/contentCleaner.ts` — 移除 script/style/noscript/iframe
+- `src/content/selection/getSelectionHtml.ts` — 获取选区 HTML
+- `src/content/selection/getSelectionText.ts` — 获取选区纯文本
+- `tests/shared-utils.test.ts` — 14 个单元测试（countWords/snippet/errors/constants）
+
+### 修改文件
+- `src/content/index.ts` — 从占位空壳重写为完整消息处理：监听 EXTRACT_CURRENT_PAGE 和 GET_SELECTION，协调提取器/解析器/Sanitizer
+- `src/shared/types/index.ts` — 改为 barrel re-export
+- `src/shared/constants/index.ts` — 改为 barrel re-export
+- `src/shared/utils/index.ts` — 改为 barrel re-export
+- `src/shared/storage/index.ts` — 改为 barrel re-export
+- `src/shared/messaging/index.ts` — 改为 barrel re-export
+
+### 新增依赖
+- `@mozilla/readability` (dependencies) — Mozilla 正文提取
+- `turndown` (dependencies) — HTML → Markdown 转换
+- `@types/turndown` (devDependencies) — turndown 类型定义
+- `jsdom` (devDependencies) — Vitest 运行环境
+
+### 改动摘要
+- 完整的 shared 基础层：类型系统、消息协议、chrome.storage Promise 封装、日志/错误工具
+- Content Script 提取链路：clone document → clean → Readability → fail? → fallback → Markdown
+- 选区提取：检查 selection → 返回 html+text → 无选区返回 { success: false, error: 'NO_SELECTION' }
+- 构建：`npm run build` 通过，Content Script bundle 47.73KB (gzip 16.24KB)
+- 测试：`npm run test` 通过，14 个测试
+- 安全：Token 不在日志中输出，日志仅输出模式和字数
+
+---
+
 ## Session 1：创建 Vite + React + MV3 插件脚手架 (2026-06-10)
 
 ### 新增文件
@@ -78,3 +125,4 @@
 - 记录了 9 条技术决策
 - 记录了 4 条已知风险
 - 未安装任何依赖，未创建任何代码文件
+

@@ -1,1 +1,1 @@
-// Shared storage utilities for ClipMate
+export * from './storage'

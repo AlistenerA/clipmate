@@ -4,14 +4,82 @@
 
 ---
 
-## Session 1 (2026-06-10)
+## Session 2 (2026-06-10)
 
 ### 运行命令
 
 ```pwsh
-New-Item -ItemType Directory -Force -Path "clipmate-v0.1\public\icons", ...
+npm install @mozilla/readability turndown
 ```
-创建了项目目录结构（public/icons, src/background, src/content, src/popup, src/options, src/styles, src/shared/*, tests）。
+成功安装 @mozilla/readability, turndown（+3 packages, 339 total）。
+
+```pwsh
+npm install --save-dev @types/turndown
+```
+成功安装 turndown 类型定义（340 packages total）。
+
+```pwsh
+npm install --save-dev jsdom
+```
+成功安装 jsdom（+37 packages, 377 total）。
+
+```pwsh
+npm run build
+```
+
+首次构建报错（预期内）：
+- `TS2345`: SelectionResult 类型不匹配 → 已修复（映射 html→content, text→textContent）
+- `TS7016`: turndown 缺少声明文件 → 已安装 @types/turndown
+- `TS2322`: `'strike'` 不在 HTMLElementTagNameMap → 已修复（移除 strike，保留 del/s）
+
+修复后构建成功：
+- tsc: 无类型错误
+- vite build: 57 个模块，716ms
+- Content Script bundle: 47.73KB (gzip 16.24KB)
+
+```pwsh
+npm run test
+```
+首次报错：缺少 jsdom 依赖 → 已修复。
+
+修复后测试通过：
+- `tests/example.test.ts` — 1 test passed
+- `tests/shared-utils.test.ts` — 13 tests passed
+- 总计：14 tests passed, 2 test files
+
+```pwsh
+npm run lint
+```
+首次报错：`sendMessage.ts` 中 `logger` 已导入但未使用 → 已修复（在 `sendToActiveTab` 中添加错误日志）。
+修复后：0 errors, 0 warnings。
+
+```pwsh
+npm run build
+```
+最终验证：57 modules, 719ms 成功。
+
+### 测试结果
+
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/shared-utils.test.ts (13 tests) 2ms
+
+Test Files  2 passed (2)
+     Tests  14 passed (14)
+  Duration  4.32s
+```
+
+### 错误/失败
+
+- **构建第一轮失败**（3 个 TS 错误）→ 全部修复，第二轮通过
+- **测试第一轮失败**（缺少 jsdom）→ 安装后通过
+- **Lint 第一轮失败**（logger 未使用）→ 修复后通过
+
+---
+
+## Session 1 (2026-06-10)
+
+### 运行命令
 
 ```pwsh
 npm install
@@ -62,3 +130,4 @@ New-Item -ItemType Directory -Path "clipmate-v0.1\docs" -Force
 ### 错误/失败
 
 无。
+
