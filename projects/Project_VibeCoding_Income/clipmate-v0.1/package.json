@@ -10,7 +10,8 @@
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "zip": "powershell -Command \"Import-Module Microsoft.PowerShell.Archive; Compress-Archive -Path dist/* -DestinationPath clipmate-v0.1.zip -Force\""
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
