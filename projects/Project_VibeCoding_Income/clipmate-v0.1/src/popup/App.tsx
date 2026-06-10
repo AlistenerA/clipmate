@@ -11,6 +11,7 @@ import { useClipDraft } from './hooks/useClipDraft'
 import { useCopyMarkdown } from './hooks/useCopyMarkdown'
 import { useSaveToNotion } from './hooks/useSaveToNotion'
 import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
+import { formatCopyMarkdown } from '../shared/utils/formatMarkdown'
 import type { ClipMode, ClipDraft } from '../shared/types/clip.types'
 
 export default function App() {
@@ -79,9 +80,16 @@ export default function App() {
 
   const handleCopy = useCallback(() => {
     if (content) {
-      copy(content.markdown)
+      const fullMarkdown = formatCopyMarkdown(
+        content.title,
+        content.url,
+        tags,
+        note,
+        content.markdown,
+      )
+      copy(fullMarkdown)
     }
-  }, [content, copy])
+  }, [content, copy, tags, note])
 
   const handleSaveToNotion = useCallback(() => {
     if (!content) return

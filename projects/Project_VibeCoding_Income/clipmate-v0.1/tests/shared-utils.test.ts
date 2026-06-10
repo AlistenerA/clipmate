@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { countWords, snippet } from '../src/shared/utils/formatMarkdown'
+import {
+  countWords,
+  snippet,
+  cleanMarkdown,
+  formatCopyMarkdown,
+} from '../src/shared/utils/formatMarkdown'
 import { ClipMateError, ErrorCodes } from '../src/shared/utils/errors'
 import { MESSAGE_TYPES } from '../src/shared/constants/messageTypes'
 import { DEFAULT_SETTINGS, STORAGE_KEYS } from '../src/shared/constants/defaults'
@@ -22,8 +27,143 @@ describe('formatMarkdown', () => {
       expect(countWords('hello   world')).toBe(2)
     })
 
-    it('handles CJK characters as single words', () => {
-      expect(countWords('你好 世界')).toBe(2)
+    it('counts CJK characters individually without spaces', () => {
+      expect(countWords('你好世界')).toBe(4)
+    })
+
+    it('counts CJK with spaces as characters', () => {
+      expect(countWords('你好 世界')).toBe(4)
+    })
+
+    it('counts mixed CJK and English correctly', () => {
+      expect(countWords('你好 world 你好')).toBe(5)
+    })
+
+    it('counts pure Chinese selection text', () => {
+      expect(countWords('这是一段测试内容')).toBe(8)
+    })
+
+    it('counts CJK with punctuation', () => {
+      expect(countWords('你好，世界！')).toBe(6)
+    })
+
+    it('handles English-only text with whitespace splitting', () => {
+      expect(countWords('The quick brown fox')).toBe(4)
+    })
+  })
+
+  describe('cleanMarkdown', () => {
+    it('returns empty string for empty input', () => {
+      expect(cleanMarkdown('')).toBe('')
+    })
+
+    it('merges adjacent bold segments: **A****B** -> **AB**', () => {
+      expect(cleanMarkdown('**米团生活：从****\u201C心零售\u201D到信任生态**')).toBe(
+        '**米团生活：从\u201C心零售\u201D到信任生态**',
+      )
+    })
+
+    it('merges adjacent bold with Chinese quotes (example 2)', () => {
+      expect(cleanMarkdown('**战略落地：****\u201C央信码\u201C全面接入米团生态**')).toBe(
+        '**战略落地：\u201C央信码\u201C全面接入米团生态**',
+      )
+    })
+
+    it('merges adjacent bold: **从**** -> **从 (example 3)', () => {
+      expect(cleanMarkdown('**从****\u201C流量狂欢\u201D到\u201C信任回归\u201D**')).toBe(
+        '**从\u201C流量狂欢\u201D到\u201C信任回归\u201D**',
+      )
+    })
+
+    it('merges multiple adjacent bolds: **A****B****C** -> **ABC**', () => {
+      expect(cleanMarkdown('**A****B****C**')).toBe('**ABC**')
+    })
+
+    it('merges **a******b** (6-star edge case, HTML pre-merge handles full fix)', () => {
+      expect(cleanMarkdown('**a******b**')).toBe('**a**b**')
+    })
+
+    it('does NOT merge bolds separated by space: **A** **B**', () => {
+      expect(cleanMarkdown('**A** **B**')).toBe('**A** **B**')
+    })
+
+    it('preserves normal bold text', () => {
+      expect(cleanMarkdown('**正常粗体**')).toBe('**正常粗体**')
+    })
+
+    it('preserves normal text without bold', () => {
+      expect(cleanMarkdown('普通文本')).toBe('普通文本')
+    })
+
+    it('removes empty bold marker lines', () => {
+      expect(cleanMarkdown('** **')).toBe('')
+    })
+  })
+
+  describe('formatCopyMarkdown', () => {
+    it('includes title, URL, tags, note and body', () => {
+      const result = formatCopyMarkdown(
+        '测试文章',
+        'https://example.com',
+        ['技术', '笔记'],
+        '这是备注',
+        '正文内容',
+      )
+      expect(result).toContain('# 测试文章')
+      expect(result).toContain('来源：https://example.com')
+      expect(result).toContain('标签：#技术 #笔记')
+      expect(result).toContain('> 这是备注')
+      expect(result).toContain('---')
+      expect(result).toContain('正文内容')
+    })
+
+    it('omits title section when title is empty', () => {
+      const result = formatCopyMarkdown('', 'https://example.com', [], '', 'body')
+      expect(result).not.toContain('# ')
+      expect(result).toContain('来源：https://example.com')
+    })
+
+    it('omits URL section when URL is empty', () => {
+      const result = formatCopyMarkdown('Title', '', [], '', 'body')
+      expect(result).not.toContain('来源：')
+      expect(result).toContain('# Title')
+    })
+
+    it('omits tags section when tags are empty', () => {
+      const result = formatCopyMarkdown('T', 'https://a.com', [], '', 'body')
+      expect(result).not.toContain('标签：')
+    })
+
+    it('omits note section when note is blank', () => {
+      const result = formatCopyMarkdown('T', 'https://a.com', [], '  ', 'body')
+      expect(result).not.toContain('>')
+    })
+
+    it('handles empty body markdown', () => {
+      const result = formatCopyMarkdown('T', 'https://a.com', [], '', '')
+      expect(result).toContain('# T')
+      expect(result).toContain('---')
+    })
+
+    it('contains title before URL before tags before note before divider before body', () => {
+      const result = formatCopyMarkdown(
+        'T',
+        'https://a.com',
+        ['a'],
+        'n',
+        'body',
+      )
+      const idxTitle = result.indexOf('# T')
+      const idxUrl = result.indexOf('来源：')
+      const idxTag = result.indexOf('标签：')
+      const idxNote = result.indexOf('> n')
+      const idxDivider = result.indexOf('---')
+      const idxBody = result.indexOf('body')
+      expect(idxTitle).toBeLessThan(idxUrl)
+      expect(idxUrl).toBeLessThan(idxTag)
+      expect(idxTag).toBeLessThan(idxNote)
+      expect(idxNote).toBeLessThan(idxDivider)
+      expect(idxDivider).toBeLessThan(idxBody)
     })
   })
 

@@ -64,7 +64,7 @@ function handleExtractFullpage(): HandlerResult {
 
     return { success: true, data: content }
   } catch (err) {
-    logger.error('Fullpage extraction failed', err)
+    logger.error('Fullpage extraction failed')
     return { success: false, error: 'EXTRACTION_FAILED' }
   }
 }
@@ -84,7 +84,7 @@ function handleGetSelection(): HandlerResult {
 
     return { success: true, data: content }
   } catch (err) {
-    logger.error('Selection extraction failed', err)
+    logger.error('Selection extraction failed')
     return { success: false, error: 'EXTRACTION_FAILED' }
   }
 }

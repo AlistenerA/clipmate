@@ -4,6 +4,124 @@
 
 ---
 
+## Session 4.2.1 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run test
+```
+80 tests passed, 6 test files, 1.62s。
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/notion-blocks.test.ts (13 tests) 5ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/notion-client.test.ts (10 tests) 8ms
+✓ tests/shared-utils.test.ts (35 tests) 7ms
+✓ tests/content-parser.test.ts (12 tests) 100ms
+
+Test Files  6 passed (6)
+     Tests  80 passed (80)
+  Duration  1.62s
+```
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run build
+```
+构建成功：80 modules, 776ms
+- tsc: 无类型错误
+- vite build: 80 个模块，776ms
+- Popup bundle: 9.28KB (gzip 3.78KB)
+- Options bundle: 5.36KB (gzip 1.98KB)
+- Content Script bundle: 47.61KB (gzip 16.21KB)
+- Background bundle: 3.26KB (gzip 1.53KB)
+
+### 测试变更
+
+- **notion-blocks**：重写长备注测试 → 验证所有 chunk 为 callout + 📝 图标 + 无 paragraph 泄露 + rich_text ≤ 2000
+- **cleanMarkdown**：重写全部测试（10 tests）
+  - 三种中文引号真实场景（用户提供）
+  - 多段相邻粗体合并 `**A****B****C**` → `**ABC**`
+  - 6 星号边缘情况 `**a******b**` → `**a**b**`
+  - 空格分隔不合并 `**A** **B**`
+  - 正常粗体/文本保留
+  - 空粗体行移除
+
+### 错误/失败
+
+无。
+
+---
+
+## Session 4.2 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run test
+```
+初测 76 tests, 2 failed（countWords mixed CJK 和 CJK with punctuation 期望值未更新 → 修复后全部通过）。
+最终：
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/notion-client.test.ts (10 tests) 7ms
+✓ tests/notion-errors.test.ts (9 tests) 2ms
+✓ tests/notion-blocks.test.ts (13 tests) 6ms
+✓ tests/shared-utils.test.ts (31 tests) 5ms
+✓ tests/content-parser.test.ts (12 tests) 92ms
+
+Test Files  6 passed (6)
+     Tests  76 passed (76)
+  Duration  1.57s
+```
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run build
+```
+构建成功：80 modules, 783ms
+- tsc: 无类型错误
+- vite build: 80 个模块，783ms
+- Popup bundle: 9.28KB (gzip 3.78KB)
+- Options bundle: 5.36KB (gzip 1.98KB)
+- Content Script bundle: 47.54KB (gzip 16.18KB)
+- Background bundle: 3.29KB (gzip 1.55KB)
+
+### 新增/修改测试覆盖
+
+- **countWords CJK**（9 tests）：纯英文/纯中文/混合中英/CJK 标点/空格/空字符串
+- **cleanMarkdown**（5 tests）：空输入/**** 清理/多连续星号/空粗体行/正常粗体保留
+- **formatCopyMarkdown**（7 tests）：完整结构/空 title/空 URL/空 tags/空 note/空 body/顺序验证
+- **blocks callout 分片**（1 test）：长备注 ≥4500 字 → 1 callout + ≥2 paragraph，icon 验证
+- **blocks callout 图标**：原有 note callout 测试增加 `icon: { emoji: '📝' }` 断言
+
+### 日志安全审查
+
+审查全部 console/logger 调用，移除所有 `err` 原始对象传递：
+- `logger.ts`：移除 `err` 参数，只接受 `string` message
+- `content/index.ts`：2 处 `logger.error` 移除 err
+- `background/index.ts`：`console.log/error` → `logger.info/error`，不传 err
+- `notionHandler.ts`：日志改为只输出错误码 `Notion save failed: ${code}`
+- `storage.ts`：5 处 `logger.error` 移除 err 参数
+- `sendMessage.ts`：`logger.error('No active tab found')` 无 err（安全）
+
+结论：0 处 Token/正文/备注泄露。
+
+### 错误/失败
+
+- **测试第一轮 2 failed**（countWords CJK 期望值未更新）→ 修复期望值后全部通过
+
+---
+
 ## Session 4.1 (2026-06-10)
 
 ### 运行命令

@@ -192,3 +192,47 @@
 - **原因**：延续 D-020 的模式。Background handler 返回英文错误码（如 `NOTION_TOKEN_MISSING`），Popup 通过 `ERROR_MESSAGES` 映射为用户可见中文提示。错误码可用于日志追踪，中文提示用于用户展示。日志中绝不输出 Token 或正文全文。
 - **影响**：新增 8 个错误码和对应中文映射。Popup 和 Background 代码均不包含硬编码中文错误字符串（仅 ERROR_MESSAGES 常量表包含）。
 - **可反转性**：高。后续可改为 i18n 方案。
+
+---
+
+## Session 4.2.1 决策
+
+### D-033：cleanMarkdown 使用迭代正则合并相邻粗体，不做简单 `****` → `**` 替换
+
+- **原因**：此前 `cleanMarkdown` 用 `/\*{4,}/g` 将连续 4+ 星号替换为 `**`，但 `**A****B**` 变成了 `**A**B**`（匹配边界错误，`B**` 成为孤儿）。新的迭代正则 `\*\*(.*?)\*\*\*\*(.*?)\*\*` → `**$1$2**` 精确匹配相邻粗体片段并合并，支持中文引号和一行内多次出现。`\*{6,}` 场景（如 `**a******b**`）由 HTML 预合并根除。
+- **影响**：cleanMarkdown 不再产生新的结构错误。6 星号边缘情况在 Markdown 层面无法完美处理，但 HTML 预合并已从源头避免。
+- **可反转性**：高。可随时调整正则或增加预处理规则。
+
+### D-032：在 htmlToMarkdown 转换前合并相邻粗体标签，从源头消除 `****`
+
+- **原因**：turndown 将相邻 `<strong>A</strong><strong>B</strong>` 转换为 `**A****B**`，产生异常 4 连续星号。在 Markdown 后处理阶段难以完美恢复（尤其 6 星号以上场景丢失结构信息）。`mergeAdjacentBold` 在 HTML 阶段用正则 `<\/(strong|b)>\s*<\1>` 合并相邻同类型标签，turndown 直接输出干净的 `**AB**`。
+- **影响**：`cleanMarkdown` 简化为兜底安全网。HTML 预处理仅去除标签间空白，不改变内容语义。
+- **可反转性**：高。可随时调整合并规则或移除，不影响其他流程。
+
+---
+
+## Session 4.2 决策
+
+### D-028：countWords 对 CJK 字符逐个计数
+
+- **原因**：此前 `countWords` 仅用空白分割，中文文本不含空格时整段计为 1 个"词"。真机测试中选区模式选中 8 个中文汉字后状态栏显示"1 字"，用户困惑。解决方案：CJK 字符（汉字/日文假名/韩文/全角标点）逐字计数，英文按空白分词，混合文本累加两者。
+- **影响**：英文页面 `countWords` 行为不变（仍按空白分词）；中文页面字数从 1 变为实际字符数；混合页面显示 CJK 字符数 + 英文词数。
+- **可反转性**：高。后续若需精确到"词"（如中文分词），可引入分词库。
+
+### D-029：复制 Markdown 增加元数据头（标题/URL/标签/备注/分割线）
+
+- **原因**：真机测试发现复制 Markdown 仅包含正文，缺少标题和来源 URL，用户粘贴到 Notion/Obsidian 后需手动补充。`formatCopyMarkdown` 按固定结构组装：`# 标题` → `来源：URL` → `标签：#tag` → `> 备注` → `---` → 正文。每部分仅在有数据时出现。
+- **影响**：复制结果变长（增加了元数据头），但对用户价值远大于之前的纯正文。保存到 Notion 的链路（`buildNotionBlocks`）未被修改，不受影响。
+- **可反转性**：高。可通过配置切换是否包含元数据。
+
+### D-030：turndown 输出后增加 cleanMarkdown 清理异常 **** 标记
+
+- **原因**：真机测试发现 turndown 转换 HTML 时产生 `****` 异常（相邻 `<strong>` 标签无文本间隔时）。`cleanMarkdown` 将 4 个及以上连续 `*` 规范化为 `**`，并移除空粗体行。不引入完整 Markdown parser。
+- **影响**：仅影响 Markdown 输出。正常粗体（`**text**`）不受影响。极端情况（如代码块中的 `****`）理论上可能被错误修改，但概率极低。
+- **可反转性**：高。可随时调整清理规则或改用 DOM 预处理。
+
+### D-031：logger.error 移除 err 参数，防止敏感信息泄露
+
+- **原因**：先前 `logger.error(msg, err)` 将原始错误对象传递给 `console.error`，若 err 为 fetch Response（含 Authorization header）或 chrome.storage 错误（含 settings 对象中的 Token），可能导致明文 Token 出现在控制台。真机测试中疑似看到授权码明文。
+- **影响**：调试时不再能看到完整错误对象，但错误码已通过 message 字段传递（如 `"Notion save failed: NOTION_AUTH_FAILED"`）。DevTools Application/Storage 中可查看 chrome.storage.local 的 Token，但那是本地存储可见（非 console 打印），属于浏览器正常行为，不在本次修复范围。
+- **可反转性**：高。后续可添加 debug mode 开关（如 `debug: true` 时输出脱敏后的错误摘要）。

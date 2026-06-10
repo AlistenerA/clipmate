@@ -129,13 +129,13 @@ export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
       })
     } else {
       const noteChunks = chunkText(noteText)
-      for (let i = 0; i < noteChunks.length; i++) {
+      for (const chunk of noteChunks) {
         blocks.push({
           object: 'block',
           type: 'callout',
           callout: {
-            rich_text: richText(noteChunks[i]),
-            icon: i === 0 ? { emoji: '📝' } : undefined,
+            rich_text: richText(chunk),
+            icon: { emoji: '📝' },
           },
         })
       }

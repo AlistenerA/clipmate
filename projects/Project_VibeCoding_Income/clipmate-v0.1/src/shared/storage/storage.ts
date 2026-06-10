@@ -8,8 +8,8 @@ export async function getSettings(): Promise<ClipMateSettings> {
     const result = await chrome.storage.local.get(STORAGE_KEYS.SETTINGS)
     const stored = result[STORAGE_KEYS.SETTINGS] as ClipMateSettings | undefined
     return stored ? { ...DEFAULT_SETTINGS, ...stored } : { ...DEFAULT_SETTINGS }
-  } catch (err) {
-    logger.error('Failed to read settings', err)
+  } catch {
+    logger.error('Failed to read settings')
     return { ...DEFAULT_SETTINGS }
   }
 }
@@ -22,7 +22,7 @@ export async function saveSettings(
     const merged = { ...current, ...partial }
     await chrome.storage.local.set({ [STORAGE_KEYS.SETTINGS]: merged })
   } catch (err) {
-    logger.error('Failed to save settings', err)
+    logger.error('Failed to save settings')
     throw err
   }
 }
@@ -32,7 +32,7 @@ export async function getLastClipDraft(): Promise<ClipDraft | null> {
     const result = await chrome.storage.local.get(STORAGE_KEYS.LAST_CLIP)
     return (result[STORAGE_KEYS.LAST_CLIP] as ClipDraft | undefined) ?? null
   } catch (err) {
-    logger.error('Failed to read last clip', err)
+    logger.error('Failed to read last clip')
     return null
   }
 }
@@ -41,7 +41,7 @@ export async function saveLastClipDraft(draft: ClipDraft): Promise<void> {
   try {
     await chrome.storage.local.set({ [STORAGE_KEYS.LAST_CLIP]: draft })
   } catch (err) {
-    logger.error('Failed to save last clip', err)
+    logger.error('Failed to save last clip')
     throw err
   }
 }
@@ -50,7 +50,7 @@ export async function clearLastClipDraft(): Promise<void> {
   try {
     await chrome.storage.local.remove(STORAGE_KEYS.LAST_CLIP)
   } catch (err) {
-    logger.error('Failed to clear last clip', err)
+    logger.error('Failed to clear last clip')
     throw err
   }
 }

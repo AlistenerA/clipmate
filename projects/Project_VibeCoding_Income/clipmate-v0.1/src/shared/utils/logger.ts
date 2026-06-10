@@ -7,11 +7,7 @@ export const logger = {
   warn(msg: string): void {
     console.warn(`${PREFIX} ${msg}`)
   },
-  error(msg: string, err?: unknown): void {
-    if (err !== undefined) {
-      console.error(`${PREFIX} ${msg}`, err)
-    } else {
-      console.error(`${PREFIX} ${msg}`)
-    }
+  error(msg: string): void {
+    console.error(`${PREFIX} ${msg}`)
   },
 }

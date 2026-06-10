@@ -32,7 +32,7 @@ export async function handleSaveToNotion(
   } catch (err) {
     const code =
       err instanceof Error ? err.message : 'NOTION_SAVE_FAILED'
-    logger.error('Notion save failed', err)
+    logger.error(`Notion save failed: ${code}`)
     return { success: false, error: code }
   }
 }

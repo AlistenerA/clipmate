@@ -4,6 +4,68 @@
 
 ---
 
+## Session 4.2.1：复测问题二次修复 (2026-06-10)
+
+### 修改文件
+- `src/platforms/notion/blocks.ts` — 长备注切分后所有 chunk 都生成 callout block（📝图标），不再将后续 chunk 变为普通 paragraph
+- `src/content/parser/htmlToMarkdown.ts` — 新增 `mergeAdjacentBold` 函数，在 turndown 转换前合并相邻 `<strong>` / `<b>` 标签，从源头消除 `****` 异常
+- `src/shared/utils/formatMarkdown.ts` — 重写 `cleanMarkdown` 为迭代合并相邻粗体（`**A****B**` → `**AB**`），不再做简单的 `\*{4,}→**` 替换
+- `tests/notion-blocks.test.ts` — 重写长备注测试：验证所有 chunk 均为 callout、均有 📝 图标、无 note paragraph 泄露
+- `tests/shared-utils.test.ts` — 重写 cleanMarkdown 测试（10 tests），新增用户提供的三种真实中文引号场景、多段相邻粗体合并、空格分隔不合并、正常文本保留
+- `docs/CURRENT_STATUS.md` — 更新阶段状态
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 4.2.1 运行记录
+- `docs/ISSUES.md` — 新增 I-014（长备注 paragraph 泄露）、I-015（粗体合并不完整），标记 ✅
+- `docs/DECISIONS.md` — 新增 D-032、D-033
+
+### 改动摘要
+- **长备注 callout**：`chunkText` 切分后每个 chunk 均生成独立 callout block，`icon: { emoji: '📝' }`，不再混用 paragraph
+- **粗体合并根因修复**：在 `htmlToMarkdown.ts` 中新增 `mergeAdjacentBold(html)`，用正则 `<\/(strong|b)>\s*<\1>` 合并相邻同类型粗体标签，防止 turndown 产生 `****`；`cleanMarkdown` 改为迭代正则 `\*\*(.*?)\*\*\*\*(.*?)\*\*` → `**$1$2**`，支持中文引号和多段相邻粗体
+- 构建：80 modules, 776ms
+- Lint：0 errors, 0 warnings
+- 测试：80 passed（+4 cleanMarkdown，+1 notion-blocks 重写）
+
+---
+
+## Session 4.2：真机测试问题修复 (2026-06-10)
+
+### 新增功能
+- `countWords` 支持 CJK 字符逐个计数：汉字/日文/韩文每字算 1，英文按空白分词，混合文本正确累加
+- `formatCopyMarkdown` 生成完整复制内容：标题 → URL → 标签 → 备注 → 分割线 → 正文
+- `cleanMarkdown` 清理 turndown 产出的异常 `****` 粗体标记
+
+### 修改文件
+- `src/shared/utils/formatMarkdown.ts` — 新增 `countWords` CJK 支持、`cleanMarkdown`、`formatCopyMarkdown`
+- `src/shared/utils/logger.ts` — 移除 `err` 参数，防止敏感数据泄露（Token/正文/备注）
+- `src/content/parser/htmlToMarkdown.ts` — turndown 输出后调用 `cleanMarkdown` 清理
+- `src/content/index.ts` — 移除 `logger.error` 的 err 参数（2 处）
+- `src/background/index.ts` — 统一使用 logger（移除直接 console.log/console.error），不输出 err 详情
+- `src/background/handlers/notionHandler.ts` — 日志只输出错误码，不输出 err 对象
+- `src/shared/storage/storage.ts` — 5 处 `logger.error` 移除 err 参数，不泄露 settings/draft 内容
+- `src/platforms/notion/blocks.ts` — 长备注 >2000 字时首段用 callout（📝），后续段用 paragraph
+- `src/popup/App.tsx` — 复制 Markdown 改用 `formatCopyMarkdown`，含标题/URL/标签/备注
+- `docs/CURRENT_STATUS.md` — 更新为 Session 4.2 阶段状态
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 4.2 运行记录
+- `docs/ISSUES.md` — 新增 I-009 ~ I-013，更新 I-008（callout 图标不一致）
+- `docs/DECISIONS.md` — 新增 D-028 ~ D-031
+
+### 测试变更
+- `tests/shared-utils.test.ts` — +21 tests（countWords CJK 5 + cleanMarkdown 5 + formatCopyMarkdown 7），更新 CJK 期望值
+- `tests/notion-blocks.test.ts` — +1 test（长备注 callout+paragraph 分片 + 图标验证），原有 callout 测试增加 icon 断言
+
+### 改动摘要
+- **字数统计**：CJK 字符按 Unicode 范围逐个计数（含全角标点），英文按空格分词，混合文本正确累计。解决中文选区选中的 8 字只显示 1 字问题
+- **复制 Markdown**：新增 `formatCopyMarkdown` 函数，按固定顺序拼接 # 标题 → 来源 URL → 标签 → > 引用备注 → --- 分割线 → 正文
+- **异常粗体修复**：`cleanMarkdown` 将 `****` 及更多连续星号规范化为 `**`，移除空粗体行
+- **安全审查**：`logger.error` 移除 `err` 参数，全项目 9 处调用不再输出可能包含 Token/正文/备注的原始对象。`background/index.ts` 从 `console.log/error` 统一改用 `logger`。明确 DevTools Storage 可见 ≠ console 泄露
+- **Callout 图标**：长备注首段 callout（📝），后续段落用普通 paragraph block，不再出现 💡 图标
+- 构建：80 modules, 783ms
+- Lint：0 errors, 0 warnings
+- 测试：76 passed（+19，shared-utils +18, notion-blocks +1）
+
+---
+
 ## Session 4.1：Notion 保存链路小补测与安全检查 (2026-06-10)
 
 ### 新增文件

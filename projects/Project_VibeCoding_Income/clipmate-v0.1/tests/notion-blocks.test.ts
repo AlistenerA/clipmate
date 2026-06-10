@@ -105,6 +105,35 @@ describe('buildNotionBlocks', () => {
 
     const noteBlock = blocks.find((b) => b.type === 'callout')
     expect(noteBlock).toBeDefined()
+    const callout = (noteBlock as Record<string, unknown>).callout as Record<string, unknown>
+    expect(callout.icon).toEqual({ emoji: '📝' })
+  })
+
+  it('splits long note into multiple callout blocks, all with 📝 icon', () => {
+    const longNote = 'A'.repeat(4500)
+    const draft = makeDraft({ note: longNote, tags: [] })
+    draft.content.url = ''
+    const blocks = buildNotionBlocks(draft)
+
+    const callouts = blocks.filter((b) => b.type === 'callout')
+    expect(callouts.length).toBeGreaterThanOrEqual(3)
+
+    for (const calloutBlock of callouts) {
+      const callout = (calloutBlock as Record<string, unknown>).callout as Record<string, unknown>
+      expect(callout.icon).toEqual({ emoji: '📝' })
+      const richText = callout.rich_text as Array<Record<string, unknown>>
+      for (const rt of richText) {
+        const content = (rt.text as Record<string, unknown>).content as string
+        expect(content.length).toBeLessThanOrEqual(2000)
+      }
+    }
+
+    const paragraphs = blocks.filter((b) => b.type === 'paragraph')
+    const hasANoteParagraph = paragraphs.some((b) => {
+      const json = JSON.stringify(b)
+      return json.includes('AAAA') && !json.includes('来源：') && !json.includes('标签：')
+    })
+    expect(hasANoteParagraph).toBe(false)
   })
 
   it('skips note block when note is empty', () => {
