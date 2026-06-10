@@ -5,6 +5,7 @@ export const MESSAGE_TYPES = {
   SAVE_SETTINGS: 'SAVE_SETTINGS',
   SAVE_LAST_CLIP: 'SAVE_LAST_CLIP',
   GET_LAST_CLIP: 'GET_LAST_CLIP',
+  SAVE_TO_NOTION: 'SAVE_TO_NOTION',
 } as const
 
 export type MessageTypeValue =

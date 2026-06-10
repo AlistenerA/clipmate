@@ -4,6 +4,114 @@
 
 ---
 
+## Session 4.1 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+57 tests passed, 6 test files, 1.59s。
+
+```pwsh
+npm run build
+```
+构建成功：80 modules, 732ms
+- tsc: 无类型错误
+- vite build: 80 个模块，732ms
+- Popup bundle: 9.19KB (gzip 3.74KB)
+- Options bundle: 5.36KB (gzip 1.98KB)
+- Content Script bundle: 47.55KB (gzip 16.17KB)
+- Background bundle: 3.32KB (gzip 1.55KB)
+
+### 测试结果
+
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-blocks.test.ts (12 tests) 4ms
+✓ tests/notion-client.test.ts (10 tests) 6ms   ← 新增
+✓ tests/notion-errors.test.ts (9 tests) 2ms
+✓ tests/shared-utils.test.ts (13 tests) 3ms
+✓ tests/content-parser.test.ts (12 tests) 94ms
+
+Test Files  6 passed (6)
+     Tests  57 passed (57)
+  Duration  1.59s
+```
+
+### 测试覆盖说明（notion-client.test.ts 新增）
+
+- **HTTP 错误映射**：401 → NOTION_AUTH_FAILED, 403 → NOTION_AUTH_FAILED, 404 → NOTION_PAGE_NOT_FOUND, 429 → NOTION_RATE_LIMITED, 500 → NOTION_SAVE_FAILED, fetch reject → NETWORK_ERROR
+- **分批请求**：≤100 blocks 单次请求, 150 blocks 两次请求, 250 blocks 三次正向验证, 中途失败停止后续批次
+
+### 日志安全审查
+
+审查全部 19 处 console/logger 调用：
+- `background/index.ts`：仅输出 status/message type（无 Token/正文）
+- `notionHandler.ts`：仅输出 blocks count（无 Token/正文）
+- `logger.ts`：通用工具，不假定输入内容
+- `content/index.ts`：仅输出 mode/word count/status（无正文）
+- `storage.ts`：仅输出操作类型+chrome API error（无内容）
+- `sendMessage.ts`：仅输出 'No active tab found'（无其他）
+
+结论：0 处 Token/正文/备注泄露。
+
+### 错误/失败
+
+无。
+
+---
+
+## Session 4 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run test
+```
+47 tests passed, 5 test files, 1.45s。
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run build
+```
+构建成功：80 modules, 760ms
+- tsc: 无类型错误
+- vite build: 80 个模块，760ms
+- Popup bundle: 9.19KB (gzip 3.74KB)
+- Options bundle: 5.36KB (gzip 1.98KB)
+- Content Script bundle: 47.55KB (gzip 16.17KB)
+- Background bundle: 3.11KB (gzip 1.49KB)
+
+### 测试结果
+
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/notion-blocks.test.ts (12 tests) 4ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/shared-utils.test.ts (13 tests) 3ms
+✓ tests/content-parser.test.ts (12 tests) 102ms
+
+Test Files  5 passed (5)
+     Tests  47 passed (47)
+  Duration  1.45s
+```
+
+### 错误/失败
+
+无。
+
+---
+
 ## Session 3.1 (2026-06-10)
 
 ### 运行命令

@@ -23,7 +23,8 @@ const manifest: ManifestV3Export = {
       js: ['src/content/index.ts']
     }
   ],
-  permissions: ['storage', 'activeTab']
+  permissions: ['storage', 'activeTab'],
+  host_permissions: ['https://api.notion.com/*']
 }
 
 export default manifest

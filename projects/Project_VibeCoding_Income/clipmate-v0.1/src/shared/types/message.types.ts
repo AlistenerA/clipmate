@@ -25,3 +25,9 @@ export type SaveLastClipPayload = ClipDraft
 export type LastClipResponse =
   | { success: true; data: ClipDraft | null }
   | { success: false; error: string }
+
+export type SaveToNotionPayload = ClipDraft
+
+export type SaveToNotionResponse =
+  | { success: true }
+  | { success: false; error: string }

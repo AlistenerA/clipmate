@@ -9,6 +9,7 @@ import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
 import { useCopyMarkdown } from './hooks/useCopyMarkdown'
+import { useSaveToNotion } from './hooks/useSaveToNotion'
 import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
 import type { ClipMode, ClipDraft } from '../shared/types/clip.types'
 
@@ -18,6 +19,8 @@ export default function App() {
   const { content, loading, error, extract, setContent } = useExtractContent()
   const { tags, setTags, addTag, removeTag, note, setNote } = useClipDraft()
   const { copy, copied } = useCopyMarkdown()
+  const { saving, saveError, saved, save: saveToNotion, clearResult } =
+    useSaveToNotion()
 
   const [notionConfigured, setNotionConfigured] = useState(false)
   const [draftLoaded, setDraftLoaded] = useState(false)
@@ -81,13 +84,22 @@ export default function App() {
   }, [content, copy])
 
   const handleSaveToNotion = useCallback(() => {
+    if (!content) return
     if (!notionConfigured) {
       alert('请先打开设置页面，配置 Notion Token 和 Page ID')
       chrome.runtime.openOptionsPage()
       return
     }
-    alert('保存到 Notion 功能将在下一阶段接入')
-  }, [notionConfigured])
+    clearResult()
+    const draft: ClipDraft = {
+      title: content.title,
+      tags,
+      note,
+      mode: content.mode,
+      content,
+    }
+    saveToNotion(draft)
+  }, [content, notionConfigured, tags, note, saveToNotion, clearResult])
 
   const openOptions = useCallback(() => {
     chrome.runtime.openOptionsPage()
@@ -130,10 +142,20 @@ export default function App() {
       <ActionButtons
         hasContent={content !== null && !error}
         copied={copied}
+        saving={saving}
         onCopy={handleCopy}
         onSaveToNotion={handleSaveToNotion}
         onOpenSettings={openOptions}
       />
+
+      {saved && (
+        <div className="text-xs text-green-600 text-center">
+          已保存到 Notion
+        </div>
+      )}
+      {saveError && (
+        <div className="text-xs text-red-600 text-center">{saveError}</div>
+      )}
 
       <button
         className="w-full py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30"

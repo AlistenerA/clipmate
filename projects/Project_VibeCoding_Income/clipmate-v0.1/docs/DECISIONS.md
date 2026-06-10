@@ -144,3 +144,51 @@
 - **原因**：Session 3 的错误码翻译是 `useExtractContent` 内的私有函数，无法被测试覆盖。提取为共享常量后，Popup 和测试均可引用。
 - **影响**：`src/shared/constants/defaults.ts` 新增 `ERROR_MESSAGES` 导出。`useExtractContent.ts` 移除私有 `translateError` 函数。
 - **可反转性**：高。后续可改为 i18n 方案。
+
+---
+
+## Session 4.1 决策
+
+### D-025：blocks.ts 各字段均做 2000 字长度限制
+
+- **原因**：Notion API rich_text 对象的 `text.content` 字段限制 2000 字符。此前仅有正文段落做了 chunkText 切分，标题、URL 显示文本、标签文本、备注 callout 未限制长度。用户输入的备注可能超过 2000 字（如粘贴一段长文本作为备注）。
+- **影响**：标题截断到 2000 字；URL 显示文本截断到 2000 字（link.url 保留完整）；标签文本截断到 1997 字（预留"标签："前缀）；备注按 chunkText 切分为多个 callout block（首个带📝图标，后续不带）。
+- **可反转性**：高。后续可改为更智能的分段策略或 Markdown parser。
+
+### D-026：Notion client 错误映射使用 mock fetch 单元测试，不真实调用 API
+
+- **原因**：client.ts 的 `makeRequest` 内部函数不可外部访问，仅能通过 `appendBlocks` 间接测试。使用 vitest `vi.stubGlobal('fetch')` 模拟 fetch 响应，验证错误码映射的正确性和分批逻辑。
+- **影响**：新增 10 个测试用例，覆盖全部 HTTP 错误路径和 3 种分批场景（≤100、150、250、中途失败停止）。
+- **可反转性**：高。后续可改为 E2E 测试。
+
+### D-027：权限说明文档作为上架材料草稿
+
+- **原因**：Edge Add-ons / Chrome Web Store 审核需要说明每个权限的用途。创建 `docs/PERMISSION_JUSTIFICATION.md` 详细解释 `activeTab`（点击图标时获取当前页）、`storage`（本地保存设置和草稿）、`https://api.notion.com/*`（仅调用 Notion API）、`<all_urls>` content_scripts（用户可在任何网站剪藏，不静默运行）。
+- **影响**：上架材料 +1，后续可直接引用。
+- **可反转性**：不可逆。文档是审核必需材料。
+
+---
+
+### D-021：Notion 保存链路走 Popup → Background SW → Notion API
+
+- **原因**：Background Service Worker 可以访问 chrome.storage 读取 Token/Page ID，且 fetch 不受 CORS 限制。Popup 通过 `sendToRuntime` 将 ClipDraft 发送给 Background，由 Background 完成 API 调用。这比 Popup 直接调用 Notion API 更安全（Token 不出现在 Content Script 上下文中）。
+- **影响**：Background SW 从纯日志占位变为实际处理 SAVE_TO_NOTION 消息。新增 host_permissions `https://api.notion.com/*` 确保 fetch 可靠。
+- **可反转性**：中。后续可改为 Popup 直接调用，但安全性略降。
+
+### D-022：v0.1 正文按纯文本段落保存到 Notion，不做完整 Markdown 渲染
+
+- **原因**：Notion API 的 rich_text 不支持嵌套格式（如行内代码、粗体、斜体与段落嵌套），需要在 blocks.ts 中实现复杂的 Markdown AST 解析才能生成正确 rich_text annotations。v0.1 优先实现可用闭环，正文按 `\n\n` 分段后每段一个 paragraph block。后续版本可引入 Markdown parser 生成更丰富的 blocks（如代码块、引用、列表）。
+- **影响**：保存到 Notion 的正文为纯文本段落，丢失了原始 Markdown 的粗体/斜体/行内代码/列表/引用格式。用户仍可通过"复制 Markdown"获得完整格式。
+- **可反转性**：高。后续可替换 blocks.ts 中的 `splitParagraphs` 为完整 Markdown→Blocks 转换器。
+
+### D-023：host_permissions 增加 https://api.notion.com/*
+
+- **原因**：Background Service Worker 的 `fetch` 在技术上不需要 host_permissions，但添加此权限可以确保在各类 Chrome/Edge 版本中的兼容性，且在扩展审核时向用户明确告知网络访问范围。仅限 Notion API 域名，不扩大权限范围。
+- **影响**：用户安装时会看到"访问 api.notion.com 数据"提示。manifest.json 中 host_permissions 字段包含 `https://api.notion.com/*`。
+- **可反转性**：高。若测试确认不需要即可移除。
+
+### D-024：错误码使用英文常量 + ERROR_MESSAGES 映射为中文
+
+- **原因**：延续 D-020 的模式。Background handler 返回英文错误码（如 `NOTION_TOKEN_MISSING`），Popup 通过 `ERROR_MESSAGES` 映射为用户可见中文提示。错误码可用于日志追踪，中文提示用于用户展示。日志中绝不输出 Token 或正文全文。
+- **影响**：新增 8 个错误码和对应中文映射。Popup 和 Background 代码均不包含硬编码中文错误字符串（仅 ERROR_MESSAGES 常量表包含）。
+- **可反转性**：高。后续可改为 i18n 方案。

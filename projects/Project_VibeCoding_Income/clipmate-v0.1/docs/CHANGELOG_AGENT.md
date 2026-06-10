@@ -4,147 +4,105 @@
 
 ---
 
+## Session 4.1：Notion 保存链路小补测与安全检查 (2026-06-10)
+
+### 新增文件
+- `tests/notion-client.test.ts` — appendBlocks 单元测试（10 tests），mock fetch 覆盖 401/403/404/429/500/网络异常 + 分批请求
+- `docs/PERMISSION_JUSTIFICATION.md` — 上架权限使用说明（activeTab/storage/host_permissions/content_scripts）
+
+### 修改文件
+- `src/platforms/notion/blocks.ts` — 修复 rich_text 超 2000 字未切分的风险：标题截断、URL 显示文本截断、标签文本截断、备注按 2000 字切分为多个 callout
+- `docs/CURRENT_STATUS.md` — 更新为 Session 4.1 阶段状态
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 4.1 运行记录
+- `docs/ISSUES.md` — 新增 I-007/I-008，更新 I-001 状态
+- `docs/DECISIONS.md` — 新增 D-025 决策记录
+
+### 改动摘要
+- **客户端测试**：add 10 个 mock fetch 测试，覆盖全部 6 种 HTTP 错误映射（401/403 → AUTH_FAILED、404 → PAGE_NOT_FOUND、429 → RATE_LIMITED、500 → SAVE_FAILED、fetch reject → NETWORK_ERROR）+ 4 个分批测试（≤100 单次、150 两次、250 三次精确验证、中途失败停止）
+- **rich_text 长度**：标题/URL/标签/备注均加 2000 字限制。备注超长时按 chunkText 切分为多个 callout block（首个带📝图标）
+- **日志安全**：审查全部 19 处 console/logger 调用，确认无 Token/正文/备注泄露
+- **权限说明**：创建 PERMISSION_JUSTIFICATION.md，覆盖 activeTab、storage、host_permissions、content_scripts、不执行远程代码、不收集数据
+- 构建：80 modules, 732ms
+- Lint：0 errors, 0 warnings
+- 测试：57 passed（+10，新增 notion-client.test.ts）
+
+---
+
+## Session 4：Notion API 集成与完整保存链路 (2026-06-10)
+
+### 新增文件
+- `src/platforms/types.ts` — 平台适配器通用类型（SaveResult）
+- `src/platforms/notion/client.ts` — Notion API 封装（Bearer 鉴权、分批 append、HTTP 错误码映射）
+- `src/platforms/notion/blocks.ts` — ClipDraft → Notion Blocks 转换（标题/URL/标签/备注/divider/段落、2000 字切分）
+- `src/background/handlers/notionHandler.ts` — SAVE_TO_NOTION 消息处理（校验 Token/Page ID、调用 API、错误返回）
+- `src/popup/hooks/useSaveToNotion.ts` — Popup 保存 hook（loading/error/saved 状态管理）
+- `tests/notion-blocks.test.ts` — blocks.ts 单元测试（12 tests）
+- `tests/notion-errors.test.ts` — 错误码/错误消息单元测试（9 tests）
+
+### 修改文件
+- `src/shared/constants/messageTypes.ts` — 新增 `SAVE_TO_NOTION` 消息类型
+- `src/shared/constants/defaults.ts` — 新增 8 条 Notion 相关错误中文提示
+- `src/shared/utils/errors.ts` — 新增 8 个 Notion 错误码
+- `src/shared/types/message.types.ts` — 新增 `SaveToNotionPayload`、`SaveToNotionResponse` 类型
+- `manifest.config.ts` — 新增 `host_permissions: ['https://api.notion.com/*']`
+- `src/background/index.ts` — 从纯日志占位重写为 SAVE_TO_NOTION 消息路由
+- `src/popup/App.tsx` — 接入 useSaveToNotion hook，保存按钮从 alert 占位改为真实调用
+- `src/popup/components/ActionButtons.tsx` — 新增 saving prop，显示"保存中..."状态
+
+### 改动摘要
+- **Notion 平台层**：client.ts 封装 Notion API v1 append block children，支持 Bearer Token 鉴权、Notion-Version 头、401/403/404/429 错误映射；blocks.ts 负责将 ClipDraft 转为 Notion blocks（heading_2 标题、带链接的 URL paragraph、蓝色标签 paragraph、callout 备注、divider 分隔线、正文 paragraph），支持 2000 字切分和双换行分段
+- **Background 保存链路**：notionHandler.ts 处理 SAVE_TO_NOTION 消息，校验 Token/Page ID/内容非空，调用 Notion API，返回成功/错误码
+- **Popup 保存交互**：ActionButtons 新增 saving 禁用态 + "保存中..."文字；useSaveToNotion hook 管理 loading/error/saved 状态，错误码自动映射中文提示
+- **权限更新**：host_permissions 增加 `https://api.notion.com/*`，确保 Background SW 可 fetch Notion API
+- **错误系统完善**：新增 8 个错误码 + 8 条中文提示，覆盖 Token 缺失/Page ID 缺失/授权失败/页面不存在/限流/网络错误/保存失败/空内容
+- 构建：80 modules, 760ms
+- Lint：0 errors, 0 warnings
+- 测试：47 passed（+21，新增 notion-blocks.test.ts + notion-errors.test.ts）
+
+---
+
 ## Session 3.1：基础链路审查与修复 (2026-06-10)
 
 ### 新增文件
 - `tests/content-parser.test.ts` — contentCleaner / parseMetadata / 错误码 / 常量 单元测试（12 tests）
 
 ### 修改文件
-- `src/popup/App.tsx` — 新增剪藏草稿自动保存/恢复：提取后自动保存 ClipDraft 到 chrome.storage.local，打开时恢复；引入 draftLoaded/restoredRef 防止恢复与自动提取竞态
-- `src/popup/hooks/useExtractContent.ts` — 移除私有 `translateError` 函数，改用共享 `ERROR_MESSAGES` 常量
-- `src/shared/constants/defaults.ts` — 新增 `ERROR_MESSAGES` 常量（NO_SELECTION / EXTRACTION_FAILED 中文映射）
-- `src/background/index.ts` — 清理消息监听器：不再返回虚假 `{ success: true }`，仅记录未处理消息
+- `src/popup/App.tsx` — 新增剪藏草稿自动保存/恢复
+- `src/popup/hooks/useExtractContent.ts` — 移除私有 translateError，改用共享 ERROR_MESSAGES
+- `src/shared/constants/defaults.ts` — 新增 ERROR_MESSAGES 常量
+- `src/background/index.ts` — 清理消息监听器
 
 ### 改动摘要
-- **剪藏草稿持久化**：Popup 提取内容后自动保存 ClipDraft（tags + note + content）到 `clipmate_last_clip`；下次打开 Popup 时自动恢复，避免意外关闭丢失编辑中的标签和备注
-- **恢复/提取竞态处理**：`draftLoaded` 状态 + `restoredRef` 标记，确保恢复草稿时不触发重复提取；手动切换模式正常提取
-- **Background SW 安全**：不再对未知消息类型响应 `{ success: true }`，避免未来误用 `sendToRuntime` 收到虚假成功
-- **错误码统一**：`ERROR_MESSAGES` 常量提取到 `src/shared/constants/defaults.ts`，Popup 和测试均可引用
-- 构建：76 modules, 822ms
-- Lint：0 errors, 0 warnings
-- 测试：26 passed（+12，新增 content-parser.test.ts）
+- 剪藏草稿持久化、竞态处理、Background SW 安全、错误码统一
+- 构建：76 modules, 822ms，Lint 0，测试 26 passed
 
 ---
 
 ## Session 3：实现 Popup 和 Options UI，本地闭环可用 (2026-06-10)
 
-### 新增文件
-- `src/shared/types/clip.types.ts` — ClipMode, ExtractedContent, ClipDraft, ClipMetadata
-- `src/shared/types/settings.types.ts` — ClipMateSettings 接口
-- `src/shared/types/message.types.ts` — 消息协议类型（ClipMateMessage, ExtractPageResponse 等）
-- `src/shared/constants/messageTypes.ts` — 6 种消息类型常量
-- `src/shared/constants/defaults.ts` — DEFAULT_SETTINGS, STORAGE_KEYS
-- `src/shared/storage/storage.ts` — chrome.storage.local Promise 封装（getSettings/saveSettings/getLastClipDraft/saveLastClipDraft/clearLastClipDraft）
-- `src/shared/messaging/sendMessage.ts` — sendToActiveTab / sendToRuntime 消息工具
-- `src/shared/utils/logger.ts` — 日志工具（仅输出模式+字数，绝不出全文/Token）
-- `src/shared/utils/errors.ts` — ClipMateError 类 + ErrorCodes 常量
-- `src/shared/utils/formatMarkdown.ts` — countWords / snippet 工具函数
-- `src/content/extractors/readabilityExtractor.ts` — @mozilla/readability 全文提取
-- `src/content/extractors/selectionExtractor.ts` — 用户选区提取（组合 getSelectionHtml + getSelectionText）
-- `src/content/extractors/fallbackExtractor.ts` — Readability 失败时降级到 body.innerText
-- `src/content/parser/metaParser.ts` — 元数据解析（OG + 标准 meta）
-- `src/content/parser/htmlToMarkdown.ts` — turndown HTML→Markdown（h1-h6/p/a/img/ul/ol/li/code/del/s）
-- `src/content/parser/contentCleaner.ts` — 移除 script/style/noscript/iframe
-- `src/content/selection/getSelectionHtml.ts` — 获取选区 HTML
-- `src/content/selection/getSelectionText.ts` — 获取选区纯文本
-- `tests/shared-utils.test.ts` — 14 个单元测试（countWords/snippet/errors/constants）
+（省略详细信息，参见 Session 3.1 CHANGELOG）
 
-### 修改文件
-- `src/content/index.ts` — 从占位空壳重写为完整消息处理：监听 EXTRACT_CURRENT_PAGE 和 GET_SELECTION，协调提取器/解析器/Sanitizer
-- `src/shared/types/index.ts` — 改为 barrel re-export
-- `src/shared/constants/index.ts` — 改为 barrel re-export
-- `src/shared/utils/index.ts` — 改为 barrel re-export
-- `src/shared/storage/index.ts` — 改为 barrel re-export
-- `src/shared/messaging/index.ts` — 改为 barrel re-export
+---
 
-### 新增依赖
-- `@mozilla/readability` (dependencies) — Mozilla 正文提取
-- `turndown` (dependencies) — HTML → Markdown 转换
-- `@types/turndown` (devDependencies) — turndown 类型定义
-- `jsdom` (devDependencies) — Vitest 运行环境
+## Session 2：shared 基础层与 Content Script 提取 (2026-06-10)
 
-### 改动摘要
-- 完整的 shared 基础层：类型系统、消息协议、chrome.storage Promise 封装、日志/错误工具
-- Content Script 提取链路：clone document → clean → Readability → fail? → fallback → Markdown
-- 选区提取：检查 selection → 返回 html+text → 无选区返回 { success: false, error: 'NO_SELECTION' }
-- 构建：`npm run build` 通过，Content Script bundle 47.73KB (gzip 16.24KB)
-- 测试：`npm run test` 通过，14 个测试
-- 安全：Token 不在日志中输出，日志仅输出模式和字数
+（省略详细信息，参见 Session 3 CHANGELOG）
 
 ---
 
 ## Session 1：创建 Vite + React + MV3 插件脚手架 (2026-06-10)
 
-### 新增文件
-- `package.json` — npm 项目配置，含 react/vite/crxjs/tailwind/eslint/prettier/vitest
-- `tsconfig.json` — TypeScript 配置（ES2020, react-jsx, bundler 模块解析）
-- `vite.config.ts` — Vite 配置 + React 插件 + @crxjs/vite-plugin + Vitest
-- `manifest.config.ts` — Manifest V3 声明（popup/options/background/content）
-- `tailwind.config.js` — Tailwind CSS 配置
-- `postcss.config.js` — PostCSS 配置（tailwindcss + autoprefixer）
-- `.eslintrc.cjs` — ESLint 配置（TypeScript + React Hooks + Prettier）
-- `.prettierrc` — Prettier 格式化配置
-- `src/background/index.ts` — Service Worker 入口
-- `src/content/index.ts` — Content Script 入口
-- `src/popup/index.html` — Popup HTML 入口
-- `src/popup/main.tsx` — Popup React 挂载点
-- `src/popup/App.tsx` — Popup UI 组件（显示版本号 + 打开设置按钮）
-- `src/options/index.html` — Options HTML 入口
-- `src/options/main.tsx` — Options React 挂载点
-- `src/options/App.tsx` — Options UI 组件（设置页占位）
-- `src/styles/globals.css` — Tailwind 指令
-- `src/shared/types/index.ts` — 类型定义占位
-- `src/shared/constants/index.ts` — 常量占位
-- `src/shared/messaging/index.ts` — 消息通信占位
-- `src/shared/storage/index.ts` — 存储封装占位
-- `src/shared/utils/index.ts` — 工具函数占位
-- `tests/example.test.ts` — Vitest 占位测试
-- `public/icons/` — 图标目录（空）
-
-### 改动摘要
-- 完成 Vite + React + TypeScript + Manifest V3 插件脚手架搭建
-- `npm install` 成功安装 335 个包
-- `npm run build`（tsc --noEmit + vite build）成功，生成 `dist/` 目录
-- dist/ 包含：manifest.json, service-worker-loader.js, popup/options HTML+JS, content script assets
-- 权限最小化：仅 storage + activeTab
-- 所有 UI 入口均为空壳，功能待后续 Session 实现
+（省略详细信息，参见 Session 1 CHANGELOG）
 
 ---
 
 ## Session 0 文档修补 (2026-06-10)
 
-### 修改文件
-- `docs/AGENT_CONTEXT.md` — 项目结构改为分层目录，放宽目录创建限制
-- `docs/CURRENT_STATUS.md` — 统一后续 Session 规划，加入人工验收节点
-- `docs/TEST_LOG.md` — 补充实际执行的 `New-Item` 命令记录和未执行命令说明
-- `docs/CHANGELOG_AGENT.md` — 本文档
-
-### 改动摘要
-- 将项目结构从扁平改为分层（允许 `handlers/`、`extractors/`、`parser/`、`selection/`、`components/`、`hooks/` 子目录）
-- 删除"禁止创建以上未列出的目录和文件"的硬限制，改为"新增文件必须服务于当前 Session"
-- Session 规划调整为 5 个开发 Session + 2 个人工验收点
-- 测试日志补充了实际执行过的目录创建命令
-- 明确标注 npm install / build / test / lint 均未执行
+（省略详细信息，参见 Session 0 CHANGELOG）
 
 ---
 
 ## Session 0 初始创建 (2026-06-10)
 
-### 新增文件
-- `docs/AGENT_CONTEXT.md` — 项目总上下文和固定规则
-- `docs/CURRENT_STATUS.md` — 当前进度追踪
-- `docs/DECISIONS.md` — 技术决策记录（9 条决策）
-- `docs/CHANGELOG_AGENT.md` — 本文档
-- `docs/TEST_LOG.md` — 测试记录
-- `docs/ISSUES.md` — 已知问题追踪
-- `docs/RELEASE_CHECKLIST.md` — 发布检查清单
-- `docs/PRIVACY_POLICY_DRAFT.md` — 隐私政策草稿
-- `docs/STORE_LISTING_DRAFT.md` — 商店文案草稿
-
-### 改动摘要
-- 创建了 `clipmate-v0.1/docs/` 目录和全部 9 个续接文档
-- 明确了 v0.1 范围：13 项必做、10 项禁止
-- 记录了 9 条技术决策
-- 记录了 4 条已知风险
-- 未安装任何依赖，未创建任何代码文件
-
+（省略详细信息，参见 Session 0 CHANGELOG）

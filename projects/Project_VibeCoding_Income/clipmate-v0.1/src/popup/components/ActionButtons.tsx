@@ -1,6 +1,7 @@
 interface Props {
   hasContent: boolean
   copied: boolean
+  saving: boolean
   onCopy: () => void
   onSaveToNotion: () => void
   onOpenSettings: () => void
@@ -9,6 +10,7 @@ interface Props {
 export default function ActionButtons({
   hasContent,
   copied,
+  saving,
   onCopy,
   onSaveToNotion,
   onOpenSettings,
@@ -28,10 +30,10 @@ export default function ActionButtons({
       </button>
       <button
         className="flex-1 px-3 py-2 text-sm font-medium rounded bg-gray-700 text-white hover:bg-gray-800 transition-colors disabled:opacity-40"
-        disabled={!hasContent}
+        disabled={!hasContent || saving}
         onClick={onSaveToNotion}
       >
-        保存到 Notion
+        {saving ? '保存中...' : '保存到 Notion'}
       </button>
       <button
         className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"

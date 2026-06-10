@@ -6,6 +6,18 @@
 
 ## 开放问题
 
+### I-008：Notion rich_text 各字段可能超过 2000 字限制
+
+- **状态**：✅ 已修复 (Session 4.1)
+- **描述**：blocks.ts 中标题、URL 显示文本、标签拼接文本、备注 callout 的 rich_text 未做 2000 字长度限制。若用户输入超长备注（>2000 字），Notion API 会拒绝请求。标题、URL、标签理论上也可能超长。
+- **修复**：标题截断到 2000 字；URL 显示文本截断（保留完整 href）；标签文本截断；备注按 2000 字切分为多个 callout block（首个带📝图标）。
+
+### I-007：appendBlocks 的错误映射未经单元测试
+
+- **状态**：✅ 已修复 (Session 4.1)
+- **描述**：client.ts 的 HTTP 状态码→错误码映射（401/403→AUTH_FAILED, 404→PAGE_NOT_FOUND, 429→RATE_LIMITED, 500→SAVE_FAILED, fetch reject→NETWORK_ERROR）和分批逻辑（100 blocks/batch）未有专门的单元测试。
+- **修复**：新增 `tests/notion-client.test.ts`（10 tests），mock fetch 覆盖全部 6 种错误映射 + 4 个分批场景。
+
 ### I-006：ClipDraft 恢复与自动提取存在潜在竞态
 
 - **状态**：🟡 已缓解
@@ -50,6 +62,12 @@
 ---
 
 ## 已解决问题
+
+### I-S4-001：不存在 Notion API 保存链路（Session 4）
+✅ 已实现：完整 Popup → Background SW → Notion API 保存链路。包括 client.ts（API 封装，401/403/404/429 错误映射）、blocks.ts（ClipDraft→Blocks 转换，2000 字切分）、notionHandler.ts（校验 Token/Page ID/内容）、useSaveToNotion.ts（loading/error/saved 状态）。新增 host_permissions: https://api.notion.com/*。
+
+### I-001：Notion API 保存格式可能需要后续调试（Session 4）
+✅ 已解决：Session 4 完成 Notion API 集成。支持基础 blocks：heading_2（标题）、paragraph（URL/标签）、callout（备注）、divider、paragraph（正文段落）。正文按纯文本段落保存（双换行分段），长文本自动切分 2000 字。复杂元素（表格/嵌套列表）降级为纯文本段落。待真机验证。
 
 ### I-S3.1-001：剪藏草稿不持久化，标签/备注在 Popup 关闭后丢失（Session 3.1）
 ✅ 已修复：`src/popup/App.tsx` 新增 auto-save / restore 逻辑。提取成功后自动保存 ClipDraft（Content + Tags + Note）到 `chrome.storage.local`；Popup 打开时自动恢复上次草稿。使用 `draftLoaded` 状态 + `restoredRef` 标记防止恢复与自动提取的竞态。
