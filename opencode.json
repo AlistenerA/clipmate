@@ -118,7 +118,7 @@
     "mcp_timeout": 60000
   },
 
-  "plugin": [],
+  "plugin": ["litewolf"],
 
   "permission": {
     "edit": "ask",
