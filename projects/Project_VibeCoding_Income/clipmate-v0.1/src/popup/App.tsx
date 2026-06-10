@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import ClipModeToggle from './components/ClipModeToggle'
 import ContentPreview from './components/ContentPreview'
 import TagEditor from './components/TagEditor'
@@ -9,27 +9,58 @@ import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
 import { useCopyMarkdown } from './hooks/useCopyMarkdown'
-import { getSettings } from '../shared/storage/storage'
-import type { ClipMode } from '../shared/types/clip.types'
+import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
+import type { ClipMode, ClipDraft } from '../shared/types/clip.types'
 
 export default function App() {
   const { tab } = useCurrentTab()
   const [mode, setMode] = useState<ClipMode>('fullpage')
-  const { content, loading, error, extract } = useExtractContent()
-  const { tags, addTag, removeTag, note, setNote } = useClipDraft()
+  const { content, loading, error, extract, setContent } = useExtractContent()
+  const { tags, setTags, addTag, removeTag, note, setNote } = useClipDraft()
   const { copy, copied } = useCopyMarkdown()
 
   const [notionConfigured, setNotionConfigured] = useState(false)
+  const [draftLoaded, setDraftLoaded] = useState(false)
+  const restoredRef = useRef(false)
 
   useEffect(() => {
     getSettings().then((s) => {
       setNotionConfigured(Boolean(s.notionToken && s.notionPageId))
     })
+    getLastClipDraft().then((draft) => {
+      if (draft?.content) {
+        restoredRef.current = true
+        setContent(draft.content)
+        setTags(draft.tags)
+        setNote(draft.note)
+        setMode(draft.mode)
+      }
+      setDraftLoaded(true)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setContent/setTags/setNote are stable setters
   }, [])
 
   useEffect(() => {
+    if (!draftLoaded) return
+    if (restoredRef.current) {
+      restoredRef.current = false
+      return
+    }
     extract(mode)
-  }, [mode, extract])
+  }, [mode, draftLoaded, extract])
+
+  useEffect(() => {
+    if (!content) return
+    const draft: ClipDraft = {
+      title: content.title,
+      tags,
+      note,
+      mode: content.mode,
+      content,
+    }
+    saveLastClipDraft(draft)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- use createdAt as identity to avoid infinite loop
+  }, [content?.metadata?.createdAt, tags, note])
 
   const statusLabel: 'idle' | 'loading' | 'success' | 'error' = loading
     ? 'loading'

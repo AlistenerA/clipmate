@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { sendToActiveTab } from '../../shared/messaging/sendMessage'
 import { MESSAGE_TYPES } from '../../shared/constants/messageTypes'
+import { ERROR_MESSAGES } from '../../shared/constants/defaults'
 import type { ExtractedContent, ClipMode } from '../../shared/types/clip.types'
 import type { ExtractPageResponse, SelectionResponse } from '../../shared/types/message.types'
 
@@ -30,7 +31,7 @@ export function useExtractContent() {
       if (result.success) {
         setContent(result.data)
       } else {
-        setError(translateError(result.error))
+        setError(ERROR_MESSAGES[result.error] || `提取失败（${result.error}）`)
         setContent(null)
       }
     } catch (err) {
@@ -53,12 +54,4 @@ export function useExtractContent() {
   }, [])
 
   return { content, loading, error, extract, clear, setContent }
-}
-
-function translateError(code: string): string {
-  const map: Record<string, string> = {
-    NO_SELECTION: '请先选中页面文字后再提取',
-    EXTRACTION_FAILED: '内容提取失败，请尝试全文模式',
-  }
-  return map[code] || `提取失败（${code}）`
 }

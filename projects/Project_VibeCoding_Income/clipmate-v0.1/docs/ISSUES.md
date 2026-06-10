@@ -6,6 +6,13 @@
 
 ## 开放问题
 
+### I-006：ClipDraft 恢复与自动提取存在潜在竞态
+
+- **状态**：🟡 已缓解
+- **描述**：Popup 打开时同时触发「恢复上次草稿」和「自动提取」，可能导致恢复的草稿被提取覆盖，或反之。Session 3.1 通过 `draftLoaded` + `restoredRef` 机制已缓解：有草稿时跳过自动提取，无草稿时正常提取。
+- **影响**：边界场景下可能出现短暂闪烁（先显示恢复内容，mode 变化后重新提取）。不影响数据正确性。
+- **缓解**：v0.1 可接受。v0.2+ 可考虑 URL 匹配检查（仅当草稿 URL 与当前页 URL 匹配时才恢复）。
+
 ### I-001：Notion API 保存格式可能需要后续调试
 
 - **状态**：🟡 Session 4 接入
@@ -43,6 +50,15 @@
 ---
 
 ## 已解决问题
+
+### I-S3.1-001：剪藏草稿不持久化，标签/备注在 Popup 关闭后丢失（Session 3.1）
+✅ 已修复：`src/popup/App.tsx` 新增 auto-save / restore 逻辑。提取成功后自动保存 ClipDraft（Content + Tags + Note）到 `chrome.storage.local`；Popup 打开时自动恢复上次草稿。使用 `draftLoaded` 状态 + `restoredRef` 标记防止恢复与自动提取的竞态。
+
+### I-S3.1-002：Background SW 对所有消息返回 `{ success: true }`（Session 3.1）
+✅ 已修复：`src/background/index.ts` 不再响应未处理消息类型，仅记录日志。避免未来误用 `sendToRuntime` 时收到虚假成功。
+
+### I-S3.1-003：错误码翻译函数不可测试（Session 3.1）
+✅ 已修复：`src/shared/constants/defaults.ts` 新增 `ERROR_MESSAGES` 常量，`useExtractContent.ts` 移除私有 `translateError` 函数改用共享常量。
 
 ### I-S3-001：Lint 未使用变量（Session 3）
 ✅ 已修复：移除 App.tsx 中未使用的 `resetDraft`、ActionButtons.tsx 中 `notionConfigured`、StatusBar.tsx 中 `error` prop。

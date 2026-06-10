@@ -122,3 +122,25 @@
 - **原因**：剪藏工具的目标用户是中文用户，错误信息（如"请先选中页面文字后再提取"、"内容提取失败，请尝试全文模式"）比英文代码（如"NO_SELECTION"、"EXTRACTION_FAILED"）更友好。
 - **影响**：翻译映射表 `Record<string, string>` 在 useExtractContent hook 中维护。新错误码需同步添加翻译。
 - **可反转性**：高。可替换为 i18n 方案，但 v0.1 暂不需要。
+
+---
+
+## Session 3.1 决策
+
+### D-018：剪藏草稿在 Popup 关闭前自动持久化到 chrome.storage.local
+
+- **原因**：Session 3 实现中，标签和备注仅在 React state 中存在，Popup 关闭即丢失。用户可能在添加标签/备注后意外关闭 Popup，应能恢复上次编辑状态。
+- **影响**：Popup 打开时尝试恢复上次草稿（跳过自动提取）；提取成功或标签变更时自动保存。Note 变更也触发保存（接受每按键一次写入的性能开销）。
+- **可反转性**：高。后续可添加 debounce 或整合到 Notion API 保存流程。
+
+### D-019：Background SW 不响应未处理的消息类型
+
+- **原因**：Session 3 中 Background SW 对所有消息返回 `{ success: true }`，若未来误用 `sendToRuntime` 会收到虚假成功，掩盖真实错误。
+- **影响**：改为仅记录日志不响应（`return false`），`sendToRuntime` 调用方会收到错误，更早暴露问题。
+- **可反转性**：高。后续 Background SW 需要处理消息时直接添加对应 handler。
+
+### D-020：ERROR_MESSAGES 常量提取到 shared/constants/defaults.ts
+
+- **原因**：Session 3 的错误码翻译是 `useExtractContent` 内的私有函数，无法被测试覆盖。提取为共享常量后，Popup 和测试均可引用。
+- **影响**：`src/shared/constants/defaults.ts` 新增 `ERROR_MESSAGES` 导出。`useExtractContent.ts` 移除私有 `translateError` 函数。
+- **可反转性**：高。后续可改为 i18n 方案。

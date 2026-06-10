@@ -1,6 +1,6 @@
 console.log('[ClipMate] background ready')
 
-chrome.runtime.onMessage.addListener((_message, _sender, sendResponse) => {
-  sendResponse({ success: true })
-  return true
+chrome.runtime.onMessage.addListener((message) => {
+  console.log('[ClipMate] background received unhandled message:', message?.type)
+  return false
 })

@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Session 3 已完成** — Popup 和 Options UI 已实现，本地闭环可用。
+**Session 3.1 已完成** — Session 3 遗留问题修复，基础链路完整可进入 Notion API 阶段。
 
 ---
 
@@ -29,7 +29,8 @@
 | 内容清洗 | ✅ 已完成 | 移除 script/style/noscript/iframe |
 | Popup UI | ✅ 已完成 | 完整 UI：模式切换/内容预览/标签/备注/复制MD/打开设置 |
 | Options 设置页 | ✅ 已完成 | Notion 配置/默认标签/历史开关/调试面板 |
-| Background SW | 🟡 基础 | 只做基础路由，Settings 通过 Popup/Options 直接 storage 操作 |
+| Background SW | ✅ 完成 | 仅日志记录，不响应未处理消息 |
+| Popup 剪藏草稿持久化 | ✅ 已完成 | 自动保存/恢复 clip draft（Content → Tags → Note 联动） |
 | Notion API | ⬜ 未开始 | 保存到 Notion |
 | 测试 | 🟡 基础 | 14 个测试（shared utils + 占位） |
 | 上架材料 | ⬜ 未开始 | 隐私政策/商店文案草稿已有 |
@@ -60,12 +61,20 @@
   - 构建：`npm run build` 成功，76 modules
   - Lint：0 errors, 0 warnings
   - 测试：14 passed
+- [x] Session 3.1：基础链路审查与修复
+  - 剪藏草稿自动持久化：提取内容后自动保存 ClipDraft（Content+Tags+Note）到 chrome.storage.local，再次打开 Popup 时自动恢复
+  - Background SW 清理：不再对未处理消息返回虚假 `{ success: true }`
+  - 错误码中文化统一到 `ERROR_MESSAGES` 常量
+  - 新增测试：contentCleaner / parseMetadata / ERROR_MESSAGES / STORAGE_KEYS（+12 tests）
+  - 构建：`npm run build` 成功，76 modules
+  - Lint：0 errors, 0 warnings
+  - 测试：26 passed（+12）
 
 ---
 
 ## 未完成（按优先级）
 
-1. ~~Session 3：实现 Popup 和 Options，本地闭环可用~~ ✅ 已完成
+1. ~~Session 3.1：修复 Session 3 遗留问题~~ ✅ 已完成
 2. 人工验收 A：整理材料交给 ChatGPT 审查
 3. Session 4：实现 Notion 保存与完整链路
 4. Session 5：测试、修复、打包和上架材料

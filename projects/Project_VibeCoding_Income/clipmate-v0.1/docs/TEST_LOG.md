@@ -4,6 +4,59 @@
 
 ---
 
+## Session 3.1 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run build
+```
+构建成功：76 modules, 822ms
+- tsc: 无类型错误
+- vite build: 76 个模块，822ms
+- Popup bundle: 8.32KB (gzip 3.48KB)
+- Options bundle: 5.33KB (gzip 1.96KB)
+- Content Script bundle: 47.55KB (gzip 16.17KB)
+
+```pwsh
+npm run lint
+```
+首次报错（现有代码残留导致重复 useEffect 语法错误）→ 已修复：
+- `src/popup/App.tsx` 第26-30行：旧 useEffect 头未完全被替换，导致重复声明
+
+修复后 lint 报 2 warnings（exhaustive-deps）→ 添加 eslint-disable 注释后通过。
+
+最终：0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+26 tests passed, 3 test files, 1.37s。
+
+```pwsh
+npm run build
+```
+最终验证：76 modules, 822ms 成功。
+
+### 测试结果
+
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/shared-utils.test.ts (13 tests) 3ms
+✓ tests/content-parser.test.ts (12 tests) 78ms
+
+Test Files  3 passed (3)
+     Tests  26 passed (26)
+  Duration  1.37s
+```
+
+### 错误/失败
+
+- **Lint 语���错误**（重复 useEffect 头）→ 删除残留代码后修复
+- **Lint 2 warnings**（exhaustive-deps）→ 添加 eslint-disable 注释，0 errors
+
+---
+
 ## Session 3 (2026-06-10)
 
 ### 运行命令
