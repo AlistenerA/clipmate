@@ -1,8 +1,46 @@
-# 环境变量 / 密钥
+# dependencies
+node_modules/
+
+# build outputs
+dist/
+build/
+*.zip
+*.crx
+
+# env / secrets
 .env
-.env.local
-*.pem
-*.key
+.env.*
+!.env.example
+*.token
+*.secret
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# coverage
+coverage/
+
+# local AI / MCP / tool state
+.opencode/
+.playwright-mcp/
+.wolf/
+projects/Project_VibeCoding_Income/.opencode/
+projects/Project_VibeCoding_Income/.playwright-mcp/
+projects/Project_VibeCoding_Income/.wolf/
+
+# private instructor / raw chat logs
+projects/Project_VibeCoding_Income-clipmate-instructor/
+projects/Project_VibeCoding_Income/补全图标.md
+*_聊天内容.md
+session*.md
+
+# ClipMate build/package outputs
+projects/Project_VibeCoding_Income/clipmate-v0.1/dist/
+projects/Project_VibeCoding_Income/clipmate-v0.1/*.zip
+projects/Project_VibeCoding_Income/clipmate-icons.zip
 
 # Python
 __pycache__/
@@ -14,7 +52,9 @@ venv/
 # uv
 uv.lock
 
-# 系统
+# OS / editor
+.DS_Store
 Thumbs.db
 Desktop.ini
-*.log
+.vscode/
+.idea/
