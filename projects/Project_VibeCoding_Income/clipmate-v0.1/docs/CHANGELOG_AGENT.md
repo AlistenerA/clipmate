@@ -4,6 +4,44 @@
 
 ---
 
+## Session 3：实现 Popup 和 Options UI，本地闭环可用 (2026-06-10)
+
+### 新增文件
+- `src/popup/hooks/useCurrentTab.ts` — 获取当前标签页信息（title/url/hostname）
+- `src/popup/hooks/useExtractContent.ts` — Content Script 提取钩子（loading/error/content/extract）
+- `src/popup/hooks/useClipDraft.ts` — 剪藏草稿管理（tags/addTag/removeTag/note，加载默认标签）
+- `src/popup/hooks/useCopyMarkdown.ts` — 复制到剪贴板钩子（Clipboard API + execCommand fallback）
+- `src/popup/components/ClipModeToggle.tsx` — 全文/选区模式切换按钮组
+- `src/popup/components/ContentPreview.tsx` — 内容预览（标题/URL/前500字/loading/error 状态）
+- `src/popup/components/TagEditor.tsx` — 标签编辑器（逗号/回车分隔，Backspace 删除，标签芯片）
+- `src/popup/components/NoteEditor.tsx` — 备注编辑器（textarea）
+- `src/popup/components/StatusBar.tsx` — 状态栏（字数/模式/提取状态）
+- `src/popup/components/ActionButtons.tsx` — 操作按钮组（复制MD/保存到Notion/打开设置）
+- `src/options/components/NotionSettingsForm.tsx` — Notion配置表单（Token password字段/Page ID文本框）
+- `src/options/components/DefaultTagsForm.tsx` — 默认标签配置（逗号分隔标签列表）
+- `src/options/components/StorageDebugPanel.tsx` — 调试面板（脱敏Token显示/当前配置概览）
+- `src/options/components/SettingsStatus.tsx` — 保存状态提示（saving/saved/error）
+- `src/styles/popup.css` — Popup基础样式（宽度限制 360-420px）
+- `src/styles/options.css` — Options样式（空文件，占位）
+
+### 修改文件
+- `src/popup/App.tsx` — 从占位空壳重写为完整 Popup：组合所有hooks和组件、自动提取/模式切换、复制/保存/设置按钮
+- `src/popup/main.tsx` — 引入 popup.css
+- `src/options/App.tsx` — 从占位空壳重写为完整设置页：加载/保存/清空配置、所有组件编排
+- `src/options/main.tsx` — 引入 options.css
+
+### 改动摘要
+- Popup 完整功能：模式切换、自动提取、内容预览（前500字）、标签/备注编辑、复制Markdown、保存到Notion（配置检查）、打开设置
+- Options 完整功能：Notion Token（password input）、Page ID、默认标签、剪藏历史开关、保存/清空、调试面板（Token脱敏显示）
+- 错误信息中文化（FAILED_EXTRACTION → 内容提取失败，NO_SELECTION → 请先选中文字）
+- Popup 宽度 384px（Tailwind w-96），中文界面，简洁风格
+- 安全：Token通过password输入框隐藏，调试面板仅显示脱敏Token（前4+后4其余为*），不在console输出
+- 构建：76 modules, 729ms
+- Lint：0 errors, 0 warnings
+- 测试：14 passed
+
+---
+
 ## Session 2：实现 shared 基础层与 Content Script 提取 (2026-06-10)
 
 ### 新增文件

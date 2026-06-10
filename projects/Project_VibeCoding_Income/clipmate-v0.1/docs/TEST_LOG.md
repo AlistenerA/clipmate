@@ -4,6 +4,57 @@
 
 ---
 
+## Session 3 (2026-06-10)
+
+### 运行命令
+
+```pwsh
+npm run build
+```
+构建成功：76 modules, 729ms
+- tsc: 无类型错误
+- vite build: 76 个模块，729ms
+- Popup bundle: 8.02KB (gzip 3.40KB)
+- Options bundle: 5.33KB (gzip 1.96KB)
+- Content Script bundle: 47.55KB (gzip 16.17KB)
+
+```pwsh
+npm run lint
+```
+首次报错（3 个未使用变量）→ 已修复：
+- `resetDraft` in App.tsx → 从解构中移除
+- `notionConfigured` in ActionButtons.tsx → 从 Props 中移除
+- `error` in StatusBar.tsx → 从 Props 中移除
+
+修复后：0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+14 tests passed, 2 test files, 1.26s。
+
+```pwsh
+npm run build
+```
+最终验证：76 modules, 729ms 成功。
+
+### 测试结果
+
+```text
+✓ tests/example.test.ts (1 test) 1ms
+✓ tests/shared-utils.test.ts (13 tests) 3ms
+
+Test Files  2 passed (2)
+     Tests  14 passed (14)
+  Duration  1.26s
+```
+
+### 错误/失败
+
+- **Lint 第一轮失败**（3 个 unused vars）→ 全部修复，第二轮通过
+
+---
+
 ## Session 2 (2026-06-10)
 
 ### 运行命令

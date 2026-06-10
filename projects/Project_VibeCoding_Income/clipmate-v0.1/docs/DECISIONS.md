@@ -94,3 +94,31 @@
 - **原因**：防止敏感信息泄露到 Console。Content Script 运行在用户页面的 JS 上下文中，任何 console 输出都可能被页面脚本读取（虽然概率低）。
 - **影响**：调试略不便（需手动检查提取结果），但安全性优先。
 - **可反转性**：高。后续可添加 debug mode 开关。
+
+---
+
+## Session 3 决策
+
+### D-014：Popup/Options 直接使用 chrome.storage.local，不走 Background 路由
+
+- **原因**：Popup 和 Options 页面本身具有完整的 chrome.* API 访问权限，直接调用 `chrome.storage.local` 比通过 Background Service Worker 中继更简单、更少延迟、更少代码。Background SW 的 `GET_SETTINGS`/`SAVE_SETTINGS` 消息类型预留给未来可能需要跨上下文共享设置的场景（如 Content Script 读取设置）。
+- **影响**：Settings 的读写逻辑在 Popup/Options 中通过 shared storage 模块完成，Background SW 保持轻量。
+- **可反转性**：高。后续可改为通过 Background 路由，只需修改调用方使用 `sendToRuntime` 而非直接 import storage 模块。
+
+### D-015：复制功能使用 Clipboard API + execCommand fallback
+
+- **原因**：`navigator.clipboard.writeText` 是标准 API，但在某些上下文（如 Chrome Extension Popup）可能因权限不足而失败。`document.execCommand('copy')` 是成熟的 fallback 方案。
+- **影响**：复制 Markdown 成功率提升，即使 Clipboard API 不可用也能通过 textarea + execCommand 完成。
+- **可反转性**：低。这是标准实践，无需反转。
+
+### D-016：Popup 状态管理使用组件内 useState + 组合 hooks，不用 Context/Reducer
+
+- **原因**：Popup 页面简单（单页面、无深层组件嵌套、无跨组件状态共享需求），用 React Context + useReducer 是过度工程。4 个自定义 hooks（useCurrentTab/useExtractContent/useClipDraft/useCopyMarkdown）组合在 App.tsx 中，每个 hook 职责单一。
+- **影响**：代码更直观、易调试。如果后续 Popup 变得更复杂（多页面、多步向导），可重构为 Context。
+- **可反转性**：高。组件间通过 props 传递，改为 Context 只需包装 Provider。
+
+### D-017：错误信息中文化，面向最终用户
+
+- **原因**：剪藏工具的目标用户是中文用户，错误信息（如"请先选中页面文字后再提取"、"内容提取失败，请尝试全文模式"）比英文代码（如"NO_SELECTION"、"EXTRACTION_FAILED"）更友好。
+- **影响**：翻译映射表 `Record<string, string>` 在 useExtractContent hook 中维护。新错误码需同步添加翻译。
+- **可反转性**：高。可替换为 i18n 方案，但 v0.1 暂不需要。

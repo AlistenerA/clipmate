@@ -8,10 +8,11 @@
 
 ### I-001：Notion API 保存格式可能需要后续调试
 
-- **状态**：未开始
+- **状态**：🟡 Session 4 接入
 - **描述**：Notion API 的 Block 格式对复杂 HTML 的兼容性待验证。特别是 `<table>`、嵌套列表、代码块等复杂元素。
 - **影响**：富文本页面可能丢失格式。
 - **缓解**：优先支持基础 Block（段落、标题、列表、引用、图片），复杂元素降级为纯文本。
+- **更新**：Session 3 已实现 Popup 配置检查和占位提示。Session 4 将实现完整 Notion API 调用链。
 
 ### I-002：Readability 对复杂网页可能提取失败，需要 fallback
 
@@ -36,12 +37,15 @@
 ### I-005：Bundle 体积偏大
 
 - **状态**：🟡 待评估
-- **描述**：Content Script bundle 47.73KB (gzip 16.24KB)，主要来自 @mozilla/readability 和 turndown。对于浏览器扩展来说可接受，但后续可考虑代码拆分。
+- **描述**：Content Script bundle 47.55KB (gzip 16.17KB)，主要来自 @mozilla/readability 和 turndown。对于浏览器扩展来说可接受，但后续可考虑代码拆分。
 - **缓解**：v0.1 不优化，v0.2+ 可考虑按需加载或 tree-shaking。
 
 ---
 
 ## 已解决问题
+
+### I-S3-001：Lint 未使用变量（Session 3）
+✅ 已修复：移除 App.tsx 中未使用的 `resetDraft`、ActionButtons.tsx 中 `notionConfigured`、StatusBar.tsx 中 `error` prop。
 
 ### I-S2-001：turndown 和 jsdom 类型依赖缺失（Session 2）
 ✅ 已安装 @types/turndown 和 jsdom。
