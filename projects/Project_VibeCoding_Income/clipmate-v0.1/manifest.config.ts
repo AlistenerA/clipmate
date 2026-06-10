@@ -23,6 +23,12 @@ const manifest: ManifestV3Export = {
       js: ['src/content/index.ts']
     }
   ],
+  icons: {
+    '16': 'icons/icon-16.png',
+    '32': 'icons/icon-32.png',
+    '48': 'icons/icon-48.png',
+    '128': 'icons/icon-128.png'
+  },
   permissions: ['storage', 'activeTab'],
   host_permissions: ['https://api.notion.com/*']
 }

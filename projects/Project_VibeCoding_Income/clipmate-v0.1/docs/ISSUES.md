@@ -8,10 +8,7 @@
 
 ### I-016：public/icons/ 图标文件缺失（Session 5）
 
-- **状态**：🔴 阻塞上架
-- **描述**：`public/icons/` 目录为空，dist 构建产物中亦无图标文件。Edge Add-ons 上架需要提供 16×16、32×32、48×48、128×128 的 PNG 图标。当前扩展加载后工具栏图标可能显示为默认占位符。
-- **影响**：无法通过 Edge Add-ons 审核。扩展在工具栏无自定义图标。
-- **缓解**：需人工补充 PNG 图标文件到 `public/icons/` 目录，重新 build 和 zip。
+✅ 已解决（Session 5.1）— `public/icons/` 已部署 6 个图标文件（16/32/48/128/512 PNG + SVG source），manifest 已声明 icons 配置，dist 和 zip 均包含图标。
 
 ### I-006：ClipDraft 恢复与自动提取存在潜在竞态
 

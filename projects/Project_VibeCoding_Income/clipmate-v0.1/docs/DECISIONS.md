@@ -4,6 +4,16 @@
 
 ---
 
+## Session 5.1 决策
+
+### D-035：zip 脚本改用 .NET ZipFile API，不再依赖 PowerShell Archive 模块
+
+- **原因**：`Import-Module Microsoft.PowerShell.Archive` 在执行策略 Restricted 的系统上不可用。改用 `[System.IO.Compression.ZipFile]::CreateFromDirectory()` 是 .NET Framework 内置 API，无需加载外部模块，不受执行策略限制。
+- **影响**：`npm run zip` 在所有 Windows 系统上可用（.NET Framework 3.0+ 内置）。macOS/Linux 不可用。
+- **可反转性**：高。可后续添加跨平台方案。
+
+---
+
 ## Session 5 决策
 
 ### D-034：打包方式使用 PowerShell `Compress-Archive`，不引入 Node 打包依赖

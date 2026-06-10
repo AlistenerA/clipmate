@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Session 5 已完成** — 最终测试计划、发布材料定稿、打包脚本、READEME 完善。
+**Session 5.1 已完成** — 图标资源应用与重新打包。I-016 已解决。
 
 ---
 
@@ -39,7 +39,7 @@
 | 上架材料 | ✅ 定稿 | TEST_PLAN / QA 模板 / 隐私政策 / 商店文案 / 权限说明 / 发布清单 |
 | 打包 | ✅ 已就绪 | npm run zip（PowerShell） + 手动打包说明 |
 | README | ✅ 已完善 | 开发命令 / 加载步骤 / Notion 配置 / 隐私 / 已知限制 |
-| 图标资源 | ⚠️ 缺失 | public/icons/ 为空，上架前需补充 16/32/48/128 PNG |
+| 图标资源 | ✅ 已完成 | icon-16/32/48/128/512 PNG + SVG source |
 
 ---
 
@@ -54,17 +54,17 @@
 - [x] Session 4.1：Notion 保存链路小补测与安全检查
 - [x] Session 4.2：真机测试问题修复（5 项）
 - [x] Session 4.2.1：复测问题二次修复
-- [x] Session 5：最终测试计划、发布材料定稿、打包脚本、README 完善（本轮）
+- [x] Session 5：最终测试计划、发布材料定稿、打包脚本、README 完善
+- [x] Session 5.1：图标资源应用与重新打包（本轮）
 
 ---
 
 ## 未完成（按优先级）
 
 1. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试
-2. 补充图标资源：16×16, 32×32, 48×48, 128×128 PNG
-3. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
-4. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
-5. 提交 Edge Add-ons Partner Center
+2. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
+3. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
+4. 提交 Edge Add-ons Partner Center
 
 ---
 
@@ -72,4 +72,4 @@
 
 **人工验收 A** — 用户按 TEST_PLAN.md 逐项手动测试，填写 MANUAL_QA_RESULT_TEMPLATE.md，确认所有 16 项测试通过后进入人工验收 B。
 
-> Session 5 已验证：80 tests 全部通过，Lint 0 errors，Build 成功，Zip 打包成功（77.7KB）。所有发布材料已定稿。
+> Session 5.1 已验证：80 tests 全部通过，Lint 0 errors，Build 成功，Zip 打包成功（111KB），图标已部署到 dist 和 zip。

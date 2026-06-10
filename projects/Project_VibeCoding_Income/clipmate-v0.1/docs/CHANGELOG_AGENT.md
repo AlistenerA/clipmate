@@ -4,6 +4,37 @@
 
 ---
 
+## Session 5.1：图标资源应用与重新打包 (2026-06-10)
+
+### 新增文件
+- `public/icons/icon-16.png` — 16×16 工具栏图标
+- `public/icons/icon-32.png` — 32×32 图标
+- `public/icons/icon-48.png` — 48×48 图标
+- `public/icons/icon-128.png` — 128×128 扩展管理图标
+- `public/icons/icon-512.png` — 512×512 商店展示图标
+- `public/icons/icon-source.svg` — SVG 源文件
+
+### 修改文件
+- `manifest.config.ts` — 新增 `icons` 字段，声明 16/32/48/128 图标路径
+- `package.json` — 修复 `zip` 脚本：改用 .NET ZipFile API 替代依赖执行策略的 PowerShell Archive 模块
+- `docs/CURRENT_STATUS.md` — 更新为 Session 5.1 完成状态
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 5.1 运行记录
+- `docs/ISSUES.md` — I-016 标记为已解决
+- `docs/DECISIONS.md` — 新增 D-035（zip 脚本 .NET API）
+
+### 改动摘要
+- 从 `clipmate-icons.zip` 解压 6 个图标文件并复制到 `public/icons/`
+- manifest 新增 `icons` 配置，路径指向 `icons/icon-{16,32,48,128}.png`
+- 未修改任何业务代码（Popup / Options / Content Script / Background / Notion）
+- 构建：80 modules, 844ms
+- Lint：0 errors, 0 warnings
+- 测试：80 passed
+- Zip：clipmate-v0.1.zip (111KB)，含 6 个图标文件
+- I-016 图标缺失问题已解决
+
+---
+
 ## Session 5：最终测试计划、发布材料定稿、打包 (2026-06-10)
 
 ### 新增文件
