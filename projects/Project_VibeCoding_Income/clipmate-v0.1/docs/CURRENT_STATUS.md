@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-**Session 5.1 已完成** — 图标资源应用与重新打包。I-016 已解决。
+**v0.2 Session 0 已完成** — 范围确认、分支确认、V0.2_PLAN.md 已创建。v0.1 代码冻结，待 v0.2 开发启动。
 
 ---
 
@@ -70,6 +70,6 @@
 
 ## 下一阶段建议
 
-**人工验收 A** — 用户按 TEST_PLAN.md 逐项手动测试，填写 MANUAL_QA_RESULT_TEMPLATE.md，确认所有 16 项测试通过后进入人工验收 B。
+**v0.2 Session 1** — 数据结构升级与兼容迁移。按 `docs/V0.2_PLAN.md` 中 Session 1 范围执行：扩展 types、实现 migration.ts、扩展 storage CRUD、编写迁移测试。
 
-> Session 5.1 已验证：80 tests 全部通过，Lint 0 errors，Build 成功，Zip 打包成功（111KB），图标已部署到 dist 和 zip。
+> v0.1 代码冻结：80 tests 全部通过，Lint 0 errors，Build 成功，Zip 打包成功（111KB），图标已就绪。v0.2 开发在 feature/clipmate-v0.2-history-targets 分支上进行。

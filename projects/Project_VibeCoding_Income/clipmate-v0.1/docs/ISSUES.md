@@ -1,10 +1,16 @@
-# ISSUES.md — ClipMate v0.1 已知问题追踪
+# ISSUES.md — ClipMate v0.1 / v0.2 已知问题追踪
 
 > 记录所有未解决问题，不要隐藏失败。已解决的问题标记为 ✅。
 
 ---
 
-## 开放问题
+## v0.2 开放问题
+
+> v0.2 Session 0 已完成范围确认，暂无实现层面 issue。
+
+---
+
+## v0.1 开放问题
 
 ### I-016：public/icons/ 图标文件缺失（Session 5）
 

@@ -1,10 +1,27 @@
-# TEST_LOG.md — ClipMate v0.1 测试记录
+# TEST_LOG.md — ClipMate v0.1 / v0.2 测试记录
 
 > 记录每轮运行过的命令、结果、错误。不隐藏失败。
 
 ---
 
-## Session 5.1 (2026-06-10)
+## v0.2 Session 0 (2026-06-11)
+
+### 运行命令
+
+无。本轮为纯规划 Session，未修改业务代码，未运行测试/构建/lint。
+
+### 产出
+
+- `docs/V0.2_PLAN.md` — v0.2 迭代规划文档
+- 更新 CURRENT_STATUS / CHANGELOG_AGENT / DECISIONS
+
+### 错误/失败
+
+无。
+
+---
+
+## v0.1 Session 5.1 (2026-06-10)
 
 ### 运行命令
 
