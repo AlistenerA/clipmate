@@ -11,7 +11,7 @@ describe('Notion error messages', () => {
 
   it('NOTION_PAGE_ID_MISSING maps to Chinese message', () => {
     expect(ERROR_MESSAGES.NOTION_PAGE_ID_MISSING).toBe(
-      '请先在设置页填写 Notion Page ID',
+      '请先在设置页添加 Notion 目标页面',
     )
   })
 

@@ -1,6 +1,36 @@
 import type { NotionTarget } from '../../shared/types/settings.types'
 import { generateId } from '../../shared/utils/id'
 
+const HEX32_REGEX = /^[a-fA-F0-9]{32}$/
+const UUID_REGEX = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/
+
+export function extractNotionPageId(input: string): string | null {
+  const trimmed = input.trim()
+  if (!trimmed) return null
+
+  try {
+    const url = new URL(trimmed)
+    const segments = url.pathname.split('/').filter(Boolean)
+    if (segments.length > 0) {
+      const lastSegment = segments[segments.length - 1]
+      const hexMatch = lastSegment.match(/[a-fA-F0-9]{32}$/)
+      if (hexMatch) return hexMatch[0]
+    }
+  } catch {
+    // not a valid URL, continue
+  }
+
+  if (UUID_REGEX.test(trimmed)) {
+    return trimmed.replace(/-/g, '')
+  }
+
+  if (HEX32_REGEX.test(trimmed)) {
+    return trimmed
+  }
+
+  return null
+}
+
 export function addTarget(
   targets: NotionTarget[],
   name: string,
@@ -8,10 +38,14 @@ export function addTarget(
   makeDefault?: boolean,
 ): { targets: NotionTarget[]; newTarget: NotionTarget } {
   const trimmedName = name.trim()
-  const trimmedPageId = pageId.trim()
 
-  if (!trimmedName || !trimmedPageId) {
-    throw new Error('名称和 Page ID 不能为空')
+  if (!trimmedName) {
+    throw new Error('名称不能为空')
+  }
+
+  const normalizedPageId = extractNotionPageId(pageId)
+  if (!normalizedPageId) {
+    throw new Error('无法识别 Notion 页面 ID，请复制 Notion 页面链接或填写 32 位页面 ID')
   }
 
   const now = new Date().toISOString()
@@ -21,7 +55,7 @@ export function addTarget(
   const newTarget: NotionTarget = {
     id: generateId(),
     name: trimmedName,
-    pageId: trimmedPageId,
+    pageId: normalizedPageId,
     isDefault: shouldBeDefault,
     createdAt: now,
     updatedAt: now,
@@ -42,10 +76,14 @@ export function updateTarget(
   pageId: string,
 ): NotionTarget[] {
   const trimmedName = name.trim()
-  const trimmedPageId = pageId.trim()
 
-  if (!trimmedName || !trimmedPageId) {
-    throw new Error('名称和 Page ID 不能为空')
+  if (!trimmedName) {
+    throw new Error('名称不能为空')
+  }
+
+  const normalizedPageId = extractNotionPageId(pageId)
+  if (!normalizedPageId) {
+    throw new Error('无法识别 Notion 页面 ID，请复制 Notion 页面链接或填写 32 位页面 ID')
   }
 
   const index = targets.findIndex((t) => t.id === id)
@@ -58,7 +96,7 @@ export function updateTarget(
   updatedTargets[index] = {
     ...updatedTargets[index],
     name: trimmedName,
-    pageId: trimmedPageId,
+    pageId: normalizedPageId,
     updatedAt: now,
   }
 

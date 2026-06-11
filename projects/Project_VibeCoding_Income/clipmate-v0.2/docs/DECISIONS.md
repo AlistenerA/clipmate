@@ -4,6 +4,50 @@
 
 ---
 
+## v0.2 Session 4.1 决策
+
+### D-059：Popup TargetSelector 不显示 Page ID 预览
+
+- **原因**：用户只需通过名称区分目标，Page ID 预览增加视觉噪音。Session 4 的 `(maskPageId)` 显示对日常使用无意义。Options 管理页仍保留脱敏 Page ID 用于辨认。
+- **影响**：`TargetSelector.tsx` 移除 `maskPageId` 调用和导入，option 文案只有 `t.name`。Popup 纯函数 `maskPageId` 保留供其他用途。
+- **可反转性**：高。
+
+### D-058：extractNotionPageId 自动忽略 URL hash
+
+- **原因**：Notion 页面 URL 中 # 后是块定位 ID（如 `#37c5fa028348810a9305d7476a1bd017`），不应作为目标页面 ID。`new URL().pathname` 天然排除 hash，安全可靠。
+- **影响**：`extractNotionPageId` 通过 URL 解析忽略 hash，用户粘贴含 # 的链接时自动取正确页面 ID。
+- **可反转性**：高。若未来需要支持块定位，可扩展返回结构。
+
+### D-057：extractNotionPageId 集成到 addTarget/updateTarget 验证层
+
+- **原因**：pageId 归一化应发生在数据入口（addTarget/updateTarget），确保存储中始终是 32 位 hex。TargetEditor 作为 UI 层也做预归一化（提前显示错误），但最终验证以 targetManager 为准。
+- **影响**：`addTarget`/`updateTarget` 不再接受任意短字符串作为 pageId。不合法的输入抛出明确错误消息。已有测试中所有短 pageId 字符串（`'page-work'`、`'new-page'` 等）替换为合法 32 位 hex。
+- **可反转性**：低。回退需要同时修改 targetManager 验证、TargetEditor 归一化、所有相关测试。
+
+---
+
+## v0.2 Session 4 决策
+
+### D-056：历史写入在 Background Service Worker 中执行
+
+- **原因**：Background 是保存链路的终点，同时拥有 settings（控制 saveHistoryEnabled）和 Notion API 结果（成功/失败/errorCode）。在 Popup 中写入需要额外传递结果状态，增加消息往返和重复写入风险。
+- **影响**：`notionHandler.ts` 负责在 Notion API 调用后调用 `addHistoryItem`。Popup 不感知历史写入。
+- **可反转性**：中。若需支持"复制 Markdown"写入 unsaved 历史，可在 Popup 中直接调 `addHistoryItem`。
+
+### D-055：SaveToNotionPayload 改为包含 target 信息的接口，不再只是 ClipDraft 别名
+
+- **原因**：v0.1 的 `SaveToNotionPayload = ClipDraft` 无法携带目标信息。Popop 需要把 `targetId`、`targetName`、`pageId` 传给 Background。改为接口 `{ draft, targetId?, targetName?, pageId }` 是最小侵入方案。
+- **影响**：Popup 的 `useSaveToNotion.save()` 和 Background 的 `handleSaveToNotion()` 签名变更。旧 `SaveToNotionPayload` 类型引用已全部更新。
+- **可反转性**：中。需要同步改 Popup 和 Background 两端。
+
+### D-054：resolveSelectedTarget 用纯函数实现，空 defaultTargetId 回退首个 target
+
+- **原因**：`defaultTargetId` 可能为空字符串（未设置）或指向已删除的目标。纯函数方便测试（7 tests）。回退逻辑简单明确：有匹配则用匹配，否则用首个。
+- **影响**：Popup 在 `getSettings()` 后调用 `resolveSelectedTarget(s.notionTargets, s.defaultTargetId)` 确定初始选中。若用户首次使用且无 target，显示提示而非下拉。
+- **可反转性**：高。
+
+---
+
 ## v0.2 Session 3 决策
 
 ### D-053：目标操作即时持久化，不依赖全局保存按钮

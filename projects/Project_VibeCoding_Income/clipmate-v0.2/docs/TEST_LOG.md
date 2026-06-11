@@ -4,6 +4,119 @@
 
 ---
 
+## v0.2 Session 4.1 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+191 tests passed, 10 test files, 2.58s。
+```text
+✓ tests/example.test.ts (1 test) 3ms
+✓ tests/notion-blocks.test.ts (13 tests) 8ms
+✓ tests/popup-target-selection.test.ts (19 tests) 7ms
+✓ tests/notion-errors.test.ts (9 tests) 7ms
+✓ tests/notion-client.test.ts (10 tests) 10ms
+✓ tests/shared-utils.test.ts (35 tests) 10ms
+✓ tests/options-targets.test.ts (45 tests) 19ms
+✓ tests/history-save-flow.test.ts (13 tests) 27ms
+✓ tests/storage-migration.test.ts (34 tests) 46ms
+✓ tests/content-parser.test.ts (12 tests) 167ms
+
+Test Files  10 passed (10)
+     Tests  191 passed (191)
+  Duration  2.58s
+```
+
+```pwsh
+npm run build
+```
+构建成功：87 modules, 931ms
+- tsc: 无类型错误
+- vite build: 87 个模块，931ms
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| extractNotionPageId | 8 | 空/空白/null、纯32位hex、UUID去横杠、URL无hash、URL有hash忽略、无效字符串、URL无hex段、trim |
+| addTarget 归一化 | 2 | URL pageId归一化、UUID pageId归一化 |
+| updateTarget 归一化 | 1 | URL pageId归一化 |
+| addTarget 错误消息 | 1 | 新增 invalid pageId 错误消息测试 |
+
+总测试从 178 增至 191（+13）。
+
+### 错误/失败
+
+首次运行 13 项测试失败：已有测试使用的 `'page-work'`、`'page-2'`、`'new-page'` 等短字符串无法通过 `extractNotionPageId` 验证。全部替换为合法 32 位 hex 字符串（PG_1/PG_2/PG_3）后修复。`updateTarget` 的 "target not found" 测试同时需要有效 pageId 才能到达目标查找阶段。
+
+---
+
+## v0.2 Session 4 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+178 tests passed, 10 test files, 2.57s。
+```text
+✓ tests/example.test.ts (1 test) 3ms
+✓ tests/notion-blocks.test.ts (13 tests) 5ms
+✓ tests/notion-client.test.ts (10 tests) 8ms
+✓ tests/notion-errors.test.ts (9 tests) 4ms
+✓ tests/popup-target-selection.test.ts (19 tests) 6ms
+✓ tests/options-targets.test.ts (32 tests) 10ms
+✓ tests/shared-utils.test.ts (35 tests) 14ms
+✓ tests/storage-migration.test.ts (34 tests) 36ms
+✓ tests/history-save-flow.test.ts (13 tests) 15ms
+✓ tests/content-parser.test.ts (12 tests) 153ms
+
+Test Files  10 passed (10)
+     Tests  178 passed (178)
+  Duration  2.57s
+```
+
+```pwsh
+npm run build
+```
+构建成功：87 modules, 916ms
+- tsc: 无类型错误
+- vite build: 87 个模块，916ms
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| resolveSelectedTarget | 7 | 空 targets、无 defaultTargetId 回退首个、匹配 defaultTargetId、不匹配回退、唯一 target |
+| maskPageId | 3 | 空字符串、短字符、最后6位 mask |
+| buildHistoryInput | 9 | 基本构建、target 信息、saveStatus、notePreview/contentPreview 截断、空值处理、selection mode |
+| handleSaveToNotion (集成) | 13 | Token 缺失、pageId 为空、内容为空、保存成功写 saved 历史、失败写 failed 历史、saveHistoryEnabled=false 不写、网络错误写历史、使用 payload.pageId 非 settings.notionPageId、无 targetId/targetName、markdownTruncated |
+
+### 错误/失败
+
+首次运行有 6 项测试失败，均为测试断言错误（非代码 bug）：
+- `notion-errors.test.ts`: `NOTION_PAGE_ID_MISSING` 文案已改，测试期望未同步
+- `popup-target-selection.test.ts`: `maskPageId('1234567')` 期望值计算错误（7 位字符最后 6 位是 `234567` 不是 `34567`）
+- `popup-target-selection.test.ts`: 空字符串 `defaultTargetId` 测试期望 `undefined` 但实际回退第一个 target（falsy 值行为）
+- `popup-target-selection.test.ts`: `undefined` 被 `??` fallback 覆盖，改为测试空字符串
+- `history-save-flow.test.ts`: 网络错误测试期望 `NOTION_SAVE_FAILED` 但 `makeRequest` catch 抛出 `NETWORK_ERROR`
+
+全部修复后 178 tests 全通过。
+
+---
+
 ## v0.2 Session 3 (2026-06-11)
 
 ### 运行命令

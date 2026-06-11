@@ -4,6 +4,60 @@
 
 ---
 
+## v0.2 Session 4.1：小修复 — alert 精准化 + URL 提取 Page ID + 移除 Page ID 预览 (2026-06-11)
+
+### 修改文件
+- `src/popup/App.tsx` — alert 消息改用 `ERROR_MESSAGES` 常量（NOTION_TOKEN_MISSING / NOTION_TARGETS_EMPTY / NOTION_TARGET_NOT_FOUND），消除硬编码文案不一致
+- `src/popup/components/TargetSelector.tsx` — 移除 Page ID 预览（不再显示 `(maskPageId)`），仅显示 target.name
+- `src/options/utils/targetManager.ts` — 新增 `extractNotionPageId()` 函数（支持纯 32 位 hex / UUID / 完整 Notion URL / #hash 忽略）；`addTarget` 和 `updateTarget` 改用语义化错误消息：名称空 → `'名称不能为空'`，pageId 无法识别 → `'无法识别 Notion 页面 ID...'`
+- `src/options/components/TargetEditor.tsx` — `handleSave` 调用 `extractNotionPageId` 提前归一化 pageId；新增提示文案"可粘贴完整 Notion 页面链接；如链接包含 #，# 后通常是块定位"
+- `src/shared/constants/defaults.ts` — `NOTION_TARGET_NOT_FOUND` 消息从 `'所选目标已不存在'` 改为 `'所选 Notion 目标不存在'`
+- `tests/options-targets.test.ts` — 新增 `extractNotionPageId` 测试套件（10 tests）+ 归一化集成测试（3 tests）；所有 pageId 测试值切换为合法 32 位 hex；对齐新错误消息
+- `tests/notion-errors.test.ts` — 对齐 `NOTION_TARGET_NOT_FOUND` 新文案
+
+### 改动摘要
+- Popup alert 消息与 ERROR_MESSAGES 常量统一（Token 缺失 / 目标为空 / 目标失效）
+- Options Page ID 输入框支持粘贴完整 Notion URL（自动提取 # 前的 32 位页面 ID）
+- Popup 目标下拉框不再显示脱敏 Page ID，UI 更简洁
+- `extractNotionPageId` 处理三种格式：纯 hex32 / UUID / Notion URL（忽略 #hash）
+- 新增 13 项测试（45 → 58 tests 在 options-targets），总测试数 178 → 191
+- 构建：87 modules, 931ms
+- Lint：0 errors, 0 warnings
+
+---
+
+## v0.2 Session 4：Popup 目标选择与历史写入 (2026-06-11)
+
+### 新增文件
+- `src/popup/utils/targetSelection.ts` — 目标选择纯函数（resolveSelectedTarget / maskPageId）
+- `src/popup/utils/historyPayload.ts` — 历史 payload 构建纯函数（buildHistoryInput）
+- `src/popup/components/TargetSelector.tsx` — Popup 目标下拉选择器组件
+- `tests/popup-target-selection.test.ts` — 目标选择 + history input 纯函数测试（19 tests）
+- `tests/history-save-flow.test.ts` — Background 保存链路 + 历史写入集成测试（13 tests）
+
+### 修改文件
+- `src/popup/App.tsx` — 状态类型升级为 `ClipMateSettingsV2`；`notionConfigured` 替换为 `settings`；新增 `selectedTargetId` 状态；`handleSaveToNotion` 按 token→targets→pageId 逐级校验；错误提示从"配置 Page ID"改为"添加 Notion 目标页面"
+- `src/popup/hooks/useSaveToNotion.ts` — `save` 函数签名从 `(draft: ClipDraft)` 改为 `(payload: SaveToNotionPayload)`
+- `src/background/handlers/notionHandler.ts` — 接收新 `SaveToNotionPayload`（含 targetId/targetName/pageId）；使用 payload.pageId 调用 Notion API（不再依赖 settings.notionPageId）；保存成功/失败后通过 `addHistoryItem` 写入本地历史；遵循 `saveHistoryEnabled` 开关
+- `src/background/index.ts` — 消息处理器改为传递 `SaveToNotionPayload` 类型（替换旧 `ClipDraft`）
+- `src/shared/types/message.types.ts` — `SaveToNotionPayload` 从 `ClipDraft` 别名改为包含 `draft`/`targetId`/`targetName`/`pageId` 的接口
+- `src/shared/constants/defaults.ts` — 新增 `NOTION_TARGETS_EMPTY` 和 `NOTION_TARGET_NOT_FOUND` 错误消息；`NOTION_PAGE_ID_MISSING` 消息从"填写 Notion Page ID"改为"添加 Notion 目标页面"
+- `tests/notion-errors.test.ts` — 对齐 `NOTION_PAGE_ID_MISSING` 新消息文案
+
+### 改动摘要
+- Popup 不再依赖旧 `notionPageId` 判断配置状态，改用 `notionTargets` + `defaultTargetId`
+- 修复核心痛点：Options 已配置 Token 和目标，但 Popup 仍提示"请配置 Page ID"
+- TargetSelector 组件：默认选中 defaultTargetId → 回退第一个目标；支持 target 间切换；无目标时显示配置提示
+- Background 保存后自动写入 `clipmate_history`：saved 含 savedAt，failed 含 errorCode
+- `saveHistoryEnabled=false` 时不写历史
+- 复制 Markdown 暂不写 unsaved 历史（留待 History UI 或鲁棒性阶段完善）
+- 未修改 Content Script / Options 多目标管理 UI / 数据结构
+- 构建：87 modules（+2），916ms
+- Lint：0 errors, 0 warnings
+- 测试：178 passed（+32），10 files
+
+---
+
 ## v0.2 Session 3：Options 多 Notion 目标管理 (2026-06-11)
 
 ### 新增文件

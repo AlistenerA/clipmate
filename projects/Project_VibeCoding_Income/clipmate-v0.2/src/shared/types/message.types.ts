@@ -26,7 +26,12 @@ export type LastClipResponse =
   | { success: true; data: ClipDraft | null }
   | { success: false; error: string }
 
-export type SaveToNotionPayload = ClipDraft
+export interface SaveToNotionPayload {
+  draft: ClipDraft
+  targetId?: string
+  targetName?: string
+  pageId: string
+}
 
 export type SaveToNotionResponse =
   | { success: true }

@@ -2,8 +2,7 @@ import { useState, useCallback } from 'react'
 import { sendToRuntime } from '../../shared/messaging/sendMessage'
 import { MESSAGE_TYPES } from '../../shared/constants/messageTypes'
 import { ERROR_MESSAGES } from '../../shared/constants/defaults'
-import type { ClipDraft } from '../../shared/types/clip.types'
-import type { SaveToNotionResponse } from '../../shared/types/message.types'
+import type { SaveToNotionPayload, SaveToNotionResponse } from '../../shared/types/message.types'
 
 export function useSaveToNotion() {
   const [saving, setSaving] = useState(false)
@@ -11,7 +10,7 @@ export function useSaveToNotion() {
   const [saved, setSaved] = useState(false)
 
   const save = useCallback(
-    async (draft: ClipDraft) => {
+    async (payload: SaveToNotionPayload) => {
       setSaving(true)
       setSaveError(null)
       setSaved(false)
@@ -19,7 +18,7 @@ export function useSaveToNotion() {
       try {
         const result = await sendToRuntime<SaveToNotionResponse>({
           type: MESSAGE_TYPES.SAVE_TO_NOTION,
-          payload: draft,
+          payload,
         })
 
         if (result.success) {

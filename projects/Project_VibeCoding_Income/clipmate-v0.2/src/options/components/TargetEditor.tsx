@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { NotionTarget } from '../../shared/types/settings.types'
+import { extractNotionPageId } from '../utils/targetManager'
 
 interface Props {
   initial?: NotionTarget
@@ -19,12 +20,13 @@ export default function TargetEditor({ initial, onSave, onCancel, disabled }: Pr
       setError('名称不能为空')
       return
     }
-    if (!pageId.trim()) {
-      setError('Page ID 不能为空')
+    const normalizedPageId = extractNotionPageId(pageId)
+    if (!normalizedPageId) {
+      setError('无法识别 Notion 页面 ID，请复制 Notion 页面链接或填写 32 位页面 ID')
       return
     }
     setError('')
-    onSave(name, pageId, initial ? undefined : makeDefault)
+    onSave(name, normalizedPageId, initial ? undefined : makeDefault)
   }
 
   return (
@@ -57,6 +59,9 @@ export default function TargetEditor({ initial, onSave, onCancel, disabled }: Pr
           disabled={disabled}
           onChange={(e) => setPageId(e.target.value)}
         />
+        <p className="text-xs text-gray-400 mt-1">
+          可粘贴完整 Notion 页面链接；如链接包含 #，# 后通常是块定位，不需要填写。
+        </p>
         {!initial && (
           <label className="flex items-center gap-1 mt-1 cursor-pointer">
             <input

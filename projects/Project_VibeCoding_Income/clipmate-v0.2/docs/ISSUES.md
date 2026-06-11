@@ -6,7 +6,31 @@
 
 ## v0.2 开放问题
 
-> v0.2 Session 1 已完成，无新增 issue。
+> v0.2 Session 4.1 已完成。
+
+### I-019：Popup alert 文案与 ERROR_MESSAGES 不一致（Session 4.1）
+
+- **状态**：✅ 已解决
+- **描述**：Session 4 的 `App.tsx` 中 alert 使用硬编码文案（`'请先打开设置页面，配置 Notion Token'`），与 `ERROR_MESSAGES.NOTION_TOKEN_MISSING`（`'请先在设置页填写 Notion Token'`）不一致。
+- **修复**：App.tsx alert 全部改用 `ERROR_MESSAGES` 常量，同时 TargetSelector 内联提示已使用 `ERROR_MESSAGES.NOTION_TARGETS_EMPTY`。
+
+### I-020：Notion URL #hash 可能混淆用户（Session 4.1）
+
+- **状态**：✅ 已解决
+- **描述**：Notion URL 如 `.../Page-37b5fa...#37c5fa...` 中 # 后是块定位 ID，用户可能误当作页面 ID 填写。
+- **修复**：`targetManager.ts` 新增 `extractNotionPageId()` 函数，用 `new URL().pathname` 自动忽略 hash；TargetEditor 增加提示文案说明 # 后不需要填写。
+
+### I-021：Popup 目标选择框显示 Page ID 预览（Session 4.1）
+
+- **状态**：✅ 已解决
+- **描述**：Popup TargetSelector 下拉选项显示 `目标名称 (...aa453c)`，Page ID 预览对用户无用且增加视觉噪音。
+- **修复**：TargetSelector 移除 `(maskPageId)` 显示，仅保留 `t.name`。Options 管理页仍保留脱敏 Page ID。
+
+### I-018：复制 Markdown 暂不写入 unsaved 历史（Session 4）
+
+- **状态**：🟡 待后续
+- **描述**：本轮核心是实现"保存到 Notion"链路的历史写入。复制 Markdown 写入 `saveStatus='unsaved'` 历史留待 Session 5（History UI）或 Session 7（鲁棒性）完善。
+- **影响**：用户复制 Markdown 后不会在历史记录中留下 unsaved 条目。
 
 ### I-017：MIN_HISTORY_LIMIT 为 10，用户可设置更小值但会被 clamp（Session 1）
 

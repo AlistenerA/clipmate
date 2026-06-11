@@ -8,7 +8,7 @@
 
 ## 当前阶段
 
-**v0.2 Session 3 已完成** — Options 多 Notion 目标管理：实现 TargetList / TargetEditor 组件，用户可在 Options 页面管理多个 Notion 保存目标（新增/编辑/删除/设为默认）。Notion Page ID 从旧单输入框过渡到多目标列表管理，Notion Token 配置保持不变。
+**v0.2 Session 4.1 已完成** — Popup 目标选择与历史写入的小修复：alert 文案对齐 ERROR_MESSAGES、Options 支持完整 Notion URL 自动提取 Page ID、Popup 目标选择框不再显示 Page ID 预览。
 
 ---
 
@@ -30,21 +30,19 @@
 | HTML → Markdown | ✅ 已完成 | turndown + cleanMarkdown + mergeAdjacentBold |
 | 中文字数统计 | ✅ 已完成 | CJK 字符逐个计数 + 英文按空格分词 |
 | 复制 Markdown 完整格式 | ✅ 已完成 | 标题/URL/标签/备注/分割线/正文 |
-| Popup UI | ✅ 已完成 | 完整 UI |
-| Options 设置页 | ✅ 已完成 | Notion 配置/默认标签/历史开关/调试面板 |
-| Background SW | ✅ 已完成 | 消息路由：SAVE_TO_NOTION |
+| Popup UI | ✅ 已完成 | 完整 UI + v0.2 新增 TargetSelector + S4.1 移除 Page ID 预览 |
+| Options 设置页 | ✅ 已完成 | Notion 配置/默认标签/历史开关/调试面板 + S4.1 URL 提取 Page ID |
+| Background SW | ✅ 已完成 | 消息路由：SAVE_TO_NOTION + v0.2 历史写入 |
 | Popup 剪藏草稿持久化 | ✅ 已完成 | 自动保存/恢复 clip draft |
 | Notion 平台层 | ✅ 已完成 | client.ts + blocks.ts |
-| Notion 保存链路 | ✅ 已完成 | Popup → Background → Notion API |
+| Notion 保存链路 | ✅ 已完成 | Popup → Background → Notion API + 目标选择 + 历史写入 |
 | 日志安全 | ✅ 已审查 | 无 Token/正文/备注泄露 |
-| 测试 | ✅ 114 tests | 7 test files, all pass |
-| 上架材料 | ✅ 定稿 | TEST_PLAN / QA 模板 / 隐私政策 / 商店文案 / 权限说明 / 发布清单 |
-| 打包 | ✅ 已就绪 | npm run zip（PowerShell） + 手动打包说明 |
-| README | ✅ 已完善 | 开发命令 / 加载步骤 / Notion 配置 / 隐私 / 已知限制 |
-| 图标资源 | ✅ 已完成 | icon-16/32/48/128/512 PNG + SVG source |
+| 测试 | ✅ 191 tests | 10 test files, all pass |
 | v0.2 Session 1 数据结构升级 | ✅ 已完成 | types 扩展 + 迁移逻辑 + storage CRUD + 34 tests |
 | v0.2 Session 2 版本目录隔离 | ✅ 已完成 | clipmate-v0.2/ 独立目录，clipmate-v0.1/ 冻结快照 |
 | v0.2 Session 3 Options 多目标管理 | ✅ 已完成 | TargetList / TargetEditor UI + targetManager 纯函数 + 32 tests |
+| v0.2 Session 4 Popup 目标选择与历史写入 | ✅ 已完成 | TargetSelector + 保存链路改造 + 历史写入 + 32 tests |
+| v0.2 Session 4.1 小修复 | ✅ 已完成 | alert 对齐 ERROR_MESSAGES + Notion URL 提取 Page ID + 移除 Page ID 预览 + 13 tests |
 
 ---
 
@@ -64,25 +62,25 @@
 - [x] v0.2 Session 0：范围确认与 V0.2_PLAN 创建
 - [x] v0.2 Session 1：数据结构升级与兼容迁移
 - [x] v0.2 Session 2：版本目录隔离与迁移
-- [x] v0.2 Session 3：Options 多 Notion 目标管理（本轮）
+- [x] v0.2 Session 3：Options 多 Notion 目标管理
+- [x] v0.2 Session 4：Popup 目标选择与历史写入（本轮）
 
 ---
 
 ## 未完成（按优先级）
 
-1. v0.2 Session 4：Popup 目标选择与历史写入
-2. v0.2 Session 5：History UI
-3. v0.2 Session 6：文档、QA、版本号、打包
-4. v0.2 Session 7：鲁棒性检查与修复
-5. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试
-6. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
-7. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
-8. 提交 Edge Add-ons Partner Center
+1. v0.2 Session 5：History UI（搜索/复制/删除/清空/重试）
+2. v0.2 Session 6：文档、QA、版本号、打包
+3. v0.2 Session 7：鲁棒性检查与修复
+4. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试
+5. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
+6. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
+7. 提交 Edge Add-ons Partner Center
 
 ---
 
 ## 下一阶段建议
 
-**v0.2 Session 4** — Popup 目标选择与历史写入。按 `docs/V0.2_PLAN.md` 中 Session 4 范围执行：Popup 目标下拉选择器、保存链路注入 targetId、Background 写历史记录。
+**v0.2 Session 5** — History UI。按 `docs/V0.2_PLAN.md` 中 Session 5 范围执行：在 Options 中新增「剪藏历史」tab，实现历史列表展示、搜索、复制 Markdown、单条删除、清空全部、失败重试。
 
-> v0.2 Session 3 交付：Options 多目标管理完成。TargetList / TargetEditor UI + targetManager 纯函数。146 tests 全部通过（新增 32 tests），Lint 0 errors，Build 成功（85 modules）。`clipmate-v0.1/` 未修改。
+> v0.2 Session 4 交付：Popup 目标选择与历史写入完成。TargetSelector 组件 + 保存链路改造 + Background 历史写入。178 tests 全部通过（新增 32 tests），Lint 0 errors，Build 成功（87 modules）。`clipmate-v0.1/` 未修改。

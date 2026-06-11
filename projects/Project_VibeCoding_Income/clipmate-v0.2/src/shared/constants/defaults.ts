@@ -32,7 +32,9 @@ export const ERROR_MESSAGES: Record<string, string> = {
   NO_SELECTION: '请先选中页面文字后再提取',
   EXTRACTION_FAILED: '内容提取失败，请尝试全文模式',
   NOTION_TOKEN_MISSING: '请先在设置页填写 Notion Token',
-  NOTION_PAGE_ID_MISSING: '请先在设置页填写 Notion Page ID',
+  NOTION_PAGE_ID_MISSING: '请先在设置页添加 Notion 目标页面',
+  NOTION_TARGETS_EMPTY: '请先在设置页添加 Notion 目标页面',
+  NOTION_TARGET_NOT_FOUND: '所选 Notion 目标不存在，请重新选择',
   NOTION_AUTH_FAILED: 'Notion 授权失败，请检查 Token 是否正确',
   NOTION_PAGE_NOT_FOUND:
     '找不到 Notion 页面，请检查 Page ID，并确认 Integration 已被邀请到该页面',

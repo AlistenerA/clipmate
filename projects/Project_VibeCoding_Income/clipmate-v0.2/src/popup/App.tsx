@@ -5,6 +5,7 @@ import TagEditor from './components/TagEditor'
 import NoteEditor from './components/NoteEditor'
 import StatusBar from './components/StatusBar'
 import ActionButtons from './components/ActionButtons'
+import TargetSelector from './components/TargetSelector'
 import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
@@ -12,7 +13,10 @@ import { useCopyMarkdown } from './hooks/useCopyMarkdown'
 import { useSaveToNotion } from './hooks/useSaveToNotion'
 import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
 import { formatCopyMarkdown } from '../shared/utils/formatMarkdown'
+import { resolveSelectedTarget } from './utils/targetSelection'
+import { ERROR_MESSAGES } from '../shared/constants/defaults'
 import type { ClipMode, ClipDraft } from '../shared/types/clip.types'
+import type { ClipMateSettingsV2 } from '../shared/types/settings.types'
 
 export default function App() {
   const { tab } = useCurrentTab()
@@ -23,13 +27,18 @@ export default function App() {
   const { saving, saveError, saved, save: saveToNotion, clearResult } =
     useSaveToNotion()
 
-  const [notionConfigured, setNotionConfigured] = useState(false)
+  const [settings, setSettings] = useState<ClipMateSettingsV2 | null>(null)
+  const [selectedTargetId, setSelectedTargetId] = useState<string>('')
   const [draftLoaded, setDraftLoaded] = useState(false)
   const restoredRef = useRef(false)
 
   useEffect(() => {
     getSettings().then((s) => {
-      setNotionConfigured(Boolean(s.notionToken && s.notionPageId))
+      setSettings(s)
+      const resolved = resolveSelectedTarget(s.notionTargets, s.defaultTargetId)
+      if (resolved) {
+        setSelectedTargetId(resolved.id)
+      }
     })
     getLastClipDraft().then((draft) => {
       if (draft?.content) {
@@ -93,11 +102,28 @@ export default function App() {
 
   const handleSaveToNotion = useCallback(() => {
     if (!content) return
-    if (!notionConfigured) {
-      alert('请先打开设置页面，配置 Notion Token 和 Page ID')
+
+    if (!settings?.notionToken) {
+      alert(ERROR_MESSAGES.NOTION_TOKEN_MISSING)
       chrome.runtime.openOptionsPage()
       return
     }
+    if (!settings?.notionTargets || settings.notionTargets.length === 0) {
+      alert(ERROR_MESSAGES.NOTION_TARGETS_EMPTY)
+      chrome.runtime.openOptionsPage()
+      return
+    }
+    if (!selectedTargetId) {
+      alert('请先选择一个 Notion 目标页面')
+      return
+    }
+
+    const target = settings.notionTargets.find((t) => t.id === selectedTargetId)
+    if (!target) {
+      alert(ERROR_MESSAGES.NOTION_TARGET_NOT_FOUND)
+      return
+    }
+
     clearResult()
     const draft: ClipDraft = {
       title: content.title,
@@ -106,8 +132,13 @@ export default function App() {
       mode: content.mode,
       content,
     }
-    saveToNotion(draft)
-  }, [content, notionConfigured, tags, note, saveToNotion, clearResult])
+    saveToNotion({
+      draft,
+      targetId: target.id,
+      targetName: target.name,
+      pageId: target.pageId,
+    })
+  }, [content, settings, selectedTargetId, tags, note, saveToNotion, clearResult])
 
   const openOptions = useCallback(() => {
     chrome.runtime.openOptionsPage()
@@ -146,6 +177,12 @@ export default function App() {
 
       <TagEditor tags={tags} onAdd={addTag} onRemove={removeTag} disabled={loading} />
       <NoteEditor note={note} onChange={setNote} disabled={loading} />
+
+      <TargetSelector
+        targets={settings?.notionTargets ?? []}
+        selectedTargetId={selectedTargetId}
+        onChange={setSelectedTargetId}
+      />
 
       <ActionButtons
         hasContent={content !== null && !error}
