@@ -1,31 +1,10 @@
-# CHANGELOG_AGENT.md — ClipMate v0.1 / v0.2 每轮修改记录
+# CHANGELOG_AGENT.md — ClipMate v0.1 每轮修改记录
 
 > 每轮 agent 结束后更新，记录修改文件清单和改动摘要。
 
 ---
 
-## v0.2 Session 0：范围确认与 V0.2_PLAN 创建 (2026-06-11)
-
-### 新增文件
-- `docs/V0.2_PLAN.md` — v0.2 迭代规划文档（产品定位/功能清单/数据结构草案/迁移策略/Session 拆分/风险清单）
-
-### 修改文件
-- `docs/CURRENT_STATUS.md` — 更新为 v0.2 Session 0 完成状态
-- `docs/CHANGELOG_AGENT.md` — 本条记录
-- `docs/TEST_LOG.md` — v0.2 S0 记录（无代码运行）
-- `docs/DECISIONS.md` — 新增 D-036~D-046（v0.2 关键技术决策）
-
-### 改动摘要
-- 创建 V0.2_PLAN.md，明确 v0.2 范围：本地剪藏历史 + 多 Notion 目标 + 保存失败重试
-- 确认不新增权限、不新增外部 API、不引入 AI/多平台/付费/OAuth
-- 数据结构草案已拟定（NotionTarget / ClipHistoryItem / ClipMateSettingsV2）
-- v0.1 → v0.2 settings 迁移策略已制定
-- Session 拆分：S0→S6，严格顺序执行
-- 未修改任何业务代码、package.json、manifest.config.ts
-
----
-
-## v0.1 Session 5.1：图标资源应用与重新打包 (2026-06-10)
+## Session 5.1：图标资源应用与重新打包 (2026-06-10)
 
 ### 新增文件
 - `public/icons/icon-16.png` — 16×16 工具栏图标

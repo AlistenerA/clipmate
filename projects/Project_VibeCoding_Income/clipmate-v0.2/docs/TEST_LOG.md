@@ -1,10 +1,111 @@
-# TEST_LOG.md — ClipMate v0.1 测试记录
+# TEST_LOG.md — ClipMate v0.1 / v0.2 测试记录
 
 > 记录每轮运行过的命令、结果、错误。不隐藏失败。
 
 ---
 
-## Session 5.1 (2026-06-10)
+## v0.2 Session 2 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+114 tests passed, 7 test files。
+
+```pwsh
+npm run build
+```
+构建成功。
+
+### 产出
+
+- `clipmate-v0.2/` 目录创建并迁移完成
+- `clipmate-v0.1/` 恢复为 v0.1 冻结快照
+- 更新 V0.2_PLAN / AGENT_CONTEXT / CURRENT_STATUS / CHANGELOG_AGENT / DECISIONS
+
+### 错误/失败
+
+无。
+
+---
+
+## v0.2 Session 1 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+114 tests passed, 7 test files, 2.07s。
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/notion-blocks.test.ts (13 tests) 6ms
+✓ tests/notion-client.test.ts (10 tests) 8ms
+✓ tests/shared-utils.test.ts (35 tests) 6ms
+✓ tests/storage-migration.test.ts (34 tests) 39ms
+✓ tests/content-parser.test.ts (12 tests) 116ms
+
+Test Files  7 passed (7)
+     Tests  114 passed (114)
+  Duration  2.07s
+```
+
+```pwsh
+npm run build
+```
+构建成功：82 modules, 907ms
+- tsc: 无类型错误
+- vite build: 82 个模块，907ms
+- Popup bundle: 9.28KB (gzip 3.78KB)
+- Options bundle: 5.36KB (gzip 1.98KB)
+- Content Script bundle: 47.61KB (gzip 16.21KB)
+- Background bundle: 3.26KB (gzip 1.53KB)
+- Storage bundle: 2.43KB (gzip 1.26KB)
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| migrateSettings 纯函数 | 7 | v0.1 迁移、无 pageId 不创建空目标、空/null 初始化、字段保留、Token 不打印 |
+| getSettings 与迁移 | 4 | v2 存储读取、v0.1 自动迁移、不重复迁移、写回存储 |
+| saveSettings | 1 | 保存并读取验证 |
+| notionTargets CRUD | 5 | 获取/保存/默认目标/空列表 |
+| history CRUD | 14 | 添加/更新/删除/清空/搜索（title/url/tags/大小写/空查询）、markdown 截断、limit 裁剪、limit 下限 clamp |
+| no token leakage | 1 | Token 透传不打印 |
+
+### 错误/失败
+
+- **limit enforcement 测试失败（已修复）**：测试使用 `historyLimit: 3`（低于 MIN_HISTORY_LIMIT=10），limit 被 clamp 到 10 导致裁剪未生效。修复：测试改用 `historyLimit: 10` 并新增 clamp 验证测试。
+- **ESLint 1 error（已修复）**：`DEFAULT_HISTORY_LIMIT` 被导入但未使用。修复：从 import 中移除。
+
+### 运行命令
+
+无。本轮为纯规划 Session，未修改业务代码，未运行测试/构建/lint。
+
+### 产出
+
+- `docs/V0.2_PLAN.md` — v0.2 迭代规划文档
+- 更新 CURRENT_STATUS / CHANGELOG_AGENT / DECISIONS
+
+### 错误/失败
+
+无。
+
+---
+
+## v0.1 Session 5.1 (2026-06-10)
 
 ### 运行命令
 

@@ -1,10 +1,22 @@
-# ISSUES.md — ClipMate v0.1 已知问题追踪
+# ISSUES.md — ClipMate v0.1 / v0.2 已知问题追踪
 
 > 记录所有未解决问题，不要隐藏失败。已解决的问题标记为 ✅。
 
 ---
 
-## 开放问题
+## v0.2 开放问题
+
+> v0.2 Session 1 已完成，无新增 issue。
+
+### I-017：MIN_HISTORY_LIMIT 为 10，用户可设置更小值但会被 clamp（Session 1）
+
+- **状态**：✅ 已处理
+- **描述**：`saveSettings` 中 clamp `historyLimit` 到 [10, 500]。用户设置小于 10 的值会自动调整为 10。`addHistoryItem` 中也有安全阀 clamp。
+- **影响**：用户想设置小于 10 的历史记录上限当前不支持。
+
+---
+
+## v0.1 开放问题
 
 ### I-016：public/icons/ 图标文件缺失（Session 5）
 
