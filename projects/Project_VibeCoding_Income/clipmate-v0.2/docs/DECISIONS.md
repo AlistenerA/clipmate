@@ -4,6 +4,90 @@
 
 ---
 
+## v0.2 Session 5.2 决策
+
+### D-069：摘要优先级修正 — description 优先，备注不作为摘要首位
+
+- **原因**：备注是用户个人笔记，不应占据主摘要位置。页面描述（description）更能代表网页内容，应作为第一优先级。
+- **影响**：`getHistorySummary` 优先级从 `notePreview > contentPreview > body > url` 改为 `descriptionPreview > contentPreview > body > url`。备注匹配信息仍通过"备注匹配" tag 独立显示。
+- **可反转性**：高。
+
+### D-068：真实 favicon 优先，域名首字母仅作为 fallback
+
+- **原因**：Session 5.1 的域名首字母头像方案给所有网站显示相同风格的首字母，无法区分同一域名但不同网站。真实 favicon 能提供更好的视觉识别。
+- **影响**：Content Script 新增 `extractSiteIconUrl`（从 `<link rel>` 提取，优先级 `apple-touch-icon` > `icon` > `shortcut icon` > `mask-icon` > `/favicon.ico`）。HistoryItem 渲染 `<img src={siteIconUrl}>`，`onError` 隐藏图片并 fallback 域名首字母。旧历史无 `siteIconUrl` 字段时直接显示首字母。
+- **可反转性**：高。可回退到仅首字母方案。
+
+### D-067：图标 URL 来自当前页面 DOM，不调用第三方 favicon 服务
+
+- **原因**：D-038 已决策「v0.2 不新增第三方 API」。通过 `document.querySelectorAll('link')` 遍历 DOM 提取图标无需网络请求，无需新增权限。
+- **影响**：不依赖 Google favicon、FaviconKit 等第三方服务。相对路径用 `new URL(href, baseUrl)` 解析。无法获取的网站 fallback 到 `/favicon.ico`。
+- **可反转性**：中。若未来需要更准确的图标，可添加缓存服务。
+
+### D-068：新增字段均为可选，旧历史记录无需迁移
+
+- **原因**：`siteName` / `siteIconUrl` / `themeColor` / `descriptionPreview` 均为可选字段。旧 `ClipHistoryItem` 不含这些字段时，UI 自动 fallback 到现有逻辑（首字母头像、contentPreview 摘要等）。
+- **影响**：无破坏性变更。`addHistoryItem` 和 `CreateHistoryItemInput` 新增可选字段，不传时 storage 中不存储 undefined。
+- **可反转性**：低（字段一旦写入历史，移除需清理存储，但可选字段不影响旧数据读取）。
+
+### D-066：历史摘要跳过 Markdown/HTML 图片，不显示图片语法
+
+- **原因**：文章开篇图片导致摘要显示 `![](url)` 等 Markdown 语法，非常难看。`stripMarkdownImages` 纯函数在取摘要前移除所有 `![]()` / `[![]()]()` / `<img>` 标签。多张连续图片开篇会继续向后寻找文本。全图片内容则回退 URL/domain。
+- **影响**：`getHistorySummary` 在取 contentPreview 和 markdown body 时均先过 `stripMarkdownImages` + `normalizeSummaryText`。
+- **可反转性**：高。
+
+---
+
+## v0.2 Session 5.1 决策
+
+### D-066：搜索高亮不展示完整正文，只显示匹配 tag
+
+- **原因**：正文可能长达数万字，展示全文会撑爆 UI 且泄露隐私。正文匹配通过"正文匹配" tag 提示用户即可。搜索命中 notePreview 显示"备注匹配" tag，命中 targetName 显示"目标匹配" tag。
+- **影响**：HistoryItem 在匹配正文但未命中标题/URL 时显示橙色"正文匹配" tag。
+- **可反转性**：高。
+
+### D-065：网站图标使用域名首字母圆形头像 + getStableSiteColor 同色
+
+- **原因**：不调用第三方 favicon API（禁止新增外部调用），本地生成域名首字母头像是最安全方案。头像颜色与左侧色条使用同一颜色（getStableSiteColor）。域名首字母通过 `getSiteInitial` 取域名第一个 Unicode code point 大写。
+- **影响**：每条历史卡片左侧显示域名首字母圆形头像，不依赖任何外部服务。
+- **可反转性**：高。后续可扩展为 favicon 缓存。
+
+### D-064：同站统一色条使用 domain hash + 固定 12 色调色板
+
+- **原因**：同一域名必须稳定得到同一颜色（用户预期的视觉分组），不允许随机色。djb2 hash(domain) % 12 取色盘索引，保证确定性。空 domain 返回灰色 `#6B7280`。
+- **影响**：HistoryItem 左侧 `borderLeftColor` 由 `getStableSiteColor(getHostname(item.url))` 决定，替换旧的 saveStatus 颜色色条（状态仍由 badge 显示）。
+- **可反转性**：高。调色板可扩展。
+
+### D-063：Popup draft 恢复前比较 active tab URL，不同则 auto-extract
+
+- **原因**：用户在同一网站切换文章后打开 Popup，不应恢复旧文章的 title/content/markdown。判断粒度为完整 URL（非 domain），避免同站不同文章被错误恢复。
+- **影响**：`App.tsx` 的 `useEffect` 中 `Promise.all([getLastClipDraft(), chrome.tabs.query()])` 比较后决定。URL 相同 → 恢复全量（含 tags/note）；URL 不同 → 不恢复内容，触发 auto-extract。无 draft → auto-extract 不变。
+- **可反转性**：中。需要同步改 Popup 启动流程。
+
+---
+
+## v0.2 Session 5 决策
+
+### D-062：retry 保存复用现有 Background SAVE_TO_NOTION 链路
+
+- **原因**：避免在 Options 中直接调用 Notion API，保持保存逻辑集中在 Background。通过在 `SaveToNotionPayload` 中增加 `sourceHistoryId` 和 `historyWriteMode` 两个可选字段实现 retry 的差异化行为。
+- **影响**：Background `handleSaveToNotion` 在收到 `historyWriteMode='update'` 时调用 `updateHistoryItem` 而非 `addHistoryItem`。普通 Popup 保存不传这两个字段，行为不变。
+- **可反转性**：中。需同步改 message types 和 Background handler。
+
+### D-061：retry 更新原历史记录而非新增重复
+
+- **原因**：D-044 已决策「重试保存时使用用户选择的目标」。retry 的成功/失败应更新同一条原历史记录（saveStatus/savedAt/errorCode/targetId/targetName），避免历史列表中重复出现同一次剪藏的多次记录。
+- **影响**：`historyWriteMode='update'` 通过 `updateHistoryItem(sourceHistoryId, ...)` 更新原记录。普通 Popup 保存仍通过 `addHistoryItem` 新增记录。
+- **可反转性**：低。如果改为新增模式，历史列表会膨胀。
+
+### D-060：History UI 放在 Options tab 内，不新增独立页面
+
+- **原因**：继承 D-046 决策「History UI 放在 Options 页面内」。通过顶部 tab 切换（设置 / 剪藏历史），不修改 manifest，不新增 options_ui 入口。
+- **影响**：App.tsx 新增 `activeTab` 状态和 tab 切换 UI。HistoryTab 组件独立渲染，与设置表单解耦。
+- **可反转性**：高。后续可改为独立页面。
+
+---
+
 ## v0.2 Session 4.1 决策
 
 ### D-059：Popup TargetSelector 不显示 Page ID 预览

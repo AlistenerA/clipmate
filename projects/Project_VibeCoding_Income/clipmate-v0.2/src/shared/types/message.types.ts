@@ -31,6 +31,8 @@ export interface SaveToNotionPayload {
   targetId?: string
   targetName?: string
   pageId: string
+  sourceHistoryId?: string
+  historyWriteMode?: 'append' | 'update'
 }
 
 export type SaveToNotionResponse =

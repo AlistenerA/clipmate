@@ -8,6 +8,8 @@ export interface ClipMetadata {
   description: string
   siteName: string
   createdAt: string
+  siteIconUrl?: string
+  themeColor?: string
 }
 
 export interface ExtractedContent {

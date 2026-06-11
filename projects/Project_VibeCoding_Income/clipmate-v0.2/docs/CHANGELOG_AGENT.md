@@ -4,7 +4,66 @@
 
 ---
 
-## v0.2 Session 4.1：小修复 — alert 精准化 + URL 提取 Page ID + 移除 Page ID 预览 (2026-06-11)
+## v0.2 Session 5.2：图片摘要跳过 + 真实网站图标 (2026-06-11)
+
+### 新增文件
+无
+
+### 修改文件
+- `src/content/parser/metaParser.ts` — 新增 3 个纯函数：`resolveIconUrl`（相对/绝对 URL 解析）、`extractThemeColor`（从 meta 标签提取）、`extractSiteIconUrl`（从 link 标签提取 favicon，优先级 apple-touch-icon > icon > shortcut icon > mask-icon > /favicon.ico fallback）；重写为遍历所有 link 元素后按优先级取最优；`PageMeta` 新增 `siteIconUrl?` / `themeColor?` 可选字段；`parseMetadata` 调用 favicon 提取
+- `src/shared/types/clip.types.ts` — `ClipMetadata` 新增 `siteIconUrl?` / `themeColor?` 可选字段
+- `src/shared/types/settings.types.ts` — `ClipHistoryItem` 新增 `siteName?` / `siteIconUrl?` / `themeColor?` / `descriptionPreview?` 可选字段（旧历史记录无感知兼容）
+- `src/content/index.ts` — `buildContent` 将 meta 中的 favicon 字段写入 ExtractedContent.metadata
+- `src/shared/storage/storage.ts` — `CreateHistoryItemInput` 和 `addHistoryItem` 新增上述 4 个可选字段
+- `src/popup/utils/historyPayload.ts` — `HistoryInput` 和 `buildHistoryInput` 新增 `siteName` / `siteIconUrl` / `themeColor` / `descriptionPreview` 字段，从 metadata 透传
+- `src/background/handlers/notionHandler.ts` — 两处 `addHistoryItem` 调用（成功/失败）均从 `draft.content.metadata` 传入新增字段
+- `src/options/utils/historyView.ts` — 新增 `stripMarkdownImages`（移除 `![]()` / `[![]()]()` / `<img>` 语法）、`normalizeSummaryText`（压缩空白）；`getHistorySummary` 优先级改为：`descriptionPreview` → 清理后的 `contentPreview` → 清理后的 markdown body → URL/标题（备注不再作为摘要首位）
+- `src/options/components/HistoryItem.tsx` — 图标区域新增真实 favicon 渲染：有 `siteIconUrl` 时显示 `<img>`，`onError` 后隐藏图片并显示域名首字母 fallback；无 `siteIconUrl` 时直接显示首字母
+- `tests/history-polish.test.ts` — 导入新函数；更新 `getHistorySummary` 测试（11 项，新增描述优先/图片跳过/多图/链接图/HTML img/全图回退）；新增 `stripMarkdownImages` 测试（8 项）；新增 `normalizeSummaryText` 测试（4 项）；`makeHistoryItem` 新增可选字段支持
+- `tests/content-parser.test.ts` — 新增 `resolveIconUrl` 测试（4 项）、`extractThemeColor` 测试（2 项）、`extractSiteIconUrl` 测试（9 项，含优先级/相对路径/baseURI/fallback/mask-icon/parseMetadata集成）
+- `tests/popup-target-selection.test.ts` — 新增 `buildHistoryInput` 携带 siteIconUrl/themeColor/siteName/descriptionPreview 测试（4 项）
+- `tests/history-save-flow.test.ts` — 新增 descriptionPreview 写入、siteName+siteIconUrl 写入、无新字段兼容测试（3 项）
+
+### 改动摘要
+- 两个人工测试问题修复：
+  1. 文章开篇图片导致摘要显示 `![](url)` 的修复：`stripMarkdownImages` 纯函数移除 markdown/HTML 图片语法，`normalizeSummaryText` 归一化空白
+  2. 网站图标只有域名首字母：Content Script 从页面 DOM 提取真实 favicon（`<link rel>` / `<meta name="theme-color">`），优先级 `apple-touch-icon` > `icon` > `shortcut icon` > `mask-icon` > `/favicon.ico` fallback
+- 摘要优先级修正：`descriptionPreview`（页面描述）> 清理后 `contentPreview` > 清理后 markdown body > URL/domain
+- 新增 4 个可选字段（`siteName` / `siteIconUrl` / `themeColor` / `descriptionPreview`），数据流从 `metaParser` → `buildContent` → `buildHistoryInput` / `notionHandler` → `addHistoryItem` → `ClipHistoryItem`
+- 真实图标渲染：`<img src={siteIconUrl}>` 带 `onError` → fallback 域名首字母；旧历史无新字段时直接显示首字母
+- 不新增 manifest 权限、不调用第三方 favicon API、不修改版本号
+- 构建：90 modules，961ms
+- Lint：0 errors, 0 warnings
+- 测试：321 passed（+41），13 files
+
+---
+
+## v0.2 Session 5.1：History UI 体验增强 + Popup 同站自动刷新 (2026-06-11)
+
+### 新增文件
+- `tests/history-polish.test.ts` — Session 5.1 纯函数测试（46 tests）
+
+### 修改文件
+- `src/options/utils/historyView.ts` — 新增 8 个纯函数：`highlightText`（文本高亮切分）、`getHistoryMatchInfo`（匹配信息查询）、`getDomainFromUrl`、`getSiteInitial`（域名首字母）、`getHistorySummary`（摘要生成）、`extractMarkdownBodyPreview`、`getStableSiteColor`（domain hash → 固定 12 色调色板）、`shouldAutoExtractForActiveTab`（URL 比较决策）；`filterHistoryLocally` 扩展支持 markdown 正文搜索
+- `src/options/components/HistoryItem.tsx` — 全面重设计：左侧站点颜色色条（getStableSiteColor）、网站图标/头像（域名首字母圆形 badge）、摘要预览（getHistorySummary 优先级：notePreview → contentPreview → markdown body → URL）、搜索高亮（highlightText render match token，非 dangerouslySetInnerHTML）、匹配标签（标签命中黄底、目标/备注/正文匹配 tag）；移除旧 notePreview/contentPreview 灰底预览区
+- `src/options/components/HistoryTab.tsx` — 传递 `query` prop 给 HistoryItem
+- `src/popup/App.tsx` — 修复 draft 恢复逻辑：`Promise.all([getLastClipDraft(), chrome.tabs.query()])` 比较 draft URL 与 active tab URL；相同则恢复草稿，不同则 auto-extract；同一页面不丢失 tags/note
+
+### 改动摘要
+- 搜索高亮：使用 `highlightText` 切分文本为 `string | { match }` token 数组，React `<mark>` 渲染，不使用 dangerouslySetInnerHTML
+- 匹配标签：标签命中 query → 黄底样式；目标匹配 → "目标匹配" 紫色 tag；备注匹配 → "备注匹配" 青色 tag；正文匹配（仅当标题/URL 未匹配） → "正文匹配" 橙色 tag
+- 网站图标：每条历史左侧显示域名首字母圆形头像，颜色与左侧色条一致（同站同色）
+- 摘要预览：优先 notePreview → contentPreview → markdown body 前 120 字 → URL/标题兜底
+- 同站统一色条：`getStableSiteColor` 对 domain 做 djb2 hash，在 12 色调色板中取色，同 domain 稳定一致
+- Popup 自动刷新：draft.url !== active tab.url → 不恢复旧内容，触发 auto-extract；draft.url === active tab.url → 恢复全部（包括 tags/note）；无 draft → auto-extract
+- 搜索扩展：`filterHistoryLocally` 新增 `extractBodyMarkdown` 匹配，搜索可命中 `---` 分隔符后的正文
+- 构建：90 modules，934ms
+- Lint：0 errors, 0 warnings
+- 测试：280 passed（+46），13 files
+
+---
+
+## v0.2 Session 5：History UI — 搜索、复制、删除、清空、重试 (2026-06-11)
 
 ### 修改文件
 - `src/popup/App.tsx` — alert 消息改用 `ERROR_MESSAGES` 常量（NOTION_TOKEN_MISSING / NOTION_TARGETS_EMPTY / NOTION_TARGET_NOT_FOUND），消除硬编码文案不一致

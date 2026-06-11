@@ -40,8 +40,14 @@ export default function App() {
         setSelectedTargetId(resolved.id)
       }
     })
-    getLastClipDraft().then((draft) => {
-      if (draft?.content) {
+    Promise.all([
+      getLastClipDraft(),
+      chrome.tabs.query({ active: true, currentWindow: true }),
+    ]).then(([draft, tabs]) => {
+      const activeUrl = tabs[0]?.url
+      const draftUrl = draft?.content?.url
+
+      if (draft?.content && draftUrl && activeUrl === draftUrl) {
         restoredRef.current = true
         setContent(draft.content)
         setTags(draft.tags)

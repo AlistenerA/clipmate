@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { JSDOM } from 'jsdom'
 import { cleanDocument } from '../src/content/parser/contentCleaner'
-import { parseMetadata } from '../src/content/parser/metaParser'
+import { parseMetadata, extractSiteIconUrl, extractThemeColor, resolveIconUrl } from '../src/content/parser/metaParser'
 import { ERROR_MESSAGES, DEFAULT_SETTINGS, STORAGE_KEYS } from '../src/shared/constants/defaults'
 
 describe('contentCleaner', () => {
@@ -135,5 +135,111 @@ describe('STORAGE_KEYS', () => {
   it('defines prefixed storage keys', () => {
     expect(STORAGE_KEYS.SETTINGS).toBe('clipmate_settings')
     expect(STORAGE_KEYS.LAST_CLIP).toBe('clipmate_last_clip')
+  })
+})
+
+describe('resolveIconUrl', () => {
+  it('resolves absolute URL as-is', () => {
+    expect(resolveIconUrl('https://example.com/icon.png', 'https://other.com')).toBe('https://example.com/icon.png')
+  })
+
+  it('resolves relative path against base URL', () => {
+    expect(resolveIconUrl('/favicon.ico', 'https://example.com')).toBe('https://example.com/favicon.ico')
+  })
+
+  it('resolves relative path without leading slash', () => {
+    expect(resolveIconUrl('images/icon.png', 'https://example.com/page/')).toBe('https://example.com/page/images/icon.png')
+  })
+
+  it('returns undefined for invalid URL', () => {
+    expect(resolveIconUrl('', '')).toBeUndefined()
+  })
+})
+
+describe('extractThemeColor', () => {
+  it('extracts theme-color meta tag', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <meta name="theme-color" content="#ff6600">
+    </head><body></body></html>`)
+    expect(extractThemeColor(dom.window.document)).toBe('#ff6600')
+  })
+
+  it('returns undefined when no theme-color meta tag', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head></head><body></body></html>`)
+    expect(extractThemeColor(dom.window.document)).toBeUndefined()
+  })
+})
+
+describe('extractSiteIconUrl', () => {
+  it('extracts standard rel=icon', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="icon" href="https://example.com/favicon.ico">
+    </head><body></body></html>`)
+    expect(extractSiteIconUrl(dom.window.document, 'https://example.com')).toBe('https://example.com/favicon.ico')
+  })
+
+  it('prefers apple-touch-icon over icon', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="icon" href="/icon.ico">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://example.com')
+    expect(result).toBe('https://example.com/apple-touch-icon.png')
+  })
+
+  it('prefers icon over shortcut icon', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="shortcut icon" href="/shortcut.ico">
+      <link rel="icon" href="/icon.png">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://site.com')
+    expect(result).toBe('https://site.com/icon.png')
+  })
+
+  it('resolves relative icon path to absolute', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="icon" href="/images/favicon.png">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://news.cn')
+    expect(result).toBe('https://news.cn/images/favicon.png')
+  })
+
+  it('falls back to /favicon.ico when no link icon defined', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head></head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://example.com/page')
+    expect(result).toBe('https://example.com/favicon.ico')
+  })
+
+  it('uses baseURI over pageUrl when available', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <base href="https://cdn.example.com/">
+      <link rel="icon" href="favicon.ico">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://example.com')
+    expect(result).toBe('https://cdn.example.com/favicon.ico')
+  })
+
+  it('does not throw for invalid href', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="icon" href="">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://example.com')
+    expect(result).toBe('https://example.com/favicon.ico')
+  })
+
+  it('includes siteIconUrl in parseMetadata result', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="icon" href="/favicon.ico">
+    </head><body></body></html>`, { url: 'https://example.com/page' })
+    const meta = parseMetadata(dom.window.document)
+    expect(meta.siteIconUrl).toBe('https://example.com/favicon.ico')
+  })
+
+  it('extracts mask-icon when no higher-priority icon found', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><head>
+      <link rel="mask-icon" href="/mask-icon.svg">
+    </head><body></body></html>`)
+    const result = extractSiteIconUrl(dom.window.document, 'https://example.com')
+    expect(result).toBe('https://example.com/mask-icon.svg')
   })
 })

@@ -132,6 +132,10 @@ export interface CreateHistoryItemInput {
   saveStatus: SaveStatus
   savedAt?: string
   errorCode?: string
+  siteName?: string
+  siteIconUrl?: string
+  themeColor?: string
+  descriptionPreview?: string
 }
 
 export async function addHistoryItem(input: CreateHistoryItemInput): Promise<ClipHistoryItem> {
@@ -163,6 +167,10 @@ export async function addHistoryItem(input: CreateHistoryItemInput): Promise<Cli
       errorCode: input.errorCode,
       createdAt: now,
       updatedAt: now,
+      siteName: input.siteName,
+      siteIconUrl: input.siteIconUrl,
+      themeColor: input.themeColor,
+      descriptionPreview: input.descriptionPreview,
     }
 
     const history = await getHistoryRaw()

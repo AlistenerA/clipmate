@@ -1,4 +1,4 @@
-import { getSettings, addHistoryItem } from '../../shared/storage/storage'
+import { getSettings, addHistoryItem, updateHistoryItem } from '../../shared/storage/storage'
 import { appendBlocks } from '../../platforms/notion/client'
 import { buildNotionBlocks } from '../../platforms/notion/blocks'
 import { formatCopyMarkdown } from '../../shared/utils/formatMarkdown'
@@ -8,7 +8,7 @@ import { logger } from '../../shared/utils/logger'
 export async function handleSaveToNotion(
   payload: SaveToNotionPayload,
 ): Promise<SaveToNotionResponse> {
-  const { draft, targetId, targetName, pageId } = payload
+  const { draft, targetId, targetName, pageId, sourceHistoryId, historyWriteMode } = payload
   const settings = await getSettings()
 
   if (!settings.notionToken) {
@@ -24,13 +24,26 @@ export async function handleSaveToNotion(
     return { success: false, error: 'CONTENT_EMPTY' }
   }
 
+  const isRetryUpdate =
+    sourceHistoryId && historyWriteMode === 'update'
+
   const blocks = buildNotionBlocks(draft)
 
   try {
     await appendBlocks(settings.notionToken, pageId, blocks)
     logger.info(`Saved ${blocks.length} blocks to Notion`)
 
-    if (settings.saveHistoryEnabled) {
+    if (isRetryUpdate) {
+      const now = new Date().toISOString()
+      await updateHistoryItem(sourceHistoryId, {
+        saveStatus: 'saved',
+        savedAt: now,
+        targetId,
+        targetName,
+        errorCode: undefined,
+   	updatedAt: now,
+      })
+    } else if (settings.saveHistoryEnabled) {
       const fullMarkdown = formatCopyMarkdown(
         draft.title,
         draft.content.url,
@@ -40,6 +53,7 @@ export async function handleSaveToNotion(
       )
 
       const now = new Date().toISOString()
+      const meta = draft.content?.metadata
       await addHistoryItem({
         title: draft.title,
         url: draft.content.url,
@@ -53,6 +67,10 @@ export async function handleSaveToNotion(
         targetName,
         saveStatus: 'saved',
         savedAt: now,
+        siteName: meta?.siteName,
+        siteIconUrl: meta?.siteIconUrl,
+        themeColor: meta?.themeColor,
+        descriptionPreview: meta?.description,
       })
     }
 
@@ -62,7 +80,14 @@ export async function handleSaveToNotion(
       err instanceof Error ? err.message : 'NOTION_SAVE_FAILED'
     logger.error(`Notion save failed: ${code}`)
 
-    if (settings.saveHistoryEnabled) {
+    if (isRetryUpdate) {
+      const now = new Date().toISOString()
+      await updateHistoryItem(sourceHistoryId, {
+        saveStatus: 'failed',
+        errorCode: code,
+        updatedAt: now,
+      })
+    } else if (settings.saveHistoryEnabled) {
       const fullMarkdown = formatCopyMarkdown(
         draft.title,
         draft.content.url,
@@ -71,6 +96,7 @@ export async function handleSaveToNotion(
         draft.content.markdown,
       )
 
+      const meta = draft.content?.metadata
       await addHistoryItem({
         title: draft.title,
         url: draft.content.url,
@@ -84,6 +110,10 @@ export async function handleSaveToNotion(
         targetName,
         saveStatus: 'failed',
         errorCode: code,
+        siteName: meta?.siteName,
+        siteIconUrl: meta?.siteIconUrl,
+        themeColor: meta?.themeColor,
+        descriptionPreview: meta?.description,
       })
     }
 

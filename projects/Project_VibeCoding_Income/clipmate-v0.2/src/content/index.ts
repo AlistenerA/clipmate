@@ -41,8 +41,13 @@ function buildContent(
     markdown,
     wordCount,
     metadata: {
-      ...meta,
+      url: meta.url,
+      title: meta.title,
+      description: meta.description,
+      siteName: meta.siteName,
       createdAt: new Date().toISOString(),
+      siteIconUrl: meta.siteIconUrl,
+      themeColor: meta.themeColor,
     },
   }
 }

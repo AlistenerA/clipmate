@@ -190,4 +190,66 @@ describe('buildHistoryInput', () => {
 
     expect(result.mode).toBe('selection')
   })
+
+  it('carries siteIconUrl from metadata', () => {
+    const content = makeContent({
+      metadata: {
+        url: 'https://example.com',
+        title: 'Test Page',
+        description: 'A test page',
+        siteName: 'Example',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        siteIconUrl: 'https://example.com/favicon.ico',
+      },
+    })
+    const draft = makeDraft({ content })
+    const result = buildHistoryInput(draft)
+    expect(result.siteIconUrl).toBe('https://example.com/favicon.ico')
+  })
+
+  it('carries themeColor from metadata', () => {
+    const content = makeContent({
+      metadata: {
+        url: 'https://example.com',
+        title: 'Test Page',
+        description: 'A test page',
+        siteName: 'Example',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        themeColor: '#ff6600',
+      },
+    })
+    const draft = makeDraft({ content })
+    const result = buildHistoryInput(draft)
+    expect(result.themeColor).toBe('#ff6600')
+  })
+
+  it('carries siteName from metadata', () => {
+    const content = makeContent({
+      metadata: {
+        url: 'https://example.com',
+        title: 'Test Page',
+        description: 'A test page',
+        siteName: 'Example Site',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    })
+    const draft = makeDraft({ content })
+    const result = buildHistoryInput(draft)
+    expect(result.siteName).toBe('Example Site')
+  })
+
+  it('carries descriptionPreview from metadata description', () => {
+    const content = makeContent({
+      metadata: {
+        url: 'https://example.com',
+        title: 'Test Page',
+        description: 'Meta description text',
+        siteName: 'Example',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    })
+    const draft = makeDraft({ content })
+    const result = buildHistoryInput(draft)
+    expect(result.descriptionPreview).toBe('Meta description text')
+  })
 })

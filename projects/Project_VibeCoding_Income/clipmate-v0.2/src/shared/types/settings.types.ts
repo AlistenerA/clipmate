@@ -35,6 +35,10 @@ export interface ClipHistoryItem {
   errorCode?: string
   createdAt: string
   updatedAt: string
+  siteName?: string
+  siteIconUrl?: string
+  themeColor?: string
+  descriptionPreview?: string
 }
 
 export interface ClipMateSettingsV2 extends ClipMateSettings {

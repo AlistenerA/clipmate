@@ -6,13 +6,54 @@
 
 ## v0.2 开放问题
 
-> v0.2 Session 4.1 已完成。
+> v0.2 Session 5.2 已完成。
+
+### I-027：History 预览显示图片语法（Session 5.2）
+
+- **状态**：✅ 已解决
+- **描述**：文章开篇是图片时，历史条目预览显示 Markdown 图片语法 `![](url)`，非常难看。
+- **修复**：新增 `stripMarkdownImages` 纯函数（移除 `![]()` / `[![]()]()` / `<img>` 标签）和 `normalizeSummaryText`，在 `getHistorySummary` 中清理 body 后再取摘要。
+
+### I-026：网站图标只有域名首字母（Session 5.2）
+
+- **状态**：✅ 已解决
+- **描述**：历史条目图标仅显示域名首字母头像，期望优先显示真实 favicon。
+- **修复**：Content Script 的 `extractSiteIconUrl` 从 `<link rel="...">` 提取真实图标 URL（优先级 `apple-touch-icon` > `icon` > `shortcut icon` > `mask-icon` > `/favicon.ico` fallback）。新增 `siteIconUrl` / `siteName` / `themeColor` / `descriptionPreview` 可选字段，数据流从 metaParser → buildContent → history input → storage。HistoryItem 渲染 `<img src={siteIconUrl}>`，`onError` 后隐藏图片并 fallback 域名首字母。旧历史记录无新字段时直接显示首字母。
+
+### I-025：搜索关键词匹配不渲染高亮（Session 5.1）
+
+- **状态**：✅ 已解决
+- **描述**：人工测试发现搜索时不会给匹配的关键词做高亮。
+- **修复**：`HistoryItem.tsx` 用 `highlightText` 纯函数切分匹配片段为 token 数组，React `<mark>` 渲染，非 `dangerouslySetInnerHTML`。标题、URL/域名、摘要中匹配文字均有高亮。
+
+### I-024：搜索匹配 tag 不显示（Session 5.1）
+
+- **状态**：✅ 已解决
+- **描述**：搜索命中正文/备注/目标时没有视觉反馈。
+- **修复**：`getHistoryMatchInfo` 返回各字段匹配状态，HistoryItem 渲染匹配 tag（黄底标签/紫色"目标匹配"/青色"备注匹配"/橙色"正文匹配"）。
+
+### I-023：历史条目预览样式单调（Session 5.1）
+
+- **状态**：✅ 已解决
+- **描述**：预览区像纯文本，不够直观。
+- **修复**：HistoryItem 重设计：每条历史左侧显示域名首字母圆形头像 + 同站颜色；摘要优先级 notePreview → contentPreview → markdown body → URL 兜底。
+
+### I-022：同站不同文章打开 Popup 不自动刷新（Session 5.1）
+
+- **状态**：✅ 已解决
+- **描述**：同一网站不同文章间切换后打开 Popup 仍显示上一篇文章。
+- **修复**：`App.tsx` 中 `Promise.all([getLastClipDraft(), chrome.tabs.query()])` 比较 draft URL 与 active tab URL；不同则不自恢复内容而触发 auto-extract；相同则保持 draft 恢复全量（含 tags/note）。
+
+### I-018：复制 Markdown 暂不写入 unsaved 历史（Session 4）
+
+- **状态**：🟡 已确认保留
+- **描述**：Popup 中「复制 Markdown」不会写入 `saveStatus='unsaved'` 历史。Session 5 未修改 Popup 逻辑，因为那会扩大 Session 范围。History UI 已支持展示和重试已有的 unsaved 历史记录。
+- **影响**：用户复制 Markdown 后不会在历史记录中留下 unsaved 条目。可留待后续 Session 处理。
 
 ### I-019：Popup alert 文案与 ERROR_MESSAGES 不一致（Session 4.1）
 
 - **状态**：✅ 已解决
-- **描述**：Session 4 的 `App.tsx` 中 alert 使用硬编码文案（`'请先打开设置页面，配置 Notion Token'`），与 `ERROR_MESSAGES.NOTION_TOKEN_MISSING`（`'请先在设置页填写 Notion Token'`）不一致。
-- **修复**：App.tsx alert 全部改用 `ERROR_MESSAGES` 常量，同时 TargetSelector 内联提示已使用 `ERROR_MESSAGES.NOTION_TARGETS_EMPTY`。
+- **描述**：Session 4 的 `App.tsx` 中 alert 使用硬编码文案，与 `ERROR_MESSAGES` 不一致。
 
 ### I-020：Notion URL #hash 可能混淆用户（Session 4.1）
 
@@ -28,9 +69,9 @@
 
 ### I-018：复制 Markdown 暂不写入 unsaved 历史（Session 4）
 
-- **状态**：🟡 待后续
-- **描述**：本轮核心是实现"保存到 Notion"链路的历史写入。复制 Markdown 写入 `saveStatus='unsaved'` 历史留待 Session 5（History UI）或 Session 7（鲁棒性）完善。
-- **影响**：用户复制 Markdown 后不会在历史记录中留下 unsaved 条目。
+- **状态**：🟡 已确认保留
+- **描述**：Popup 中「复制 Markdown」不会写入 `saveStatus='unsaved'` 历史。Session 5 未修改 Popup 逻辑，因为那会扩大 Session 范围。History UI 已支持展示和重试已有的 unsaved 历史记录。
+- **影响**：用户复制 Markdown 后不会在历史记录中留下 unsaved 条目。可留待后续 Session 处理。
 
 ### I-017：MIN_HISTORY_LIMIT 为 10，用户可设置更小值但会被 clamp（Session 1）
 

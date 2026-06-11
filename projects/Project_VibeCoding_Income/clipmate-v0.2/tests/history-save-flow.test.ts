@@ -332,4 +332,59 @@ describe('handleSaveToNotion', () => {
     const item = history[0] as Record<string, unknown>
     expect(item.markdownTruncated).toBe(true)
   })
+
+  it('writes descriptionPreview from metadata description', async () => {
+    mockFetch(200)
+    setRawSettings(makeSettings())
+    const draft = makeDraft()
+    draft.content.metadata.description = 'Meta description for this page'
+
+    await handleSaveToNotion(makePayload({ draft }))
+
+    const history = getHistory()
+    expect(history).toHaveLength(1)
+    expect(history[0]).toMatchObject({
+      descriptionPreview: 'Meta description for this page',
+    })
+  })
+
+  it('writes siteName and siteIconUrl when available', async () => {
+    mockFetch(200)
+    setRawSettings(makeSettings())
+    const draft = makeDraft()
+    draft.content.metadata.siteIconUrl = 'https://example.com/favicon.ico'
+    draft.content.metadata.siteName = 'Example Site'
+
+    await handleSaveToNotion(makePayload({ draft }))
+
+    const history = getHistory()
+    expect(history).toHaveLength(1)
+    expect(history[0]).toMatchObject({
+      siteIconUrl: 'https://example.com/favicon.ico',
+      siteName: 'Example Site',
+    })
+  })
+
+  it('writes history without new fields when metadata has none', async () => {
+    mockFetch(200)
+    setRawSettings(makeSettings())
+    const draft = makeDraft()
+    draft.content.metadata = {
+      url: 'https://example.com',
+      title: 'Test Page',
+      description: '',
+      siteName: '',
+      createdAt: '2026-01-01T00:00:00.000Z',
+    }
+
+    await handleSaveToNotion(makePayload({ draft }))
+
+    const history = getHistory()
+    expect(history).toHaveLength(1)
+    expect(history[0]).toMatchObject({
+      siteName: '',
+      siteIconUrl: undefined,
+      descriptionPreview: '',
+    })
+  })
 })

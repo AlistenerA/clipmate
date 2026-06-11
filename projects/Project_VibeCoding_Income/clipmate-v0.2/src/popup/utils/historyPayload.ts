@@ -13,6 +13,10 @@ export interface HistoryInput {
   targetId?: string
   targetName?: string
   saveStatus?: SaveStatus
+  siteName?: string
+  siteIconUrl?: string
+  themeColor?: string
+  descriptionPreview?: string
 }
 
 export function buildHistoryInput(
@@ -21,6 +25,7 @@ export function buildHistoryInput(
   saveStatus?: SaveStatus,
 ): HistoryInput {
   const contentText = draft.content?.contentText || ''
+  const meta = draft.content?.metadata
 
   return {
     title: draft.title,
@@ -34,5 +39,9 @@ export function buildHistoryInput(
     targetId: target?.id,
     targetName: target?.name,
     saveStatus,
+    siteName: meta?.siteName,
+    siteIconUrl: meta?.siteIconUrl,
+    themeColor: meta?.themeColor,
+    descriptionPreview: meta?.description,
   }
 }

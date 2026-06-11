@@ -8,7 +8,7 @@
 
 ## 当前阶段
 
-**v0.2 Session 4.1 已完成** — Popup 目标选择与历史写入的小修复：alert 文案对齐 ERROR_MESSAGES、Options 支持完整 Notion URL 自动提取 Page ID、Popup 目标选择框不再显示 Page ID 预览。
+**v0.2 Session 5.2 已完成** — History 预览摘要跳过 Markdown 图片 + 优先显示真实网站图标。修复摘要显示 `![](url)` 问题，新增 `stripMarkdownImages` / `normalizeSummaryText` 纯函数；Content Script 从页面提取真实 favicon（apple-touch-icon > icon > shortcut icon > mask-icon > /favicon.ico），HistoryItem 优先渲染真实图标，加载失败 fallback 域名首字母头像。新增 `descriptionPreview` / `siteIconUrl` / `siteName` / `themeColor` 可选字段，旧历史记录无感知兼容。
 
 ---
 
@@ -43,6 +43,9 @@
 | v0.2 Session 3 Options 多目标管理 | ✅ 已完成 | TargetList / TargetEditor UI + targetManager 纯函数 + 32 tests |
 | v0.2 Session 4 Popup 目标选择与历史写入 | ✅ 已完成 | TargetSelector + 保存链路改造 + 历史写入 + 32 tests |
 | v0.2 Session 4.1 小修复 | ✅ 已完成 | alert 对齐 ERROR_MESSAGES + Notion URL 提取 Page ID + 移除 Page ID 预览 + 13 tests |
+| v0.2 Session 5 History UI | ✅ 已完成 | 搜索/复制Markdown/删除/清空/重试 + Options tab 切换 + retry 更新原历史 + 43 tests |
+| v0.2 Session 5.1 History UI 体验增强 | ✅ 已完成 | 搜索高亮/匹配标签/网站图标+摘要预览/同站统一色条/Popup 同站自动刷新 + 46 tests |
+| v0.2 Session 5.2 图片摘要与真实图标 | ✅ 已完成 | 跳过 markdown/HTML 图片语法、content script 提取 favicon、description 优先摘要 + 41 tests |
 
 ---
 
@@ -63,14 +66,16 @@
 - [x] v0.2 Session 1：数据结构升级与兼容迁移
 - [x] v0.2 Session 2：版本目录隔离与迁移
 - [x] v0.2 Session 3：Options 多 Notion 目标管理
-- [x] v0.2 Session 4：Popup 目标选择与历史写入（本轮）
+- [x] v0.2 Session 4：Popup 目标选择与历史写入
+- [x] v0.2 Session 5：History UI（搜索/复制/删除/清空/重试）
+- [x] v0.2 Session 5.1：History UI 体验增强 + Popup 同站自动刷新
+- [x] v0.2 Session 5.2：图片摘要跳过 + 真实网站图标优先显示
 
 ---
 
 ## 未完成（按优先级）
 
-1. v0.2 Session 5：History UI（搜索/复制/删除/清空/重试）
-2. v0.2 Session 6：文档、QA、版本号、打包
+1. v0.2 Session 6：文档、QA、版本号、打包
 3. v0.2 Session 7：鲁棒性检查与修复
 4. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试
 5. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
@@ -81,6 +86,6 @@
 
 ## 下一阶段建议
 
-**v0.2 Session 5** — History UI。按 `docs/V0.2_PLAN.md` 中 Session 5 范围执行：在 Options 中新增「剪藏历史」tab，实现历史列表展示、搜索、复制 Markdown、单条删除、清空全部、失败重试。
+**v0.2 Session 6** — 文档、QA、版本号、打包。按 `docs/V0.2_PLAN.md` 中 Session 6 范围执行：更新 README/隐私政策/权限说明/商店文案/发布清单，将 package.json 和 manifest.config.ts 版本号升级为 0.2.0。
 
-> v0.2 Session 4 交付：Popup 目标选择与历史写入完成。TargetSelector 组件 + 保存链路改造 + Background 历史写入。178 tests 全部通过（新增 32 tests），Lint 0 errors，Build 成功（87 modules）。`clipmate-v0.1/` 未修改。
+> v0.2 Session 5.2 交付：摘要预览跳过 Markdown/HTML 图片语法（![]()、[![]()]()、<img>），真实 favicon 提取与渲染（apple-touch-icon > icon > shortcut icon > mask-icon > /favicon.ico），description 优先摘要。321 tests 全部通过（+41），Lint 0 errors，Build 成功（90 modules）。`clipmate-v0.1/` 未修改。

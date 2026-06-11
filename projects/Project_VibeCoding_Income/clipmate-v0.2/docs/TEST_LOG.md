@@ -4,6 +4,207 @@
 
 ---
 
+## v0.2 Session 5.2 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+321 tests passed, 13 test files, 2.97s。
+```text
+✓ tests/example.test.ts (1 test) 5ms
+✓ tests/notion-blocks.test.ts (13 tests) 6ms
+✓ tests/notion-client.test.ts (10 tests) 12ms
+✓ tests/history-ui.test.ts (32 tests) 9ms
+✓ tests/history-polish.test.ts (65 tests) 14ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/popup-target-selection.test.ts (23 tests) 9ms
+✓ tests/options-targets.test.ts (45 tests) 19ms
+✓ tests/shared-utils.test.ts (35 tests) 10ms
+✓ tests/history-retry-flow.test.ts (11 tests) 19ms
+✓ tests/history-save-flow.test.ts (16 tests) 17ms
+✓ tests/storage-migration.test.ts (34 tests) 56ms
+✓ tests/content-parser.test.ts (27 tests) 244ms
+
+Test Files  13 passed (13)
+     Tests  321 passed (321)
+  Duration  2.97s
+```
+
+```pwsh
+npm run build
+```
+构建成功：90 modules, 961ms
+- tsc: 无类型错误
+- vite build: 90 个模块，961ms
+- Options bundle: 21.70KB (gzip 6.84KB)
+- Background bundle: 4.68KB (gzip 1.92KB)
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| stripMarkdownImages | 8 | 无 alt 图片、带 alt 图片、链接图片、HTML img、文本保留、多图片、无图片原文、空输入 |
+| normalizeSummaryText | 4 | trim、空白压缩、纯空白、正常文本 |
+| getHistorySummary 更新 | 11 | descriptionPreview 优先、contentPreview 清理图片、markdown body 跳图片、多图开篇、链接图开篇、HTML img 开篇、全图片回退、URL 回退、标题回退、普通文本不变 |
+| resolveIconUrl | 4 | 绝对 URL、相对路径、无前导斜杠、无效 URL |
+| extractThemeColor | 2 | 提取 theme-color、无 meta tag |
+| extractSiteIconUrl | 9 | rel=icon、apple-touch-icon 优先、icon 优先 shortcut、相对路径解析、fallback /favicon.ico、baseURI 优先、空 href fallback、parseMetadata 集成、mask-icon |
+| buildHistoryInput 新字段 | 4 | siteIconUrl、themeColor、siteName、descriptionPreview |
+| history-save-flow 新字段 | 3 | descriptionPreview 写入、siteName+siteIconUrl 写入、无新字段兼容 |
+
+总测试从 280 增至 321（+41）。
+
+### 错误/失败
+
+首次运行 7 项失败（4 项 extractSiteIconUrl + 3 项 getHistorySummary/stripMarkdownImages），原因：
+- **JSDOM 中 `querySelectorAll('link[rel]')` 对多 link 元素/某些 rel 值返回空集合** → 改用 `querySelectorAll('link')` 遍历后手动过滤 rel
+- **`doc.baseURI` 在无 url 选项的 JSDOM 中为 `about:blank`，导致相对 icon 路径解析失败** → `baseUrl` 增加判断：非 http 协议的 baseURI 回退到 `pageUrl`
+- **`stripMarkdownImages` 先移除 `![]()` 再移除 `[![]()]()` 导致链接图片残留 `[]()`** → 调整顺序为先移除外层链接图片再移除内层图片
+- **`makeHistoryItem` 未包含 `descriptionPreview` 等新增字段** → 补齐 4 个可选字段
+
+全部修复后 321 tests 全通过。
+
+---
+
+## v0.2 Session 5.1 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+280 tests passed, 13 test files, 2.99s。
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-blocks.test.ts (13 tests) 5ms
+✓ tests/notion-client.test.ts (10 tests) 10ms
+✓ tests/popup-target-selection.test.ts (19 tests) 6ms
+✓ tests/history-ui.test.ts (32 tests) 15ms
+✓ tests/history-polish.test.ts (46 tests) 13ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/options-targets.test.ts (45 tests) 21ms
+✓ tests/shared-utils.test.ts (35 tests) 14ms
+✓ tests/storage-migration.test.ts (34 tests) 45ms
+✓ tests/history-retry-flow.test.ts (11 tests) 12ms
+✓ tests/history-save-flow.test.ts (13 tests) 21ms
+✓ tests/content-parser.test.ts (12 tests) 145ms
+
+Test Files  13 passed (13)
+     Tests  280 passed (280)
+  Duration  2.99s
+```
+
+```pwsh
+npm run build
+```
+构建成功：90 modules, 934ms
+- tsc: 无类型错误
+- vite build: 90 个模块，934ms
+- Options bundle: 21.31KB (gzip 6.69KB) — 相比 S5 的 18.94KB 增加约 2.4KB（新增搜索高亮/匹配标签/站点头像组件逻辑）
+- Background/Popup/Content 体积无明显变化
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| highlightText | 7 | 空 query、匹配、大小写不敏感、多次出现、无匹配、特殊正则字符、多词匹配 |
+| getHistoryMatchInfo | 11 | 空 query 全 false、标题/URL/标签/目标名/备注/contentPreview/markdown body 匹配、targetName undefined、contentPreview 已匹配时 markdownMatched 不设、大小写不敏感 |
+| getDomainFromUrl | 3 | 提取域名、无效 URL、空输入 |
+| getSiteInitial | 4 | 首字母大写、空字符串 ?、CJK、www 前缀 |
+| getHistorySummary | 5 | notePreview 优先、contentPreview fallback、markdown body fallback、URL fallback、title fallback |
+| extractMarkdownBodyPreview | 3 | 截取前 N 字、空 body、无分隔符全返回 |
+| getStableSiteColor | 5 | 同 domain 同色、不同 domain 大概率不同、空 domain 默认灰、有效 hex |
+| shouldAutoExtractForActiveTab | 6 | 空 tab(=false)、无 draft(=true)、URL 相同(=false)、同域不同 URL(=true)、跨域不同 URL(=true) |
+| filterHistoryLocally body match | 2 | 搜索命中 markdown 正文、搜索未命中 |
+
+总测试从 234 增至 280（+46）。
+
+### 错误/失败
+
+无。一次通过。
+
+---
+
+## v0.2 Session 5 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+234 tests passed, 12 test files, 2.79s。
+```text
+✓ tests/example.test.ts (1 test) 3ms
+✓ tests/notion-blocks.test.ts (13 tests) 7ms
+✓ tests/notion-client.test.ts (10 tests) 8ms
+✓ tests/history-ui.test.ts (32 tests) 10ms
+✓ tests/notion-errors.test.ts (9 tests) 3ms
+✓ tests/popup-target-selection.test.ts (19 tests) 7ms
+✓ tests/options-targets.test.ts (45 tests) 15ms
+✓ tests/shared-utils.test.ts (35 tests) 17ms
+✓ tests/storage-migration.test.ts (34 tests) 39ms
+✓ tests/history-retry-flow.test.ts (11 tests) 14ms
+✓ tests/history-save-flow.test.ts (13 tests) 17ms
+✓ tests/content-parser.test.ts (12 tests) 159ms
+
+Test Files  12 passed (12)
+     Tests  234 passed (234)
+  Duration  2.79s
+```
+
+```pwsh
+npm run build
+```
+构建成功：90 modules, 978ms
+- tsc: 无类型错误
+- vite build: 90 个模块，978ms
+- Options bundle: 18.94KB (gzip 5.78KB) — 相比 S4.1 的 11.22KB 增加约 7.7KB（新增 HistoryTab/HistoryItem/historyView）
+- Background bundle: 4.27KB (gzip 1.82KB) — 相比 S4.1 的 3.26KB 增加约 1KB（retry update 逻辑）
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| extractBodyMarkdown | 4 | 双换行分隔、单换行分隔、无分隔原样返回、多个 --- 保留后续 |
+| getHistoryStatusLabel | 3 | saved/failed/unsaved 中文标签 |
+| getHistoryStatusTone | 3 | 绿/红/灰色调 |
+| formatHistoryTime | 2 | 有效 ISO 包含日期+时间、无效输入原样返回 |
+| getHostname | 2 | 提取域名、无效 URL 原样返回 |
+| resolveRetryTarget | 6 | 空 targets/null、原 targetId 匹配、targetId 无效回退默认、回退首个、无 targetId 用默认、无 targetId 无默认用首个 |
+| filterHistoryLocally | 13 | 空/空白查询、标题/URL/标签/目标名/备注预览/正文预览搜索、大小写不敏感、部分匹配、无匹配 |
+| getModeLabel | 2 | 全文/选区中文标签 |
+| handleSaveToNotion retry | 11 | update 模式更新原历史不新增、update 模式失败更新原历史、普通模式仍新增、普通失败仍新增、update 模式无视 saveHistoryEnabled、Token 缺失、pageId 空、内容空、append 模式仍新增、success 清除 errorCode、更新时间戳 |
+
+总测试从 191 增至 234（+43）。
+
+### 错误/失败
+
+首次运行 4 项测试失败：
+- `extractBodyMarkdown`: `slice(idx + 5)` 保留了前导 `\n`，修复：增加 `startsWith('\n')` 判断裁剪
+- `formatHistoryTime`: UTC 10:30 在本地时区显示 18:30，修复：测试改用 `/\d{2}:\d{2}/` 正则匹配
+- `formatHistoryTime` 无效输入：`new Date('not-a-date')` 返回 NaN，修复：实现增加 `isNaN(d.getTime())` 检测
+
+全部修复后 234 tests 全通过。
+
+---
+
 ## v0.2 Session 4.1 (2026-06-11)
 
 ### 运行命令
