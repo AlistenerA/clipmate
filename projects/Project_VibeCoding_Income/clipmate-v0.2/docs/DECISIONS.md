@@ -4,6 +4,16 @@
 
 ---
 
+## v0.2 Session 7 决策
+
+### D-074：Session 7 仅做鲁棒性检查，不修改代码
+
+- **原因**：Session 7 目标为对 v0.2.0 做最终自动化鲁棒性检查。全量检查（lint/test/build/zip/版本/manifest/zip内容/隐私日志/敏感信息/文档一致性/边界决策）全部通过，无需修改任何业务代码。
+- **影响**：仅更新交接文档（CURRENT_STATUS/CHANGELOG_AGENT/TEST_LOG/ISSUES/DECISIONS）。未修改 src/、tests/、manifest、版本号、权限、依赖。
+- **可反转性**：高。后续 Session 可随时基于此基线继续。
+
+---
+
 ## v0.2 Session 6 决策
 
 ### D-073：包名版本号在 Session 6 升级到 0.2.0

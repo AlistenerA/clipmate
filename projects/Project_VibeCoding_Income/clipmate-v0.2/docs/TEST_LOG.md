@@ -4,6 +4,121 @@
 
 ---
 
+## v0.2 Session 7 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+321 tests passed, 13 test files, 3.39s。
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-blocks.test.ts (13 tests) 9ms
+✓ tests/history-ui.test.ts (32 tests) 16ms
+✓ tests/history-polish.test.ts (65 tests) 20ms
+✓ tests/notion-client.test.ts (10 tests) 14ms
+✓ tests/notion-errors.test.ts (9 tests) 6ms
+✓ tests/popup-target-selection.test.ts (23 tests) 12ms
+✓ tests/shared-utils.test.ts (35 tests) 9ms
+✓ tests/options-targets.test.ts (45 tests) 31ms
+✓ tests/storage-migration.test.ts (34 tests) 47ms
+✓ tests/history-retry-flow.test.ts (11 tests) 21ms
+✓ tests/history-save-flow.test.ts (16 tests) 30ms
+✓ tests/content-parser.test.ts (27 tests) 274ms
+
+Test Files  13 passed (13)
+     Tests  321 passed (321)
+  Duration  3.39s
+```
+
+```pwsh
+npm run build
+```
+构建成功：90 modules, 929ms
+- tsc: 无类型错误
+- vite build: 90 个模块，929ms
+- dist/manifest.json version = 0.2.0 ✅
+
+```pwsh
+npm run zip
+```
+打包成功：clipmate-v0.2.zip (117.6 KB)
+
+### 版本与权限检查
+
+| 检查项 | 值 | 结果 |
+|--------|-----|:---:|
+| package.json version | 0.2.0 | ✅ |
+| manifest.config.ts version | 0.2.0 | ✅ |
+| dist/manifest.json version | 0.2.0 | ✅ |
+| permissions | storage, activeTab | ✅ |
+| host_permissions | https://api.notion.com/* | ✅ |
+| content_scripts matches | <all_urls> | ✅ |
+| 新增权限 | 无 | ✅ |
+
+### zip 内容检查
+
+zip 包含 21 个条目：
+- ✅ manifest.json
+- ✅ service-worker-loader.js
+- ✅ assets/ (11 JS/CSS 构建产物)
+- ✅ icons/ (7 图标文件: icon-16/32/48/128/512.png + icon-source.svg)
+- ✅ src/popup/index.html
+- ✅ src/options/index.html
+- ✅ 不含 .ts/.tsx 源文件
+- ✅ 不含 tests/、docs/、node_modules/、.git/、.env、README.md、package.json
+
+### 隐私与日志检查
+
+**console.log 调用**：仅在 `logger.ts:5`（logger 自身实现），所有日志调用通过 logger 封装。
+
+**logger 输出内容审查**：
+- `notionHandler.ts`: 仅输出 block 数量和错误码（`NOTION_AUTH_FAILED` / `NOTION_SAVE_FAILED`），无 Token/正文/备注泄露 ✅
+- `content/index.ts`: 仅输出 wordCount 和状态信息，无正文全文泄露 ✅
+- `background/index.ts`: 仅输出 ready/unhandled message 类型，无敏感信息 ✅
+- `storage.ts`: 仅输出操作失败警告（如"Failed to read settings"），无数据内容泄露 ✅
+
+**敏感信息搜索**：
+- `NotionSettingsForm.tsx`: `type="password"` - UI 输入类型 ✅
+- `NotionSettingsForm.tsx`: `placeholder="secret_xxxxxxxxxxxxx"` - 占位符文本，非真实 Token ✅
+- `client.ts`: `Authorization: \`Bearer ${token}\`` - 使用变量，非硬编码 Token ✅
+- `client.ts`: `'Notion-Version': NOTION_VERSION` - API 版本常量 ✅
+- 无 `api_key`、`apikey`、`password` 硬编码出现 ✅
+
+### 文档一致性检查
+
+| 文档 | 检查结果 |
+|------|:---:|
+| README.md | 指向 0.2.0，v0.2 功能列表完整，已知限制不含未实现功能承诺 ✅ |
+| RELEASE_CHECKLIST.md | 版本 0.2.0，权限对照正确 ✅ |
+| PERMISSION_JUSTIFICATION.md | 权限与 manifest 一致，v0.2 权限对比表正确 ✅ |
+| PRIVACY_POLICY_DRAFT.md | 涵盖历史记录存储说明，不调用第三方 favicon API ✅ |
+| STORE_LISTING_DRAFT.md | 功能列表与 v0.2 一致，无承诺未实现功能 ✅ |
+| CURRENT_STATUS.md | 已更新 Session 7 ✅ |
+
+### 边界决策验证
+
+| 检查项 | 结论 |
+|--------|:---:|
+| historyLimit clamp [10, 500] | storage.ts:51-52 实现 ✅ |
+| MAX_MARKDOWN_LENGTH 50000 + truncation | defaults.ts:26 + storage.ts:147-148 ✅ |
+| deleteTarget 不删历史 | targetManager.ts:106 仅操作 targets ✅ |
+| retry 保存更新原历史不新增 | notionHandler.ts:28-38 使用 updateHistoryItem ✅ |
+| favicon 仅从 DOM 读取 | metaParser.ts:30 遍历 link 标签 ✅ |
+| popup 同站不同 URL 重新提取 | historyView.ts:222 shouldAutoExtractForActiveTab ✅ |
+
+### 错误/失败
+
+无。全部自动化检查通过，未发现需要修复的问题。本轮未修改任何业务代码。
+
+---
+
 ## v0.2 Session 6 (2026-06-11)
 
 ### 运行命令

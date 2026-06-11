@@ -8,7 +8,7 @@
 
 ## 当前阶段
 
-**v0.2 Session 6 已完成** — 文档更新、QA 材料、版本号升级到 0.2.0、打包。
+**v0.2 Session 7 已完成** — 鲁棒性检查与修复。全量自动化检查通过，未发现需要修复的问题。
 
 ---
 
@@ -47,6 +47,7 @@
 | v0.2 Session 5.1 History UI 体验增强 | ✅ 已完成 | 搜索高亮/匹配标签/网站图标+摘要预览/同站统一色条/Popup 同站自动刷新 + 46 tests |
 | v0.2 Session 5.2 图片摘要与真实图标 | ✅ 已完成 | 跳过 markdown/HTML 图片语法、content script 提取 favicon、description 优先摘要 + 41 tests |
 | v0.2 Session 6 文档、版本号、打包 | ✅ 已完成 | README/TEST_PLAN/QA模板/隐私政策/权限说明/商店文案/发布清单更新，版本号 0.2.0，clipmate-v0.2.zip |
+| v0.2 Session 7 鲁棒性检查 | ✅ 已完成 | 全量自动化检查通过，无代码修改 |
 
 ---
 
@@ -73,21 +74,21 @@
 - [x] v0.2 Session 5.1：History UI 体验增强 + Popup 同站自动刷新
 - [x] v0.2 Session 5.2：图片摘要跳过 + 真实网站图标优先显示
 - [x] v0.2 Session 6：文档更新、版本号升级到 0.2.0、打包
+- [x] v0.2 Session 7：鲁棒性检查与修复（全量自动化检查通过，无代码修改）
 
 ---
 
 ## 未完成（按优先级）
 
-1. v0.2 Session 7：鲁棒性检查与修复
-2. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试（40 项）
-3. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
-4. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
-5. 提交 Edge Add-ons Partner Center
+1. 人工验收 A：按 TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 逐项测试（40 项）
+2. 人工验收 B：最终发布前审查（由用户或 ChatGPT 审查）
+3. 创建 GitHub Pages 托管隐私政策页面（获取公开 URL）
+4. 提交 Edge Add-ons Partner Center
 
 ---
 
 ## 下一阶段建议
 
-**v0.2 Session 7** — 鲁棒性检查与修复。全量回归测试、lint、build、zip、边界场景修复。确认所有 321 tests 通过后，对代码做最后的鲁棒性检查和修复。
+**人工 QA** — 自动化检查全部通过。下一步由人工按 TEST_PLAN.md（40 项）逐项手动测试并填写 MANUAL_QA_RESULT_TEMPLATE.md。确认无阻塞问题后，创建 GitHub Pages 托管隐私政策，然后提交 Edge Add-ons Partner Center。
 
-> v0.2 Session 6 交付：版本号升级到 0.2.0（package.json + manifest.config.ts），8 份文档更新（README/TEST_PLAN/MANUAL_QA_RESULT_TEMPLATE/PRIVACY_POLICY_DRAFT/PERMISSION_JUSTIFICATION/STORE_LISTING_DRAFT/RELEASE_CHECKLIST/交接文档），zip 打包为 clipmate-v0.2.zip。未修改 src/ 和 tests/ 业务代码。`clipmate-v0.1/` 未修改。
+> v0.2 Session 7 交付：全量自动化鲁棒性检查（lint/test/build/zip/版本/manifest/zip内容/隐私日志/敏感信息/文档一致性/边界决策验证），全部通过。未修改 src/ 和 tests/ 业务代码。`clipmate-v0.1/` 未修改。

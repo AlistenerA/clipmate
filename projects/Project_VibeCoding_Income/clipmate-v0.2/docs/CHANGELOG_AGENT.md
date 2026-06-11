@@ -4,6 +4,47 @@
 
 ---
 
+## v0.2 Session 7：鲁棒性检查与修复 (2026-06-11)
+
+### 修改文件
+
+无业务代码修改。仅更新交接文档：
+- `docs/CURRENT_STATUS.md` — 更新当前阶段为 Session 7 已完成
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 7 检查记录
+- `docs/ISSUES.md` — 确认无新增 blocker
+- `docs/DECISIONS.md` — 记录 Session 7 仅做鲁棒性检查
+
+### 检查项与结果
+
+| 检查项 | 结果 |
+|--------|:---:|
+| npm run lint | 0 errors, 0 warnings |
+| npm run test | 321 passed, 13 files |
+| npm run build | 90 modules, 929ms |
+| npm run zip | clipmate-v0.2.zip (117.6 KB) |
+| package.json version | 0.2.0 ✅ |
+| manifest.config.ts version | 0.2.0 ✅ |
+| dist/manifest.json version | 0.2.0 ✅ |
+| manifest 权限一致性 | storage / activeTab / host_permissions api.notion.com / content_scripts all_urls ✅ |
+| zip 内容 (21 entries) | 仅构建产物，无源码泄露 ✅ |
+| console.log / logger 泄露检查 | 仅输出状态信息、字数、错误码，无 Token/正文/备注/Markdown 泄露 ✅ |
+| 硬编码敏感信息 | client.ts 中 Authorization Bearer 使用变量 token，placeholder 为 secret_xxx，无真实凭据 ✅ |
+| 文档一致性（7 份） | README/RELEASE_CHECKLIST/PERMISSION_JUSTIFICATION/PRIVACY_POLICY_DRAFT/STORE_LISTING_DRAFT/CURRENT_STATUS 均与 v0.2.0 一致 ✅ |
+| 历史功能边界 | historyLimit clamp [10,500]、MAX_MARKDOWN_LENGTH 50000、deleteTarget 不删历史、retry update 不新增、favicon 仅读 DOM、popup auto-refresh ✅ |
+| 兼容与迁移 | v0.1 settings 迁移函数存在、旧历史无新字段不崩溃、目标缺失 fallback ✅ |
+
+### 改动摘要
+
+- 未修改任何 `src/` 和 `tests/` 文件
+- 未修改 manifest 权限
+- 未修改版本号（保持 0.2.0）
+- 未新增依赖
+- 未修改 `clipmate-v0.1/`
+- 仅更新交接文档记录 Session 7 检查结果
+
+---
+
 ## v0.2 Session 6：文档、QA、版本号、打包 (2026-06-11)
 
 ### 修改文件
