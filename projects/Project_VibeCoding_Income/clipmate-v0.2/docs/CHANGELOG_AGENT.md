@@ -4,6 +4,32 @@
 
 ---
 
+## v0.2 Session 3：Options 多 Notion 目标管理 (2026-06-11)
+
+### 新增文件
+- `src/options/utils/targetManager.ts` — 目标管理纯函数（addTarget / updateTarget / deleteTarget / setDefaultTarget / maskPageId）
+- `src/options/components/TargetList.tsx` — 目标列表展示组件（含空状态、默认标记、编辑/删除/设为默认按钮）
+- `src/options/components/TargetEditor.tsx` — 目标新增/编辑表单组件（含名称、Page ID、设为默认复选框、内联验证）
+- `tests/options-targets.test.ts` — 目标管理纯函数测试（32 tests）
+
+### 修改文件
+- `src/options/App.tsx` — 状态类型从 `ClipMateSettings` 升级到 `ClipMateSettingsV2`；替换旧 `pageId` 输入为 TargetList/TargetEditor 多目标管理；新增 add/edit/delete/setDefault handler；目标操作即时持久化到 storage；handleClear 增加 V2 字段清理
+- `src/options/components/NotionSettingsForm.tsx` — 移除 `pageId` / `onChangePageId` props（Page ID 现由多目标管理）
+- `src/options/components/StorageDebugPanel.tsx` — 类型升级到 `ClipMateSettingsV2`；显示目标数量/名称列表/历史记录上限
+
+### 改动摘要
+- Options 页面从单 Page ID 输入切换为多 Notion 目标列表管理
+- 目标 CRUD 操作即时持久化到 chrome.storage.local（不依赖全局保存按钮）
+- Token 和标签仍通过全局保存按钮持久化
+- 纯函数 targetManager 不依赖 React/chrome API，方便测试
+- 首目标自动设为默认；删除默认目标自动选择新默认；只有一个 isDefault=true
+- 旧 notionPageId 字段保留兼容，不再作为主要输入
+- 构建：85 modules（+3），877ms
+- Lint：0 errors, 0 warnings
+- 测试：146 passed（+32），8 files
+
+---
+
 ## v0.2 Session 2：版本目录隔离与迁移 (2026-06-11)
 
 ### 新增文件

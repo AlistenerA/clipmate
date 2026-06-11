@@ -1,7 +1,7 @@
-import type { ClipMateSettings } from '../../shared/types/settings.types'
+import type { ClipMateSettingsV2 } from '../../shared/types/settings.types'
 
 interface Props {
-  settings: ClipMateSettings
+  settings: ClipMateSettingsV2
 }
 
 function maskToken(token: string): string {
@@ -21,10 +21,15 @@ export default function StorageDebugPanel({ settings }: Props) {
           Token：<span className="text-gray-400">{maskToken(settings.notionToken)}</span>
         </div>
         <div>
-          Page ID：{settings.notionPageId || '（未设置）'}
+          保存目标：{settings.notionTargets.length} 个
+          {settings.notionTargets.length > 0 &&
+            `（${settings.notionTargets.map((t) => t.name).join('、')}）`}
         </div>
         <div>
           默认标签：{settings.defaultTags.length > 0 ? settings.defaultTags.join(', ') : '（未设置）'}
+        </div>
+        <div>
+          历史记录上限：{settings.historyLimit}
         </div>
         <div>
           剪藏历史：{settings.saveHistoryEnabled ? '开启' : '关闭'}

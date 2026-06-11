@@ -4,6 +4,22 @@
 
 ---
 
+## v0.2 Session 3 决策
+
+### D-053：目标操作即时持久化，不依赖全局保存按钮
+
+- **原因**：add/edit/delete/setDefault 是原子操作，用户完成操作后应立即生效。Token 和标签修改频率低，仍使用全局保存按钮。
+- **影响**：App.tsx 中对目标操作单独调用 `saveSettings` 写入 storage，不使用 `handleSave`。
+- **可反转性**：高。可改为统一全局保存。
+
+### D-052：抽出 targetManager 纯函数
+
+- **原因**：目标 CRUD 逻辑不依赖 React 和 chrome API，抽出为纯函数方便单元测试。32 项测试覆盖所有核心逻辑和边界场景。
+- **影响**：`src/options/utils/targetManager.ts` 不导入 React/chrome，所有函数输入输出纯数据。
+- **可反转性**：高。可合并回组件内部。
+
+---
+
 ## v0.2 Session 2 决策
 
 ### D-051：clipmate-v0.1/ 作为 v0.1 冻结快照，clipmate-v0.2/ 作为 v0.2 开发目录

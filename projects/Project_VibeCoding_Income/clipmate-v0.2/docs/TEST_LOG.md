@@ -4,6 +4,58 @@
 
 ---
 
+## v0.2 Session 3 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+146 tests passed, 8 test files, 1.94s。
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-client.test.ts (10 tests) 9ms
+✓ tests/notion-blocks.test.ts (13 tests) 5ms
+✓ tests/notion-errors.test.ts (9 tests) 4ms
+✓ tests/options-targets.test.ts (32 tests) 9ms
+✓ tests/shared-utils.test.ts (35 tests) 8ms
+✓ tests/storage-migration.test.ts (34 tests) 43ms
+✓ tests/content-parser.test.ts (12 tests) 119ms
+
+Test Files  8 passed (8)
+     Tests  146 passed (146)
+  Duration  1.94s
+```
+
+```pwsh
+npm run build
+```
+构建成功：85 modules, 877ms
+- tsc: 无类型错误
+- vite build: 85 个模块，877ms
+- Options bundle: 11.22KB (gzip 3.45KB) — 相比 v0.1 5.36KB 增加约 6KB（新增 TargetList/TargetEditor/targetManager）
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖内容 |
+|------|:---:|------|
+| addTarget | 10 | 首目标默认、次目标不覆盖默认、makeDefault 覆盖、trim、空名称/ID 报错、时间戳 |
+| updateTarget | 8 | 更新名称/pageId、trim、保留 id/createdAt、更新 updatedAt、保留 isDefault、找不到报错 |
+| deleteTarget | 6 | 删非默认、删默认选新默认、删最后一个清空 defaultId、找不到报错、唯一默认 |
+| setDefaultTarget | 4 | 设置默认、取消前一默认、已默认 no-op、找不到报错 |
+| maskPageId | 3 | 空字符串、长 pageId 截断、短 pageId |
+
+### 错误/失败
+
+无。
+
+---
+
 ## v0.2 Session 2 (2026-06-11)
 
 ### 运行命令

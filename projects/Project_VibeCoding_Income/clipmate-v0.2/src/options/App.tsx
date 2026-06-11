@@ -1,19 +1,29 @@
 import { useState, useEffect, useCallback } from 'react'
 import NotionSettingsForm from './components/NotionSettingsForm'
 import DefaultTagsForm from './components/DefaultTagsForm'
+import TargetList from './components/TargetList'
+import TargetEditor from './components/TargetEditor'
 import StorageDebugPanel from './components/StorageDebugPanel'
 import SettingsStatus from './components/SettingsStatus'
 import { getSettings, saveSettings } from '../shared/storage/storage'
-import { DEFAULT_SETTINGS } from '../shared/constants/defaults'
-import type { ClipMateSettings } from '../shared/types/settings.types'
+import { DEFAULT_SETTINGS_V2 } from '../shared/constants/defaults'
+import type { ClipMateSettingsV2, NotionTarget } from '../shared/types/settings.types'
+import {
+  addTarget,
+  updateTarget,
+  deleteTarget,
+  setDefaultTarget,
+} from './utils/targetManager'
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 export default function App() {
-  const [settings, setSettings] = useState<ClipMateSettings>(DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState<ClipMateSettingsV2>(DEFAULT_SETTINGS_V2)
   const [loaded, setLoaded] = useState(false)
   const [status, setStatus] = useState<SaveStatus>('idle')
   const [statusMsg, setStatusMsg] = useState('')
+  const [editingTarget, setEditingTarget] = useState<NotionTarget | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
 
   useEffect(() => {
     getSettings().then((s) => {
@@ -31,6 +41,84 @@ export default function App() {
       }
     },
     [],
+  )
+
+  const persistTargets = useCallback(
+    async (targets: NotionTarget[], defaultTargetId?: string) => {
+      setStatus('saving')
+      setStatusMsg('保存中…')
+      try {
+        const partial: Partial<ClipMateSettingsV2> = { notionTargets: targets }
+        if (defaultTargetId !== undefined) {
+          partial.defaultTargetId = defaultTargetId
+        }
+        await saveSettings(partial)
+        setSettings((s) => ({
+          ...s,
+          notionTargets: targets,
+          ...(defaultTargetId !== undefined ? { defaultTargetId } : {}),
+        }))
+        showStatus('saved', '目标已保存')
+      } catch {
+        showStatus('error', '保存失败，请重试')
+      }
+    },
+    [showStatus],
+  )
+
+  const handleAddTarget = useCallback(
+    async (name: string, pageId: string, makeDefault?: boolean) => {
+      try {
+        const result = addTarget(settings.notionTargets, name, pageId, makeDefault)
+        const newDefaultId = result.newTarget.isDefault
+          ? result.newTarget.id
+          : settings.defaultTargetId
+        await persistTargets(result.targets, newDefaultId)
+        setShowAddForm(false)
+      } catch {
+        showStatus('error', '添加失败，请重试')
+      }
+    },
+    [settings.notionTargets, settings.defaultTargetId, persistTargets, showStatus],
+  )
+
+  const handleUpdateTarget = useCallback(
+    async (name: string, pageId: string) => {
+      if (!editingTarget) return
+      try {
+        const updated = updateTarget(settings.notionTargets, editingTarget.id, name, pageId)
+        await persistTargets(updated)
+        setEditingTarget(null)
+      } catch {
+        showStatus('error', '更新失败，请重试')
+      }
+    },
+    [settings.notionTargets, editingTarget, persistTargets, showStatus],
+  )
+
+  const handleDeleteTarget = useCallback(
+    async (target: NotionTarget) => {
+      if (!confirm(`确定删除目标「${target.name}」吗？`)) return
+      try {
+        const result = deleteTarget(settings.notionTargets, target.id)
+        await persistTargets(result.targets, result.newDefaultId)
+      } catch {
+        showStatus('error', '删除失败，请重试')
+      }
+    },
+    [settings.notionTargets, persistTargets, showStatus],
+  )
+
+  const handleSetDefault = useCallback(
+    async (target: NotionTarget) => {
+      try {
+        const updated = setDefaultTarget(settings.notionTargets, target.id)
+        await persistTargets(updated, target.id)
+      } catch {
+        showStatus('error', '设置默认失败，请重试')
+      }
+    },
+    [settings.notionTargets, persistTargets, showStatus],
   )
 
   const handleSave = useCallback(async () => {
@@ -53,10 +141,14 @@ export default function App() {
         notionPageId: '',
         defaultTags: [],
         saveHistoryEnabled: true,
+        notionTargets: [],
+        defaultTargetId: undefined,
       })
       setSettings({
-        ...DEFAULT_SETTINGS,
+        ...DEFAULT_SETTINGS_V2,
         saveHistoryEnabled: true,
+        notionTargets: [],
+        defaultTargetId: undefined,
       })
       showStatus('saved', '配置已清空')
     } catch {
@@ -74,6 +166,8 @@ export default function App() {
     )
   }
 
+  const isSaving = status === 'saving'
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-xl mx-auto space-y-4">
@@ -83,22 +177,42 @@ export default function App() {
 
         <NotionSettingsForm
           token={settings.notionToken}
-          pageId={settings.notionPageId}
           onChangeToken={(v) =>
             setSettings((s) => ({ ...s, notionToken: v }))
           }
-          onChangePageId={(v) =>
-            setSettings((s) => ({ ...s, notionPageId: v }))
-          }
-          disabled={status === 'saving'}
+          disabled={isSaving}
         />
+
+        {showAddForm ? (
+          <TargetEditor
+            onSave={handleAddTarget}
+            onCancel={() => setShowAddForm(false)}
+            disabled={isSaving}
+          />
+        ) : editingTarget ? (
+          <TargetEditor
+            initial={editingTarget}
+            onSave={handleUpdateTarget}
+            onCancel={() => setEditingTarget(null)}
+            disabled={isSaving}
+          />
+        ) : (
+          <TargetList
+            targets={settings.notionTargets}
+            onEdit={(t) => setEditingTarget(t)}
+            onDelete={handleDeleteTarget}
+            onSetDefault={handleSetDefault}
+            onAdd={() => setShowAddForm(true)}
+            disabled={isSaving}
+          />
+        )}
 
         <DefaultTagsForm
           tags={settings.defaultTags}
           onChange={(tags) =>
             setSettings((s) => ({ ...s, defaultTags: tags }))
           }
-          disabled={status === 'saving'}
+          disabled={isSaving}
         />
 
         <div className="bg-white p-4 rounded border border-gray-200">
@@ -107,7 +221,7 @@ export default function App() {
               type="checkbox"
               className="rounded"
               checked={settings.saveHistoryEnabled}
-              disabled={status === 'saving'}
+              disabled={isSaving}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
@@ -124,14 +238,14 @@ export default function App() {
         <div className="flex gap-3">
           <button
             className="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors disabled:opacity-40"
-            disabled={status === 'saving'}
+            disabled={isSaving}
             onClick={handleSave}
           >
             保存配置
           </button>
           <button
             className="py-2 px-4 bg-gray-100 text-gray-600 text-sm rounded hover:bg-gray-200 transition-colors disabled:opacity-40"
-            disabled={status === 'saving'}
+            disabled={isSaving}
             onClick={handleClear}
           >
             清空配置
