@@ -170,7 +170,16 @@ clipmate-v0.2/
 
 ---
 
-## 10. 如何控制 Token
+## 10. 跨版本工作流规则入口
+
+1. **后续 agent 必须优先读取 `WORKFLOW_RULES.md`**，了解跨版本通用开发、审查、提交规范。
+2. **v0.3 启动前必须读取 `V0.3_HANDOFF.md`**，了解版本交接和规划草案。
+3. `WORKFLOW_RULES.md` 是通用规则，后续专用 Session Prompt 优先级更高。
+4. **安全底线不可覆盖**：不提交 Token/API Key/用户数据，不使用 git add .，不 push。
+
+---
+
+## 11. 如何控制 Token
 
 - **禁止**读取 `node_modules/`、`dist/`、`build/`、`.git/` 目录
 - **禁止**读取大于 500 行的非相关文件

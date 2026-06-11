@@ -4,6 +4,34 @@
 
 ---
 
+## v0.2 Session 8：跨版本工作流规则录入 + v0.3 交接文档 (2026-06-11)
+
+### 新增文件
+- `docs/WORKFLOW_RULES.md` — ClipMate 跨版本 Agent 工作流规则（通用规则，适用于 v0.2、v0.2.x、v0.3、v0.4 及后续版本）
+- `docs/V0.3_HANDOFF.md` — v0.3 版本交接与规划草案（候选方向评估、启动前置条件、禁止事项）
+
+### 修改文件
+- `docs/AGENT_CONTEXT.md` — 新增"跨版本工作流规则入口"章节，引导 agent 优先读取 WORKFLOW_RULES.md 和 V0.3_HANDOFF.md
+- `docs/CURRENT_STATUS.md` — 更新当前阶段为 Session 8 已完成
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 8 记录（docs-only，无代码变更）
+- `docs/ISSUES.md` — 确认无新增 blocker
+- `docs/DECISIONS.md` — 新增 D-075/D-076/D-077
+
+### 改动摘要
+- 本轮为 docs-only 规则录入任务，未修改任何业务代码
+- 未修改 clipmate-v0.1/
+- 未修改 clipmate-v0.2/src/
+- 未修改 clipmate-v0.2/tests/
+- 未修改 package.json / manifest.config.ts 版本号
+- 未新增/修改 manifest 权限
+- 未新增依赖
+- 未运行 lint/test/build（本轮不需要）
+- WORKFLOW_RULES.md 覆盖：优先级规则、安全底线、版本目录隔离、每轮开始/结束规则、Git commit 规则、Bug 修复流程、功能开发规划流程、鲁棒性检查流程、人工测试与 ChatGPT 审查规则
+- V0.3_HANDOFF.md 覆盖：当前状态、启动前置条件、5 个候选方向评估（AI/Database/多平台/OCR/付费）、推荐优先级、启动 Prompt 原则、禁止事项、ChatGPT 审查节点
+
+---
+
 ## v0.2 Session 7：鲁棒性检查与修复 (2026-06-11)
 
 ### 修改文件

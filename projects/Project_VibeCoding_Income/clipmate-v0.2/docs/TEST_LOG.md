@@ -4,6 +4,33 @@
 
 ---
 
+## v0.2 Session 8 (2026-06-11)
+
+### 运行命令
+
+本轮为 docs-only 规则录入任务。未修改 src/tests/package/manifest。
+未运行 npm run lint/test/build（本轮不需要）。
+
+### 产出
+
+- `docs/WORKFLOW_RULES.md` — 跨版本通用工作流规则
+- `docs/V0.3_HANDOFF.md` — v0.3 版本交接与规划草案
+- 更新 AGENT_CONTEXT / CURRENT_STATUS / CHANGELOG_AGENT / TEST_LOG / ISSUES / DECISIONS
+
+### 检查项
+
+已执行 git status / git diff 检查：
+- git status --short：确认无意外修改
+- git diff --stat：确认仅修改 clipmate-v0.2/docs/
+- 未修改 clipmate-v0.1/、src/、tests/、package.json、manifest.config.ts
+- 无 dist/、build/、zip、node_modules、.env、.wolf/、.opencode/、.playwright-mcp/
+
+### 错误/失败
+
+无。
+
+---
+
 ## v0.2 Session 7 (2026-06-11)
 
 ### 运行命令

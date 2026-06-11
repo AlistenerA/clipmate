@@ -6,7 +6,11 @@
 
 ## v0.2 开放问题
 
-> v0.2 Session 7 已完成。
+> v0.2 Session 8 已完成。
+
+### Session 8 状态
+
+Session 8 无新增 blocker。本轮为 docs-only 规则录入任务，未修改业务代码。v0.3 尚未启动，功能方向未最终确定。AI、多平台、OCR、付费等仍需单独评估后才能进入实现。
 
 ### Session 7 状态
 
