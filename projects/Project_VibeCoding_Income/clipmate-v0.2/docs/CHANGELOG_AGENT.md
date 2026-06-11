@@ -4,6 +4,39 @@
 
 ---
 
+## v0.2 Session 6：文档、QA、版本号、打包 (2026-06-11)
+
+### 修改文件
+- `package.json` — version 从 `0.1.0` 升级为 `0.2.0`；zip 脚本输出文件名改为 `clipmate-v0.2.zip`
+- `manifest.config.ts` — version 从 `0.1.0` 升级为 `0.2.0`；权限不变
+- `README.md` — 重写为 v0.2：新增多 Notion 目标、本地剪藏历史（搜索/复制/删除/清空/重试）、真实 favicon/fallback 头像、图片开篇摘要清理、同站自动刷新、历史记录说明、隐私说明扩展；更新项目结构（321 tests, 13 files）；更新 Edge 加载路径为 clipmate-v0.2/dist/
+- `docs/TEST_PLAN.md` — 重写为 v0.2：从 16 项扩展为 40 项测试用例，覆盖安装/Options 多目标管理/Popup 目标选择与保存/历史搜索复制删除清空重试/History UI 体验（favicon/摘要/色条/自动刷新）/设置与存储/错误提示/隐私与打包
+- `docs/MANUAL_QA_RESULT_TEMPLATE.md` — 重写为 v0.2：40 项可勾选测试模板，按分类组织（安装/Options/Popup/历史/History UI/设置/错误/打包），补充测试信息字段
+- `docs/PRIVACY_POLICY_DRAFT.md` — 更新 v0.2 数据流：新增本地剪藏历史存储内容说明（标题/URL/标签/Markdown/字数/保存状态/站点元数据）、不调用第三方 favicon API 声明、用户控制项（清空历史/关闭记录）、数据安全补充（控制台不输出敏感内容）
+- `docs/PERMISSION_JUSTIFICATION.md` — 更新 v0.2：补充 storage 存储历史记录和多目标配置说明、v0.2 权限对比表（确认无新增权限）、favicon 从 DOM 读取无需 host_permissions 说明、content_scripts 功能补充
+- `docs/STORE_LISTING_DRAFT.md` — 更新 v0.2：核心功能新增多目标管理/本地剪藏历史/重试保存/真实网站图标；权限说明补充 v0.2 未新增权限；Data Usage 新增剪藏历史行；截图建议补充 History UI 和 Options 多目标管理
+- `docs/RELEASE_CHECKLIST.md` — 重写为 v0.2：更新版本检查（0.2.0）、权限检查（新增对比）、打包检查（clipmate-v0.2.zip）、隐私检查（v0.2 历史记录存储 + 第三方 favicon）、文档检查（8 份）、40 项功能验证清单、素材/文案/Partner Center 清单
+- `docs/CURRENT_STATUS.md` — 更新当前阶段为 Session 6 已完成，Session 6 标记完成，下一阶段改为 Session 7
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 6 运行记录（见下）
+- `docs/ISSUES.md` — Session 6 无新增 blocker
+- `docs/DECISIONS.md` — 新增 Session 6 决策（版本号/zip 文件名/文档声明/权限不变）
+
+### 改动摘要
+- 版本号升级：package.json / manifest.config.ts 从 0.1.0 → 0.2.0
+- zip 脚本输出改为 clipmate-v0.2.zip
+- 8 份文档更新为 v0.2 范围（功能说明、安全声明、测试清单、发布清单）
+- 未修改 manifest 权限、host_permissions、content_scripts matches
+- 未修改 src/ 和 tests/ 业务代码
+- 未新增依赖
+- 未修改 clipmate-v0.1/
+- Lint：0 errors, 0 warnings
+- 测试：预期 321 passed（13 files）
+- 构建：成功
+- Zip：clipmate-v0.2.zip
+
+---
+
 ## v0.2 Session 5.2：图片摘要跳过 + 真实网站图标 (2026-06-11)
 
 ### 新增文件

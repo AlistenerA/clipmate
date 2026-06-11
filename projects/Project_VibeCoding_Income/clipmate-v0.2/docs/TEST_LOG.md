@@ -4,6 +4,70 @@
 
 ---
 
+## v0.2 Session 6 (2026-06-11)
+
+### 运行命令
+
+```pwsh
+npm run lint
+```
+0 errors, 0 warnings。
+
+```pwsh
+npm run test
+```
+321 tests passed, 13 test files, 2.81s。
+```text
+✓ tests/example.test.ts (1 test) 2ms
+✓ tests/notion-client.test.ts (10 tests) 11ms
+✓ tests/notion-blocks.test.ts (13 tests) 8ms
+✓ tests/notion-errors.test.ts (9 tests) 6ms
+✓ tests/popup-target-selection.test.ts (23 tests) 10ms
+✓ tests/history-ui.test.ts (32 tests) 15ms
+✓ tests/history-polish.test.ts (65 tests) 16ms
+✓ tests/shared-utils.test.ts (35 tests) 10ms
+✓ tests/options-targets.test.ts (45 tests) 20ms
+✓ tests/storage-migration.test.ts (34 tests) 42ms
+✓ tests/history-retry-flow.test.ts (11 tests) 15ms
+✓ tests/history-save-flow.test.ts (16 tests) 27ms
+✓ tests/content-parser.test.ts (27 tests) 264ms
+
+Test Files  13 passed (13)
+     Tests  321 passed (321)
+  Duration  2.81s
+```
+
+```pwsh
+npm run build
+```
+构建成功：90 modules, 982ms
+- tsc: 无类型错误
+- vite build: 90 个模块，982ms
+- dist/manifest.json version = 0.2.0 ✅
+
+```pwsh
+npm run zip
+```
+打包成功：clipmate-v0.2.zip (117.6 KB)
+
+### zip 内容验证
+
+zip 包含 21 个条目：
+- ✅ manifest.json
+- ✅ service-worker-loader.js
+- ✅ assets/ (11 JS/CSS 构建产物)
+- ✅ icons/ (7 图标文件: icon-16/32/48/128/512.png + icon-source.svg)
+- ✅ src/popup/index.html
+- ✅ src/options/index.html
+- ✅ 不含 .ts/.tsx 源文件
+- ✅ 不含 tests/、docs/、node_modules/、.env、package.json、README.md、.git/
+
+### 错误/失败
+
+无。Lint 0 errors, 321 tests passed, build 成功, zip 成功。本轮仅修改文档和版本号，未修改业务代码。
+
+---
+
 ## v0.2 Session 5.2 (2026-06-11)
 
 ### 运行命令

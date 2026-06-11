@@ -6,7 +6,13 @@
 
 ## v0.2 开放问题
 
-> v0.2 Session 5.2 已完成。
+> v0.2 Session 6 已完成。
+
+### Session 6 状态
+
+Session 6 无新增 blocker。文档更新、版本号升级、打包全部完成。现有开放问题均为非阻塞。
+
+
 
 ### I-027：History 预览显示图片语法（Session 5.2）
 

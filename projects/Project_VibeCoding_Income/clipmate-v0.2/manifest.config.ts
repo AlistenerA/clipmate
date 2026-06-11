@@ -3,7 +3,7 @@ import { ManifestV3Export } from '@crxjs/vite-plugin'
 const manifest: ManifestV3Export = {
   manifest_version: 3,
   name: 'ClipMate',
-  version: '0.1.0',
+  version: '0.2.0',
   description: '一键剪藏网页内容到 Notion',
   action: {
     default_popup: 'src/popup/index.html',

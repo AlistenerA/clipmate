@@ -4,6 +4,34 @@
 
 ---
 
+## v0.2 Session 6 决策
+
+### D-073：包名版本号在 Session 6 升级到 0.2.0
+
+- **原因**：D-045 已决策「package.json 和 manifest 版本号在 Session 6 才改为 0.2.0」。Session 6 是文档和打包 Session，版本号在此升级最合适。Session 0-5.2 完成所有功能开发和测试，代码稳定。
+- **影响**：`package.json` version = `0.2.0`，`manifest.config.ts` version = `0.2.0`，`dist/manifest.json` version = `0.2.0`。
+- **可反转性**：高。可随时改回。
+
+### D-072：zip 文件名使用 clipmate-v0.2.zip
+
+- **原因**：`npm run zip` 打包脚本输出文件名应与版本号一致，方便辨识 v0.2 产物。v0.1 使用 `clipmate-v0.1.zip`。
+- **影响**：zip 脚本中输出文件名改为 `clipmate-v0.2.zip`。
+- **可反转性**：高。可随时改名。
+
+### D-071：v0.2 文档明确本地历史记录存储完整 Markdown
+
+- **原因**：D-040 已决策「历史记录保存 markdown」。Session 6 的隐私政策、权限说明、README 中需明确声明历史记录包含完整 Markdown、以及其用途（重新复制和重试保存），提升透明度。
+- **影响**：PRIVACY_POLICY_DRAFT.md 详细列出历史记录包含的数据字段。README 增加历史记录说明章节。
+- **可反转性**：高。文档可随时调整。
+
+### D-070：v0.2 不新增 manifest 权限（在文档中重申）
+
+- **原因**：D-036 已决策「v0.2 不新增 manifest 权限」。Session 6 在 PERMISSION_JUSTIFICATION.md 和 STORE_LISTING_DRAFT.md 中明确声明 v0.2 权限与 v0.1 完全一致，并增加权限对比表。商店上架时为审核人员提供清晰说明。
+- **影响**：无代码变更。
+- **可反转性**：不适用（为已有决策的文档化）。
+
+---
+
 ## v0.2 Session 5.2 决策
 
 ### D-069：摘要优先级修正 — description 优先，备注不作为摘要首位
