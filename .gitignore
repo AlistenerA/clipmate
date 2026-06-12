@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+*.zip
+.env
+.env.*
+.wolf/
+.opencode/
+.playwright-mcp/
+.DS_Store
