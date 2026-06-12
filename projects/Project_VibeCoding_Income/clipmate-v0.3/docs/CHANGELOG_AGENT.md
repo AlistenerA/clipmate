@@ -4,6 +4,37 @@
 
 ---
 
+## v0.3 Session 0.1：重规划修正 — 主线调整为内容保真增强 (2026-06-12)
+
+### 修改文件
+- `docs/V0.3_PLAN.md` — 全面重写：v0.3 定位从"AI 摘要与 AI 标签"改为"内容保真增强"；新增 8 个 Session 拆分（S1 Markdown Target Profiles → S8 鲁棒性检查）；6 项暂缓功能明确推迟到 v0.5+；更新风险清单
+- `docs/CURRENT_STATUS.md` — 更新为 Session 0.1 完成状态；下一步指向 Session 1 Markdown Target Profiles
+- `docs/DECISIONS.md` — 新增 D-v0.3-005：v0.3 主线调整为内容保真增强
+- `docs/ISSUES.md` — 移除旧 AI 方向 Q1-Q7；新增内容保真增强 5 个待决策问题 + 6 个已知风险
+- `docs/TEST_LOG.md` — Session 0.1 记录
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/` — 未修改
+- `clipmate-v0.3/tests/` — 未修改
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/docs/AGENT_CONTEXT.md` — 未修改（当前内容已兼容新方向，不需修正）
+
+### 改动摘要
+- v0.3 主线从 AI 摘要/AI 标签调整为内容保真增强
+- 新主线聚焦：Markdown Target Profiles、LaTeX 保留、Code Block Cleaner、Image/Link/Table 规范化、Markdown Preview、Article Boundary Guard
+- AI / 多平台 / OCR / 付费明确暂缓到 v0.5+ 或 v0.6+
+- 本轮 docs-only，未修改任何业务代码
+- 未修改 v0.1/v0.2
+- 未新增/修改 manifest 权限
+- 未新增依赖
+- 未运行 lint/test/build（无代码变更）
+
+---
+
 ## v0.3 Session 0：版本目录隔离与启动前评估 (2026-06-11)
 
 ### 新增文件
@@ -63,4 +94,5 @@
 - V0.3_HANDOFF.md 覆盖：当前状态、启动前置条件、5 个候选方向评估（AI/Database/多平台/OCR/付费）、推荐优先级、启动 Prompt 原则、禁止事项、ChatGPT 审查节点
 
 ---
+
 *（以下为 v0.2 及更早版本的修改记录，完整内容见 clipmate-v0.2/docs/CHANGELOG_AGENT.md）*

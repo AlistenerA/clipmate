@@ -4,6 +4,51 @@
 
 ---
 
+## v0.3 Session 0.1 (2026-06-12)
+
+### 运行命令
+
+本轮为 docs-only 规划修正任务。未修改业务代码。
+
+未运行 npm run lint / test / build（本轮无代码变更，不需要）。
+
+### 执行检查
+
+已执行 git 检查：
+- `git branch --show-current`：`feature/clipmate-v0.3-planning` ✅
+- `git status --short`：干净 ✅
+- `git log --oneline -8`：正常 ✅
+- `git diff --stat`：仅 docs/ 下 6 个文件 ✅
+- `git diff --name-only`：仅 docs/ 下 6 个文件 ✅
+
+### 产出
+
+- `docs/V0.3_PLAN.md` — 全面重写，主线调整为内容保真增强
+- `docs/CURRENT_STATUS.md` — 更新为 Session 0.1 完成状态
+- `docs/DECISIONS.md` — 新增 D-v0.3-005
+- `docs/ISSUES.md` — 更新待决策问题和已知风险
+- `docs/CHANGELOG_AGENT.md` — Session 0.1 记录
+- `docs/TEST_LOG.md` — 本条记录
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/src/ ✅
+- 未修改 clipmate-v0.3/tests/ ✅
+- 未修改 clipmate-v0.3/package.json ✅
+- 未修改 clipmate-v0.3/manifest.config.ts ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 lint/test/build ✅（原因：无代码变更）
+- 无 dist/、build/、zip、node_modules、.env、.wolf/、.opencode/、.playwright-mcp/ 变更 ✅
+
+### 错误/失败
+
+无。
+
+---
+
 ## v0.3 Session 0 (2026-06-11)
 
 ### 运行命令

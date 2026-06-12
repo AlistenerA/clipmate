@@ -11,12 +11,14 @@
 
 ## 当前阶段
 
-**v0.3 Session 0 已完成** — 版本目录隔离与启动前评估。
+**v0.3 Session 0.1 已完成** — 重规划修正：将 v0.3 主线调整为内容保真增强。
 
-- `clipmate-v0.3/` 已从稳定 v0.2 复制创建（基于 commit `6d6087c`）。
+- v0.3 主线已从"AI 摘要与 AI 标签"调整为"内容保真增强版"。
+- v0.3 聚焦：LaTeX 公式保留、代码块清理、图片/链接/表格规范化、Markdown Target Profiles、Markdown Preview、Article Boundary Guard。
+- AI / 多平台 / OCR / 付费明确暂缓到 v0.5+ 或后续版本。
 - 当前分支为 `feature/clipmate-v0.3-planning`。
 - 本轮未实现任何功能。
-- 下一步应由 ChatGPT 审查 V0.3_PLAN.md，再由用户确认 v0.3 唯一主线方向。
+- 下一步应进入 v0.3 Session 1：Markdown Target Profiles。
 
 ---
 
@@ -24,14 +26,21 @@
 
 | 模块 | 状态 | 备注 |
 |------|:---:|------|
-| v0.3 版本目录创建 | ✅ 已完成 | 从 v0.2 复制，排除 node_modules/dist/build/zip/.env |
+| v0.3 版本目录创建 | ✅ 已完成 | Session 0 |
 | v0.3 分支创建 | ✅ 已完成 | feature/clipmate-v0.3-planning |
-| v0.3 文档更新 | ✅ 已完成 | AGENT_CONTEXT / CURRENT_STATUS / V0.3_PLAN / CHANGELOG_AGENT / TEST_LOG / ISSUES / DECISIONS |
-| v0.3 方向评估 | ✅ 已完成 | 见 V0.3_PLAN.md |
-| v0.3 Session 拆分草案 | ✅ 已完成 | 见 V0.3_PLAN.md |
-| v0.3 功能开发 | ⬜ 未开始 | 等待用户确认主线方向 |
-| package.json 版本号 | 0.2.0 | 未修改，留待 release Session |
-| manifest.config.ts 版本号 | 0.2.0 | 未修改，留待 release Session |
+| v0.3 方向评估（初版AI方向） | ✅ 已完成 | Session 0，已被 Session 0.1 重规划替代 |
+| v0.3 重规划修正 | ✅ 已完成 | Session 0.1 — 主线调整为内容保真增强 |
+| v0.3 功能开发 | ⬜ 未开始 | 等待进入 Session 1 |
+| Markdown Target Profiles | ⬜ 待开始 | Session 1 |
+| LaTeX 公式保留 | ⬜ 待开始 | Session 2 |
+| Code Block Cleaner | ⬜ 待开始 | Session 3 |
+| Image/Link/Table Normalization | ⬜ 待开始 | Session 4 |
+| Markdown Preview | ⬜ 待开始 | Session 5 |
+| Article Boundary Guard | ⬜ 待开始 | Session 6 |
+| 文档、QA、版本号、打包 | ⬜ 待开始 | Session 7 |
+| 鲁棒性检查与修复 | ⬜ 待开始 | Session 8 |
+| package.json 版本号 | 0.2.0 | 未修改，留待 Session 7 |
+| manifest.config.ts 版本号 | 0.2.0 | 未修改，留待 Session 7 |
 | manifest 权限 | 未变 | storage / activeTab / host_permissions api.notion.com |
 
 ---
@@ -39,23 +48,27 @@
 ## 已完成
 
 - [x] v0.3 Session 0：版本目录隔离与启动前评估
+- [x] v0.3 Session 0.1：重规划修正 — 主线调整为内容保真增强（docs-only）
 
 ---
 
 ## 未完成（按优先级）
 
-1. **用户确认 v0.3 唯一主线方向**（见 V0.3_PLAN.md 第五/六节）
-2. v0.3 Session 1：确定主线方向，更新范围、数据结构草案、Session 拆分
-3. v0.3 Session 2+：按选定主线拆小 Session 实现
-4. v0.2 人工 QA（独立于 v0.3，由用户决定何时执行）
-5. v0.2 发布到 Edge Add-ons（独立于 v0.3，由用户决定何时执行）
+1. v0.3 Session 1：Markdown Target Profiles（数据结构、纯函数、测试）
+2. v0.3 Session 2：LaTeX / 数学公式保留
+3. v0.3 Session 3：Code Block Cleaner
+4. v0.3 Session 4：Image / Link / Table Normalization
+5. v0.3 Session 5：Markdown Preview
+6. v0.3 Session 6：Article Boundary Guard
+7. v0.3 Session 7：文档、QA、版本号、打包
+8. v0.3 Session 8：鲁棒性检查与修复
+9. v0.2 人工 QA（独立于 v0.3，由用户决定何时执行）
+10. v0.2 发布到 Edge Add-ons（独立于 v0.3，由用户决定何时执行）
 
 ---
 
 ## 下一阶段建议
 
-**由 ChatGPT 审查 V0.3_PLAN.md** → 用户确认唯一主线方向 → v0.3 Session 1 正式开始。
+**由 ChatGPT 审查 V0.3_PLAN.md 重规划内容** → 用户确认 → 发送 v0.3 Session 1 专用 Prompt（Markdown Target Profiles）。
 
-v0.3 候选方向及其评估详见 `V0.3_PLAN.md`。当前推荐优先评估 AI 摘要与 AI 标签，但必须由用户确认是否接受外部 API、隐私政策更新和"用户自带 API Key"模式。
-
-> v0.3 Session 0 交付：版本目录隔离、分支创建、文档更新、方向评估。未修改 src/、tests/、package.json、manifest.config.ts。`clipmate-v0.1/` 和 `clipmate-v0.2/` 未修改。
+> v0.3 Session 0.1 交付：V0.3_PLAN.md 全面重写（内容保真增强主线）、CURRENT_STATUS / DECISIONS / ISSUES / CHANGELOG_AGENT / TEST_LOG 同步更新。未修改 src/、tests/、package.json、manifest.config.ts。`clipmate-v0.1/` 和 `clipmate-v0.2/` 未修改。
