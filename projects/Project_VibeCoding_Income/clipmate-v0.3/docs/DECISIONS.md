@@ -4,6 +4,34 @@
 
 ---
 
+## v0.3 Session 1 决策
+
+### D-v0.3-006：MarkdownTarget 默认值采用 notion 以保证向后兼容
+
+- **原因**：现有用户使用 formatCopyMarkdown 的 Notion 风格输出作为默认复制格式。Session 1 的 formatMarkdownWithProfile('notion') 输出与 formatCopyMarkdown 完全一致。将默认值设为 'notion' 确保现有用户体验不变。
+- **影响**：App.tsx 中 mdTarget 状态默认值为 'notion'，normalizeMarkdownTarget 对非法值 fallback 到 'notion'。
+- **可反转性**：高。后续可随时更改默认值。
+
+### D-v0.3-007：Markdown Target Profiles 不持久化到 storage
+
+- **原因**：Session 1 范围内不做 settings 持久化。Profile 选择是纯前端状态，每次打开 Popup 重置为默认 'notion'。避免 settings 结构膨胀（R03 风险）和数据迁移复杂度。
+- **影响**：MarkdownTarget 不存入 ClipMateSettingsV2，不修改 storage module、migration 逻辑。
+- **可反转性**：高。后续 Session 如需持久化用户偏好，可扩展 settings 类型并添加迁移。
+
+### D-v0.3-008：formatMarkdownWithProfile 不接入 Notion API 保存链路
+
+- **原因**：Notion API 保存使用 blocks 格式，与 Markdown 复制是不同的数据通路。Session 1 聚焦复制 Markdown 的格式差异化，保存到 Notion 仍走现有 blocks 转换逻辑。
+- **影响**：background/handlers/notionHandler.ts 和 platforms/notion/ 不做任何修改。
+- **可反转性**：高。后续 Session 如需 Notion 保存时使用 profile 配置的格式偏好，可扩展保存链路。
+
+### D-v0.3-009：MarkdownProfile 预留 fields 供后续 Session 扩展
+
+- **原因**：imageStyle / tableStyle / formulaStyle / codeBlockStyle 在 Session 1 中仅为占位字段。Session 2（LaTeX）、Session 3（Code Block Cleaner）、Session 4（Image/Link/Table）将基于这些字段实现差异化处理。
+- **影响**：当前 profile 定义包含这些字段但未在 formatMarkdownWithProfile 中消费（仅 body 使用了 cleanMarkdown）。后续 Session 扩展时无需修改 profile 定义。
+- **可反转性**：低。移除这些字段需跨 Session 协调。
+
+---
+
 ## v0.3 Session 0.1 决策
 
 ### D-v0.3-005：v0.3 主线调整为内容保真增强

@@ -4,6 +4,39 @@
 
 ---
 
+## v0.3 Session 1：Markdown Target Profiles (2026-06-12)
+
+### 新增文件
+- `src/shared/markdown/profiles.ts` — 4 个 MarkdownProfile 定义（notion/obsidian/typora/generic）+ getMarkdownProfile / listMarkdownProfiles / normalizeMarkdownTarget 纯函数
+- `src/shared/markdown/formatWithProfile.ts` — formatMarkdownWithProfile 纯函数，支持 YAML frontmatter、标签风格、来源格式差异化
+- `src/shared/markdown/index.ts` — barrel export
+- `src/popup/components/MarkdownTargetSelector.tsx` — Popup 内 Markdown 格式选择器组件
+- `tests/markdown-profiles.test.ts` — 58 项新测试
+
+### 修改文件
+- `src/shared/types/clip.types.ts` — 新增 MarkdownTarget 类型、MarkdownProfile 接口
+- `src/popup/App.tsx` — 接入 formatMarkdownWithProfile + MarkdownTargetSelector（保持默认 notion 向后兼容）
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/platforms/notion/` — 未修改（未改 Notion API 保存链路）
+- `clipmate-v0.3/src/background/` — 未修改
+- `clipmate-v0.3/src/content/` — 未修改
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+
+### 改动摘要
+- 新增 MarkdownTarget 四类输出目标：Notion（保持现有格式）、Obsidian（YAML frontmatter）、Typora（标准 Markdown link）、Generic（最通用）
+- formatMarkdownWithProfile 纯函数按 profile 配置生成差异化 Markdown
+- Popup 新增轻量级 MarkdownTargetSelector 下拉组件，默认 notion
+- 未破坏现有复制 Markdown 行为（notion target 输出与 v0.2 formatCopyMarkdown 一致）
+- 未修改 Notion API 保存链路
+- 未新增 manifest 权限
+- 未新增依赖
+- 未修改版本号
+- lint: 0 errors / test: 379 passed (+58 new) / build: success
+
 ## v0.3 Session 0.1：重规划修正 — 主线调整为内容保真增强 (2026-06-12)
 
 ### 修改文件

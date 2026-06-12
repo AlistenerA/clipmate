@@ -6,16 +6,17 @@ import NoteEditor from './components/NoteEditor'
 import StatusBar from './components/StatusBar'
 import ActionButtons from './components/ActionButtons'
 import TargetSelector from './components/TargetSelector'
+import MarkdownTargetSelector from './components/MarkdownTargetSelector'
 import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
 import { useCopyMarkdown } from './hooks/useCopyMarkdown'
 import { useSaveToNotion } from './hooks/useSaveToNotion'
 import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
-import { formatCopyMarkdown } from '../shared/utils/formatMarkdown'
+import { formatMarkdownWithProfile } from '../shared/markdown/formatWithProfile'
 import { resolveSelectedTarget } from './utils/targetSelection'
 import { ERROR_MESSAGES } from '../shared/constants/defaults'
-import type { ClipMode, ClipDraft } from '../shared/types/clip.types'
+import type { ClipMode, ClipDraft, MarkdownTarget } from '../shared/types/clip.types'
 import type { ClipMateSettingsV2 } from '../shared/types/settings.types'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
 
   const [settings, setSettings] = useState<ClipMateSettingsV2 | null>(null)
   const [selectedTargetId, setSelectedTargetId] = useState<string>('')
+  const [mdTarget, setMdTarget] = useState<MarkdownTarget>('notion')
   const [draftLoaded, setDraftLoaded] = useState(false)
   const restoredRef = useRef(false)
 
@@ -95,16 +97,20 @@ export default function App() {
 
   const handleCopy = useCallback(() => {
     if (content) {
-      const fullMarkdown = formatCopyMarkdown(
-        content.title,
-        content.url,
-        tags,
-        note,
-        content.markdown,
+      const fullMarkdown = formatMarkdownWithProfile(
+        {
+          title: content.title,
+          url: content.url,
+          tags,
+          note,
+          bodyMarkdown: content.markdown,
+          createdAt: content.metadata?.createdAt,
+        },
+        mdTarget,
       )
       copy(fullMarkdown)
     }
-  }, [content, copy, tags, note])
+  }, [content, copy, tags, note, mdTarget])
 
   const handleSaveToNotion = useCallback(() => {
     if (!content) return
@@ -183,6 +189,8 @@ export default function App() {
 
       <TagEditor tags={tags} onAdd={addTag} onRemove={removeTag} disabled={loading} />
       <NoteEditor note={note} onChange={setNote} disabled={loading} />
+
+      <MarkdownTargetSelector selectedTarget={mdTarget} onChange={setMdTarget} />
 
       <TargetSelector
         targets={settings?.notionTargets ?? []}

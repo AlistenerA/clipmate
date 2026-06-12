@@ -4,6 +4,56 @@
 
 ---
 
+## v0.3 Session 1 (2026-06-12)
+
+### 运行命令
+
+```
+npm run lint  → 0 errors, 0 warnings
+npm run test  → 379 passed (14 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：379（v0.2 继承 321 + Session 1 新增 58）
+- 测试文件数：14（v0.2 继承 13 + Session 1 新增 1）
+- 新增测试文件：`tests/markdown-profiles.test.ts`（58 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| listMarkdownProfiles | 4 |
+| getMarkdownProfile | 5 |
+| normalizeMarkdownTarget | 5 |
+| Notion profile output | 7 |
+| Obsidian profile output | 10 |
+| Typora profile output | 6 |
+| Generic profile output | 5 |
+| Edge cases | 10 |
+| Profile properties | 2 |
+| **合计** | **58** |
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 无 dist/、build/、zip、node_modules、.env、.wolf/、.opencode/、.playwright-mcp/ 变更 ✅
+
+### 错误/失败
+
+lint 初始 1 个 error（formatWithProfile.ts:15 unnecessary escape character `\[`），已修复。
+
+---
+
 ## v0.3 Session 0.1 (2026-06-12)
 
 ### 运行命令

@@ -31,3 +31,19 @@ export interface ClipDraft {
   mode: ClipMode
   content: ExtractedContent
 }
+
+export type MarkdownTarget = 'notion' | 'obsidian' | 'typora' | 'generic'
+
+export interface MarkdownProfile {
+  target: MarkdownTarget
+  label: string
+  description: string
+  frontmatter: boolean
+  tagStyle: 'hashtag' | 'yaml'
+  sourceStyle: 'plain-label' | 'markdown-link' | 'frontmatter'
+  headingStyle: 'standard'
+  imageStyle: 'standard' | 'preserve'
+  tableStyle: 'standard' | 'preserve'
+  formulaStyle: 'preserve-text'
+  codeBlockStyle: 'standard' | 'preserve-language'
+}

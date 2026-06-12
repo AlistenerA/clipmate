@@ -6,15 +6,22 @@
 
 ## v0.3 开放问题
 
-### v0.3 Session 0.1 — 待决策问题（非 blocker，需用户确认）
+### v0.3 Session 1 — 已确认问题（Q1-Q5 已由用户决策）
 
-以下问题必须在 v0.3 功能开发启动前由用户确认：
+1. ~~**Q1**：Markdown Target Profiles 优先级~~ → 已确认：Notion > Obsidian > Typora > Generic Markdown
+2. ~~**Q2**：Obsidian / Typora 是否需要 downloads 权限~~ → 已确认：本轮不需要
+3. ~~**Q3**：LaTeX 公式在 Notion 中的目标形态~~ → 已确认：保留公式文本，预留结构给 Session 2
+4. ~~**Q4**：v0.2 QA 是否阻塞 v0.3~~ → 已确认：不阻塞
+5. ~~**Q5**：v0.3 版本号~~ → 已确认：0.3.0，Session 7 统一修改
 
-1. **Q1**：Markdown Target Profiles 的优先级顺序？（Notion > Obsidian > Typora > Generic Markdown / 其他）
-2. **Q2**：Obsidian / Typora 的 Markdown 导出是否需要 `downloads` 权限？（仅剪贴板复制 / 同时支持下载）
-3. **Q3**：LaTeX 公式在 Notion 中的目标形态？（保留公式文本 / 尝试转换为 Notion equation block）
-4. **Q4**：是否先完成 v0.2 人工 QA 和 Edge Add-ons 发布再进入 v0.3 功能开发？
-5. **Q5**：v0.3 正式版本号用 0.3.0 还是 0.2.x？
+### v0.3 Session 1 完成状态
+
+- Session 1 Markdown Target Profiles 已完成：4 profiles + 纯函数 + Popup 接入 + 58 新测试
+- lint 0 errors / test 379 passed / build success
+
+### v0.3 待决策问题（非 blocker）
+
+无。Q1-Q5 已全部确认。
 
 ### v0.3 内容保真增强已知风险
 
