@@ -4,6 +4,46 @@
 
 ---
 
+## v0.3 Session 4 决策
+
+### D-v0.3-020：图片 src 使用多候补提取策略
+
+- **原因**：网页图片的真实 URL 可能存储在 `src`、`currentSrc`、`data-src`、`data-original`、`data-lazy-src`、`data-lazy` 等多个属性中。单一读取 `src` 会丢失懒加载图片、响应式图片的真实地址。
+- **影响**：img Turndown rule 遍历 8 个候补属性，选择第一个通过 `isLikelyImageUrl` 验证的 URL。不会发起网络请求。
+- **可反转性**：高。可增减候补属性列表。
+
+### D-v0.3-021：Figure/Figcaption 通过独立 figure rule 处理
+
+- **原因**：img 和 figcaption 是 figure 的子元素。如果只在 img rule 中处理 caption，figcaption 文本仍会被 Turndown 独立处理并重复输出。需要独立 figure rule 接收已处理的 content 并将 figcaption 文本包裹为 `*caption*` 斜体。
+- **影响**：figure rule 查找 content 中匹配 figcaption 文本的行，包裹为 `*...*`。img rule 不再检查 figure 父元素。
+- **可反转性**：高。可调整 caption 格式风格。
+
+### D-v0.3-022：链接安全过滤策略
+
+- **原因**：网页中的 `javascript:` 和 `data:` 协议链接在执行或渲染时存在安全风险。mailto/tel/相对路径/锚点是合法的导航链接。
+- **影响**：`isSafeLinkHref` 拒绝 `javascript:`、`data:`、`void(0)`、`#null`。anchor rule 遇到不安全 href 时只保留链接文本，不生成 Markdown 链接。
+- **可反转性**：高。白名单可扩展。
+
+### D-v0.3-023：简单表格转 Markdown table，复杂表格走简化 fallback
+
+- **原因**：Markdown table 不支持 rowspan/colspan。强行展开会丢失合并结构，产生歧义。采用保守 fallback：复杂表格（含 colspan/rowspan）输出 `*表格已简化*` 提示 + 纯文本管道符行。
+- **影响**：table Turndown rule 检测 `[colspan]`、`[rowspan]` 属性标记为 complex。简单表格正常输出 `| col |`. 表格单元文本通过 `cellTextWithBreaks` 保留 `<br>` 空格。
+- **可反转性**：高。后续可引入更智能的 colspan/rowspan 展开策略。
+
+### D-v0.3-024：cellTextWithBreaks 递归提取含 BR 的表格单元文本
+
+- **原因**：`cell.textContent` 不保留 `<br>` 标签的空格分隔效果，`<td>hello<br>world</td>` 会得到 `helloworld`。需要遍历子节点并将 `<br>` 替换为空格。
+- **影响**：新增 `cellTextWithBreaks` 内部函数，递归处理 DOM 子节点，保留文本节点内容，将 BR 元素替换为空格。
+- **可反转性**：高。可扩展处理其他内联格式标签。
+
+### D-v0.3-025：Image/Link/Table 规范化在 htmlToMarkdown 中通过 Turndown rules 接入
+
+- **原因**：与 Session 2 公式保护（HTML 预处理阶段）和 Session 3 代码块清理（Markdown 后处理阶段）不同，图片/链接/表格规范化最适合在 Turndown HTML→Markdown 转换阶段直接处理。
+- **影响**：4 个新 Turndown rules（img / figure / anchor / table）覆盖所有 HTML→Markdown 产出路径。formatMarkdownWithProfile 和 formatCopyMarkdown 自动受益。
+- **可反转性**：高。可随时调整 Turndown rule 实现。
+
+---
+
 ## v0.3 Session 3 决策
 
 ### D-v0.3-015：cleanMarkdownCodeBlocks 在 htmlToMarkdown 末尾执行而非 formatMarkdownWithProfile

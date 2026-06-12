@@ -4,6 +4,65 @@
 
 ---
 
+## v0.3 Session 4 (2026-06-12)
+
+### 运行命令
+
+```
+npm run lint  → 0 errors, 0 warnings
+npm run test  → 563 passed (17 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：563（v0.3 Session 3 继承 480 + Session 4 新增 83）
+- 测试文件数：17（Session 3 继承 16 + Session 4 新增 1）
+- 新增测试文件：`tests/markdown-media-link-table.test.ts`（83 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| isSafeLinkHref（安全/不安全/边界） | 12 |
+| isLikelyImageUrl（URL类型判断） | 10 |
+| sanitizeMarkdownCell（管道转义/换行/空白） | 6 |
+| normalizeImageMarkdown（输出/alt/caption/转义） | 10 |
+| normalizeLinkMarkdown（输出/不安全/保留） | 10 |
+| normalizeTableMarkdown（header/no-header/管道/换行/列/边界） | 8 |
+| htmlToMarkdown images（img/figure/data-src/no-src） | 6 |
+| htmlToMarkdown links（a/mailto/javascript/empty） | 4 |
+| htmlToMarkdown tables（thead/th/colspan/empty/pipe/br） | 7 |
+| LaTeX + code block 兼容性 | 2 |
+| normalizeImageMarkdown edge cases | 3 |
+| normalizeLinkMarkdown edge cases | 3 |
+| normalizeTableMarkdown edge cases | 2 |
+| **合计** | **83** |
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- 无 .wolf/.opencode/.playwright-mcp 变更 ✅
+
+### 错误/失败
+
+初始 lint 2 errors（未使用的 DATA_IMAGE_RE 和 prefer-const），已修复。
+初始 test 3 failures（figure caption 格式、cell `<br>` 空格、uneven row 空格），已修复。
+最终 lint 0 errors, test 563/563 passed, build success。
+
+---
+
 ## v0.3 Session 3 (2026-06-12)
 
 ### 运行命令

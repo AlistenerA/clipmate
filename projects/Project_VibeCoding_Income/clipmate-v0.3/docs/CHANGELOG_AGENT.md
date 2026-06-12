@@ -4,6 +4,49 @@
 
 ---
 
+## v0.3 Session 4：Image / Link / Table Normalization (2026-06-12)
+
+### 新增文件
+- `src/shared/markdown/mediaLinkTableNormalizer.ts` — 7 个纯函数：isSafeLinkHref（链接安全过滤）、isLikelyImageUrl（图片 URL 判断）、sanitizeMarkdownCell（表格单元清理）、normalizeImageMarkdown（图片 Markdown 输出）、normalizeLinkMarkdown（链接 Markdown 输出）、normalizeTableMarkdown（表格 Markdown 输出）
+- `tests/markdown-media-link-table.test.ts` — 83 项新测试
+
+### 修改文件
+- `src/content/parser/htmlToMarkdown.ts` — 新增 4 个 Turndown rules：
+  - **img rule**：多候补 src 提取（src / currentSrc / data-src / data-original / data-lazy-src / data-lazy），输出 `![alt](url)`，过滤 javascript:/data:image，空 alt 输出 `![](url)`
+  - **figure rule**：检测 figcaption，将 caption 文本包裹为 `*caption*` 斜体
+  - **anchor rule**：isSafeLinkHref 过滤 javascript:/data:/void(0) 后生成 `[text](href)`，不安全链接只保留文本
+  - **table rule**：简单表格转 `| col |` Markdown table，复杂表格走 `*表格已简化*` fallback，新增 cellTextWithBreaks 处理 `<br>` 空格
+- `src/shared/markdown/index.ts` — barrel export 新增 mediaLinkTableNormalizer
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/platforms/notion/` — 未修改（未改 Notion API 保存链路）
+- `clipmate-v0.3/src/background/` — 未修改
+- `clipmate-v0.3/src/popup/` — 未修改
+- `clipmate-v0.3/src/shared/storage/` — 未修改
+- `clipmate-v0.3/src/shared/utils/formatMarkdown.ts` — 未修改
+- `clipmate-v0.3/src/shared/markdown/formulaPreserve.ts` — 未修改
+- `clipmate-v0.3/src/shared/markdown/codeBlockCleaner.ts` — 未修改
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/package-lock.json` — 未修改
+
+### 改动摘要
+- 新增 mediaLinkTableNormalizer.ts：7 个纯函数覆盖图片/链接/表格规范化
+- 图片：多候补 src 提取、alt 保留、javascript:/data:image 过滤、空 src 返回 alt
+- 链接：安全过滤 javascript:/data:/void(0)，保留 http/https/mailto/tel/相对路径/锚点
+- 表格：简单表格转 Markdown table（th 优先作 header，| 转义，换行压空格）；复杂表格（colspan/rowspan）走 `*表格已简化*` fallback
+- 集成在 htmlToMarkdown 转换阶段（4 个 Turndown rules），不影响 Notion API 保存链路
+- 与 Session 2 公式保护和 Session 3 代码块清理兼容：公式在 Turndown 前预处理，代码块在 Markdown 后处理阶段清理，表格/链接/图片在 Turndown 中间阶段规范化
+- 未修改 manifest 权限
+- 未新增依赖
+- 未修改版本号
+- 未修改 package-lock.json
+- lint: 0 errors / test: 563 passed (+83 new) / build: success
+
+---
+
 ## v0.3 Session 3：Code Block Cleaner (2026-06-12)
 
 ### 新增文件
