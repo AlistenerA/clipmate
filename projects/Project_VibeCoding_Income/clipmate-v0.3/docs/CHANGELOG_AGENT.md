@@ -4,6 +4,47 @@
 
 ---
 
+## v0.3 Session 2：LaTeX / 数学公式保留 (2026-06-12)
+
+### 新增文件
+- `src/shared/markdown/formulaPreserve.ts` — 4 个纯函数：protectLatexSegments（保护公式片段免遭清理破坏）、normalizeLatexDelimiters（统一公式分隔符）、preserveMathHtml（从 MathJax/KaTeX HTML 恢复 LaTeX）
+- `tests/markdown-formula-preserve.test.ts` — 42 项新测试
+
+### 修改文件
+- `src/shared/markdown/index.ts` — barrel export 新增 formulaPreserve
+- `src/shared/utils/formatMarkdown.ts` — cleanMarkdown 内部使用 protectLatexSegments 保护公式，新增内部 doCleanText 函数
+- `src/content/index.ts` — 新增 extractMathJaxFormulas 函数，在 cleanDocument 前提取 script[type^="math/tex"] 并替换为可见文本 span
+- `src/content/parser/htmlToMarkdown.ts` — htmlToMarkdown 中先用 preserveMathHtml 恢复 KaTeX/data-latex 公式再进入 Turndown
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/platforms/notion/` — 未修改（未改 Notion API 保存链路）
+- `clipmate-v0.3/src/background/` — 未修改
+- `clipmate-v0.3/src/popup/` — 未修改（formatMarkdownWithProfile 已自动受益于 cleanMarkdown 公式保护）
+- `clipmate-v0.3/src/shared/storage/` — 未修改
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/package-lock.json` — 未修改
+
+### 改动摘要
+- 新增 formulaPreserve.ts：protectLatexSegments（$...$ / $$...$$ / \(...\) / \[...\] 占位保护）、normalizeLatexDelimiters（统一为 $ 分隔符）、preserveMathHtml（script/math-tex、annotation/application-x-tex、data-latex、data-katex-src、alttext 恢复）
+- cleanMarkdown 内部自动保护公式片段后再执行 bold 合并清理，确保公式内 `_`、`*`、`\` 不被破坏
+- Content Script 在 cleanDocument 前提取 MathJax <script type="math/tex"> 源码，按 mode=display 区分 block/inline，替换为 text span（带 data-clipmate-formula 属性）
+- htmlToMarkdown 调用 preserveMathHtml 在 Turndown 前预处理 HTML
+- 未破坏现有复制 Markdown 行为
+- 未修改 Notion API 保存链路
+- 保守策略：不把 $10 等金额误判为公式，不编造无法恢复的公式文本
+- 未新增 manifest 权限
+- 未新增依赖
+- 未修改版本号
+- lint: 0 errors / test: 421 passed (+42 new) / build: success
+
+### 修复问题
+- String.replace 中 `$` 特殊字符导致的 $$ 块公式双 $ 变单 $ 问题（改用 callback replacer）
+
+---
+
 ## v0.3 Session 1：Markdown Target Profiles (2026-06-12)
 
 ### 新增文件

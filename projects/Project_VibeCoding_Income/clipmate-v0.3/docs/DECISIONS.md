@@ -4,6 +4,34 @@
 
 ---
 
+## v0.3 Session 2 决策
+
+### D-v0.3-010：公式保护使用占位-还原模式而非正则跳过
+
+- **原因**：cleanMarkdown 的 bold 合并正则 `/\*\*(.*?)\*\*\*\*(.*?)\*\*/g` 可能跨公式区域匹配。在公式中 `**` 可能表示某种运算（如 convolution），直接对含有公式的文本运行 cleanMarkdown 会导致公式内部 `*` 被误处理。占位-还原模式先把公式替换为不包含特殊字符的占位符，清理完成后再还原。
+- **影响**：protectLatexSegments 返回 `{ protected, restore }` 模式；cleanMarkdown 内部调用 protectLatexSegments 包装原始文本。
+- **可反转性**：高。纯函数接口，可随时替换占位策略。
+
+### D-v0.3-011：MathJax script 提取发生在 cleanDocument 之前
+
+- **原因**：cleanDocument 使用 `doc.querySelectorAll('script')` 删除所有 script 元素。MathJax 的 `<script type="math/tex">` 源码在此时丢失。必须在 cleanDocument 之前提取并替换为可见的文本 span。
+- **影响**：content/index.ts 新增 extractMathJaxFormulas 函数，在 clone → clean 之间执行。
+- **可反转性**：高。独立函数，不影响其他提取逻辑。
+
+### D-v0.3-012：preserveMathHtml 只恢复可可靠识别的公式标记
+
+- **原因**：HTML 公式标注格式多样（KaTeX annotation、data-latex、MathJax script 标签、alttext 属性），但不是所有数学网站都以标准方式标注。保守策略：只匹配明确标注的 LaTeX 源码，不对未知 HTML 做启发式猜测。
+- **影响**：preserveMathHtml 使用有序正则替换链：script[type="math/tex"] → annotation[encoding="application/x-tex"] → data-latex → data-katex-src → alttext（需含 LaTeX 特征）。未标注的公式元素保留原 HTML。
+- **可反转性**：高。可随时增加匹配模式。
+
+### D-v0.3-013：$ 符号的 replacement 安全处理
+
+- **原因**：JS String.replace 第二个参数中的 `$` 有特殊含义（`$&`、`$1`、`$$` 等）。数学公式包含大量 `$` 符号，直接用作 replacement 字符串会导致 `$$` 被折叠为 `$`。本次修复将 restore 函数改为 callback 模式（`() => seg`），避免 replacement 字符串中的特殊字符被解释。
+- **影响**：restore 函数内部改为 callback replacer；normalizeLatexDelimiters 同样改为 callback 模式。
+- **可反转性**：不可逆转（修复后行为才是正确的）。
+
+---
+
 ## v0.3 Session 1 决策
 
 ### D-v0.3-006：MarkdownTarget 默认值采用 notion 以保证向后兼容

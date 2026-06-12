@@ -10,6 +10,21 @@ import { countWords } from '../shared/utils/formatMarkdown'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
 
+function extractMathJaxFormulas(doc: Document): void {
+  const scripts = doc.querySelectorAll('script[type^="math/tex"]')
+  for (const script of scripts) {
+    const type = script.getAttribute('type') || ''
+    const content = script.textContent?.trim()
+    if (!content) continue
+
+    const isDisplay = /mode\s*=\s*display/i.test(type)
+    const span = doc.createElement('span')
+    span.setAttribute('data-clipmate-formula', isDisplay ? 'display' : 'inline')
+    span.textContent = isDisplay ? `\n$$${content}$$\n` : `$${content}$`
+    script.replaceWith(span)
+  }
+}
+
 interface ResultOk {
   success: true
   data: ExtractedContent
@@ -55,6 +70,7 @@ function buildContent(
 function handleExtractFullpage(): HandlerResult {
   try {
     const docClone = document.cloneNode(true) as Document
+    extractMathJaxFormulas(docClone)
     cleanDocument(docClone)
 
     let extracted = extractFullpage(docClone)

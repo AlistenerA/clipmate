@@ -1,3 +1,5 @@
+import { protectLatexSegments } from '../markdown/formulaPreserve'
+
 const CJK_RE = /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\uff00-\uffef]/g
 
 export function countWords(text: string): number {
@@ -28,9 +30,7 @@ export function countWords(text: string): number {
   return count
 }
 
-export function cleanMarkdown(text: string): string {
-  if (!text) return text
-
+function doCleanText(text: string): string {
   let cleaned = text
   let prev = ''
   while (prev !== cleaned) {
@@ -41,6 +41,14 @@ export function cleanMarkdown(text: string): string {
   cleaned = cleaned.replace(/^\*{2}\s*\*{2}$/gm, '')
 
   return cleaned
+}
+
+export function cleanMarkdown(text: string): string {
+  if (!text) return text
+
+  const { protected: protectedText, restore } = protectLatexSegments(text)
+  const cleaned = doCleanText(protectedText)
+  return restore(cleaned)
 }
 
 export function formatCopyMarkdown(

@@ -4,6 +4,53 @@
 
 ---
 
+## v0.3 Session 2 (2026-06-12)
+
+### 运行命令
+
+```
+npm run lint  → 0 errors, 0 warnings
+npm run test  → 421 passed (15 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：421（v0.3 Session 1 继承 379 + Session 2 新增 42）
+- 测试文件数：15（Session 1 继承 14 + Session 2 新增 1）
+- 新增测试文件：`tests/markdown-formula-preserve.test.ts`（42 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| protectLatexSegments inline/block/bracket | 10 |
+| normalizeLatexDelimiters | 4 |
+| preserveMathHtml (script/annotation/data-latex/edge) | 8 |
+| cleanMarkdown 公式保护 (underscore/asterisk/bold/boundary) | 10 |
+| formatMarkdownWithProfile 公式输出 (4 targets × 2 + Obsidian) | 10 |
+| **合计** | **42** |
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 无 dist/build/zip/node_modules/.env/.wolf/.opencode/.playwright-mcp 变更 ✅
+
+### 错误/失败
+
+String.replace 中 `$` 特殊处理导致 `$$...$$` 公式在 restore 时双 $ 变单 $（已修复：改用 callback replacer）。其余无错误。
+
+---
+
 ## v0.3 Session 1 (2026-06-12)
 
 ### 运行命令

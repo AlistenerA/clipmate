@@ -1,5 +1,6 @@
 import TurndownService from 'turndown'
 import { cleanMarkdown } from '../../shared/utils/formatMarkdown'
+import { preserveMathHtml } from '../../shared/markdown/formulaPreserve'
 
 const turndown = new TurndownService({
   headingStyle: 'atx',
@@ -19,7 +20,8 @@ function mergeAdjacentBold(html: string): string {
 export function htmlToMarkdown(html: string): string {
   if (!html) return ''
   try {
-    const preprocessed = mergeAdjacentBold(html)
+    const formulaPreservedHtml = preserveMathHtml(html)
+    const preprocessed = mergeAdjacentBold(formulaPreservedHtml)
     const raw = turndown.turndown(preprocessed)
     return cleanMarkdown(raw)
   } catch {
