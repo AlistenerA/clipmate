@@ -4,6 +4,58 @@
 
 ---
 
+## v0.3 Session 3 (2026-06-12)
+
+### 运行命令
+
+```
+npm run lint  → 0 errors, 0 warnings
+npm run test  → 480 passed (16 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：480（v0.3 Session 2 继承 421 + Session 3 新增 59）
+- 测试文件数：16（Session 2 继承 15 + Session 3 新增 1）
+- 新增测试文件：`tests/markdown-code-block-cleaner.test.ts`（59 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| normalizeCodeLanguage（别名映射/边界） | 9 |
+| extractCleanLanguage（class 解析） | 6 |
+| cleanCodeBlock 复制按钮清理 | 5 |
+| cleanCodeBlock 语言标签清理 | 3 |
+| cleanCodeBlock UI 噪音清理 | 5 |
+| cleanCodeBlock 行号清理（前缀+独立） | 2 |
+| cleanCodeBlock 保留项（indent/shell/REPL/PS/数字/字符串/注释） | 9 |
+| cleanCodeBlock 边界（空/纯噪音/单行/多行） | 5 |
+| cleanMarkdownCodeBlocks（fence/多块/语言/无语言/LaTeX兼容） | 13 |
+| Session 2 公式兼容性 | 2 |
+| **合计** | **59** |
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 无 dist/build/zip/node_modules/.env/.wolf/.opencode/.playwright-mcp 变更 ✅
+
+### 错误/失败
+
+初始测试 "handles whitespace-only noise line" 失败（Copy 后的空白行未被清理）。修复：cleanCodeBlock 末尾新增 trim leading/trailing blank lines 逻辑。其余无错误。
+
+---
+
 ## v0.3 Session 2 (2026-06-12)
 
 ### 运行命令

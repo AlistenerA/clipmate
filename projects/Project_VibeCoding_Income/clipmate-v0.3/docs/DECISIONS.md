@@ -4,6 +4,34 @@
 
 ---
 
+## v0.3 Session 3 决策
+
+### D-v0.3-015：cleanMarkdownCodeBlocks 在 htmlToMarkdown 末尾执行而非 formatMarkdownWithProfile
+
+- **原因**：htmlToMarkdown 是所有 Markdown 产出路径的共同上游（复制 Markdown、保存到 Notion 的 markdown 字段、历史记录 markdown）。在此处集成 cleanMarkdownCodeBlocks 可使所有下游路径自动受益，无需修改 popup、background 或 notion handler。
+- **影响**：htmlToMarkdown 末尾调用链变为 Turndown → cleanMarkdown → cleanMarkdownCodeBlocks。formatMarkdownWithProfile 和 formatCopyMarkdown 无需额外修改。
+- **可反转性**：高。可随时调整集成点。
+
+### D-v0.3-014：Code Block Cleaner 只处理 fenced code block 内部内容
+
+- **原因**：Turndown 配置 `codeBlockStyle: 'fenced'` 已将 `<pre><code>` 转换为 ``` ```...```` 格式。Markdown 后处理阶段只需匹配 fenced code block 的内部清书。不对非 fenced 的 inline code `...` 做清理，避免误伤。
+- **影响**：cleanMarkdownCodeBlocks 使用正则 `/^```(\w*)[ \t]*\r?\n([\s\S]*?)\r?\n```/gm` 匹配。不匹配 inline code 或缩进代码块。
+- **可反转性**：高。后续可扩展支持缩进代码块。
+
+### D-v0.3-016：行号清理使用"多数原则"
+
+- **原因**：代码中的数字非常常见（`const x = 1`、`array[0]`、`status 404`）。只有当前缀行号模式覆盖 >50% 的非空行时才批量移除，避免误删代码中的数字。
+- **影响**：stripLineNumbers 函数检查前缀行号占比，低于阈值不做清理。
+- **可反转性**：高。阈值可调整。
+
+### D-v0.3-017：独立行号列需形成连续序列才清理
+
+- **原因**：代码中孤立的数字行（如结果输出 `42`）不应被误删。只有当至少 3 个连续递增的数字行且与代码行交替出现时，才视为行号列并移除。
+- **影响**：stripLineNumbers 中 isolated 模式需满足 sequential + interleaved 两个条件。
+- **可反转性**：高。
+
+---
+
 ## v0.3 Session 2 决策
 
 ### D-v0.3-010：公式保护使用占位-还原模式而非正则跳过

@@ -4,6 +4,44 @@
 
 ---
 
+## v0.3 Session 3：Code Block Cleaner (2026-06-12)
+
+### 新增文件
+- `src/shared/markdown/codeBlockCleaner.ts` — 5 个纯函数：normalizeCodeLanguage（语言别名映射）、extractCleanLanguage（从 HTML class 提取语言名）、cleanCodeBlock（清理单个代码块噪音）、cleanMarkdownCodeBlocks（Markdown 后处理 fenced code block）、preserveCodeFenceLanguage
+- `tests/markdown-code-block-cleaner.test.ts` — 59 项新测试
+
+### 修改文件
+- `src/content/parser/htmlToMarkdown.ts` — htmlToMarkdown 末尾调用 cleanMarkdownCodeBlocks，在 Turndown + cleanMarkdown 之后对 fenced code block 做后处理清理
+- `src/shared/markdown/index.ts` — barrel export 新增 codeBlockCleaner
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/platforms/notion/` — 未修改（未改 Notion API 保存链路）
+- `clipmate-v0.3/src/background/` — 未修改
+- `clipmate-v0.3/src/popup/` — 未修改
+- `clipmate-v0.3/src/shared/storage/` — 未修改
+- `clipmate-v0.3/src/shared/utils/formatMarkdown.ts` — 未修改（cleanMarkdown 不改动）
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/package-lock.json` — 未修改
+
+### 改动摘要
+- 新增 codeBlockCleaner.ts：cleanCodeBlock 清理代码块内 UI 噪音（Copy/Copied/复制/复制代码 按钮文字、standalone 语言标签、show more/expand/collapse/展开/收起、连续行号前缀、独立行号列）
+- normalizeCodeLanguage 映射语言别名（js→javascript、ts→typescript、py→python 等）
+- extractCleanLanguage 从 HTML class 提取干净语言名（language-xxx / lang-xxx / highlight-source-xxx / brush: xxx）
+- cleanMarkdownCodeBlocks 在 Markdown 层匹配 fenced code block 并调用 cleanCodeBlock
+- 保守策略：保留 shell prompt（$ / >>> / PS>）、保留代码内数字/字符串/注释中的 "copy"、保留真实缩进空行、不清除不连续的行号
+- 集成在 htmlToMarkdown 末尾（Turndown → cleanMarkdown → cleanMarkdownCodeBlocks），不影响 Notion API 保存链路
+- 与 Session 2 LaTeX 公式保护兼容：公式先被 cleanMarkdown 保护还原，code block cleaner 仅在 fenced code block 内操作
+- 未修改 manifest 权限
+- 未新增依赖
+- 未修改版本号
+- 未修改 package-lock.json
+- lint: 0 errors / test: 480 passed (+59 new) / build: success
+
+---
+
 ## v0.3 Session 2：LaTeX / 数学公式保留 (2026-06-12)
 
 ### 新增文件

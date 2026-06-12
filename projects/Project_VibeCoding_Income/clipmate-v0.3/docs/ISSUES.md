@@ -6,11 +6,10 @@
 
 ## v0.3 开放问题
 
-### v0.3 Session 2 完成状态
+### v0.3 Session 3 完成状态
 
-- Session 2 LaTeX / 数学公式保留已完成：formulaPreserve 纯函数 + cleanMarkdown 保护 + Content Script MathJax 提取 + htmlToMarkdown 预处理
-- lint 0 errors / test 421 passed / build success
-- R01 风险降级：LaTeX 公式在 Markdown 复制链路中已做文本保留；Notion equation block 仍暂不实现
+- Session 3 Code Block Cleaner 已完成：codeBlockCleaner 纯函数 + cleanMarkdownCodeBlocks 后处理 + 59 tests
+- R02 风险降级：代码块清理已覆盖常见复制按钮、行号、语言标签和折叠提示；仍需在真实网页上观察误删有效代码的风险
 
 ### v0.3 待决策问题（非 blocker）
 
@@ -21,7 +20,7 @@
 | 编号 | 风险 | 严重度 | 状态 |
 |:---:|------|:---:|:---:|
 | R01 | LaTeX 公式在 Notion 无原生 equation block 支持 | 🟢 低 | 已降级 — Markdown 复制链路已保留公式文本 |
-| R02 | 代码块清理可能误删有效内容 | 🟡 中 | 开放 — Session 3 处理 |
+| R02 | 代码块清理可能误删有效内容 | 🟢 低 | 已降级 — 覆盖常见噪音模式；需真实网页验证 |
 | R03 | Markdown Target Profiles 导致 settings 结构膨胀 | 🟢 低 | 开放 |
 | R04 | 复杂表格转 Markdown table 可能丢失信息 | 🟡 中 | 开放 |
 | R05 | Markdown Preview 需防范 XSS 安全风险 | 🔴 高 | 开放 |
