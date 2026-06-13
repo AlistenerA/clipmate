@@ -4,6 +4,54 @@
 
 ---
 
+## v0.4 Session 2：Site Profile Engine (2026-06-13)
+
+### 性质
+
+代码实现：结构化 profile 数据 + 纯函数匹配引擎，不改变剪藏策略。
+
+### 产出
+
+- `src/shared/siteProfiles/siteProfile.types.ts` — 类型定义
+- `src/shared/siteProfiles/seedProfiles.ts` — 19 个 seed profiles
+- `src/shared/siteProfiles/siteProfileEngine.ts` — 纯函数匹配引擎
+- `src/shared/siteProfiles/index.ts` — 模块导出
+- `tests/site-profile-engine.test.ts` — 62 个单元测试
+
+### 新增文件
+
+- `src/shared/siteProfiles/siteProfile.types.ts` — 类型定义
+  - `SiteProfileCategory`：search / video / short-video / social / community / ai-chat
+  - `SiteProfile`：id, label, category, domains, pageTypes, priority, selectorHints
+  - `SiteProfileMatchInput`：url, pageType
+  - `SiteProfileMatch`：profile, matchedDomain, matchedPageType, confidence, reasons
+- `src/shared/siteProfiles/seedProfiles.ts` — 19 个结构化 seed profiles
+  - 搜索：google-search / bing-search / baidu-search
+  - 长视频：youtube-video / bilibili-video / iqiyi-video / youku-video / tencent-video
+  - 短视频：tiktok-short-video / douyin-short-video / kuaishou-short-video
+  - 社交/社区：xiaohongshu-social / zhihu-community / reddit-community / weibo-social
+  - AI 对话：chatgpt-ai-chat / claude-ai-chat / gemini-ai-chat / copilot-ai-chat
+- `src/shared/siteProfiles/siteProfileEngine.ts` — 纯函数引擎（~120 lines）
+  - `normalizeHostname(urlOrHostname)` — 提取标准化 hostname
+  - `hostnameMatchesDomain(hostname, domain)` — 精确/子域名匹配
+  - `matchSiteProfile(input, profiles?)` — 纯函数匹配，confidence 0-1
+  - `listSiteProfiles(profiles?)` — 返回不可变副本
+- `src/shared/siteProfiles/index.ts` — 模块导出
+- `tests/site-profile-engine.test.ts` — 62 个测试
+
+### 改动摘要
+
+- 实现结构化 Site Profile Engine，19 个 seed profiles 覆盖 6 类站点
+- 所有站点规则通过数据配置管理，无散落 domain if 硬编码
+- 匹配函数为纯函数，不访问 chrome API / DOM / storage / 网络
+- 不改变现有剪藏保存策略
+- 未实现 Intent Signal Collector
+- 未实现评论/选区判断
+- 未新增 manifest 权限、依赖、版本号变更
+- lint 0，861 tests（含 62 new）全部通过，build 成功
+
+---
+
 ## v0.4 Session 1.1：Intent & Site Profile Planning (2026-06-13)
 
 ### 性质

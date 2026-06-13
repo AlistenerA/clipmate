@@ -4,6 +4,59 @@
 
 ---
 
+## v0.4 Session 2 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 23 文件 861 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：23 个测试文件，861 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| site-profile-engine.test.ts | 62 | ✅ 全部通过（新增）|
+| 其余 22 个测试文件 | 799 | ✅ 全部通过（无退化）|
+
+### 产出
+
+- `src/shared/siteProfiles/siteProfile.types.ts` — ~40 lines
+- `src/shared/siteProfiles/seedProfiles.ts` — ~160 lines
+- `src/shared/siteProfiles/siteProfileEngine.ts` — ~120 lines
+- `src/shared/siteProfiles/index.ts` — ~5 lines
+- `tests/site-profile-engine.test.ts` — ~330 lines
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 861 tests pass ✅
+- build success ✅
+
+### 错误/失败
+
+无。
+
+---
+
 ## v0.4 Session 1 (2026-06-13)
 
 ### 运行命令

@@ -4,6 +4,28 @@
 
 ---
 
+## v0.4 Session 2 决策
+
+### D-v0.4-013：Site Profile 匹配函数保持纯函数，不访问 chrome API、DOM、storage 或网络
+
+- **原因**：Site Profile Engine 的核心职责是 URL/hostname 驱动的结构化 profile 匹配。纯函数设计使其可独立单元测试、无副作用、可在 content script 或 background worker 中安全调用。
+- **影响**：`normalizeHostname`、`hostnameMatchesDomain`、`matchSiteProfile`、`listSiteProfiles` 均为纯函数。不读取 DOM、不访问 chrome.storage、不发起网络请求。
+- **可反转性**：低。推翻此决策需要重新设计模块边界。
+
+### D-v0.4-012：Seed profiles 只提供 domain/url/pageType/selector hints，不直接改变剪藏策略
+
+- **原因**：Site Profile Engine 的 seed profiles 是数据配置，不应直接耦合剪藏行为。剪藏策略应由后续 Session 的 clipStrategy 模块根据 SiteProfile + PageType + IntentSnapshot 综合决定。过早让 profile 直接控制剪藏策略会导致职责混乱。
+- **影响**：`selectorHints` 字段仅作为数据 hint 提供给下游模块自行解析。`matchSiteProfile` 返回 profile 匹配结果，不做内容提取或策略选择。
+- **可反转性**：中。后续 Session 可评估是否需要在 profile 中增加策略 hint 字段。
+
+### D-v0.4-011：Site Profile Engine 采用结构化 profile 数据和统一匹配函数，不写散落 domain if
+
+- **原因**：v0.4 Session 0 决策 D-v0.4-004 和 D-v0.4-008 均要求站点适配通过结构化 profile engine 管理。Session 2 完成了该引擎的实现：所有站点规则通过 `SEED_PROFILES` 数组中的结构化 `SiteProfile` 数据配置，`matchSiteProfile` 函数通过遍历 profiles 进行 domain/PageType 匹配和 confidence 计算，代码中无任何散落 `if (hostname === 'xxx.com')` 硬编码。
+- **影响**：新增站点适配只需在 `seedProfiles.ts` 中添加一条结构化 profile 记录，无需修改引擎逻辑或 content script。
+- **可反转性**：低。推翻此决策意味着放弃 profile engine 的架构意义。
+
+---
+
 ## v0.4 Session 1.1 决策
 
 ### D-v0.4-010：v0.4 增加 Anti-Slop Review 节点，防止重复逻辑、紧耦合和目录失控
