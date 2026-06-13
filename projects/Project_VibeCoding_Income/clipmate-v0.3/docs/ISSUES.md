@@ -6,10 +6,9 @@
 
 ## v0.3 开放问题
 
-### v0.3 Session 5 完成状态
+### v0.3 Session 6 完成状态
 
-- Session 5 Markdown Preview 已完成：parseMarkdownPreview 纯函数 + MarkdownPreview 安全组件 + Popup 切换 + 41 tests
-- **卡住修复**：修复了 `parseMarkdownPreview` 图片语法 URL 含括号时导致的 `next===i` 死循环（已添加 `parseImageLine` 宽松正则 + `next<=i` fallback 兜底）
+- Session 6 Article Boundary Guard 已完成：preCleanDocument / isLikelyNoiseElement / calculateLinkDensity / hasEnoughArticleText / assessArticleConfidence / trimArticleBody / buildLowConfidenceSummary + 99 tests
 
 ### v0.3 待决策问题（非 blocker）
 
@@ -23,8 +22,8 @@
 | R02 | 代码块清理可能误删有效内容 | 🟢 低 | 已降级 — 覆盖常见噪音模式；需真实网页验证 |
 | R03 | Markdown Target Profiles 导致 settings 结构膨胀 | 🟢 低 | 开放 |
 | R04 | 复杂表格转 Markdown table 可能丢失信息 | 🟡 中 | 已降级 — 简单表格支持 Markdown table；复杂表格采用保守简化策略（`*表格已简化*` + 纯文本）|
-| R05 | Markdown Preview 需防范 XSS 安全风险 | 🟢 低 | 已降级 — 已采用 React 文本节点和轻量 parser，不使用 dangerouslySetInnerHTML，不加载远程图片；本轮修复了异常图片语法导致的 parser 死循环风险，仍需真实网页剪藏内容验证极端 Markdown 输入 |
-| R06 | Article Boundary Guard 误删有效正文 | 🟡 中 | 开放 |
+| R05 | Markdown Preview 需防范 XSS 安全风险 | 🟢 低 | 已降级 — 已采用 React 文本节点和轻量 parser，不使用 dangerouslySetInnerHTML，不加载远程图片 |
+| R06 | Article Boundary Guard 误删有效正文 | 🟡 中 | 已降级 — 已加入 DOM 噪音清理（tag/role/class 3 层）、正文候选评分（confidence 三级）、尾部截断（17 个模式）和低置信页面兜底（免责提示 + 最多 10 条链接）；长文本（>500 字）和正文元素（article/main/pre/code/table/img/figure/blockquote/h1-h3/p）受保护；仍需通过真实网易新闻、新浪、腾讯、澎湃、CSDN、掘金等页面进行人工验证，防止误删正文 |
 
 ---
 

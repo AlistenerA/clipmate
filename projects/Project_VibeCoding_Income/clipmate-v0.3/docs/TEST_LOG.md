@@ -4,6 +4,65 @@
 
 ---
 
+## v0.3 Session 6 (2026-06-13)
+
+### 运行命令
+
+```
+npm run lint → 0 errors, 0 warnings
+npm run test → 703 passed (19 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：703（v0.3 Session 5 继承 604 + Session 6 新增 99）
+- 测试文件数：19（Session 5 继承 18 + Session 6 新增 1）
+- 新增测试文件：`tests/article-boundary-guard.test.ts`（99 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| isLikelyNoiseElement（tag/role/class 噪音检测 + 正文保护） | 30 |
+| calculateLinkDensity（无链接/半链接/全链接/导航/低密度） | 5 |
+| hasEnoughArticleText（空/短/单段/多段/中文） | 5 |
+| preCleanDocument（form/button/role/class/正文保护/新闻页/技术博客） | 24 |
+| trimArticleBody（责任编辑/相关推荐/分享到/免责声明/广告/上一篇/打开app/边界） | 11 |
+| assessArticleConfidence（high/medium/low 置信度） | 6 |
+| buildLowConfidenceSummary（标题/链接上限/噪音过滤/去重/javascript:/锚点/空文档） | 8 |
+| preserve tests（Session 2-5 全部通过） | 10（含 session compat）|
+| **合计** | **99** |
+
+### 修复记录
+
+- matchesCssPattern 函数 bug：`kw.toLowerCase().includes(kw.toLowerCase())` 永远为 true，改为 `lower.includes(kw.toLowerCase())`
+- isLikelyNoiseElement 中 'post' 关键词误匹配 'related-posts' 类名导致噪音误判为正文，移除 CONTENT_CSS_KEYWORDS 冲突检查
+- preCleanDocument 中 isProtectedElement 过于宽松（包含 div/section），阻止 role/class 噪音移除，改写为分层清理策略
+- JSDOM 需要 url 参数避免 "opaque origin" 错误（makeDom/makeEl 添加 `{ url: 'https://example.com/' }`）
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- 无 .wolf/.opencode/.playwright-mcp 变更 ✅
+
+### 错误/失败
+
+初始 18 项测试失败，根因：matchesCssPattern bug + isProtectedElement 过保护 + JSDOM opaque origin + CONTENT_CSS_KEYWORDS 误匹配。全部已修复。
+
+---
+
 ## v0.3 Session 5 (2026-06-13)
 
 > 异常中断后续接：旧对话在 test 阶段卡住（vitest 无输出超时），根因为 parseMarkdownPreview 死循环。

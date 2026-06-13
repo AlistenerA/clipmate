@@ -7,6 +7,12 @@ import { parseMetadata } from './parser/metaParser'
 import { cleanDocument } from './parser/contentCleaner'
 import { htmlToMarkdown } from './parser/htmlToMarkdown'
 import { countWords } from '../shared/utils/formatMarkdown'
+import {
+  preCleanDocument,
+  trimArticleBody,
+  assessArticleConfidence,
+  buildLowConfidenceSummary,
+} from './extractors/articleBoundaryGuard'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
 
@@ -72,16 +78,88 @@ function handleExtractFullpage(): HandlerResult {
     const docClone = document.cloneNode(true) as Document
     extractMathJaxFormulas(docClone)
     cleanDocument(docClone)
+    const noiseRemoved = preCleanDocument(docClone)
+    logger.info(`Pre-clean removed ${noiseRemoved} noise nodes`)
 
-    let extracted = extractFullpage(docClone)
+    const extracted = extractFullpage(docClone)
 
     if (!extracted) {
-      logger.info('Readability failed, falling back to body.innerText')
-      extracted = fallbackExtract(docClone)
+      logger.info('Readability failed, falling back to improved fallback')
+      const fallbackMeta = parseMetadata(docClone)
+      const fallbackResult = fallbackExtract(docClone)
+      const fallbackMd = htmlToMarkdown(fallbackResult.content)
+      const trimmed = trimArticleBody(fallbackMd)
+      const fallbackWordCount = countWords(fallbackResult.textContent)
+      const report = assessArticleConfidence(fallbackResult.textContent, fallbackResult.content)
+
+      if (report.confidence === 'low') {
+        const summary = buildLowConfidenceSummary(
+          docClone,
+          fallbackMeta.title,
+          fallbackMeta.url,
+        )
+        return {
+          success: true,
+          data: {
+            mode: 'fullpage',
+            title: fallbackMeta.title,
+            url: fallbackMeta.url,
+            description: fallbackMeta.description,
+            contentText: summary,
+            contentHtml: '',
+            markdown: summary,
+            wordCount: 0,
+            metadata: {
+              url: fallbackMeta.url,
+              title: fallbackMeta.title,
+              description: fallbackMeta.description,
+              siteName: fallbackMeta.siteName,
+              createdAt: new Date().toISOString(),
+              siteIconUrl: fallbackMeta.siteIconUrl,
+              themeColor: fallbackMeta.themeColor,
+            },
+          },
+        }
+      }
+
+      const content = buildContent('fullpage', fallbackResult, docClone)
+      content.markdown = trimmed
+      logger.info(`Fullpage fallback: ${fallbackWordCount} words`)
+      return { success: true, data: content }
+    }
+
+    const report = assessArticleConfidence(extracted.textContent, extracted.content)
+
+    if (report.confidence === 'low') {
+      const meta = parseMetadata(docClone)
+      const summary = buildLowConfidenceSummary(docClone, meta.title, meta.url)
+      return {
+        success: true,
+        data: {
+          mode: 'fullpage',
+          title: meta.title,
+          url: meta.url,
+          description: meta.description,
+          contentText: summary,
+          contentHtml: '',
+          markdown: summary,
+          wordCount: 0,
+          metadata: {
+            url: meta.url,
+            title: meta.title,
+            description: meta.description,
+            siteName: meta.siteName,
+            createdAt: new Date().toISOString(),
+            siteIconUrl: meta.siteIconUrl,
+            themeColor: meta.themeColor,
+          },
+        },
+      }
     }
 
     const content = buildContent('fullpage', extracted, docClone)
-    logger.info(`Fullpage: ${content.wordCount} words`)
+    content.markdown = trimArticleBody(content.markdown)
+    logger.info(`Fullpage: ${content.wordCount} words (${report.confidence} confidence)`)
 
     return { success: true, data: content }
   } catch (err) {

@@ -11,17 +11,18 @@
 
 ## 当前阶段
 
-**v0.3 Session 5 已完成** — Markdown Preview：新增安全的 Markdown 原文/预览切换功能。
+**v0.3 Session 6 已完成** — Article Boundary Guard：在 Readability 前后增加 DOM 噪音预清理、正文候选评分、正文尾部截断和低置信页面兜底。
 
 - v0.3 主线：内容保真增强版。
-- Session 5 交付：
-  - Preview parser：`parseMarkdownPreview` 纯函数，解析 heading/paragraph/blockquote/list/code/table/image/hr 为类型化 blocks，内联支持 text/bold/italic/code/link/image/formula
-  - `parseImageLine`：安全函数处理 URL 含括号的图片 Markdown
-  - `markdownPreview.ts`：6 个导出函数（isSafePreviewHref / sanitizePreviewText / parseImageLine / parseMarkdownPreview + 类型）
-  - Preview component：`MarkdownPreview.tsx` React 组件，纯文本节点渲染，无 dangerouslySetInnerHTML
-  - Popup 接入：原文/预览切换按钮，useMemo 确保 Markdown Target Profile 同步
-  - 41 项新测试
-- 卡住根因与修复：图片语法 URL 含括号时（如 `javascript:alert(1)`），旧正则 `[^)]+` 不匹配，`collectParagraphLines` 的 `/^!\[/` break 返回 `next===i` 导致死循环。修复：新增 `parseImageLine` 宽松正则 + `next<=i` fallback 兜底。
+- Session 6 交付：
+  - `articleBoundaryGuard.ts`：7 个导出纯函数（preCleanDocument / isLikelyNoiseElement / calculateLinkDensity / hasEnoughArticleText / trimArticleBody / assessArticleConfidence / buildLowConfidenceSummary）
+  - DOM 噪音预清理：3 层清理（tag/role/class），移除 form/button/input/nav/footer/aside + noise role + 46 个中英文噪音 class 关键词
+  - 正文候选评分：confidence high/medium/low，基于文本长度、段落数、linkDensity
+  - 链接密度：calculateLinkDensity 计算链接文本/总文本比
+  - 正文尾部截断：trimArticleBody 在 markdown 尾部检测 17 个截断模式（责任编辑/相关推荐/打开app 等）
+  - 低置信页面兜底：buildLowConfidenceSummary 生成免责提示 + 最多 10 条去重链接
+  - 改进 fallback 提取：fallbackExtract 优先查找 article/main/.article-content 等内容容器
+  - 99 项新测试
 - 未修改 Notion API 保存链路、未新增权限、未新增依赖、未修改版本号。
 
 ---
@@ -40,7 +41,7 @@
 | Code Block Cleaner | ✅ 已完成 | Session 3 — codeBlockCleaner 纯函数 + 后处理清理 + 59 tests |
 | Image / Link / Table Normalization | ✅ 已完成 | Session 4 — mediaLinkTableNormalizer 纯函数 + Turndown rules + 83 tests |
 | Markdown Preview | ✅ 已完成 | Session 5 |
-| Article Boundary Guard | ⬜ 待开始 | Session 6 |
+| Article Boundary Guard | ✅ 已完成 | Session 6 |
 | 文档、QA、版本号、打包 | ⬜ 待开始 | Session 7 |
 | 鲁棒性检查与修复 | ⬜ 待开始 | Session 8 |
 | package.json 版本号 | 0.2.0 | 未修改，留待 Session 7 |
@@ -58,6 +59,7 @@
 - [x] v0.3 Session 3：Code Block Cleaner — codeBlockCleaner 纯函数、htmlToMarkdown 后处理、59 tests
 - [x] v0.3 Session 4：Image / Link / Table Normalization — mediaLinkTableNormalizer 纯函数、Turndown rules 增强、83 tests
 - [x] v0.3 Session 5：Markdown Preview — parseMarkdownPreview 纯函数、MarkdownPreview 安全组件、Popup 切换、41 tests（含卡住修复）
+- [x] v0.3 Session 6：Article Boundary Guard — DOM 噪音预清理、正文候选评分、尾部截断、低置信兜底、99 tests
 
 ---
 
@@ -73,4 +75,4 @@
 
 ## 下一阶段建议
 
-**由 ChatGPT 审查 Session 5 交付** → 用户确认 → 发送 v0.3 Session 6 专用 Prompt（Article Boundary Guard）。
+**由 ChatGPT 审查 Session 6 交付** → 用户确认 → 发送 v0.3 Session 7 专用 Prompt（文档、QA、版本号、打包）。

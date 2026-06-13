@@ -3,6 +3,38 @@
 > 所有重要技术取舍必须记录在此，附带原因。后续轮次不能随意推翻。
 
 
+## v0.3 Session 6 决策
+
+### D-v0.3-029：articleBoundaryGuard 使用纯函数 + 分层清理策略
+
+- **原因**：DOM 噪音类型多样（tag 层/role 层/class 层），单一策略无法覆盖。分层清理：tag 层（form/button/input 等明确噪音标签直接移除）、role 层（[role="navigation"] 等结构性角色直接移除）、class 层（46 个中英文噪音关键词 + TreeWalker 遍历）。每层独立决策，避免误删正文。
+- **影响**：preCleanDocument 分 3 层执行，isLikelyNoiseElement 作为公共判断函数可复用。未修改 Readability 本身。
+- **可反转性**：高。可随时增减噪音关键词、调整层策略。
+
+### D-v0.3-030：trimArticleBody 在 Markdown 层执行而非 HTML 层
+
+- **原因**：Readability 产出 HTML 字符串，在 HTML 层做文本匹配容易因标签嵌套导致误判。Markdown 层每行是独立段落，尾部截断模式匹配更可靠。且 trimArticleBody 是纯函数，输入输出均为字符串，测试友好。
+- **影响**：trimArticleBody 在 htmlToMarkdown 之后执行，截断位置在 markdown 文本中。仅在 latter 60% 区域触发（避免截断正文开头的"来源"）。
+- **可反转性**：高。可改为 HTML DOM 级别截断。
+
+### D-v0.3-031：低置信页面不抛异常而是返回摘要
+
+- **原因**：频道页、搜索页、导航页不应被误判为错误。返回免责提示 + 最多 10 条去重链接是更友好的用户体验。不修改 storage 结构（低置信摘要写入 markdown/contentText 字段）。
+- **影响**：buildLowConfidenceSummary 过滤 javascript:/#锚点/噪音关键词链接，去重，上限 10 条。handleExtractFullpage 在 low confidence 时直接返回摘要，不调用 buildContent。
+- **可反转性**：高。后续可改为结构化 reason/confidence 字段。
+
+### D-v0.3-032：fallbackExtractor 优先查找内容容器
+
+- **原因**：原 fallback 简单返回 body.innerText，会带入大量导航/推荐。改进后按 14 个内容容器选择器（article/main/.article-content 等）顺序查找，需满足 hasEnoughArticleText 验证。找不到容器时才回退到 body。
+- **影响**：fallbackExtractor 导入 hasEnoughArticleText 从 articleBoundaryGuard。与 preCleanDocument 协作（预清理在 fallback 之前已执行）。
+- **可反转性**：高。可调整选择器列表。
+
+### D-v0.3-033：isLikelyNoiseElement 不使用 CONTENT_CSS_KEYWORDS 进行双向冲突检查
+
+- **原因**：'post' 关键词在 CONTENT_CSS_KEYWORDS 中会误匹配 'related-posts' 类名，导致噪音元素被误判为正文容器。移除 noise 路径中的 CONTENT_CSS_KEYWORDS 检查，仅保留 isArticleContainer + 长文本（>500 字）安全阀。
+- **影响**：isLikelyNoiseElement 对 class 匹配 noise keywords 的元素直接判定为噪音（除非 article/main 标签或文本 > 500 字）。略微增加误删风险（如 class 含 'share' 的正文段落），但长文本安全阀覆盖绝大多数情况。
+- **可反转性**：高。后续可加入词边界匹配或更精细的冲突解决策略。
+
 
 ## v0.3 Session 5 决策
 

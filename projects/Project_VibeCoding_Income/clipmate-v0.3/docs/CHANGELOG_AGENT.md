@@ -4,6 +4,50 @@
 
 ---
 
+## v0.3 Session 6：Article Boundary Guard (2026-06-13)
+
+### 新增文件
+- `src/content/extractors/articleBoundaryGuard.ts` — 7 个导出纯函数：preCleanDocument（3 层 DOM 噪音清理）、isLikelyNoiseElement（46 个中英文噪音 class 关键词 + noise role/tag 检测）、calculateLinkDensity（链接文本/总文本比）、hasEnoughArticleText（最小 200 字 + 2 段落）、assessArticleConfidence（high/medium/low 三级置信度）、trimArticleBody（17 个尾部截断模式）、buildLowConfidenceSummary（低置信兜底 + 最多 10 条去重链接）
+- `tests/article-boundary-guard.test.ts` — 99 项新测试
+
+### 修改文件
+- `src/content/index.ts` — 导入 articleBoundaryGuard；handleExtractFullpage 增加 preCleanDocument 预清理 + assessArticleConfidence 置信度评估 + trimArticleBody 尾部截断 + buildLowConfidenceSummary 低置信兜底；改进 fallback 链路（置信度评估 + 低置信摘要）
+- `src/content/extractors/fallbackExtractor.ts` — 改进 fallback 提取：优先查找 article/main/.article-content 等 14 个内容容器选择器
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/platforms/notion/` — 未修改
+- `clipmate-v0.3/src/background/` — 未修改
+- `clipmate-v0.3/src/popup/` — 未修改
+- `clipmate-v0.3/src/options/` — 未修改
+- `clipmate-v0.3/src/shared/storage/` — 未修改
+- `clipmate-v0.3/src/shared/markdown/` — 未修改（trimArticleBody 在 markdown 层操作，不修改已有模块）
+- `clipmate-v0.3/package.json` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/manifest.config.ts` — 未修改（版本号保持 0.2.0）
+- `clipmate-v0.3/package-lock.json` — 未修改
+
+### 改动摘要
+- 新增 articleBoundaryGuard.ts：7 个纯函数覆盖 DOM 预清理、置信度评估、尾部截断、低置信兜底
+- preCleanDocument 分 3 层：tag 层（form/button/input/select/textarea/canvas）、role 层（navigation/banner/complementary/contentinfo/search/dialog/alert）、class 层（46 个中英文噪音关键词 + TreeWalker 遍历）
+- isLikelyNoiseElement 保护正文元素（article/main/pre/code/table/img/figure/blockquote/h1-h3/p），长文本（>500 字）不误删
+- calculateLinkDensity 计算链接文本占比，>0.5 判定低置信
+- trimArticleBody 在 markdown 尾部检测 17 个截断模式（责任编辑/相关推荐/分享到/打开app/广告 等），仅在 latter 60% 区域触发
+- buildLowConfidenceSummary 生成免责提示 + 去重链接（max 10），过滤 javascript:/#锚点/噪音关键词链接
+- fallbackExtractor 改进：14 个内容容器选择器优先匹配，hasEnoughArticleText 验证
+- 与 Session 2-5 全部兼容：lint 0 errors / test 703 passed (+99 new) / build success
+- 未修改 manifest 权限
+- 未新增依赖
+- 未修改版本号
+- 未修改 package-lock.json
+
+### 修复问题
+- 修复 matchesCssPattern 函数 bug（`kw.toLowerCase().includes(kw.toLowerCase())` 改为 `lower.includes(kw.toLowerCase())`）
+- 修复 isLikelyNoiseElement 中 CONTENT_CSS_KEYWORDS 误匹配问题（'post' 匹配 'related-posts' 导致噪音误判为正文）
+- 修复 preCleanDocument 中 isProtectedElement 过于宽松导致 role/class 噪音无法移除的问题
+
+---
+
 ## v0.3 Session 5：Markdown Preview (2026-06-13)
 
 > 异常中断后续接：旧对话在 test 阶段卡住，根因为 parseMarkdownPreview 死循环。
