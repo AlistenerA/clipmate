@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import ClipModeToggle from './components/ClipModeToggle'
 import ContentPreview from './components/ContentPreview'
 import TagEditor from './components/TagEditor'
@@ -7,6 +7,7 @@ import StatusBar from './components/StatusBar'
 import ActionButtons from './components/ActionButtons'
 import TargetSelector from './components/TargetSelector'
 import MarkdownTargetSelector from './components/MarkdownTargetSelector'
+import MarkdownPreview from './components/MarkdownPreview'
 import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
@@ -32,6 +33,7 @@ export default function App() {
   const [selectedTargetId, setSelectedTargetId] = useState<string>('')
   const [mdTarget, setMdTarget] = useState<MarkdownTarget>('notion')
   const [draftLoaded, setDraftLoaded] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   const restoredRef = useRef(false)
 
   useEffect(() => {
@@ -91,26 +93,30 @@ export default function App() {
         ? 'success'
         : 'idle'
 
+  const displayMarkdown = useMemo(() => {
+    if (!content) return ''
+    return formatMarkdownWithProfile(
+      {
+        title: content.title,
+        url: content.url,
+        tags,
+        note,
+        bodyMarkdown: content.markdown,
+        createdAt: content.metadata?.createdAt,
+      },
+      mdTarget,
+    )
+  }, [content, tags, note, mdTarget])
+
   const handleExtract = useCallback(() => {
     extract(mode)
   }, [mode, extract])
 
   const handleCopy = useCallback(() => {
-    if (content) {
-      const fullMarkdown = formatMarkdownWithProfile(
-        {
-          title: content.title,
-          url: content.url,
-          tags,
-          note,
-          bodyMarkdown: content.markdown,
-          createdAt: content.metadata?.createdAt,
-        },
-        mdTarget,
-      )
-      copy(fullMarkdown)
+    if (displayMarkdown) {
+      copy(displayMarkdown)
     }
-  }, [content, copy, tags, note, mdTarget])
+  }, [displayMarkdown, copy])
 
   const handleSaveToNotion = useCallback(() => {
     if (!content) return
@@ -191,6 +197,42 @@ export default function App() {
       <NoteEditor note={note} onChange={setNote} disabled={loading} />
 
       <MarkdownTargetSelector selectedTarget={mdTarget} onChange={setMdTarget} />
+
+      {content && (
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-1">
+            <button
+              className={`px-2 py-0.5 text-xs rounded transition-colors ${
+                !showPreview
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+              onClick={() => setShowPreview(false)}
+            >
+              原文
+            </button>
+            <button
+              className={`px-2 py-0.5 text-xs rounded transition-colors ${
+                showPreview
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+              onClick={() => setShowPreview(true)}
+            >
+              预览
+            </button>
+          </div>
+          <div className="max-h-48 overflow-y-auto border border-gray-200 rounded p-2 bg-white">
+            {showPreview ? (
+              <MarkdownPreview markdown={displayMarkdown} />
+            ) : (
+              <pre className="text-xs text-gray-700 font-mono whitespace-pre-wrap break-words">
+                {displayMarkdown || '提取后将在此显示 Markdown'}
+              </pre>
+            )}
+          </div>
+        </div>
+      )}
 
       <TargetSelector
         targets={settings?.notionTargets ?? []}

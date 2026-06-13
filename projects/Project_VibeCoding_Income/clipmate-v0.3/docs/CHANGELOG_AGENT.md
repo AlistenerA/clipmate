@@ -4,6 +4,29 @@
 
 ---
 
+## v0.3 Session 5：Markdown Preview (2026-06-13)
+
+> 异常中断后续接：旧对话在 test 阶段卡住，根因为 parseMarkdownPreview 死循环。
+
+### 新增文件
+- `src/shared/markdown/markdownPreview.ts` — 6 个导出函数：isSafePreviewHref、sanitizePreviewText、parseImageLine、parseMarkdownPreview（主解析器，heading/paragraph/blockquote/list/code/table/image/hr blocks + inline bold/italic/code/link/image/formula segments）
+- `src/popup/components/MarkdownPreview.tsx` — React 组件，纯文本节点渲染 blocks，无 dangerouslySetInnerHTML
+- `tests/markdown-preview.test.ts` — 41 项新测试
+
+### 修改文件
+- `src/shared/markdown/index.ts` — barrel export 新增 markdownPreview
+- `src/popup/App.tsx` — 新增 `showPreview` state，原文/预览切换按钮
+
+### 卡住根因与修复
+- **根因**：`![xss](javascript:alert(1))` URL 含括号，旧正则 `[^)]+` 不匹配；`collectParagraphLines` 的 `/^!\[/` break 返回 `next===i` 导致主循环死循环。
+- **修复**：新增 `parseImageLine()` 宽松正则 `(.*)`；`collectParagraphLines` 改用 `parseImageLine()`；主循环增加 `next<=i` fallback 兜底。
+
+### 改动摘要
+- 未修改 Notion 保存链路、未新增依赖、未新增权限、未修改版本号
+- lint: 0 errors / test: 604 passed (+41 new) / build: success
+
+---
+
 ## v0.3 Session 4：Image / Link / Table Normalization (2026-06-12)
 
 ### 新增文件

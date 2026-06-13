@@ -4,6 +4,77 @@
 
 ---
 
+## v0.3 Session 5 (2026-06-13)
+
+> 异常中断后续接：旧对话在 test 阶段卡住（vitest 无输出超时），根因为 parseMarkdownPreview 死循环。
+
+### 运行命令
+
+```
+npx vitest run tests/markdown-preview.test.ts -t "javascript image" --reporter=default → 1 passed
+npx vitest run tests/markdown-preview.test.ts -t "malformed image" --reporter=default → 1 passed
+npx vitest run tests/markdown-preview.test.ts --reporter=verbose → 41 passed, 0 failed
+npm run lint → 0 errors, 0 warnings
+npm run test → 604 passed (18 files), 0 failures
+npm run build → success
+```
+
+### 测试统计
+
+- 总测试数：604（v0.3 Session 4 继承 563 + Session 5 新增 41）
+- 测试文件数：18（Session 4 继承 17 + Session 5 新增 1）
+- 新增测试文件：`tests/markdown-preview.test.ts`（41 tests）
+
+### 新增测试覆盖
+
+| 测试类别 | 测试数 |
+|----------|:---:|
+| isSafePreviewHref（安全/不安全/边界） | 6 |
+| sanitizePreviewText（HTML 剥离/保留） | 3 |
+| parseMarkdownPreview basic（空/空格） | 1 |
+| headings（h1-h3 / HTML 剥离） | 2 |
+| paragraphs（单段/多段/raw HTML） | 3 |
+| blockquote（单行/多行） | 2 |
+| lists（ul/ol） | 2 |
+| code blocks（fence/语言/markdown 不解析） | 3 |
+| tables（header+data/无管道/HTML cell） | 3 |
+| images（安全/不安全/空 alt/畸形语法不卡/嵌套括号） | 5 |
+| inline（bold/italic/code/link/unsafe link） | 5 |
+| LaTeX（inline/display） | 2 |
+| hr（---/***） | 2 |
+| profile compat（notion/obsidian） | 2 |
+| **合计** | **41** |
+
+### 卡住修复记录
+
+旧对话在 `npx vitest run tests/markdown-preview.test.ts` 阶段卡住（仅 `RUN` 无任何测试输出，120s+ 超时）。排查确认：
+- Vitest 可用（minimal 测试通过、其他 17 个文件 563 tests 通过）
+- 根因：`parseMarkdownPreview` 的图片正则 `[^)]+` 无法匹配 URL 含括号的行（如 `javascript:alert(1)`），导致 `collectParagraphLines` 返回 `next===i`，主循环死循环
+- 修复：`parseImageLine` 宽松正则 + `next<=i` fallback + `collectParagraphLines` 改用 `parseImageLine`
+- 修复后 41 tests 全部在 1.09s 内通过
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- 无 .wolf/.opencode/.playwright-mcp 变更 ✅
+
+### 错误/失败
+
+旧对话卡住（vitest 超时），根因已修复。本轮 lint/test/build 无错误。
+
+---
+
 ## v0.3 Session 4 (2026-06-12)
 
 ### 运行命令

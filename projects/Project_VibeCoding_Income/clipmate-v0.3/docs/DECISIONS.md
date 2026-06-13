@@ -2,9 +2,29 @@
 
 > 所有重要技术取舍必须记录在此，附带原因。后续轮次不能随意推翻。
 
----
 
-## v0.3 Session 4 决策
+
+## v0.3 Session 5 决策
+
+### D-v0.3-026：Markdown Preview 使用轻量纯函数 parser 而非 marked/markdown-it
+
+- **原因**：marked / markdown-it / react-markdown 等库会生成 HTML 字符串，有 XSS 风险和 dangerouslySetInnerHTML 需求。轻量纯函数 parser 产出类型化 blocks，React 文本节点安全渲染，零外部依赖。
+- **影响**：parseMarkdownPreview 仅支持 ClipMate 常见 Markdown 块（heading/paragraph/blockquote/list/code/table/image/hr），不支持嵌套 HTML、footnote、definition list 等。LaTeX 公式作为 formula segment 保留。
+- **可反转性**：高。后续可替换 parser 实现或增加块类型。
+
+### D-v0.3-027：parseImageLine 使用宽松正则 `(.*)` 支持 URL 含括号
+
+- **原因**：旧正则 `[^)]+` 无法匹配 `![xss](javascript:alert(1))` 等 URL 含括号的图片 Markdown。`collectParagraphLines` 的 `/^!\[/` break 规则返回 `next===i` 导致主循环死循环。
+- **影响**：parseImageLine 使用 `/^!\[([^\]]*)\]\((.*)\)$/` 最后 `)` 前贪婪匹配任意字符。同时增加 `next<=i` fallback 兜底异常路径。
+- **可反转性**：高。可调整正则或解析策略。
+
+### D-v0.3-028：Markdown Preview 不持久化状态到 chrome.storage
+
+- **原因**：预览/原文切换是纯 UI 状态，每次打开 Popup 重置为原文模式，避免 storage 膨胀和竞态。
+- **影响**：showPreview 为 React useState，不写入 storage。
+- **可反转性**：高。后续可持久化用户偏好。
+
+---
 
 ### D-v0.3-020：图片 src 使用多候补提取策略
 
