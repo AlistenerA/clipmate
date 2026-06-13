@@ -4,6 +4,25 @@
 
 ---
 
+## v0.4 Roadmap Adjustment：Defer History UX Sessions (2026-06-13)
+
+### 运行命令
+
+本轮 docs-only roadmap adjustment。未运行 lint/test/build。
+
+### 原因
+
+没有代码变更。
+
+### 检查项
+
+- git status --short：clean ✅
+- git ls-files --others --exclude-standard：无输出 ✅
+- 未修改 src/tests/package/manifest ✅
+- 未修改 clipmate-v0.1/v0.2/v0.3 ✅
+
+---
+
 ## v0.4 Session 4 (2026-06-13)
 
 ### 运行命令

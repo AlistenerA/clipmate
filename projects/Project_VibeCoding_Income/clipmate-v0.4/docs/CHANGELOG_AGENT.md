@@ -4,6 +4,35 @@
 
 ---
 
+## v0.4 Roadmap Adjustment：Defer History UX Sessions (2026-06-13)
+
+### 性质
+
+docs-only roadmap adjustment。不修改 src/tests/package/manifest。
+
+### 变更
+
+- 从 v0.4 当前路线中移出 **Tag Search UX**（历史搜索栏支持 #tag）
+- 从 v0.4 当前路线中移出 **Better History Config**（历史入口移到设置页/独立 tab）
+- 将两者标记为 deferred to v0.5 History UX / Settings Refactor
+- V0.4_PLAN Session 5-9 重新编号为 Session 5-8
+
+### 修改文件
+
+- `docs/V0.4_PLAN.md` — 移除原 Session 5 Tag Search UX，新增 Deferred 章节，Session 6-9 → 5-8
+- `docs/CURRENT_STATUS.md` — 进度表 Tag Search UX 标记为 deferred，未完成列表移除并新增 Deferred 章节
+- `docs/ISSUES.md` — F05 标记 deferred，新增 F08 Better History Config deferred
+- `docs/DECISIONS.md` — 新增 D-v0.4-029
+- `docs/SITE_INTENT_MATRIX.md` — 下一阶段描述移除 Session 5 Tag Search UX 引用
+
+### 改动摘要
+
+- docs-only，未修改 src/tests/package/manifest
+- Tag Search UX 和 Better History Config 不是删除，是 deferred to v0.5
+- v0.4 后续 Session：4.1 Anti-Slop → 5 Site Icon → 6 Link Card → 7 Docs/Package → 8 Release
+
+---
+
 ## v0.4 Session 4：Comment / Selection Clip Core (2026-06-13)
 
 ### 性质

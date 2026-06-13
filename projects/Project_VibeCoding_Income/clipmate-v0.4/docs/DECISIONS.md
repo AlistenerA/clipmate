@@ -4,6 +4,16 @@
 
 ---
 
+## v0.4 Roadmap Adjustment 决策
+
+### D-v0.4-029：Tag Search UX 和 Better History Config 从 v0.4 当前路线移出，延后到 v0.5 或 History UX / Settings Refactor 专项
+
+- **原因**：两者属于历史记录/设置页体验增强，不是 v0.4 PageType + SiteProfile + Scenario Modes 的核心能力。Better History Config 可能引入 Popup / Options UI 重构，增加 v0.4 发布风险。v0.4 应继续聚焦 Comment / Selection、Site Icon、Link Card 和发布 QA。
+- **影响**：V0.4_PLAN.md 中移除 Tag Search UX Session，改为 deferred 记录。CURRENT_STATUS.md / ISSUES.md / SITE_INTENT_MATRIX.md 同步更新。不影响已完成 Session 编号。
+- **可反转性**：高。如果 v0.4 剩余功能提前完成且 QA 无问题，可通过新的 roadmap change 决策重新纳入 v0.4.x。
+
+---
+
 ## v0.4 Session 4 决策
 
 ### D-v0.4-028：CommentSelectionDraft 不保存 selectedText 字段，只保存 selectedTextLength；Markdown 输出允许包含用户主动选中的内容

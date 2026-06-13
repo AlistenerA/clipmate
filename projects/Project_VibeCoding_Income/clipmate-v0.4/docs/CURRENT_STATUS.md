@@ -59,7 +59,7 @@
 | Session 3.2 Navigation Summary QA Fix + IS01 | ✅ 已完成 | IS01 修复 + guard + 17 tests + QA doc，待 ChatGPT 审查 |
 | Session 4 Comment / Selection Clip Mode | ✅ 已完成 | commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查 |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
-| Session 5 Tag Search UX | ⏳ 待启动 | |
+| Session 5 Tag Search UX | 🔄 deferred | v0.5 History UX |
 | Session 6 Site Icon / Theme Cache | ⏳ 待启动 | |
 | Session 7 Link Card Preview | ⏳ 待启动 | |
 | Session 8 Docs, QA, Version, Package | ⏳ 待启动 | |
@@ -89,11 +89,15 @@
 1. Session 4：Comment / Selection Clip Mode（✅ 已完成，待 ChatGPT 审查）
 2. Session 3.2 Notion Block 转换（deferred，IS01 已修复，Notion block 未接入）
 3. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
-4. Session 5：Tag Search UX — 标签搜索
-5. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
-6. Session 7：Link Card Preview — 链接卡片预览
-7. Session 8：Docs, QA, Version, Package
-8. Session 9：Robustness Check and Release Candidate Review
+4. Session 5：Site Icon / Theme Cache — 站点图标/主题缓存
+5. Session 6：Link Card Preview — 链接卡片预览
+6. Session 7：Docs, QA, Version, Package
+7. Session 8：Robustness Check and Release Candidate Review
+
+### Deferred（延后到 v0.5 或独立专项）
+
+- Tag Search UX（History UX）：历史搜索栏支持 #tag 快速筛选 → v0.5
+- Better History Config（Settings Refactor）：历史入口放到设置页/独立 tab → v0.5
 
 ---
 
@@ -109,5 +113,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 4 输出 → commit → 进入 Session 4.1 Anti-Slop Review**
-（commentSelection 类型/builder/serializer 已实现，GET_SELECTION 最小接入完成。1184 tests，lint 0，build success。未改 fullpage/Popup/Options/Background/Notion。）
+**ChatGPT 审查本轮 Roadmap Adjustment → commit → 进入 Session 4.1 Anti-Slop Review**
+（Session 4 已提交 cd826d3。Tag Search UX 和 Better History Config 已延后到 v0.5。）

@@ -24,9 +24,10 @@
 | F02 | 站点规则引擎 | ✅ Session 2 已完成 |
 | F03 | 导航页摘要模式 | ✅ Session 3 Draft Builder 已完成，Session 3.1 Markdown + Minimal Integration 已完成 |
 | F04 | 评论选区模式 | Session 4 规划中 |
-| F05 | 标签搜索 UX | Session 5 规划中 |
-| F06 | 站点图标/主题缓存 | Session 6 规划中 |
-| F07 | 链接卡片预览 | Session 7 规划中 |
+| F05 | 标签搜索 UX | 🔄 deferred to v0.5 History UX |
+| F06 | 站点图标/主题缓存 | Session 5 规划中 |
+| F07 | 链接卡片预览 | Session 6 规划中 |
+| F08 | Better History Config | 🔄 deferred to v0.5 Settings / History Refactor |
 
 ---
 

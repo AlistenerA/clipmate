@@ -208,7 +208,7 @@ Intent 判断建立在 PageType 之上但不取代：
 
 **下一阶段：**
 
-Session 4 完成后，`clip-comment` / `clip-video-comment` / `clip-ai-answer` 等意图的选区已有 core draft + structured markdown 支持。后续可进入 Session 4.1 Anti-Slop Review 或 Session 5 Tag Search UX。
+Session 4 完成后，`clip-comment` / `clip-video-comment` / `clip-ai-answer` 等意图的选区已有 core draft + structured markdown 支持。后续可进入 Session 4.1 Anti-Slop Review 或 Session 5 Site Icon / Theme Cache。
 
 **Session 2.2 实现要点：**
 
