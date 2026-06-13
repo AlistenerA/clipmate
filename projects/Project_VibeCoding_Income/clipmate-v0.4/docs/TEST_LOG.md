@@ -4,6 +4,66 @@
 
 ---
 
+## v0.4 Session 7 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+npm run zip     # PowerShell [System.IO.Compression.ZipFile]::CreateFromDirectory
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings（无输出）
+- `npm run test`：32 个测试文件，1383 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+- `npm run zip`：成功，`clipmate-v0.4.zip`（140,022 bytes）
+- `dist/manifest.json` version = `0.4.0`
+
+### 性质
+
+docs-only + version bump + package Session。未修改 src/ 功能代码、未修改 tests/。
+
+### 版本号变更
+
+- `package.json` version: 0.3.0 → 0.4.0
+- `package.json` zip script: `clipmate-v0.3.zip` → `clipmate-v0.4.zip`（zip 输出文件名同步版本号）
+- `manifest.config.ts` version: 0.3.0 → 0.4.0
+- `package-lock.json`：未修改
+
+### 检查项
+
+- 未修改 src/ ✅
+- 未修改 tests/ ✅
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- lint 0 ✅
+- 1383 tests pass ✅
+- build success ✅
+- zip generated ✅（clipmate-v0.4.zip, 140,022 bytes）
+- manifest permissions unchanged ✅
+- host_permissions unchanged ✅
+- remote code not added ✅
+- manual QA：待用户真实浏览器验证，未标记通过 ✅
+
+### 错误/失败
+
+无。
+
+### zip content check scope note
+
+本轮 zip 检查仅基于打包脚本的逻辑：脚本使用 `[System.IO.Compression.ZipFile]::CreateFromDirectory('dist', $zip)`，仅压缩 dist/ 目录。未逐文件解压列出 zip 内容。详细 zip 内容逐文件检查推迟到 Session 8 Release Robustness Review。
+
+---
+
 ## v0.4 Session 6 (2026-06-13)
 
 ### 运行命令

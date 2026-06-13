@@ -4,6 +4,15 @@
 
 ---
 
+## v0.4 Session 7 状态
+
+- 当前无 blocker
+- 所有已知限制为 minor/non-blocker
+- 手动 QA 全部待用户真实浏览器验证（未执行）
+- ZIP-QA-01：zip 内容逐文件审计推迟到 Session 8 Release Robustness Review（当前仅基于打包脚本逻辑检查，未逐文件解压列出）
+
+---
+
 ## v0.4 当前已知问题（从 v0.3 继承）
 
 | 编号 | 问题 | 关联 Session |
@@ -80,6 +89,14 @@
 | QA03 | claude.ai / gemini.google.com / copilot.microsoft.com 的 contentContainer selector 为通用猜测（`[data-message-author-role]` / `.chat-turn` / `.chat-message`），需在真实站点上确认匹配 | Session 8 手动 QA |
 | QA04 | reddit-community.contentContainer `shreddit-post, [slot="post"]` 依赖新版 Reddit Web Components，旧版 reddit 不适用 | Session 8 手动 QA |
 | QA05 | tiktok data-e2e selector（`[data-e2e="video-desc"]`, `[data-e2e="comment"]`）可能随版本变化，建议后续定期复查 | Session 7 / Session 9 |
+
+---
+
+## v0.4 Session 7 新增限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| ZIP-QA-01 | zip 内容逐文件审计未完成 | minor | 当前 zip 检查基于打包脚本逻辑（仅压缩 dist/），逐文件解压列出内容推迟到 Session 8 Release Robustness Review |
 
 ---
 

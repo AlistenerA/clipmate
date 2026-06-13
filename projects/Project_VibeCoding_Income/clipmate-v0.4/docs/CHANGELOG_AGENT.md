@@ -4,6 +4,107 @@
 
 ---
 
+## v0.4 Session 7.1：Release Docs Completion Fix (2026-06-13)
+
+### 性质
+
+docs-only fix，不修改 src/tests/permissions/dependencies/旧版本目录。
+
+### 修正内容
+
+1. **TEST_LOG.md** — 新增 Session 7 完整记录：lint 0 / test 1383 passed / build success / zip 140,022 bytes / dist manifest version 0.4.0。
+2. **V0.4_PACKAGE_NOTES.md** — 新增打包说明文档：package.json zip script 变更、版本号同步、zip 仅压缩 dist/ 的检查结论、逐文件解压检查推迟到 Session 8。
+3. **V0.4_RELEASE_NOTES.md** — 打包产物说明新增 zip inspection scope 声明。
+4. **RELEASE_CHECKLIST.md** — 打包检查新增 "逐文件内容审计推迟到 Session 8" 说明。
+5. **CHANGELOG_AGENT.md** — 本记录 + Session 7 记录补充 package.json zip script 变更说明。
+6. **CURRENT_STATUS.md** — 补充 Session 7.1 docs completion fix 状态。
+7. **ISSUES.md** — 新增 ZIP-QA-01：zip 内容需 Session 8 逐文件检查。
+
+### 修改文件
+
+- `docs/TEST_LOG.md`
+- `docs/CHANGELOG_AGENT.md`
+- `docs/CURRENT_STATUS.md`
+- `docs/ISSUES.md`
+- `docs/V0.4_RELEASE_NOTES.md`
+- `docs/RELEASE_CHECKLIST.md`
+
+### 新增文件
+
+- `docs/V0.4_PACKAGE_NOTES.md`
+
+### 未修改
+
+- `src/`、`tests/`、`package.json`、`manifest.config.ts`、`README.md`、`PRIVACY.md`
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `.wolf/`、`.opencode/`、`.playwright-mcp/`
+
+### 改动摘要
+
+- 补齐 Session 7 的 TEST_LOG 记录
+- 明确 package.json zip script 变更仅为输出文件名同步版本号
+- 明确 zip 检查边界：基于脚本逻辑检查，逐文件解压推迟到 Session 8
+- 无代码变更、无权限变更、无依赖变更
+
+---
+
+## v0.4 Session 7：Docs, Manual QA, Version Bump, Package (2026-06-13)
+
+### 性质
+
+纯 docs/version/package Session。不修改 src/ 功能代码、tests、permissions、dependencies。
+
+### 变更摘要
+
+- `package.json` — version 0.3.0 → 0.4.0；zip script 输出文件名 `clipmate-v0.3.zip` → `clipmate-v0.4.zip`（仅同步版本号，未改变打包逻辑）
+- `manifest.config.ts` — version 0.3.0 → 0.4.0（仅 version 字段，permissions/host_permissions/content_scripts 未变）
+- `package-lock.json` — 未修改
+
+### 新增文件
+
+- `PRIVACY.md` — v0.4 隐私政策（根目录）
+- `STORE_SUBMISSION.md` — v0.4 商店提交材料（根目录）
+- `docs/V0.4_RELEASE_NOTES.md` — v0.4 发布说明
+- `docs/MANUAL_QA.md` — v0.4 手动 QA 汇总
+
+### 修改文件
+
+- `README.md` — 完全重写为 v0.4：新增 7 大能力、v0.3/v0.2 继承、严格非目标、项目结构（1383 tests, 32 files）
+- `docs/RELEASE_CHECKLIST.md` — 完全重写为 v0.4：代码质量/版本/权限/打包/隐私/文档/人工 QA/Git checklist
+- `docs/CURRENT_STATUS.md` — 更新 Session 7 完成状态、版本号 0.4.0、进度表
+- `docs/V0.4_PLAN.md` — Session 7 标记完成，Session 8 待启动
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/SITE_INTENT_MATRIX.md` — 更新进度表，Session 6.1/7 标记完成，过时"下一阶段"文案清理
+
+### 轻微更新（标注 release status）
+
+- `docs/NAVIGATION_SUMMARY_QA.md`
+- `docs/COMMENT_SELECTION_QA.md`
+- `docs/SITE_VISUAL_QA.md`
+- `docs/LINK_CARD_QA.md`
+
+### 未修改
+
+- 未修改 `src/` 功能代码
+- 未修改 `tests/`
+- 未修改 `package-lock.json`
+- 未修改 `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- 未修改 `.wolf/`、`.opencode/`、`.playwright-mcp/`
+- 未新增依赖
+- 未新增 manifest 权限
+- 未运行 `npm install`
+
+### 改动摘要
+
+- v0.4 版本号完整升级：package.json / manifest.config.ts → 0.4.0
+- 发布文档全面更新：README / PRIVACY / STORE_SUBMISSION / V0.4_RELEASE_NOTES / RELEASE_CHECKLIST / MANUAL_QA
+- 状态文档更新：CURRENT_STATUS / V0.4_PLAN / CHANGELOG_AGENT / SITE_INTENT_MATRIX
+- QA 文档标注 release status
+- 不修改业务代码、不新增权限/依赖
+- 待 ChatGPT 审查后 commit，进入 Session 8
+
+---
+
 ## v0.4 Session 6：Link Card Preview Core (2026-06-13)
 
 ### 性质

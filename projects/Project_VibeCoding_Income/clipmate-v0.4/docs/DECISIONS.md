@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 7 决策
+
+### D-v0.4-036：v0.4 发布包不提交 dist/build/zip，仅在本地生成用于人工验证
+
+- **原因**：与 D-v0.3-034、D-v0.2-xxx 保持一致的安全原则。dist/ 和 zip 是构建产物，不属于源码；node_modules 和 .env 在任何情况下都不应进入版本控制。
+- **影响**：Session 7 和 Session 8 的 build/zip 在本地生成，`git status` 不得包含 dist/build/zip。
+- **可反转性**：低。违反此决策违反安全工作流底线。
+
+### D-v0.4-035：v0.4 release candidate version 升级为 0.4.0
+
+- **原因**：Session 7 完成所有功能开发后，正式将版本号从 0.3.0 升级到 0.4.0。package.json / manifest.config.ts / README / 发布文档全部同步更新。
+- **影响**：`package.json` version: 0.4.0，`manifest.config.ts` version: 0.4.0，zip 脚本输出 `clipmate-v0.4.zip`。不修改 manifest 权限、不新增依赖。
+- **可反转性**：低。版本号升级是发布流程的一部分，回退意味着重新发布 v0.3。
+
+---
+
 ## v0.4 Roadmap Adjustment 决策
 
 ### D-v0.4-029：Tag Search UX 和 Better History Config 从 v0.4 当前路线移出，延后到 v0.5 或 History UX / Settings Refactor 专项
