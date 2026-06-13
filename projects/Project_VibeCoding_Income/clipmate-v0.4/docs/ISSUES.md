@@ -83,6 +83,14 @@
 
 ---
 
+## v0.4 Session 5 新增限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS05 | 不验证 favicon 是否真实存在 | minor | extractor 只读取 DOM 中 link/meta 标签，不发起网络请求验证图标 URL 可访问性 |
+| IS06 | 不承诺所有站点都有 theme-color | minor | 部分站点未设置 `meta name="theme-color"`，themeColor 可能为 undefined |
+| IS07 | Cache persistence 本轮未实现 | minor | cache strategy 为纯函数，未实际写入 chrome.storage；后续 Session 或 v0.5 可接入 |
+
 ## v0.4 Blocker
 
 当前无 blocker。

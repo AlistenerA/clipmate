@@ -12,17 +12,19 @@
 
 ## 当前阶段
 
-**v0.4 Session 4 已完成** — Comment / Selection Clip Core（待 ChatGPT 审查）。
+**v0.4 Session 5 已完成** — Site Icon / Theme Cache（待 ChatGPT 审查）。
 
-- 新增 `commentSelection/` 模块：纯函数类型、builder、Markdown serializer
-- 接入 `handleGetSelection()`：基于 selectionContext + pageType 判断选区模式，生成结构化 Markdown
-- 7 种选区模式：selection-generic / comment-selection / forum-selection / video-description-selection / video-comment-selection / short-video-caption-selection / ai-answer-selection
-- 每个模式有对应 warning 文案，selection-generic 不强制加 warning
-- selection-first 不变：有选区永远走 selection 路径，不抓取整页评论/论坛
-- 未改 fullpage、Popup、Options、Background、Notion 保存链路
-- 总测试数：1084 → 1184（+100：comment-selection-builder 52 + comment-selection-markdown 48）
-- 未接入 Notion block 转换，未新增权限/依赖
-- 下一步建议 Session 4.1 Anti-Slop Review
+- 新增 `siteVisual/` 模块：类型定义、安全提取器、纯函数 cache strategy
+- 提取器：`extractDomain` / `normalizeThemeColor` / `isSafeIconUrl` / `normalizeIconUrl` / `extractSiteVisualMetadata`
+- Cache strategy：`shouldUseCachedSiteVisual` / `mergeSiteVisualWithCache` / `toSiteVisualCacheRecord`（TTL 7 天）
+- 安全归一化：themeColor 仅接受 #hex / rgb/rgba / hsl/hsla，拒绝 javascript/data/url/expression/calc/var
+- 安全 icon URL：仅接受 http/https/相对路径，拒绝 javascript/data/blob/chrome/edge/about/file/vbscript
+- 最小接入：`metaParser.ts` 的 `resolveIconUrl` / `extractThemeColor` / `extractSiteIconUrl` 委托给 safe extractor
+- 本版本实际持久化 chrome.storage cache，cache strategy 为纯函数，ISSUES 记录 persistence deferred
+- 未改 Popup / Options / Background / Notion / fullpage / selection 主链路
+- 未新增权限/依赖
+- 总测试数：1184 → 1274（+90：site-visual-extractor 67 + site-visual-cache 23）
+- 下一步建议 Session 5.1 Anti-Slop Review 或直接进入 Session 6 Link Card Preview
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
@@ -57,11 +59,11 @@
 | Session 3 Navigation Summary Draft Builder | ✅ 已完成 | 纯函数 draft builder + 73 tests，待 ChatGPT 审查 |
 | Session 3.1 Navigation Summary Integration | ✅ 已完成 | Markdown serializer + minimal fallback，待 ChatGPT 审查 |
 | Session 3.2 Navigation Summary QA Fix + IS01 | ✅ 已完成 | IS01 修复 + guard + 17 tests + QA doc，待 ChatGPT 审查 |
-| Session 4 Comment / Selection Clip Mode | ✅ 已完成 | commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查 |
-| Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
-| Session 5 Tag Search UX | 🔄 deferred | v0.5 History UX |
-| Session 6 Site Icon / Theme Cache | ⏳ 待启动 | |
-| Session 7 Link Card Preview | ⏳ 待启动 | |
+| Session 4 Comment / Selection Clip Mode | ✅ 已完成 | cd826d3，待 ChatGPT 审查 |
+| Session 4.1 Anti-Slop Review | ✅ 已完成 | ChatGPT 审查通过，只读审查，无 commit |
+| Session 5 Site Icon / Theme Cache | ✅ 已完成 | 本轮完成，待 ChatGPT 审查 |
+| Session 5.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
+| Session 6 Link Card Preview | ⏳ 待启动 | |
 | Session 8 Docs, QA, Version, Package | ⏳ 待启动 | |
 | Session 9 Robustness Check and Release | ⏳ 待启动 | |
 
@@ -86,13 +88,11 @@
 
 ## 未完成（按优先级）
 
-1. Session 4：Comment / Selection Clip Mode（✅ 已完成，待 ChatGPT 审查）
-2. Session 3.2 Notion Block 转换（deferred，IS01 已修复，Notion block 未接入）
-3. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
-4. Session 5：Site Icon / Theme Cache — 站点图标/主题缓存
-5. Session 6：Link Card Preview — 链接卡片预览
-6. Session 7：Docs, QA, Version, Package
-7. Session 8：Robustness Check and Release Candidate Review
+1. Session 5：Site Icon / Theme Cache（✅ 已完成，待 ChatGPT 审查）
+2. Session 5.1：Anti-Slop Review — Site Visual 后质量审查（建议新增）
+3. Session 6：Link Card Preview — 链接卡片预览
+4. Session 7：Docs, QA, Version Bump, Package
+5. Session 8：Robustness Check and Release Candidate Review
 
 ### Deferred（延后到 v0.5 或独立专项）
 
@@ -113,5 +113,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Roadmap Adjustment → commit → 进入 Session 4.1 Anti-Slop Review**
-（Session 4 已提交 cd826d3。Tag Search UX 和 Better History Config 已延后到 v0.5。）
+**ChatGPT 审查本轮 Session 5 → commit → 进入 Session 5.1 Anti-Slop Review 或 Session 6 Link Card Preview**
+（Session 5 待 ChatGPT 审查后由用户决定下一步。）

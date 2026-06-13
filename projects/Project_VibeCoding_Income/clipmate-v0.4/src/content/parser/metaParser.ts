@@ -1,3 +1,5 @@
+import { normalizeIconUrl, normalizeThemeColor } from '../../shared/siteVisual/siteVisualExtractor'
+
 export interface PageMeta {
   url: string
   title: string
@@ -8,18 +10,14 @@ export interface PageMeta {
 }
 
 export function resolveIconUrl(href: string, baseUrl: string): string | undefined {
-  try {
-    return new URL(href, baseUrl).href
-  } catch {
-    return undefined
-  }
+  return normalizeIconUrl(href, baseUrl)
 }
 
 export function extractThemeColor(doc: Document): string | undefined {
   try {
     const el = doc.querySelector('meta[name="theme-color"]')
     const content = el?.getAttribute('content')?.trim()
-    return content || undefined
+    return normalizeThemeColor(content || null)
   } catch {
     return undefined
   }
@@ -44,7 +42,7 @@ export function extractSiteIconUrl(doc: Document, pageUrl: string): string | und
 
       const href = link.getAttribute('href')?.trim()
       if (href) {
-        const url = resolveIconUrl(href, baseUrl)
+        const url = normalizeIconUrl(href, baseUrl)
         if (url) {
           bestIcon = { priority, url }
         }
@@ -54,7 +52,7 @@ export function extractSiteIconUrl(doc: Document, pageUrl: string): string | und
     if (bestIcon) return bestIcon.url
 
     const origin = new URL(pageUrl).origin
-    return resolveIconUrl('/favicon.ico', origin)
+    return normalizeIconUrl('/favicon.ico', origin)
   } catch {
     return undefined
   }

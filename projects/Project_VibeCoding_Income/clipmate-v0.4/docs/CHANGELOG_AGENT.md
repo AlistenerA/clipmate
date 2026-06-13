@@ -4,6 +4,75 @@
 
 ---
 
+## v0.4 Session 5：Site Icon / Theme Cache (2026-06-13)
+
+### 性质
+
+代码实现：siteVisual 纯函数模块 + metaParser 安全接入。不改变剪藏主链路，不新增权限/依赖。cache 为纯函数 strategy，暂不实际持久化 chrome.storage。
+
+### 产出
+
+- `src/shared/siteVisual/siteVisual.types.ts` — 类型定义（~25 lines）
+  - `SiteVisualMetadata`：domain, siteIconUrl?, themeColor?, source, updatedAt
+  - `SiteVisualExtractInput`：document, pageUrl
+  - `SiteVisualCacheRecord`：domain, siteIconUrl?, themeColor?, updatedAt
+- `src/shared/siteVisual/siteVisualExtractor.ts` — 安全提取器（~150 lines）
+  - `extractDomain(url)` → hostname
+  - `normalizeThemeColor(value)` → 安全归一化：仅接受 #hex / rgb(rgba) / hsl(hsla)，拒绝 javascript/data/url/expression/calc/var/颜色名，长度限制 128 字符
+  - `isSafeIconUrl(url)` → 允许 http/https/相对路径，拒绝 javascript/data/blob/chrome/edge/about/file/vbscript
+  - `normalizeIconUrl(url, baseUrl)` → 安全解析为绝对 URL
+  - `extractSiteVisualMetadata(input)` → icon（link rel 优先级）+ themeColor（meta theme-color）+ fallback /favicon.ico，不访问网络/chrome API/storage
+- `src/shared/siteVisual/siteVisualCache.ts` — 纯函数 cache strategy（~90 lines）
+  - `SITE_VISUAL_CACHE_TTL_MS` = 7 天
+  - `shouldUseCachedSiteVisual(record, now?)` → TTL 过期检查
+  - `mergeSiteVisualWithCache(extracted, cached, now?)` → extracted 优先，缺失时 fallback cache，source 自动标记 document/cache/fallback
+  - `toSiteVisualCacheRecord(metadata)` → 剥离 source，只保留 domain/siteIconUrl/themeColor/updatedAt
+- `src/shared/siteVisual/index.ts` — 模块导出
+
+### 修改文件
+
+- `src/content/parser/metaParser.ts` — 6 insertions, 8 deletions
+  - `resolveIconUrl` → 委托 `normalizeIconUrl`
+  - `extractThemeColor` → 委托 `normalizeThemeColor`
+  - `extractSiteIconUrl` → 使用 `normalizeIconUrl` 替代旧的 `resolveIconUrl`
+  - `parseMetadata` 签名不变，向后兼容
+
+### 新增测试
+
+- `tests/site-visual-extractor.test.ts` — 67 tests
+  - extractDomain：5 tests（正常/子域/无路径/空/非法）
+  - normalizeThemeColor：21 tests（#fff/#ffffff/rgb/rgba/hsl/hsla/拒绝 javascript/data/url/expression/null/空/过长/颜色名/calc/var/trim）
+  - isSafeIconUrl：15 tests（接受 https/http/绝对路径/相对/父级相对，拒绝 js/data/blob/chrome/edge/about/file/空/vbscript）
+  - normalizeIconUrl：12 tests（绝对/相对/无前导斜线/拒绝 7 种危险协议/空/ftp）
+  - extractSiteVisualMetadata：11 tests（domain/icon/apple-touch-icon/icon-over-shortcut/fallback/themeColor/拒绝不安全 icon/拒绝不安全 themeColor/updatedAt/graceful/空 pageUrl）
+  - Safety：3 tests（无 fetch/XMLHttpRequest/chrome.storage/不保存完整 DOM/body）
+- `tests/site-visual-cache.test.ts` — 23 tests
+  - shouldUseCachedSiteVisual：7 tests（valid/undefined/missing updatedAt/expired/boundary/explicit now/far future）
+  - mergeSiteVisualWithCache：10 tests（无 cache/过期/有提取优先/缺失 fallback cache/全部缺失 fallback/过期不用）
+  - toSiteVisualCacheRecord：5 tests（字段剥离/无 source/无 title/url/description/contentText/markdown/body/fullHtml/空 domain/null）
+  - Safety：2 tests（无 chrome.storage/无 fetch/XMLHttpRequest）
+
+### 未修改
+
+- 未修改 Popup UI、Options UI、Background route
+- 未修改 Notion 保存主链路
+- 未修改 fullpage / selection 提取主逻辑
+- 未修改 navigationSummary / commentSelection / intent 模块
+- 未修改 content/index.ts
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+
+### 改动摘要
+
+- 实现安全 Site Visual 提取器：icon 优先级 + themeColor 归一化 + 危险协议拒绝
+- 实现纯函数 cache strategy：TTL 7 天、extracted 优先、缺失 fallback、source 自动标记
+- metaParser 最小接入：resolveIconUrl/extractThemeColor/extractSiteIconUrl 委托给 safe extractor
+- cache 暂未实际持久化到 chrome.storage，ISSUES 记录为 deferred
+- 不访问网络/chrome API/storage/完整 DOM
+- lint 0 / 1274 tests（+90 new）全部通过 / build success（116 modules）
+
+---
+
 ## v0.4 Roadmap Adjustment：Defer History UX Sessions (2026-06-13)
 
 ### 性质

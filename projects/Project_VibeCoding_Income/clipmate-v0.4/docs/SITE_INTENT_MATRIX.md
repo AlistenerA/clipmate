@@ -197,6 +197,21 @@ Intent 判断建立在 PageType 之上但不取代：
 | Session 3.1 | ✅ 完成 | Navigation Summary Markdown + Minimal Integration（commit 8312d2c）|
 | Session 3.2 | ✅ 完成 | Navigation Summary QA Fix + IS01 Completion（commit 0aa4e08）|
 | Session 4 | ✅ 完成 | Comment / Selection Clip Core（commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查）|
+| Session 4.1 | ✅ 完成 | Anti-Slop Review（ChatGPT 审查通过，只读审查）|
+| Session 5 | ✅ 完成 | Site Icon / Theme Cache（siteVisual extractor + cache strategy，待 ChatGPT 审查）|
+
+**Session 5 实现要点：**
+
+1. 实现了安全 Site Visual 提取器：icon 优先级（apple-touch-icon > icon > shortcut icon）+ themeColor 归一化（仅 #hex/rgb/hsl）+ 危险协议拒绝（javascript/data/blob/chrome/edge/about/file/vbscript）。
+2. 实现了纯函数 cache strategy：TTL 7 天，extracted 优先，缺失时 fallback cache，source 自动标记 document/cache/fallback。
+3. 最小接入 metaParser：resolveIconUrl/extractThemeColor/extractSiteIconUrl 委托给 safe extractor，向后兼容。
+4. Cache 暂未实际持久化到 chrome.storage，为纯函数 strategy。
+5. site visual metadata（domain/siteIconUrl/themeColor）可供后续 Link Card / History UI 复用。
+6. 不访问网络/chrome API/storage，不改变剪藏主链路。
+
+**下一阶段：**
+
+Session 5 完成后，siteIconUrl 和 themeColor 提取已安全归一化。后续可进入 Session 5.1 Anti-Slop Review 或 Session 6 Link Card Preview。
 
 **Session 4 实现要点：**
 
@@ -208,7 +223,7 @@ Intent 判断建立在 PageType 之上但不取代：
 
 **下一阶段：**
 
-Session 4 完成后，`clip-comment` / `clip-video-comment` / `clip-ai-answer` 等意图的选区已有 core draft + structured markdown 支持。后续可进入 Session 4.1 Anti-Slop Review 或 Session 5 Site Icon / Theme Cache。
+Session 5 完成后，siteIconUrl 和 themeColor 提取已安全归一化。后续可进入 Session 6 Link Card Preview。
 
 **Session 2.2 实现要点：**
 

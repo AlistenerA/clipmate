@@ -14,6 +14,22 @@
 
 ---
 
+## v0.4 Session 5 决策
+
+### D-v0.4-031：Site Visual Cache 只保存 domain / siteIconUrl / themeColor / updatedAt，不保存正文、选区、Markdown、完整 DOM 或 settings
+
+- **原因**：隐私安全底线要求不持久化用户内容。Cache 字段仅包含域名字段（domain）和脱敏视觉元数据（siteIconUrl、themeColor、updatedAt），均为结构化短字符串。`toSiteVisualCacheRecord` 函数剥离 `source` 字段，JSON 序列化后不含 title/url/description/contentText/markdown/body/fullHtml 等字段。
+- **影响**：`SiteVisualCacheRecord` 接口不含 source 字段，`toSiteVisualCacheRecord` 返回 `SiteVisualCacheRecord | null`。测试显式验证了序列化结果不含敏感字段。
+- **可反转性**：低。推翻此决策意味着引入隐私风险。
+
+### D-v0.4-030：Site Visual 提取只读取当前 Document 的 icon/theme-color，不访问网络验证图标
+
+- **原因**：v0.4 定位为纯前端增强版本，不新增 manifest 权限。图标和主题色的提取仅限于当前页面的 DOM 读取（link/meta 标签），不发起任何网络请求验证图标是否真实存在或是否可访问。任何网络请求都需要新增 host_permissions 或绕过 CSP，与 v0.4 的纯前端定位冲突。
+- **影响**：`extractSiteVisualMetadata` 和 `normalizeIconUrl` 均为纯同步函数，不调用 fetch/XMLHttpRequest/chrome API。`source: 'document'` 表示数据来自 DOM 读取，不代表图标 URL 真实可访问。
+- **可反转性**：低。推翻此决策意味着引入网络权限和隐私风险。
+
+---
+
 ## v0.4 Session 4 决策
 
 ### D-v0.4-028：CommentSelectionDraft 不保存 selectedText 字段，只保存 selectedTextLength；Markdown 输出允许包含用户主动选中的内容

@@ -4,26 +4,51 @@
 
 ---
 
-## v0.4 Roadmap Adjustment：Defer History UX Sessions (2026-06-13)
+## v0.4 Session 5 (2026-06-13)
 
 ### 运行命令
 
-本轮 docs-only roadmap adjustment。未运行 lint/test/build。
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 30 文件 1274 tests)
+npm run build   # tsc --noEmit && vite build
+```
 
-### 原因
+### 结果
 
-没有代码变更。
+- `npm run lint`：首次 2 错误（未使用的 ICON_LINK_SELECTORS 和 baseUrl 参数），修复后通过（无输出）
+- `npm run test`：30 个测试文件，1274 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| site-visual-extractor.test.ts | 67 | ✅ 全部通过（新增）|
+| site-visual-cache.test.ts | 23 | ✅ 全部通过（新增）|
+| content-parser.test.ts | 27 | ✅ 全部通过（无退化）|
+| 其余 27 个测试文件 | 1157 | ✅ 全部通过（无退化）|
+
+### 错误/修复
+
+1. lint：`ICON_LINK_SELECTORS` 未使用 → 移除
+2. lint：`isSafeIconUrl` 的 `baseUrl` 参数未使用 → 移除参数
+3. test：`prefers icon over shortcut icon` — makeDom 未传递 pageUrl 导致 baseURI 不正确 → 修复
+4. test：cache merge `source` 断言失败 3 处 → 修复 mergeSiteVisualWithCache
 
 ### 检查项
 
-- git status --short：clean ✅
-- git ls-files --others --exclude-standard：无输出 ✅
-- 未修改 src/tests/package/manifest ✅
-- 未修改 clipmate-v0.1/v0.2/v0.3 ✅
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- lint 0 ✅
+- 1274 tests pass ✅
+- build success ✅
 
 ---
 
-## v0.4 Session 4 (2026-06-13)
+## v0.4 Roadmap Adjustment：Defer History UX Sessions (2026-06-13)
 
 ### 运行命令
 
