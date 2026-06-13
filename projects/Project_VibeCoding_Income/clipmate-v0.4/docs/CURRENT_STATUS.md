@@ -12,7 +12,7 @@
 
 ## 当前阶段
 
-**v0.4 Session 5 已完成** — Site Icon / Theme Cache（待 ChatGPT 审查）。
+**v0.4 Session 6 已完成** — Link Card Preview Core（待 ChatGPT 审查）。
 
 - 新增 `siteVisual/` 模块：类型定义、安全提取器、纯函数 cache strategy
 - 提取器：`extractDomain` / `normalizeThemeColor` / `isSafeIconUrl` / `normalizeIconUrl` / `extractSiteVisualMetadata`
@@ -25,6 +25,9 @@
 - 未新增权限/依赖
 - 总测试数：1184 → 1274（+90：site-visual-extractor 67 + site-visual-cache 23）
 - 下一步建议 Session 5.1 Anti-Slop Review 或直接进入 Session 6 Link Card Preview
+
+- v0.4 Session 5.1 Anti-Slop Review：完成，发现 M2（metaParser 与 siteVisualExtractor icon 提取逻辑重复）→ Session 6 已修复
+- v0.4 Session 6：Link Card Preview Core（本轮完成，待 ChatGPT 审查）
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
@@ -62,8 +65,8 @@
 | Session 4 Comment / Selection Clip Mode | ✅ 已完成 | cd826d3，待 ChatGPT 审查 |
 | Session 4.1 Anti-Slop Review | ✅ 已完成 | ChatGPT 审查通过，只读审查，无 commit |
 | Session 5 Site Icon / Theme Cache | ✅ 已完成 | 本轮完成，待 ChatGPT 审查 |
-| Session 5.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
-| Session 6 Link Card Preview | ⏳ 待启动 | |
+| Session 5.1 Anti-Slop Review | ✅ 已完成 | M2 发现并已在 Session 6 修复 |
+| Session 6 Link Card Preview | ✅ 已完成 | 本轮完成，待 ChatGPT 审查 |
 | Session 8 Docs, QA, Version, Package | ⏳ 待启动 | |
 | Session 9 Robustness Check and Release | ⏳ 待启动 | |
 
@@ -83,16 +86,19 @@
 - [x] v0.4 Session 3：Navigation Summary Draft Builder — 纯函数 draft builder + 73 tests + 文档更新
 - [x] v0.4 Session 3.1：Navigation Summary Markdown + Minimal Integration — Markdown serializer + buildLowConfidenceSummary delegate + 55 new tests
 - [x] v0.4 Session 3.2：Navigation Summary QA Fix + IS01 Completion — IS01 fix + guard + 17 new tests + NAVIGATION_SUMMARY_QA.md
+- [x] v0.4 Session 4：Comment / Selection Clip Core — commentSelection 模块 + 100 tests
+- [x] v0.4 Session 4.1：Anti-Slop Review — ChatGPT 审查通过
+- [x] v0.4 Session 5：Site Icon / Theme Cache — siteVisual 模块 + 90 tests + metaParser 安全接入
+- [x] v0.4 Session 5.1：Anti-Slop Review — 发现 M2 minor（icon 提取逻辑重复）
+- [x] v0.4 Session 6：Link Card Preview Core — linkCard 模块 + 109 tests + M2 修复
 
 ---
 
 ## 未完成（按优先级）
 
-1. Session 5：Site Icon / Theme Cache（✅ 已完成，待 ChatGPT 审查）
-2. Session 5.1：Anti-Slop Review — Site Visual 后质量审查（建议新增）
-3. Session 6：Link Card Preview — 链接卡片预览
-4. Session 7：Docs, QA, Version Bump, Package
-5. Session 8：Robustness Check and Release Candidate Review
+1. Session 6.1：Anti-Slop Review — Link Card 后质量审查（建议新增）
+2. Session 7：Docs, QA, Version Bump, Package
+3. Session 8：Robustness Check and Release Candidate Review
 
 ### Deferred（延后到 v0.5 或独立专项）
 
@@ -113,5 +119,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 5 → commit → 进入 Session 5.1 Anti-Slop Review 或 Session 6 Link Card Preview**
-（Session 5 待 ChatGPT 审查后由用户决定下一步。）
+**ChatGPT 审查本轮 Session 6 → commit → 进入 Session 6.1 Link Card Anti-Slop Review 或 Session 7 Docs/Package**
+（Session 6 待 ChatGPT 审查后由用户决定下一步。）

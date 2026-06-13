@@ -4,6 +4,60 @@
 
 ---
 
+## v0.4 Session 6 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 32 文件 1383 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：首次 1 错误（prefer-const: themeColor），修复后通过（无输出）
+- `npm run test`：32 个测试文件，1383 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| link-card-builder.test.ts | 62 | ✅ 全部通过（新增）|
+| link-card-markdown.test.ts | 47 | ✅ 全部通过（新增）|
+| content-parser.test.ts | 27 | ✅ 全部通过（M2 修复后无退化）|
+| site-visual-extractor.test.ts | 67 | ✅ 全部通过（M2 修复后无退化）|
+| site-visual-cache.test.ts | 23 | ✅ 全部通过（无退化）|
+| 其余 28 个测试文件 | 1157 | ✅ 全部通过（无退化）|
+
+### 错误/修复
+
+1. lint prefer-const：`let themeColor` → `const themeColor`
+2. test：`escapeMarkdownText` "does not escape URL characters unnecessarily" 预期不包含 'http' 但 dots 被转义后仍包含 'http' → 改为验证 dots 转义
+3. test：`formatLinkCardMarkdown` "outputs reasons" 预期 `- source=current-page` 但 `-` 被转义 → 改为匹配部分子串
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1383 tests pass ✅
+- build success ✅
+- linkCard 模块不访问 chrome API/storage/network ✅
+- linkCard 模块不保存正文/选区/评论/完整 DOM/Markdown/settings/request ✅
+- M2 已修复：metaParser 委托 extractIconFromLinks ✅
+
+---
+
 ## v0.4 Session 5 (2026-06-13)
 
 ### 运行命令

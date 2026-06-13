@@ -1,4 +1,8 @@
-import { normalizeIconUrl, normalizeThemeColor } from '../../shared/siteVisual/siteVisualExtractor'
+import {
+  extractIconFromLinks,
+  normalizeIconUrl,
+  normalizeThemeColor,
+} from '../../shared/siteVisual/siteVisualExtractor'
 
 export interface PageMeta {
   url: string
@@ -23,33 +27,13 @@ export function extractThemeColor(doc: Document): string | undefined {
   }
 }
 
-const ICON_REL_PRIORITY = ['apple-touch-icon', 'icon', 'shortcut icon', 'mask-icon'] as const
-
 export function extractSiteIconUrl(doc: Document, pageUrl: string): string | undefined {
   try {
-    const links = doc.querySelectorAll('link')
     const baseURI = doc.baseURI || ''
-    const baseUrl = baseURI.startsWith('http') ? baseURI : pageUrl
+    const resolvedBase = baseURI.startsWith('http') ? baseURI : pageUrl
 
-    let bestIcon: { priority: number; url: string } | null = null
-
-    for (const link of links) {
-      const rel = (link.getAttribute('rel') || '').trim().toLowerCase()
-      if (!rel) continue
-      const priority = ICON_REL_PRIORITY.indexOf(rel as typeof ICON_REL_PRIORITY[number])
-      if (priority === -1) continue
-      if (bestIcon && priority >= bestIcon.priority) continue
-
-      const href = link.getAttribute('href')?.trim()
-      if (href) {
-        const url = normalizeIconUrl(href, baseUrl)
-        if (url) {
-          bestIcon = { priority, url }
-        }
-      }
-    }
-
-    if (bestIcon) return bestIcon.url
+    const iconUrl = extractIconFromLinks(doc, resolvedBase)
+    if (iconUrl) return iconUrl
 
     const origin = new URL(pageUrl).origin
     return normalizeIconUrl('/favicon.ico', origin)

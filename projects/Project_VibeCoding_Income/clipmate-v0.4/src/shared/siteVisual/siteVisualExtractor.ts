@@ -85,7 +85,7 @@ export function normalizeIconUrl(url: string, baseUrl: string): string | undefin
   }
 }
 
-function extractIconFromLinks(doc: Document, baseUrl: string): string | undefined {
+export function extractIconFromLinks(doc: Document, baseUrl: string): string | undefined {
   const links = doc.querySelectorAll('link')
   const baseURI = doc.baseURI || ''
   const resolvedBase = baseURI.startsWith('http') ? baseURI : baseUrl

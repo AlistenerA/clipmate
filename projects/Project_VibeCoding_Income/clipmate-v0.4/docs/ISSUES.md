@@ -83,6 +83,13 @@
 
 ---
 
+## v0.4 Session 6 新增限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS08 | Link Card 不访问目标 URL | minor | Link Card 基于当前页面 metadata 或用户输入构建，不抓取目标链接内容 |
+| IS09 | Link Card UI 未实现 | minor | 核心 builder/serializer 已实现，Popup/Options/History UI 接入延后到 v0.5 |
+
 ## v0.4 Session 5 新增限制
 
 | 编号 | 限制 | 级别 | 说明 |
@@ -126,6 +133,14 @@
 | 编号 | 限制 | 级别 | 说明 |
 |:---:|------|:---:|------|
 | IS01 | low-confidence+high-linkDensity 路径未从 content/index.ts 触发 | minor | `buildLowConfidenceSummary` 已支持 articleConfidence/linkDensity 参数，但 content/index.ts 尚未传递报告值。navigation/search-results pageType 路径已完成闭环。 |
+
+### Session 5.1 Anti-Slop Review 已修复
+
+| 编号 | 问题 | 级别 | 修复 Session |
+|:---:|------|:---:|:---:|
+| ✅ M2 | metaParser.extractSiteIconUrl 与 siteVisualExtractor.extractIconFromLinks 存在 link 迭代 + icon 优先级处理逻辑重复 | minor | Session 6 |
+
+**M2 修复详情：** `extractIconFromLinks` 从 private 改为 public export。`extractSiteIconUrl` 移除内联 link 迭代逻辑，委托给 `extractIconFromLinks`，保留自身 `/favicon.ico` fallback 行为。27 tests（content-parser）+ 67 tests（site-visual-extractor）全部通过。
 
 ### Session 2.3 已修复问题
 

@@ -199,6 +199,23 @@ Intent 判断建立在 PageType 之上但不取代：
 | Session 4 | ✅ 完成 | Comment / Selection Clip Core（commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查）|
 | Session 4.1 | ✅ 完成 | Anti-Slop Review（ChatGPT 审查通过，只读审查）|
 | Session 5 | ✅ 完成 | Site Icon / Theme Cache（siteVisual extractor + cache strategy，待 ChatGPT 审查）|
+| Session 5.1 | ✅ 完成 | Anti-Slop Review（发现 M2 minor，Session 6 已修复）|
+| Session 6 | ✅ 完成 | Link Card Preview Core（待 ChatGPT 审查）|
+
+**Session 6 实现要点：**
+
+1. 实现了 Link Card Preview Core：类型定义（LinkCardDraft）、builder（buildLinkCardDraft）、Markdown serializer（formatLinkCardMarkdown）。
+2. 4 种 LinkCardSource 支持：current-page / selected-link / navigation-link / manual-input。
+3. 安全 URL 归一化：拒绝 javascript/data/blob/chrome/edge/about/file/vbscript 等 10 种危险协议。
+4. 复用 siteVisual：siteIconUrl 调用 isSafeIconUrl 兜底，themeColor 调用 normalizeThemeColor 兜底。
+5. M2 DRY cleanup：metaParser 委托 siteVisualExtractor 的 extractIconFromLinks。
+6. 不访问网络/chrome API/storage/document。
+7. 不保存正文/选区/评论/完整 DOM/Markdown/settings/request。
+8. Popup UI 未实现，Notion 专用 card block 未实现，History UI 未集成。
+
+**下一阶段：**
+
+Session 6 完成后，进入 Session 6.1 Link Card Anti-Slop Review 或 Session 7 Docs/Package/Version。
 
 **Session 5 实现要点：**
 

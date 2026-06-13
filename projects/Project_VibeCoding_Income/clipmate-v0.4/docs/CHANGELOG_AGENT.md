@@ -4,6 +4,73 @@
 
 ---
 
+## v0.4 Session 6：Link Card Preview Core (2026-06-13)
+
+### 性质
+
+代码实现：linkCard 纯函数模块（类型/builder/Markdown serializer）+ M2 DRY cleanup。不改变剪藏主链路，不新增权限/依赖，不接入 UI。
+
+### 产出
+
+- `src/shared/linkCard/linkCard.types.ts` — 类型定义（~25 lines）
+  - `LinkCardSource`：'current-page' | 'selected-link' | 'navigation-link' | 'manual-input'
+  - `LinkCardInput`：title?, description?, url, source, siteIconUrl?, themeColor?, pageType?, siteProfileId?, reason?
+  - `LinkCardDraft`：title, description?, url, domain, source, siteIconUrl?, themeColor?, pageType?, siteProfileId?, warning?, reasons[]
+- `src/shared/linkCard/linkCardBuilder.ts` — 核心实现（~112 lines）
+  - `extractDomain(url)` → hostname
+  - `normalizeLinkCardUrl(url, baseUrl?)` → 安全 URL 归一化，拒绝 10 种危险协议
+  - `truncateText(value, maxLength)` → title 120 / description 240 截断
+  - `buildLinkCardDraft(input)` → 完整 draft，非法 URL 返回 null
+- `src/shared/linkCard/linkCardMarkdown.ts` — Markdown serializer（~84 lines）
+  - `escapeMarkdownText(text)` — 转义 16 种 Markdown 特殊字符
+  - `formatLinkCardMarkdown(draft)` — draft → 安全 Markdown 字符串
+- `src/shared/linkCard/index.ts` — 模块导出
+
+### M2 DRY Cleanup
+
+- `src/shared/siteVisual/siteVisualExtractor.ts` — `extractIconFromLinks` 从 private 改为 public export
+- `src/content/parser/metaParser.ts` — `extractSiteIconUrl` 移除内联 link 迭代逻辑，委托给 `extractIconFromLinks`，保留 `/favicon.ico` fallback；移除 `ICON_REL_PRIORITY` 常量
+
+### 修改文件
+
+- `src/shared/siteVisual/siteVisualExtractor.ts` — 1 行变更（private→export）
+- `src/content/parser/metaParser.ts` — 减少 24 行（移除重复 link 迭代逻辑）
+
+### 新增测试
+
+- `tests/link-card-builder.test.ts` — 62 tests
+  - extractDomain：4 tests
+  - normalizeLinkCardUrl：16 tests（接受 https/http/相对 URL，拒绝 10 种危险协议）
+  - truncateText：5 tests（undefined/空/白/短/截断）
+  - buildLinkCardDraft：27 tests（4 种 source/非法 URL 返回 null/title fallback/截断/siteIcon/themeColor/pageType/reasons）
+  - 安全补丁检查：8 tests（无 contentText/selectedText/commentBody/fullHtml/fullText/markdown/settings/request）
+- `tests/link-card-markdown.test.ts` — 47 tests
+  - escapeMarkdownText：18 tests（16 种特殊字符 + 空 + 中文 + 混合 + URL dots）
+  - formatLinkCardMarkdown：22 tests（title/Source/Domain/Type/description/pageType/siteProfile/icon/themeColor/warning/escape/URL 不 escape/reasons/上限 5）
+  - 安全补丁检查：7 tests（无 contentText/selectedText/commentBody/fullHtml/fullText/settings/request + 纯函数）
+
+### 未修改
+
+- 未修改 Popup UI、Options UI、Background route
+- 未修改 Notion 保存主链路
+- 未修改 fullpage / selection 内容提取主逻辑
+- 未修改 navigationSummary / commentSelection / intent 模块
+- 未修改 content/index.ts
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+
+### 改动摘要
+
+- 实现 Link Card Preview Core：类型定义、builder、Markdown serializer
+- 4 种 LinkCardSource 支持（current-page/selected-link/navigation-link/manual-input）
+- 安全 URL 归一化：拒绝 10 种危险协议（javascript/data/blob/chrome/edge/about/file/vbscript + 相对无 baseUrl）
+- M2 DRY cleanup：metaParser 委托 siteVisualExtractor 的 extractIconFromLinks
+- 不访问网络/chrome API/storage/document
+- 不保存正文/选区/评论/完整 DOM/Markdown/settings/request
+- lint 0 / 1383 tests（+109 new）全部通过 / build success（116 modules）
+
+---
+
 ## v0.4 Session 5：Site Icon / Theme Cache (2026-06-13)
 
 ### 性质

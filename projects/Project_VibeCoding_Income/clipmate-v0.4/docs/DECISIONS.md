@@ -14,6 +14,28 @@
 
 ---
 
+## v0.4 Session 6 决策
+
+### D-v0.4-033：LinkCardDraft 不保存正文、选区、评论、完整 DOM、完整 Markdown、settings 或 request
+
+- **原因**：隐私安全底线要求不持久化用户内容。LinkCardDraft 所有字段为短字符串（title/url/domain/siteIconUrl/themeColor/pageType/siteProfileId/reasons），不含任何全文内容。
+- **影响**：`buildLinkCardDraft` 返回的 draft 不含 contentText/selectedText/commentBody/fullHtml/fullText/markdown/settings/request 字段。测试显式验证了这些字段不存在。
+- **可反转性**：低。推翻此决策意味着引入隐私风险。
+
+### D-v0.4-032：Link Card Preview 只基于当前已知 metadata / 用户输入构建，不访问目标 URL，不抓取远程页面内容
+
+- **原因**：v0.4 定位为纯前端增强版本，不新增 manifest 权限。Link Card 的 title/description/domain 来自当前页面 parseMetadata 或用户手动输入，siteIconUrl/themeColor 来自 parseMetadata 或 siteVisual 安全提取器。`normalizeLinkCardUrl` 仅做 URL 协议安全和归一化，不发起网络请求。
+- **影响**：`buildLinkCardDraft` 和 `formatLinkCardMarkdown` 均为纯函数或只接受结构化输入。不调用 fetch/XMLHttpRequest/chrome API/iframe/img。`source` 字段为枚举（current-page/selected-link/navigation-link/manual-input），不代表实际网络访问。
+- **可反转性**：低。推翻此决策意味着引入网络权限和隐私风险。
+
+### D-v0.4-034：M2 DRY cleanup — metaParser.extractSiteIconUrl 委托 siteVisualExtractor.extractIconFromLinks
+
+- **原因**：Session 5.1 Anti-Slop Review 发现 M2：metaParser.ts 的 extractSiteIconUrl 与 siteVisualExtractor.ts 的 extractIconFromLinks 存在 link 迭代 + icon 优先级处理逻辑重复。Session 6 将其作为最小 DRY cleanup 处理。
+- **影响**：`extractIconFromLinks` 从 private 改为 public export。`extractSiteIconUrl` 移除内联 link 迭代逻辑，委托给 `extractIconFromLinks`，保留自身 `/favicon.ico` fallback 行为。metaParser 的 `parseMetadata` 行为不变。content-parser 测试全部通过（27 tests）。
+- **可反转性**：中。如果后续发现委托引入行为差异，可恢复内联实现。
+
+---
+
 ## v0.4 Session 5 决策
 
 ### D-v0.4-031：Site Visual Cache 只保存 domain / siteIconUrl / themeColor / updatedAt，不保存正文、选区、Markdown、完整 DOM 或 settings
