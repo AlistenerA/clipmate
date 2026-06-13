@@ -12,6 +12,7 @@ import {
   trimArticleBody,
   assessArticleConfidence,
   buildLowConfidenceSummary,
+  classifyPageType,
 } from './extractors/articleBoundaryGuard'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
@@ -93,10 +94,12 @@ function handleExtractFullpage(): HandlerResult {
       const report = assessArticleConfidence(fallbackResult.textContent, fallbackResult.content)
 
       if (report.confidence === 'low') {
+        const pageType = classifyPageType(docClone)
         const summary = buildLowConfidenceSummary(
           docClone,
           fallbackMeta.title,
           fallbackMeta.url,
+          pageType,
         )
         return {
           success: true,
@@ -132,7 +135,8 @@ function handleExtractFullpage(): HandlerResult {
 
     if (report.confidence === 'low') {
       const meta = parseMetadata(docClone)
-      const summary = buildLowConfidenceSummary(docClone, meta.title, meta.url)
+      const pageType = classifyPageType(docClone)
+      const summary = buildLowConfidenceSummary(docClone, meta.title, meta.url, pageType)
       return {
         success: true,
         data: {

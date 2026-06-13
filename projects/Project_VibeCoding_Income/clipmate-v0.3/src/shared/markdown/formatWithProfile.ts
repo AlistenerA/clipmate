@@ -9,6 +9,7 @@ export interface FormatMarkdownInput {
   note: string
   bodyMarkdown: string
   createdAt?: string
+  mode?: 'fullpage' | 'selection'
 }
 
 function escapeYamlValue(value: string): string {
@@ -111,6 +112,11 @@ export function formatMarkdownWithProfile(
 
   parts.push('---')
   parts.push('')
+
+  if (input.mode === 'selection') {
+    parts.push('> 注：以下内容为网页选区摘录，并非全文。')
+    parts.push('')
+  }
 
   if (body.trim()) {
     parts.push(body.trim())

@@ -57,6 +57,7 @@ export function formatCopyMarkdown(
   tags: string[],
   note: string,
   bodyMarkdown: string,
+  mode?: 'fullpage' | 'selection',
 ): string {
   const parts: string[] = []
 
@@ -82,6 +83,11 @@ export function formatCopyMarkdown(
 
   parts.push('---')
   parts.push('')
+
+  if (mode === 'selection') {
+    parts.push('> 注：以下内容为网页选区摘录，并非全文。')
+    parts.push('')
+  }
 
   if (bodyMarkdown.trim()) {
     parts.push(bodyMarkdown.trim())

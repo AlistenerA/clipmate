@@ -53,5 +53,33 @@ export function useExtractContent() {
     setLoading(false)
   }, [])
 
-  return { content, loading, error, extract, clear, setContent }
+  const tryExtractPrioritizeSelection = useCallback(async (): Promise<{ content: ExtractedContent | null; mode: ClipMode } | null> => {
+    abortRef.current = false
+    setLoading(true)
+    setError(null)
+
+    try {
+      const selResult = await sendToActiveTab<ExtractResult>({
+        type: MESSAGE_TYPES.GET_SELECTION,
+      })
+
+      if (abortRef.current) return null
+
+      if (selResult.success && (selResult.data.contentText || selResult.data.markdown)) {
+        setContent(selResult.data)
+        return { content: selResult.data, mode: 'selection' }
+      }
+
+      return { content: null, mode: 'fullpage' }
+    } catch {
+      if (abortRef.current) return null
+      return { content: null, mode: 'fullpage' }
+    } finally {
+      if (!abortRef.current) {
+        setLoading(false)
+      }
+    }
+  }, [])
+
+  return { content, loading, error, extract, tryExtractPrioritizeSelection, clear, setContent }
 }

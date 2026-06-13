@@ -23,54 +23,58 @@ import type { ClipMateSettingsV2 } from '../shared/types/settings.types'
 export default function App() {
   const { tab } = useCurrentTab()
   const [mode, setMode] = useState<ClipMode>('fullpage')
-  const { content, loading, error, extract, setContent } = useExtractContent()
+  const { content, loading, error, extract, tryExtractPrioritizeSelection, setContent } = useExtractContent()
   const { tags, setTags, addTag, removeTag, note, setNote } = useClipDraft()
-  const { copy, copied } = useCopyMarkdown()
+  const { copy, copied, resetCopy } = useCopyMarkdown()
   const { saving, saveError, saved, save: saveToNotion, clearResult } =
     useSaveToNotion()
 
   const [settings, setSettings] = useState<ClipMateSettingsV2 | null>(null)
   const [selectedTargetId, setSelectedTargetId] = useState<string>('')
   const [mdTarget, setMdTarget] = useState<MarkdownTarget>('notion')
-  const [draftLoaded, setDraftLoaded] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
-  const restoredRef = useRef(false)
+  const [showPreview, setShowPreview] = useState(true)
+  const initRef = useRef(false)
 
   useEffect(() => {
-    getSettings().then((s) => {
+    if (initRef.current) return
+    initRef.current = true
+
+    const init = async () => {
+      const s = await getSettings()
       setSettings(s)
       const resolved = resolveSelectedTarget(s.notionTargets, s.defaultTargetId)
       if (resolved) {
         setSelectedTargetId(resolved.id)
       }
-    })
-    Promise.all([
-      getLastClipDraft(),
-      chrome.tabs.query({ active: true, currentWindow: true }),
-    ]).then(([draft, tabs]) => {
-      const activeUrl = tabs[0]?.url
-      const draftUrl = draft?.content?.url
 
-      if (draft?.content && draftUrl && activeUrl === draftUrl) {
-        restoredRef.current = true
+      const [draft, tabsResult] = await Promise.all([
+        getLastClipDraft(),
+        chrome.tabs.query({ active: true, currentWindow: true }),
+      ])
+      const activeUrl = tabsResult[0]?.url
+
+      const selResult = await tryExtractPrioritizeSelection()
+
+      if (selResult && selResult.content) {
+        setMode('selection')
+        resetCopy()
+        return
+      }
+
+      if (draft?.content && draft.content.url && activeUrl === draft.content.url) {
         setContent(draft.content)
         setTags(draft.tags)
         setNote(draft.note)
         setMode(draft.mode)
+        return
       }
-      setDraftLoaded(true)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- setContent/setTags/setNote are stable setters
-  }, [])
 
-  useEffect(() => {
-    if (!draftLoaded) return
-    if (restoredRef.current) {
-      restoredRef.current = false
-      return
+      extract('fullpage')
     }
-    extract(mode)
-  }, [mode, draftLoaded, extract])
+
+    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, [])
 
   useEffect(() => {
     if (!content) return
@@ -103,14 +107,20 @@ export default function App() {
         note,
         bodyMarkdown: content.markdown,
         createdAt: content.metadata?.createdAt,
+        mode: content.mode,
       },
       mdTarget,
     )
   }, [content, tags, note, mdTarget])
 
+  useEffect(() => {
+    resetCopy()
+  }, [mdTarget, content?.metadata?.createdAt, resetCopy])
+
   const handleExtract = useCallback(() => {
+    resetCopy()
     extract(mode)
-  }, [mode, extract])
+  }, [mode, extract, resetCopy])
 
   const handleCopy = useCallback(() => {
     if (displayMarkdown) {

@@ -404,6 +404,13 @@ describe('htmlToMarkdown - compatibility with formula and code block', () => {
     expect(md).toContain('const x = 1')
     expect(md).toContain('[Docs](/docs)')
   })
+
+  it('strips trailing digits after block formula', () => {
+    const md = htmlToMarkdown('<span data-latex="\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}">rendered matrix</span>3')
+    expect(md).toContain('\\begin{bmatrix}')
+    expect(md).toContain('\\end{bmatrix}')
+    expect(md).not.toMatch(/\$\$[\s\S]*?\$\$3/)
+  })
 })
 
 describe('normalizeImageMarkdown - edge cases', () => {

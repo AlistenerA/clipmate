@@ -406,4 +406,29 @@ describe('formatMarkdownWithProfile', () => {
       }
     })
   })
+
+  describe('selection excerpt hint', () => {
+    const hintText = '网页选区摘录'
+
+    it('includes hint for selection mode with notion profile', () => {
+      const input = { ...testInput, mode: 'selection' as const }
+      const result = formatMarkdownWithProfile(input, 'notion')
+      expect(result).toContain(hintText)
+      expect(result).toContain('并非全文')
+    })
+
+    it('does not include hint for fullpage mode', () => {
+      const input = { ...testInput, mode: 'fullpage' as const }
+      const result = formatMarkdownWithProfile(input, 'notion')
+      expect(result).not.toContain(hintText)
+    })
+
+    it('includes hint for all four profiles in selection mode', () => {
+      for (const target of ALL_TARGETS) {
+        const input = { ...testInput, mode: 'selection' as const }
+        const result = formatMarkdownWithProfile(input, target)
+        expect(result).toContain('并非全文')
+      }
+    })
+  })
 })

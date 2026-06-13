@@ -4,6 +4,11 @@ export function useCopyMarkdown() {
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const resetCopy = useCallback(() => {
+    setCopied(false)
+    setError(null)
+  }, [])
+
   const copy = useCallback(async (markdown: string) => {
     setError(null)
     setCopied(false)
@@ -27,5 +32,5 @@ export function useCopyMarkdown() {
     }
   }, [])
 
-  return { copy, copied, error }
+  return { copy, copied, error, resetCopy }
 }

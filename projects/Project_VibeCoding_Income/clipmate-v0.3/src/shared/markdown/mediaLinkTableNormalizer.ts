@@ -1,3 +1,5 @@
+import { normalizeFormulaTableCellText } from './formulaTableNormalizer'
+
 export interface NormalizeImageInput {
   src?: string
   alt?: string
@@ -36,7 +38,8 @@ export function isLikelyImageUrl(value: string | undefined | null): boolean {
 
 export function sanitizeMarkdownCell(value: string): string {
   if (!value) return ''
-  const cleaned = value
+  const normalized = normalizeFormulaTableCellText(value)
+  const cleaned = normalized
     .replace(/\r?\n/g, ' ')
     .replace(/\|/g, '\\|')
     .replace(/\s+/g, ' ')

@@ -51,7 +51,12 @@ export default function App() {
       setStatus('saving')
       setStatusMsg('保存中…')
       try {
-        const partial: Partial<ClipMateSettingsV2> = { notionTargets: targets }
+        const partial: Partial<ClipMateSettingsV2> = {
+          notionTargets: targets,
+          notionToken: settings.notionToken,
+          defaultTags: settings.defaultTags,
+          saveHistoryEnabled: settings.saveHistoryEnabled,
+        }
         if (defaultTargetId !== undefined) {
           partial.defaultTargetId = defaultTargetId
         }
@@ -66,7 +71,7 @@ export default function App() {
         showStatus('error', '保存失败，请重试')
       }
     },
-    [showStatus],
+    [showStatus, settings.notionToken, settings.defaultTags, settings.saveHistoryEnabled],
   )
 
   const handleAddTarget = useCallback(

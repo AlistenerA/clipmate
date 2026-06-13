@@ -3,6 +3,99 @@
 > 所有重要技术取舍必须记录在此，附带原因。后续轮次不能随意推翻。
 
 
+## v0.3 Session 8-D 决策
+
+### D-v0.3-049：MANUAL_QA_RESULT_TEMPLATE.md 本地图片路径脱敏
+
+- **原因**：文档中包含 `C:\Users\20499\...\Typora\...\image-xxx.png` 本机绝对路径，不应提交到 git 仓库。
+- **影响**：所有图片引用替换为"截图见用户本地 QA 记录，未提交到仓库"。
+- **可反转性**：高。
+
+### D-v0.3-048：CSDN/LaTeX 站点渲染残留挂起到 v0.4+
+
+- **原因**：CSDN 等站点 KaTeX/MathJax 渲染产生的 DOM 结构与纯 LaTeX 源码差异较大，当前 regex-based 清理无法完全覆盖所有渲染变体。用户已确认此为次要问题。深入解决需要引入站点级适配或更复杂的 AST 解析，不适合在 v0.3 发布前冒险。
+- **影响**：v0.3 发布不受阻塞。ISSUES.md 记录为 v0.4+ known issue。
+- **可反转性**：高。
+
+### D-v0.3-047：Popup 选区优先使用 mount-first 策略
+
+- **原因**：用户 workflow 是先选中内容再打开 Popup，期望每次打开都检查是否有选区。原逻辑在 mount 时先恢复旧 draft（同 URL fullpage），再尝试 selection，导致旧 fullpage 覆盖新 selection。新逻辑改为 mount 时先 selection check，成功直接返回；失败才 fallback old draft / fullpage。
+- **影响**：App.tsx 移除 draftLoaded/restoredRef 双重状态机，改用单次 async init 流程。tryExtractPrioritizeSelection 不再内嵌 fullpage fallback。
+- **可反转性**：中。改变了 Popup 初始化状态机，但语义更符合用户预期。
+
+
+## v0.3 Session 8-C 决策
+
+### D-v0.3-046：v0.3 不强制中文全角缩进
+
+- **原因**：Markdown 中段首空格可能导致代码块误判。选区段落全角缩进（`　　`）在主流 Markdown 编辑器中显示效果不稳定（Obsidian/Typora 均不依赖缩进表达段落）。如果实现风险高，不应为次要视觉偏好引入不可靠启发式。
+- **影响**：不修改任何段落缩进代码。仅在 DECISIONS.md 记录。后续 v0.4+ 如果用户强烈需要，可作为显式选项。
+- **可反转性**：高。后续版本可添加用户可选缩进策略。
+
+### D-v03-045：Notion rich_text 解析使用轻量正则而非完整 Markdown parser
+
+- **原因**：目标是保留最小 inline 样式（bold/italic/code/link），不需要完整 GFM 解析器。轻量正则 `/[*_`~]{1,2}/` 匹配 + segment merge 足够覆盖 95% 场景，且零依赖。
+- **影响**：新增 notionRichText.ts 独立模块。不支持嵌套样式（如 `***bold italic***`）。block 级元素（heading/table/list）仍由现有逻辑处理。
+- **可反转性**：高。后续可替换为更完整的解析器。
+
+### D-v0.3-044：选区优先策略（先选后全文）
+
+- **原因**：用户 workflow 是先选中内容再打开 Popup。原逻辑总是先走 fullpage，再允许手动切换。新增 tryExtractPrioritizeSelection 先发送 GET_SELECTION 消息，若成功则直接返回，若失败（NO_SELECTION）才回退 fullpage。
+- **影响**：useExtractContent 新增 tryExtractPrioritizeSelection 方法。Popup 初始化时调用此方法替代原 extract(mode)。"重新提取"按钮仍按当前 mode 提取。
+- **可反转性**：高。
+
+### D-v0.3-043：页面类型分类使用 classifyPageType + 低置信消息差异化
+
+- **原因**：搜索页/导航页和普通低置信页面需要不同的提示文案。classifyPageType 基于 search input/role=search/title 关键词/链接密度/段落结构识别页面类型，不依赖域名。buildLowConfidenceSummary 新增 pageType 参数输出差异化消息。
+- **影响**：articleBoundaryGuard 新增 classifyPageType 导出函数和 PageType 类型。content/index.ts 两处 low confidence 路径传入 pageType。
+- **可反转性**：高。
+
+
+## v0.3 Session 8-B 决策
+
+### D-v0.3-042：选区摘录提示双层实现
+
+- **原因**：用户明确要求在 selection mode 时给出"网页部分摘录"提示。Markdown 复制路径和 Notion 保存路径使用不同数据通道，需在两条路径分别实现。
+- **影响**：formatMarkdownWithProfile 和 formatCopyMarkdown 新增 mode 参数，在 --- 分隔线后插入提示 blockquote；buildNotionBlocks 在 divider 后插入 callout block（📋 emoji）。
+- **可反转性**：高。可随时修改文案或移除。
+
+### D-v0.3-041：选区 HTML 规范化使用 normalizeSelectionHtml
+
+- **原因**：selection range.cloneContents() 从段中开始选择时不包含父级 <p> 标签，导致 Turndown 输出首段无换行间距。normalizeSelectionHtml 检测纯文本/非块级开头，自动包裹 <p>。
+- **影响**：extractSelection 调用 normalizeSelectionHtml 预处理 HTML。不影响 fullpage 路径。
+- **可反转性**：高。
+
+### D-v0.3-040：persistTargets 同步保存 Token 防丢失
+
+- **原因**：用户输入 Token 后直接添加 Target 时，Token 仅存在 React state 而未持久化。persistTargets 调用 saveSettings 时仅写入 notionTargets，导致 Token 被覆盖为空。修复后 persistTargets 同步写入 notionToken、defaultTags、saveHistoryEnabled。
+- **影响**：Options/App.tsx persistTargets 依赖数组新增 settings.notionToken 等，每次 token 变化会重建回调。
+- **可反转性**：低。不修复会导致数据丢失。
+
+### D-v0.3-039：block formula trailing digits 在 htmlToMarkdown 末尾清理
+
+- **原因**：KaTeX display 公式元素在 DOM 中可能有相邻文本节点（如数字序号），preserveMathHtml 替换后残留。markdown 层用正则 `$$...$$\d+` 清理比 HTML 层更可靠。
+- **影响**：htmlToMarkdown 管道末尾新增 cleanBlockFormulaTrailingDigits 步骤。仅影响 $$...$$ 块公式，不影响内联公式和代码块。
+- **可反转性**：高。
+
+### D-v0.3-038：表格 cell 公式去重在 sanitizeMarkdownCell 中实现
+
+- **原因**：CSDN LaTeX 页面表格 cell 常出现 `α\alphaα` 模式（rendered + latex source + rendered 三重重复）。单独 normalizer 函数处理 40+ LaTeX 符号映射和运算符压缩（+++→+ 等），集成在通用的 sanitizeMarkdownCell 中使所有表格路径受益。
+- **影响**：新增 formulaTableNormalizer.ts 模块；sanitizeMarkdownCell 调用 normalizeFormulaTableCellText 后再执行管道/空格清理。不影响非表格文本。
+- **可反转性**：高。可随时调整符号映射表。
+
+### D-v0.3-037：默认预览模式（showPreview=true）
+
+- **原因**：用户反馈希望初次打开 Popup 优先看到渲染预览，再进行复制/保存操作。不持久化到 storage 避免 settings 膨胀。
+- **影响**：Popup App.tsx showPreview 初始值从 false 改为 true。
+- **可反转性**：高。
+
+### D-v0.3-036：assessArticleConfidence 多级判断替代单条件低置信
+
+- **原因**：旧逻辑中任何单个条件（短文本/少段落/高 linkDensity）均可将正文页降级为 low 置信，导致新闻页被误判为链接摘要。新逻辑要求多条件组合：仅当文本过短 AND 段落过少时为 low；高 linkDensity 结合内容不足才降级；新增 LIST_PAGE 检测（链接/段落比 >5 + 均段落短 + 总文本短）覆盖搜索页。
+- **影响**：articleBoundaryGuard.ts assessArticleConfidence 完全重写；NOISE_CSS_KEYWORDS 新增 CSDN 特有噪音类名。向后兼容：medium 置信仍走完整提取路径。
+- **可反转性**：中。阈值调整影响新闻/博客/搜索页分类。
+
+
 ## v0.3 Session 7 决策
 
 ### D-v0.3-034：Session 7 文档更新不修改源码和测试

@@ -8,6 +8,7 @@ import {
   trimArticleBody,
   assessArticleConfidence,
   buildLowConfidenceSummary,
+  classifyPageType,
 } from '../src/content/extractors/articleBoundaryGuard'
 
 function makeDom(bodyHtml: string): Document {
@@ -564,6 +565,52 @@ describe('preCleanDocument', () => {
     expect(doc.querySelector('table')).not.toBeNull()
     expect(doc.querySelector('h2')).not.toBeNull()
   })
+
+  it('preserves CSDN LaTeX tutorial content with tables/pre/code', () => {
+    const doc = makeDom(`
+      <div class="blog-container-for-me">
+        <nav class="blog-nav">Navigation</nav>
+        <div class="recommend-right">Related Articles</div>
+        <article class="baidu_pl">
+          <div id="content_views" class="markdown_views">
+            <h1>LaTeX Math Symbols</h1>
+            <h2>Greek Letters</h2>
+            <p>Here are the Greek letters in LaTeX:</p>
+            <table>
+              <tr><th>Symbol</th><th>Command</th></tr>
+              <tr><td>α</td><td>\\alpha</td></tr>
+              <tr><td>β</td><td>\\beta</td></tr>
+            </table>
+            <h2>Matrices</h2>
+            <pre><code class="language-latex">\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}</code></pre>
+            <p>This produces the matrix above.</p>
+          </div>
+        </article>
+        <div class="article-bar-bottom">likes/comments/share</div>
+        <div class="copyright-box">copyright notice</div>
+        <div class="blog-tags-box">tags here</div>
+        <div class="comment-list">comments</div>
+      </div>
+    `)
+
+    preCleanDocument(doc)
+
+    expect(doc.querySelector('nav.blog-nav')).toBeNull()
+    expect(doc.querySelector('.recommend-right')).toBeNull()
+    expect(doc.querySelector('.article-bar-bottom')).toBeNull()
+    expect(doc.querySelector('.copyright-box')).toBeNull()
+    expect(doc.querySelector('.blog-tags-box')).toBeNull()
+    expect(doc.querySelector('.comment-list')).toBeNull()
+
+    expect(doc.querySelector('article')).not.toBeNull()
+    expect(doc.querySelector('h1')).not.toBeNull()
+    expect(doc.querySelector('h2')).not.toBeNull()
+    expect(doc.querySelector('table')).not.toBeNull()
+    expect(doc.querySelector('pre code')).not.toBeNull()
+    const bodyText = doc.querySelector('#content_views')?.textContent ?? ''
+    expect(bodyText).toContain('LaTeX')
+    expect(bodyText).toContain('Greek')
+  })
 })
 
 describe('trimArticleBody', () => {
@@ -649,34 +696,41 @@ describe('assessArticleConfidence', () => {
     expect(report.paragraphCount).toBeGreaterThanOrEqual(2)
   })
 
-  it('returns low confidence for very short text', () => {
+  it('returns low confidence for very short text with no paragraphs', () => {
     const text = 'Short text.'
     const html = '<p>Short text.</p>'
     const report = assessArticleConfidence(text, html)
     expect(report.confidence).toBe('low')
-    expect(report.reasonCodes).toContain('SHORT_TEXT')
+    expect(report.reasonCodes).toContain('INSUFFICIENT_CONTENT')
   })
 
-  it('returns low confidence for single paragraph', () => {
+  it('returns medium confidence for long single-paragraph text', () => {
     const text = 'A'.repeat(300)
     const html = '<p>' + 'A'.repeat(300) + '</p>'
     const report = assessArticleConfidence(text, html)
-    expect(report.confidence).toBe('low')
-    expect(report.reasonCodes).toContain('FEW_PARAGRAPHS')
+    expect(report.confidence).toBe('medium')
   })
 
-  it('returns low confidence for high link density', () => {
+  it('returns medium for substantial text with high link density', () => {
     const p1 = 'Content paragraph with enough text to count. '.repeat(5)
     const p2 = 'Another paragraph also with enough text. '.repeat(5)
-    const text = p1 + '\n\n' + p2
+    const p3 = 'Third paragraph with more details. '.repeat(5)
+    const text = [p1, p2, p3].join('\n\n')
     let linkHtml = ''
     for (let i = 0; i < 30; i++) {
-      linkHtml += `<a href="/${i}">Link Title ${i} with some extra words</a>`
+      linkHtml += `<a href="/${i}">Link Title ${i} with some extra words for proportion</a>`
     }
-    const html = '<p>' + p1 + '</p><p>' + p2 + '</p>' + linkHtml
+    const html = '<p>' + p1 + '</p><p>' + p2 + '</p><p>' + p3 + '</p>' + linkHtml
+    const report = assessArticleConfidence(text, html)
+    expect(report.confidence).toBe('medium')
+    expect(report.reasonCodes).toContain('HIGH_LINK_DENSITY')
+  })
+
+  it('returns low for short single-paragraph text with high link density', () => {
+    const text = 'A'.repeat(100)
+    const html = '<p>A</p>' + Array.from({ length: 20 }, (_, i) => `<a href="/${i}">Link Title ${i} with words</a>`).join('')
     const report = assessArticleConfidence(text, html)
     expect(report.confidence).toBe('low')
-    expect(report.reasonCodes).toContain('HIGH_LINK_DENSITY')
   })
 
   it('returns medium confidence for moderate link density', () => {
@@ -701,6 +755,25 @@ describe('assessArticleConfidence', () => {
     expect(report.textLength).toBeGreaterThan(100)
     expect(report.paragraphCount).toBeGreaterThanOrEqual(2)
     expect(typeof report.linkDensity).toBe('number')
+  })
+
+  it('returns low for list-like page with many links and short paragraphs', () => {
+    const text = 'link1\n\nlink2\n\nlink3\n\nlink4\n\nlink5\n\nlink6'
+    const html = Array.from({ length: 20 }, (_, i) => `<a href="/${i}">Link Title with some words ${i}</a>`).join('')
+    const report = assessArticleConfidence(text, html)
+    expect(report.confidence).toBe('low')
+    expect(report.reasonCodes).toContain('INSUFFICIENT_CONTENT')
+  })
+
+  it('returns low for search result page', () => {
+    const text = Array.from({ length: 3 }, (_, i) => `Result ${i} title`).join('\n\n')
+    let html = '<input type="search" name="q">'
+    for (let i = 0; i < 15; i++) {
+      html += `<a href="/result${i}">Search Result Title ${i}</a>`
+    }
+    const report = assessArticleConfidence(text, html)
+    expect(report.confidence).toBe('low')
+    expect(report.reasonCodes.some(c => c === 'LIST_PAGE' || c === 'HIGH_LINK_DENSITY' || c === 'INSUFFICIENT_CONTENT')).toBe(true)
   })
 })
 
@@ -794,5 +867,96 @@ describe('buildLowConfidenceSummary', () => {
     const result = buildLowConfidenceSummary(doc, '', '')
     expect(result).toContain('当前页面可能不是文章页')
     expect(result).toContain('Link')
+  })
+
+  it('uses search results message for search page type', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, '', '', 'search-results')
+    expect(result).toContain('搜索结果页')
+    expect(result).toContain('少量主要结果链接')
+  })
+
+  it('uses navigation message for navigation page type', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, '', '', 'navigation')
+    expect(result).toContain('导航或聚合页')
+    expect(result).toContain('无关链接')
+  })
+})
+
+describe('classifyPageType', () => {
+  it('identifies Bing-like search results page', () => {
+    const doc = makeDom(`
+      <title>hello world - 搜索</title>
+      <input name="q" value="hello">
+      <div role="main">
+        <a href="/r1">Result One Title</a>
+        <span>Description of result one with some text content here.</span>
+        <a href="/r2">Result Two Title</a>
+        <span>Description of result two with more text.</span>
+        <a href="/r3">Result Three Title</a>
+      </div>
+    `)
+    expect(classifyPageType(doc)).toBe('search-results')
+  })
+
+  it('identifies Baidu-like search results page', () => {
+    const doc = makeDom(`
+      <title>搜索结果_百度搜索</title>
+      <input type="text" id="kw">
+      <div>
+        <a href="http://example1.com">结果标题一</a>
+        <a href="http://example2.com">结果标题二</a>
+        <a href="http://example3.com">结果标题三</a>
+        <a href="http://example4.com">结果标题四</a>
+      </div>
+    `)
+    expect(classifyPageType(doc)).toBe('search-results')
+  })
+
+  it('identifies navigation/card page', () => {
+    const doc = makeDom(`
+      <title>New Tab</title>
+      <div>
+        <a href="/shortcut1">S1</a>
+        <a href="/shortcut2">S2</a>
+        <a href="/shortcut3">S3</a>
+        <a href="/shortcut4">S4</a>
+        <a href="/shortcut5">S5</a>
+        <a href="/shortcut6">S6</a>
+        <a href="/shortcut7">S7</a>
+        <a href="/shortcut8">S8</a>
+        <a href="/shortcut9">S9</a>
+      </div>
+    `)
+    expect(classifyPageType(doc)).toBe('navigation')
+  })
+
+  it('identifies article page', () => {
+    const doc = makeDom(`
+      <article>
+        <h1>Article Title</h1>
+        <p>First paragraph with enough text content for classification. `.repeat(5) + `</p>
+        <p>Second paragraph also with sufficient text length here. `.repeat(5) + `</p>
+        <p>Third paragraph with more detailed information content. `.repeat(5) + `</p>
+      </article>
+    `)
+    expect(classifyPageType(doc)).toBe('article')
+  })
+
+  it('identifies page with role=search as search-results', () => {
+    const doc = makeDom(`
+      <title>Search</title>
+      <div role="search"><input name="q"></div>
+      <a href="/r1">Result 1</a>
+      <a href="/r2">Result 2</a>
+      <a href="/r3">Result 3</a>
+    `)
+    expect(classifyPageType(doc)).toBe('search-results')
+  })
+
+  it('returns unknown for ambiguous page', () => {
+    const doc = makeDom('<body><p>Just a short page.</p></body>')
+    expect(classifyPageType(doc)).toBe('unknown')
   })
 })

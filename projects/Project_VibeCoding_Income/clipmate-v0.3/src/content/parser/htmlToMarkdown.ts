@@ -181,6 +181,10 @@ function mergeAdjacentBold(html: string): string {
   return html.replace(/<\/(strong|b)>\s*<\1>/g, '')
 }
 
+function cleanBlockFormulaTrailingDigits(markdown: string): string {
+  return markdown.replace(/\$\$([\s\S]*?)\$\$\s*(\d+)/g, '$$$1$$')
+}
+
 export function htmlToMarkdown(html: string): string {
   if (!html) return ''
   try {
@@ -188,7 +192,8 @@ export function htmlToMarkdown(html: string): string {
     const preprocessed = mergeAdjacentBold(formulaPreservedHtml)
     const raw = turndown.turndown(preprocessed)
     const cleaned = cleanMarkdown(raw)
-    return cleanMarkdownCodeBlocks(cleaned)
+    const withCleanCode = cleanMarkdownCodeBlocks(cleaned)
+    return cleanBlockFormulaTrailingDigits(withCleanCode)
   } catch {
     return html.replace(/<[^>]+>/g, '')
   }

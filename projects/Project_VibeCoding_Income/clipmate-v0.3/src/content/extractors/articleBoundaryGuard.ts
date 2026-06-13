@@ -21,6 +21,9 @@ const NOISE_CSS_KEYWORDS = [
   'breadcrumb', 'breadcrumbs',
   'qrcode', 'qr-code', 'app-download', 'download-app', 'open-app',
   'newsletter', 'subscribe', 'promotion', 'rank', 'ranking',
+  'article-bar-bottom', 'more-toolbox', 'article-info-box',
+  'read-count-box', 'blog-tags-box', 'copyright-box',
+  'second-recommend', 'column-group',
   '广告', '推广', '赞助', '弹窗',
   '登录', '注册',
   '分享', '微博', '微信', '收藏', '点赞',
@@ -30,6 +33,7 @@ const NOISE_CSS_KEYWORDS = [
   '打开app', '下载app', '客户端', '二维码',
   '听全文', '字号', '责任编辑', '版权声明', '免责声明',
   '举报', '反馈',
+  '目录', '版权',
 ]
 
 const CONTENT_CSS_KEYWORDS = [
@@ -65,7 +69,10 @@ export interface ArticleBoundaryReport {
   linkDensity?: number
   paragraphCount?: number
   textLength?: number
+  pageType?: PageType
 }
+
+export type PageType = 'article' | 'search-results' | 'navigation' | 'unknown'
 
 function matchesCssPattern(text: string, patterns: string[]): boolean {
   const lower = text.toLowerCase()
@@ -134,6 +141,42 @@ export function calculateLinkDensity(element: Element): number {
   const totalLen = getTextLength(element)
   if (totalLen === 0) return 0
   return Math.min(linkTextLen / totalLen, 1.0)
+}
+
+export function classifyPageType(doc: Document): PageType {
+  const title = (doc.title || '').toLowerCase()
+  const bodyText = (doc.body.textContent || '').trim()
+  const links = doc.querySelectorAll('a[href]')
+  const paragraphs = bodyText.split(/\n\s*\n/).filter((p) => p.trim().length > 20)
+
+  const hasSearchInput = doc.querySelector('input[type="search"], input[name="q"], input[name="query"], input[name="search"]') !== null
+  const hasSearchRole = doc.querySelector('[role="search"]') !== null
+  const searchTitleWords = ['search', '搜索', 'result', '结果', '查询']
+  const hasSearchTitle = searchTitleWords.some((w) => title.includes(w))
+
+  const searchSignals = [hasSearchInput, hasSearchRole, hasSearchTitle].filter(Boolean).length
+
+  if (searchSignals >= 2) {
+    return 'search-results'
+  }
+
+  if (searchSignals >= 1 && paragraphs.length < 4 && links.length > paragraphs.length * 3) {
+    return 'search-results'
+  }
+
+  const linkCount = links.length
+  const pCount = paragraphs.length
+  const avgLen = pCount > 0 ? bodyText.length / pCount : 0
+
+  if (linkCount > 8 && pCount < 3 && avgLen < 200 && bodyText.length < 800) {
+    return 'navigation'
+  }
+
+  if (pCount >= 2 && avgLen > 80) {
+    return 'article'
+  }
+
+  return 'unknown'
 }
 
 export function hasEnoughArticleText(text: string): boolean {
@@ -257,25 +300,42 @@ export function assessArticleConfidence(
   const totalTextLen = trimmed.length || 1
   report.linkDensity = Math.min(linkTextLen / totalTextLen, 1.0)
 
-  if (trimmed.length < MIN_ARTICLE_TEXT_LENGTH) {
+  const hasEnoughText = trimmed.length >= MIN_ARTICLE_TEXT_LENGTH
+  const hasEnoughParagraphs = paragraphs.length >= MIN_PARAGRAPH_COUNT
+  const hasVeryHighLinkDensity = report.linkDensity > MAX_LINK_DENSITY_MEDIUM
+
+  if (!hasEnoughText && !hasEnoughParagraphs) {
     report.confidence = 'low'
-    report.reasonCodes.push('SHORT_TEXT')
+    report.reasonCodes.push('INSUFFICIENT_CONTENT')
+  } else if (!hasEnoughText || !hasEnoughParagraphs) {
+    report.confidence = 'medium'
+    report.reasonCodes.push('INSUFFICIENT_CONTENT')
   }
 
-  if (paragraphs.length < MIN_PARAGRAPH_COUNT) {
-    report.confidence = 'low'
-    report.reasonCodes.push('FEW_PARAGRAPHS')
-  }
-
-  if (report.linkDensity > MAX_LINK_DENSITY_MEDIUM) {
-    report.confidence = 'low'
-    report.reasonCodes.push('HIGH_LINK_DENSITY')
-  } else if (
-    report.confidence === 'high' &&
-    report.linkDensity > MAX_LINK_DENSITY_HIGH
-  ) {
+  if (hasVeryHighLinkDensity) {
+    if (report.confidence === 'low') {
+      report.reasonCodes.push('HIGH_LINK_DENSITY')
+    } else if (!hasEnoughText || !hasEnoughParagraphs) {
+      report.confidence = 'low'
+      report.reasonCodes.push('HIGH_LINK_DENSITY')
+    } else {
+      report.confidence = 'medium'
+      report.reasonCodes.push('HIGH_LINK_DENSITY')
+    }
+  } else if (report.linkDensity > MAX_LINK_DENSITY_HIGH && report.confidence === 'high') {
     report.confidence = 'medium'
     report.reasonCodes.push('MODERATE_LINK_DENSITY')
+  }
+
+  if (report.confidence !== 'low') {
+    const linkTagCount = (html.match(/<a\b[^>]*>/gi) || []).length
+    const linkToParagraphRatio = paragraphs.length > 0 ? linkTagCount / paragraphs.length : 999
+    const avgParagraphLen = paragraphs.length > 0 ? trimmed.length / paragraphs.length : 0
+
+    if (linkToParagraphRatio > 5 && avgParagraphLen < 80 && trimmed.length < 1000) {
+      report.confidence = 'low'
+      report.reasonCodes.push('LIST_PAGE')
+    }
   }
 
   return report
@@ -285,10 +345,17 @@ export function buildLowConfidenceSummary(
   doc: Document,
   title: string,
   url: string,
+  pageType?: PageType,
 ): string {
   const parts: string[] = []
 
-  parts.push('> 当前页面可能不是文章页，已避免保存大量导航或推荐链接。')
+  if (pageType === 'search-results') {
+    parts.push('> 当前页面可能是搜索结果页，已仅保留少量主要结果链接。')
+  } else if (pageType === 'navigation') {
+    parts.push('> 当前页面可能是导航或聚合页，已避免保存大量无关链接。')
+  } else {
+    parts.push('> 当前页面可能不是文章页，已避免保存大量导航或推荐链接。')
+  }
   parts.push('')
 
   if (title) {

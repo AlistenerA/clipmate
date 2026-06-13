@@ -4,6 +4,121 @@
 
 ---
 
+## v0.3 Session 8-D：选区优先模式小修 + 已知问题归档 + 文档脱敏 (2026-06-13)
+
+### 修改文件
+- `src/popup/App.tsx` — 重写初始化逻辑：每次打开 Popup 先检查 selection，有选区则优先 selection（setMode('selection')），无选区才恢复旧 draft 或走 fullpage；移除 draftLoaded/restoredRef 旧逻辑
+- `src/popup/hooks/useExtractContent.ts` — tryExtractPrioritizeSelection 改为返回 `{ content, mode } | null`，只尝试 selection，不再内嵌 fullpage fallback
+- `docs/MANUAL_QA_RESULT_TEMPLATE.md` — 清理所有 C:\Users\...\Typora 本机绝对路径，替换为"截图见用户本地 QA 记录"
+- `docs/CURRENT_STATUS.md` — Session 8-D 完成 + CSDN/LaTeX/搜索页挂起到 v0.4+
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 8-D 记录
+- `docs/ISSUES.md` — 已知问题归档
+- `docs/DECISIONS.md` — 新增 D-v0.3-047~D-v0.3-049
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `package.json` / `manifest.config.ts` / `package-lock.json` — 未修改
+- 所有 src/ 非 Popup 文件 — 未修改
+
+### 改动摘要
+- Popup 选区优先：每次 mount 先调用 tryExtractPrioritizeSelection 检查 selection，成功则直接使用 + 设置 mode='selection'；失败才恢复旧 draft 或 fullpage
+- 文档脱敏：MANUAL_QA_RESULT_TEMPLATE.md 清理 15+ 处本机 Typora 绝对路径
+- 已知问题归档：CSDN/LaTeX 站点渲染残留 → v0.4+；搜索页/导航页分类优化 → v0.4+
+- 未修改非 Popup 源码、未新增测试（本次为逻辑重排，现有 757 tests 覆盖）
+- lint: 0 errors / test: 757 passed / build: success
+
+### 新增文件
+- `src/platforms/notion/notionRichText.ts` — parseNotionRichText 纯函数：解析 markdown **bold**/*italic*/`code`/[link](url) 为 Notion rich_text annotations，支持 max 2000 字截断 + javascript: 链接过滤
+- `tests/notion-rich-text.test.ts` — 9 项新测试
+
+### 修改文件
+- `src/platforms/notion/blocks.ts` — richText 函数替换为 parseNotionRichText，content 段落/标题/标签/callout 均受益
+- `src/shared/markdown/formulaTableNormalizer.ts` — 新增 dedupInlineFormulaWrap：处理 $α$\alpha$α inline-dollar 包裹的 formula 模式 + 运算符压缩
+- `src/content/extractors/articleBoundaryGuard.ts` — 新增 classifyPageType 导出函数（article/search-results/navigation/unknown）；ArticleBoundaryReport 新增 pageType 字段；buildLowConfidenceSummary 新增 pageType 参数，区分搜索页/导航页通用页提示
+- `src/content/index.ts` — 导入 classifyPageType；两个 low confidence 路径传入 pageType
+- `src/popup/App.tsx` — 初始化优先 tryExtractPrioritizeSelection（先选后全文）
+- `src/popup/hooks/useExtractContent.ts` — 新增 tryExtractPrioritizeSelection 方法
+
+### 更新文件
+- `tests/article-boundary-guard.test.ts` — 新增 classifyPageType 6 tests + buildLowConfidenceSummary 2 tests；总计 111 tests (+8)
+- `tests/formula-table-normalizer.test.ts` — 新增 inline formula dedup 5 tests；总计 27 tests (+5)
+- `tests/notion-blocks.test.ts` — 更新 rich_text 断言适配新格式
+- `tests/notion-rich-text.test.ts` — 9 tests（新文件）
+- `docs/CURRENT_STATUS.md` — Session 8-C 已完成
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 8-C 记录
+- `docs/ISSUES.md` — 更新状态
+- `docs/DECISIONS.md` — 新增 D-v0.3-043~D-v0.3-046
+- `docs/MANUAL_QA_RESULT_TEMPLATE.md` — 更新 TC 状态
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `package.json` — 未修改
+- `manifest.config.ts` — 未修改
+- `package-lock.json` — 未修改
+- `clipmate-v0.3/public/` — 未修改
+
+### 改动摘要
+- Notion 保存支持富文本：**bold**/italic/`code`/[link](url) → Notion annotations
+- CSDN/LaTeX 二次加强：dedupInlineFormulaWrap 处理 inline dollar formula 包裹模式
+- 页面类型识别：classifyPageType + 搜索页/导航页差异化低置信提示
+- 选区优先：Popup 初始化时优先尝试选区模式
+- 选区缩进策略：v0.3 不强制全角缩进（避免 Markdown 误判代码块）
+- lint: 0 errors / test: 757 passed (+22 new) / build: success
+- 未新增权限、未新增依赖、未修改版本号
+
+### 新增文件
+- `src/shared/markdown/formulaTableNormalizer.ts` — 3 个导出纯函数：dedupRenderedWrap（渲染+LaTeX+渲染去重，40+ LaTeX 符号映射）、collapseRepeatedOperators（运算符/关系符号压缩）、normalizeFormulaTableCellText（表格 cell 公式归一化入口）
+- `tests/formula-table-normalizer.test.ts` — 22 项新测试
+
+### 修改文件
+- `src/content/extractors/articleBoundaryGuard.ts` — assessArticleConfidence 重写：不再单条件降级为 low；新增多级判断（INSUFFICIENT_CONTENT / HIGH_LINK_DENSITY / MODERATE_LINK_DENSITY / LIST_PAGE）；NOISE_CSS_KEYWORDS 新增 CSDN 噪音类名（article-bar-bottom/copyright-box 等）+ 目录/版权 中文关键词
+- `src/content/extractors/selectionExtractor.ts` — 新增 normalizeSelectionHtml 导出函数：确保选区首段有块级元素包裹（<p> 包裹）
+- `src/content/parser/htmlToMarkdown.ts` — 新增 cleanBlockFormulaTrailingDigits：移除 $$...$$ 块公式后的残留数字
+- `src/shared/markdown/mediaLinkTableNormalizer.ts` — sanitizeMarkdownCell 集成 normalizeFormulaTableCellText
+- `src/shared/markdown/formatWithProfile.ts` — FormatMarkdownInput 新增 mode 字段；selection mode 时在 body 前插入摘录提示
+- `src/shared/utils/formatMarkdown.ts` — formatCopyMarkdown 新增 mode 参数；selection mode 时添加摘录提示
+- `src/platforms/notion/blocks.ts` — buildNotionBlocks 新增 selection mode 标识 callout（📋 emoji）
+- `src/background/handlers/notionHandler.ts` — formatCopyMarkdown 调用传入 draft.mode
+- `src/popup/App.tsx` — showPreview 默认 true；mdTarget/content 变化时 resetCopy；handleExtract 触发 resetCopy；displayMarkdown 传入 mode
+- `src/popup/hooks/useCopyMarkdown.ts` — 新增 resetCopy 导出
+- `src/options/App.tsx` — persistTargets 保存时包含 notionToken/defaultTags/saveHistoryEnabled 防 Token 丢失
+
+### 更新文件
+- `tests/article-boundary-guard.test.ts` — assessArticleConfidence 测试重写（6 项新 + 4 项更新）；CSDN LaTeX fixture 测试新增；总计 103 tests (+4)
+- `tests/markdown-media-link-table.test.ts` — block formula trailing digits 测试新增（1 项）；总计 84 tests (+1)
+- `tests/markdown-profiles.test.ts` — selection excerpt hint 测试新增（3 项）
+- `tests/notion-blocks.test.ts` — selection excerpt callout 测试新增（2 项）
+- `docs/CURRENT_STATUS.md` — Session 8-B 已完成
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 8-B 记录
+- `docs/ISSUES.md` — 更新状态
+- `docs/DECISIONS.md` — 新增 D-v0.3-036~D-v0.3-042
+- `docs/MANUAL_QA_RESULT_TEMPLATE.md` — 更新 TC 状态
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `package.json` — 未修改（version 保持 0.3.0）
+- `manifest.config.ts` — 未修改（version 保持 0.3.0，权限未变）
+- `package-lock.json` — 未修改
+- `vite.config.ts` / `tsconfig.json` / `tailwind.config.js` — 未修改
+- `clipmate-v0.3/public/` — 未修改
+
+### 改动摘要
+- 9 项人工 QA blocker 修复：覆盖 TC-03/TC-10/TC-11/TC-14/TC-46/TC-47/TC-48/TC-49/TC-54/TC-56/TC-57/TC-58
+- 核心改进：articleBoundaryGuard 不再因高 linkDensity 单条件误判新闻页为低置信
+- CSDN/LaTeX 专项：表格 cell 公式去重 + 块公式 trailing digits 清理 + CSDN 噪音关键词扩展
+- 选区增强：摘录提示（Markdown + Notion blocks 双层）+ 段落换行修复
+- UX 改进：默认预览模式 + 切换 profile 自动重置复制状态
+- Options Token 稳定性：persistTargets 同步保存 Token 防丢失
+- lint: 0 errors / test: 735 passed (+32 new) / build: success
+- 未新增权限、未新增依赖、未修改版本号
+- 未提交 dist/zip
+
 ## v0.3 Session 7：文档、QA、版本号、打包 (2026-06-13)
 
 ### 修改文件

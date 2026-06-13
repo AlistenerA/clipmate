@@ -1,10 +1,5 @@
 import type { ClipDraft } from '../../shared/types/clip.types'
-
-interface TextRequest {
-  type: 'text'
-  text: { content: string; link?: { url: string } | null }
-  annotations?: Record<string, string>
-}
+import { parseNotionRichText } from './notionRichText'
 
 interface BlockObjectRequest {
   object: 'block'
@@ -35,8 +30,8 @@ function chunkText(text: string): string[] {
   return chunks
 }
 
-function richText(content: string): TextRequest[] {
-  return [{ type: 'text', text: { content } }]
+function richText(content: string) {
+  return parseNotionRichText(content)
 }
 
 function paragraphBlock(text: string): BlockObjectRequest {
@@ -147,6 +142,17 @@ export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
     type: 'divider',
     divider: {},
   })
+
+  if (draft.mode === 'selection') {
+    blocks.push({
+      object: 'block',
+      type: 'callout',
+      callout: {
+        rich_text: richText('注：以下内容为网页选区摘录，并非全文。'),
+        icon: { emoji: '📋' },
+      },
+    })
+  }
 
   const contentText = draft.content?.markdown || draft.content?.contentText || ''
   if (contentText.trim()) {

@@ -47,7 +47,7 @@ describe('buildNotionBlocks', () => {
     const heading = blocks.find((b) => b.type === 'heading_2') as Record<string, unknown>
     const heading2 = heading?.heading_2 as Record<string, unknown>
     const richText = heading2?.rich_text as Array<Record<string, unknown>>
-    expect(richText[0].text).toEqual({ content: '未命名剪藏' })
+    expect(richText[0].text.content).toBe('未命名剪藏')
   })
 
   it('generates a source URL block with link', () => {
@@ -192,5 +192,29 @@ describe('buildNotionBlocks', () => {
     expect(hasContentParagraphs).toBe(false)
     expect(blocks.some((b) => b.type === 'heading_2')).toBe(true)
     expect(blocks.some((b) => b.type === 'divider')).toBe(true)
+  })
+
+  it('includes selection excerpt callout for selection mode', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    const blocks = buildNotionBlocks(draft)
+
+    const excerptCallout = blocks.find((b) => {
+      if (b.type !== 'callout') return false
+      const text = JSON.stringify(b)
+      return text.includes('网页选区摘录')
+    })
+    expect(excerptCallout).toBeDefined()
+  })
+
+  it('does not include selection excerpt callout for fullpage mode', () => {
+    const draft = makeDraft({ mode: 'fullpage' })
+    const blocks = buildNotionBlocks(draft)
+
+    const excerptCallout = blocks.find((b) => {
+      if (b.type !== 'callout') return false
+      return JSON.stringify(b).includes('网页选区摘录')
+    })
+    expect(excerptCallout).toBeUndefined()
   })
 })

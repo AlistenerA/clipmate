@@ -11,19 +11,11 @@
 
 ## 当前阶段
 
-**v0.3 Session 7 已完成** — 文档、QA、版本号、打包：版本号升级到 0.3.0，更新所有发布文档和 QA 清单，lint/test/build/zip 全部通过。
+**v0.3 Session 8-D 已完成** — 选区优先模式小修 + 已知问题归档 + 文档脱敏清理
 
-- v0.3 主线：内容保真增强版。
-- Session 6 交付：
-  - `articleBoundaryGuard.ts`：7 个导出纯函数（preCleanDocument / isLikelyNoiseElement / calculateLinkDensity / hasEnoughArticleText / trimArticleBody / assessArticleConfidence / buildLowConfidenceSummary）
-  - DOM 噪音预清理：3 层清理（tag/role/class），移除 form/button/input/nav/footer/aside + noise role + 46 个中英文噪音 class 关键词
-  - 正文候选评分：confidence high/medium/low，基于文本长度、段落数、linkDensity
-  - 链接密度：calculateLinkDensity 计算链接文本/总文本比
-  - 正文尾部截断：trimArticleBody 在 markdown 尾部检测 17 个截断模式（责任编辑/相关推荐/打开app 等）
-  - 低置信页面兜底：buildLowConfidenceSummary 生成免责提示 + 最多 10 条去重链接
-  - 改进 fallback 提取：fallbackExtract 优先查找 article/main/.article-content 等内容容器
-  - 99 项新测试
-- 未修改 Notion API 保存链路、未新增权限、未新增依赖、未修改版本号。
+- v0.3 主线：内容保真增强版
+- Session 8-D 交付：
+  - A：Popup 选区优先模式修复 — 每次打开 Popup 先检查 selection，有选区则优先 selection，无选区才恢复旧 draft 或走 fullpage
 
 ---
 
@@ -43,7 +35,7 @@
 | Markdown Preview | ✅ 已完成 | Session 5 |
 | Article Boundary Guard | ✅ 已完成 | Session 6 |
 | 文档、QA、版本号、打包 | ✅ 已完成 | Session 7 — 版本号 0.3.0，所有发布文档更新，lint/test/build/zip 通过 |
-| 鲁棒性检查与修复 | ⬜ 待开始 | Session 8 |
+| 鲁棒性检查与修复 | ✅ Session 8-D | 人工 QA 修复完毕 + Notion rich_text + 页面类型 + 选区优先 |
 | package.json 版本号 | 0.3.0 | Session 7 已升级 |
 | manifest.config.ts 版本号 | 0.3.0 | Session 7 已升级 |
 | manifest 权限 | 未变 | storage / activeTab / host_permissions api.notion.com |
@@ -61,17 +53,21 @@
 - [x] v0.3 Session 5：Markdown Preview — parseMarkdownPreview 纯函数、MarkdownPreview 安全组件、Popup 切换、41 tests（含卡住修复）
 - [x] v0.3 Session 6：Article Boundary Guard — DOM 噪音预清理、正文候选评分、尾部截断、低置信兜底、99 tests
 - [x] v0.3 Session 7：文档、QA、版本号、打包 — 版本号 0.3.0，README/隐私/权限/商店/测试计划/QA 清单更新，lint 0 errors / test 703 passed / build success / zip 129KB
+- [x] v0.3 Session 8-B：人工 QA blocker 最小修复 — 9 项修复 + 32 tests / lint 0 errors / test 735 passed / build success
+- [x] v0.3 Session 8-C：人工复测后剩余问题修复 — Notion rich_text + LaTeX 二次清理 + 页面类型识别 + 选区优先 + 22 tests / lint 0 errors / test 757 passed / build success
+- [x] v0.3 Session 8-D：选区优先模式小修 — Popup 每次打开优先检查 selection + 已知问题归档 + 文档脱敏 + lint 0 errors / test 757 passed / build success
 
 ---
 
 ## 未完成（按优先级）
 
-1. v0.3 Session 8：鲁棒性检查与修复
-5. v0.2 人工 QA（独立于 v0.3，由用户决定何时执行）
-6. v0.2 发布到 Edge Add-ons（独立于 v0.3，由用户决定何时执行）
+1. v0.3 人工 QA 复测 — 选区优先模式需用户复测
+2. v0.4+ 已知问题：CSDN/LaTeX 站点渲染残留 → v0.4
+3. v0.4+ 已知问题：搜索页/导航页分类仍需优化 → v0.4
+4. v0.2 发布到 Edge Add-ons（独立于 v0.3，由用户决定何时执行）
 
 ---
 
 ## 下一阶段建议
 
-**由 ChatGPT 审查 Session 7 交付** → 用户确认 → 发送 v0.3 Session 8 专用 Prompt（鲁棒性检查与修复）。
+**用户复测选区优先模式 → ChatGPT 审查 8-B/8-C/8-D → commit → 发布准备**
