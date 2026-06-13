@@ -193,6 +193,22 @@ Intent 判断建立在 PageType 之上但不取代：
 | Session 2.3.1 | ✅ 已完成 | Build Fix + Video Iframe Selector Migration（commit cf38675）|
 | Session 2.2 | ✅ 完成 | Seed Profiles Manual QA / Refinement（11 profiles 补强，所有 19 profiles 至少 1 个 selectorHints，commit 36c638b）|
 | Session 3.0 | ✅ 完成 | Navigation Summary Mode Strategy Design（docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md，待 ChatGPT 审查）|
+| Session 3 | ✅ 完成 | Navigation Summary Draft Builder（纯函数 + 73 tests，commit 6317f6a）|
+| Session 3.1 | ✅ 完成 | Navigation Summary Markdown + Minimal Integration（commit 8312d2c）|
+| Session 3.2 | ✅ 完成 | Navigation Summary QA Fix + IS01 Completion（commit 0aa4e08）|
+| Session 4 | ✅ 完成 | Comment / Selection Clip Core（commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查）|
+
+**Session 4 实现要点：**
+
+1. 实现了 7 种选区模式：selection-generic / comment-selection / forum-selection / video-description-selection / video-comment-selection / short-video-caption-selection / ai-answer-selection。
+2. `clip-comment` / `clip-video-comment` / `clip-ai-answer` / `clip-video-description` 等 intent 已有对应的核心 draft 支持。
+3. selection-first 不变：有选区走 selection 路径，不抓取整页评论。
+4. 接入 `handleGetSelection()`：基于 selectionContext + pageType + intentSnapshot 判断模式，生成结构化 Markdown 输出。
+5. 未实现评论楼层筛选、评论区批量抓取、Notion block 评论专用转换。
+
+**下一阶段：**
+
+Session 4 完成后，`clip-comment` / `clip-video-comment` / `clip-ai-answer` 等意图的选区已有 core draft + structured markdown 支持。后续可进入 Session 4.1 Anti-Slop Review 或 Session 5 Tag Search UX。
 
 **Session 2.2 实现要点：**
 

@@ -15,6 +15,15 @@ import {
   classifyPageType,
   confidenceToNumeric,
 } from './extractors/articleBoundaryGuard'
+import { matchSiteProfile } from '../shared/siteProfiles'
+import {
+  collectIntentSnapshot,
+  getSelectionRootElement,
+} from './intent'
+import {
+  buildCommentSelectionDraft,
+  formatCommentSelectionMarkdown,
+} from './commentSelection'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
 
@@ -193,7 +202,39 @@ function handleGetSelection(): HandlerResult {
       content: result.html,
       textContent: result.text,
     }, document)
-    logger.info(`Selection: ${content.wordCount} words`)
+
+    const sel = window.getSelection()
+    const pageType = classifyPageType(document)
+    const siteProfileMatch = matchSiteProfile({
+      url: document.URL,
+      pageType,
+    })
+
+    const intentSnapshot = collectIntentSnapshot({
+      document,
+      pageType,
+      siteProfileMatch,
+      selection: sel,
+    })
+
+    const draft = buildCommentSelectionDraft({
+      title: content.title,
+      url: content.url,
+      pageType,
+      siteProfileMatch,
+      intentSnapshot,
+      selectionText: result.text,
+      selectionHtml: result.html,
+      selectionMarkdown: content.markdown,
+      selectionContext: intentSnapshot.selectionContext,
+      selectionRoot: getSelectionRootElement(sel),
+    })
+
+    if (draft.mode !== 'selection-generic') {
+      content.markdown = formatCommentSelectionMarkdown(draft)
+    }
+
+    logger.info(`Selection: ${content.wordCount} words (${draft.mode})`)
 
     return { success: true, data: content }
   } catch (err) {

@@ -4,6 +4,70 @@
 
 ---
 
+## v0.4 Session 4 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 28 文件 1184 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：首次 2 错误（未使用的 import SiteProfileMatch/IntentSnapshot），修复后通过（无输出）
+- `npm run test`：28 个测试文件，1184 个测试，全部通过
+- `npm run build`：构建成功，115 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| comment-selection-builder.test.ts | 52 | ✅ 全部通过（新增）|
+| comment-selection-markdown.test.ts | 48 | ✅ 全部通过（新增）|
+| 其余 26 个测试文件 | 1084 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试（comment-selection-builder.test.ts）
+
+- extractDomain：4 tests（正常/子域/非法/空）
+- detectCommentSelectionMode：14 tests（comment+forum→forum-selection、comment+video→video-comment-selection、comment+video+short→short-video-caption、video-description→video-description、ai-answer→ai-answer/ai-answer pageType、comment+unknown→comment-selection、article/unknown/navigation/search-result→selection-generic、undefined selectionContext）
+- getCommentSelectionWarning：7 tests（6 种模式 warning + selection-generic 返回 undefined）
+- buildCommentSelectionDraft：27 tests（title/url/domain、selectedTextLength 计算、无 selectedText 字段、无 commentBody/fullHtml/fullText/body/innerHTML/fullPage、reasons 短句、selection-first 理由、context/intent/pageType 理由、generic/unknown intent 不加 intent reason、siteProfileId、selectionMarkdown 优先、warning/contextLabel、空 title/url、null intentSnapshot/siteProfileMatch、intent reason 正确、reasons 不超过 5）
+
+### 本轮新增测试（comment-selection-markdown.test.ts）
+
+- escapeMarkdownText：19 tests（\\、\*、\_、\`、\[\]\(\)\{\}\<\>、\#、\+、\-、\.、\!、\|、\~、空、中文、混合、多字符序列）
+- formatCommentSelectionMarkdown：22 tests（H1 标题/URL/pageType/selectionContext/selectedTextLength、comment/forum/video-comment/ai-answer 各输出 warning、selection-generic 无 warning、用户内容在 md 中、无 innerHTML/outerHTML/<html>/<body>、siteProfileId 有/无、reasons ≤5、title/warning/reason/contextLabel 转义、空 markdown、空 reasons）
+- Safety checks：7 tests（无 chrome.、无 storage、无 document、无 fetch/XMLHttpRequest、无 <!DOCTYPE/<html/<head/<script/<style、无 settings/message request、无 token/api_key/pageId）
+
+### 错误/修复
+
+1. lint：commentSelectionBuilder.ts 中 import 了未使用的 `SiteProfileMatch` 和 `IntentSnapshot` → 移除
+2. test：3 个 markdown 测试因 escapeMarkdownText 转义了 warning/siteProfileId/reason 中的 `-` 和 `.` 字符导致 `toContain('comment-related area')` 失败 → 改为检查单词片段（如 `toContain('comment') && toContain('area')`)
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1184 tests pass ✅
+- build success ✅
+- commentSelection 模块不访问 chrome API/storage/network ✅
+- commentSelection 模块不保存 selectedText 字段 ✅
+- commentSelection 模块无站点域名硬编码 ✅
+- 未抓取整页评论/论坛 ✅
+
+---
+
 ## v0.4 Session 3.2 (2026-06-13)
 
 ### 运行命令

@@ -12,24 +12,30 @@
 
 ## 当前阶段
 
-**v0.4 Session 3.2 已完成** — Navigation Summary QA Fix + IS01 Completion（待 ChatGPT 审查）。
+**v0.4 Session 4 已完成** — Comment / Selection Clip Core（待 ChatGPT 审查）。
 
-- IS01 修复：`content/index.ts` 两个调用点传递 `confidenceToNumeric(report.confidence)` 和 `report.linkDensity`
-- Guard：视频/论坛/AI-answer 页面的低置信+高链接密度不误触发 Navigation Summary
-- 新增 `confidenceToNumeric` 函数（high→0.9, medium→0.5, low→0.2）
-- 新增 17 个测试（article-boundary-guard +7, builder +7, markdown +3），总测试数 1084
-- 新增 `docs/NAVIGATION_SUMMARY_QA.md` — 7 场景人工测试文档
-- 未接入 Notion block，未改 Popup/Options/Background
-- 下一步建议 Session 4 Comment / Selection Core，或 Session 3.3 Anti-Slop Review
+- 新增 `commentSelection/` 模块：纯函数类型、builder、Markdown serializer
+- 接入 `handleGetSelection()`：基于 selectionContext + pageType 判断选区模式，生成结构化 Markdown
+- 7 种选区模式：selection-generic / comment-selection / forum-selection / video-description-selection / video-comment-selection / short-video-caption-selection / ai-answer-selection
+- 每个模式有对应 warning 文案，selection-generic 不强制加 warning
+- selection-first 不变：有选区永远走 selection 路径，不抓取整页评论/论坛
+- 未改 fullpage、Popup、Options、Background、Notion 保存链路
+- 总测试数：1084 → 1184（+100：comment-selection-builder 52 + comment-selection-markdown 48）
+- 未接入 Notion block 转换，未新增权限/依赖
+- 下一步建议 Session 4.1 Anti-Slop Review
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
 - v0.4 Session 2：完成 Site Profile Engine（siteProfile.types / seedProfiles / siteProfileEngine / index）— commit 006908e
 - v0.4 Session 2.1：完成 Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）— commit 72db8b6
-- v0.4 Session 2.3：Anti-Slop Review 发现 B1 build blocker（缺少 SelectionContext 导入）和 M1 video iframe domain slop
+- v0.4 Session 2.3：Anti-Slop Review 发现 B1 build blocker 和 M1 video iframe domain slop
 - v0.4 Session 2.3.1：修复 B1 + M1，lint 0 / test 928 passed / build success
-- v0.4 Session 2.2：补强 11 个 profile 的 selectorHints（contentContainer / commentContainer），所有 19 个 profile 现在至少有 1 个 selectorHints 字段；新增 8 个 profile 结构验证测试；总测试数 936
-- 建议后续进入 Session 3 Navigation Summary Mode，等待 ChatGPT 审查本 Session 后决定
+- v0.4 Session 2.2：补强 11 个 profile 的 selectorHints，所有 19 个 profile 至少有 1 个 selectorHints 字段
+- v0.4 Session 3.0：Navigation Summary Strategy Design（docs-only）
+- v0.4 Session 3：Navigation Summary Draft Builder（纯函数 + 73 tests）
+- v0.4 Session 3.1：Navigation Summary Markdown + Minimal Integration（serializer + 55 tests）
+- v0.4 Session 3.2：Navigation Summary QA Fix + IS01 Completion（IS01 fix + guard + 17 tests）
+- v0.4 Session 4：Comment / Selection Clip Core（本轮完成）
 
 ---
 
@@ -51,7 +57,7 @@
 | Session 3 Navigation Summary Draft Builder | ✅ 已完成 | 纯函数 draft builder + 73 tests，待 ChatGPT 审查 |
 | Session 3.1 Navigation Summary Integration | ✅ 已完成 | Markdown serializer + minimal fallback，待 ChatGPT 审查 |
 | Session 3.2 Navigation Summary QA Fix + IS01 | ✅ 已完成 | IS01 修复 + guard + 17 tests + QA doc，待 ChatGPT 审查 |
-| Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
+| Session 4 Comment / Selection Clip Mode | ✅ 已完成 | commentSelection 模块 + GET_SELECTION 接入，待 ChatGPT 审查 |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 5 Tag Search UX | ⏳ 待启动 | |
 | Session 6 Site Icon / Theme Cache | ⏳ 待启动 | |
@@ -80,8 +86,8 @@
 
 ## 未完成（按优先级）
 
-1. Session 3.2：Navigation Summary QA Fix / Notion Block — 修复 Session 3.1 发现的问题，完成 Notion block 转换
-2. Session 4：Comment / Selection Clip Mode — 评论选区模式
+1. Session 4：Comment / Selection Clip Mode（✅ 已完成，待 ChatGPT 审查）
+2. Session 3.2 Notion Block 转换（deferred，IS01 已修复，Notion block 未接入）
 3. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
 4. Session 5：Tag Search UX — 标签搜索
 5. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
@@ -103,5 +109,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 3.2 输出 → commit → 进入 Session 3.3 Anti-Slop Review 或 Session 4 Comment / Selection Core**
-（IS01 已修复：low-confidence + high-linkDensity 现在可从 content/index.ts 传递评估值触发 Navigation Summary Markdown fallback。Guard 防止视频/论坛/AI-answer 误触发。1084 tests，lint 0，build success。Notion block 转换未实现。）
+**ChatGPT 审查本轮 Session 4 输出 → commit → 进入 Session 4.1 Anti-Slop Review**
+（commentSelection 类型/builder/serializer 已实现，GET_SELECTION 最小接入完成。1184 tests，lint 0，build success。未改 fullpage/Popup/Options/Background/Notion。）

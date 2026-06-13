@@ -4,6 +4,66 @@
 
 ---
 
+## v0.4 Session 4：Comment / Selection Clip Core (2026-06-13)
+
+### 性质
+
+代码实现：commentSelection 纯函数模块 + GET_SELECTION 最小接入。不改变 fullpage、Popup、Notion、Background route。
+
+### 产出
+
+- `src/content/commentSelection/commentSelection.types.ts` — 类型定义（~50 lines）
+  - `CommentSelectionMode`：7 种选区模式
+  - `CommentSelectionDraft`：包含 mode、selectionContext、selectedTextLength、warning、markdown、reasons 等，不保存 selectedText 字段
+  - `CommentSelectionInput`：title/url/pageType/selectionText/selectionMarkdown/selectionContext 等
+- `src/content/commentSelection/commentSelectionBuilder.ts` — 核心实现（~130 lines）
+  - `extractDomain(url)` — 提取 hostname
+  - `detectCommentSelectionMode(input)` — 基于 selectionContext + pageType 判断 7 种模式
+  - `getCommentSelectionWarning(mode)` — 返回对应 warning 文案
+  - `buildCommentSelectionDraft(input)` — 整合输出 draft
+- `src/content/commentSelection/commentSelectionMarkdown.ts` — Markdown serializer（~75 lines）
+  - `escapeMarkdownText(text)` — 转义 19 种 Markdown 特殊字符
+  - `formatCommentSelectionMarkdown(draft)` — draft → 结构化 Markdown 字符串
+- `src/content/commentSelection/index.ts` — 模块导出
+
+### 修改文件
+
+- `src/content/index.ts` — 42 行新增
+  - 新增 import：siteProfile（matchSiteProfile）、intent（collectIntentSnapshot/getSelectionRootElement）、commentSelection（builder/serializer）
+  - `handleGetSelection()` 中集成：获取 pageType/siteProfileMatch/intentSnapshot → 构建 CommentSelectionDraft → 若 mode 非 generic 则替换 content.markdown
+
+### 新增测试
+
+- `tests/comment-selection-builder.test.ts` — 52 tests
+  - extractDomain：4 tests（正常/子域/非法/空）
+  - detectCommentSelectionMode：14 tests（7 种模式覆盖 + 边界）
+  - getCommentSelectionWarning：7 tests（每种模式 warning 文案）
+  - buildCommentSelectionDraft：27 tests（字段正确性、隐私安全、理由生成、边界处理）
+- `tests/comment-selection-markdown.test.ts` — 48 tests
+  - escapeMarkdownText：19 tests（19 种特殊字符 + 空 + 中文 + 混合 + 多字符序列）
+  - formatCommentSelectionMarkdown：22 tests（标题/warning/Source/pageType/selectionContext/selectedTextLength/siteProfileId/用户内容/理由/转义/空内容）
+  - Safety checks：7 tests（chrome API/storage/document/network/full DOM/settings/token）
+
+### 未修改
+
+- 未修改 Popup UI、Options UI、Background route
+- 未修改 Notion 保存主链路
+- 未修改 fullpage 主链路
+- 未修改 selection-first 行为
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+
+### 改动摘要
+
+- 实现 Comment / Selection Clip Core：7 种选区模式，基于 selectionContext + pageType 判断
+- selection-first 不变：有选区走 selection 路径，不抓取整页评论/论坛
+- 每个模式有对应 warning，selection-generic 不强制加 warning
+- Draft 不保存 selectedText 字段，只保存 selectedTextLength
+- Markdown 输出允许包含用户主动选中内容，但不得扩展抓取
+- lint 0 / 1184 tests（+100 new）全部通过 / build success（115 modules）
+
+---
+
 ## v0.4 Session 3.2：Navigation Summary QA Fix + IS01 Completion (2026-06-13)
 
 ### 性质

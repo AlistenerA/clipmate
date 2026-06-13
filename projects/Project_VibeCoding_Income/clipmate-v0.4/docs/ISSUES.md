@@ -86,6 +86,24 @@
 
 当前无 blocker。
 
+### Session 4 Comment / Selection Clip Core 已知限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS02 | SelectionContext 归类依赖 DOM class 关键词，非标准站点可能误判 | minor | `classifyElementContext` 基于 ancestor 遍历关键词匹配，真实非标准站点可能将评论区误判为 unknown → selection-generic |
+| IS03 | 评论区真实站点 DOM 需人工 QA | minor | 选区 context 判断正确性依赖 `classifyElementContext` 的准确率，真实评论页面需手动测试（QA06-QA10）|
+| IS04 | 短视频/AI 对话页选区行为未在真实浏览器验证 | minor | 依赖 seed profile selector hints 作为辅助，但真实页面 DOM 可能不同 |
+
+### 待 QA（Session 4 新增）
+
+| 编号 | 待 QA | 关联 |
+|:---:|------|:---:|
+| QA06 | 论坛评论页（如 Reddit/Zhihu 等）选区 → 应触发 forum-selection 或 comment-selection | Session 4 / Session 8 手动 QA |
+| QA07 | 视频页评论区选区（如 YouTube/Bilibili）→ 应触发 video-comment-selection | Session 4 / Session 8 手动 QA |
+| QA08 | 视频简介区选区 → 应触发 video-description-selection | Session 4 / Session 8 手动 QA |
+| QA09 | AI 对话页选区（ChatGPT/Claude 等）→ 应触发 ai-answer-selection | Session 4 / Session 8 手动 QA |
+| QA10 | 普通文章页选区 → 应保持 selection-generic，不误触发 comment/forum warning | Session 4 / Session 8 手动 QA |
+
 ### Session 3.2 已修复
 
 | 编号 | 问题 | 级别 | 修复 Session |

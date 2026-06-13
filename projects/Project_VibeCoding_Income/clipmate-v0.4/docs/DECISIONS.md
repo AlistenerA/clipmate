@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 4 决策
+
+### D-v0.4-028：CommentSelectionDraft 不保存 selectedText 字段，只保存 selectedTextLength；Markdown 输出允许包含用户主动选中的内容
+
+- **原因**：隐私安全底线要求不持久化用户正文、评论、全文。`selectedTextLength` 为纯数字统计量，不存在泄漏风险。Markdown 输出是 selection 剪藏的实际产物，用户预期其中的内容即为主动选择的内容，此部分由上游 `buildContent('selection', ...)` 控制。
+- **影响**：`buildCommentSelectionDraft` 返回的 draft 中只有 `selectedTextLength`（数字）和 `markdown`（包含用户选区内容的 Markdown），没有单独的 `selectedText` 字段。测试中显式验证了这一点。
+- **可反转性**：低。推翻此决策意味着引入隐私风险。
+
+### D-v0.4-027：Comment / Selection Clip Mode 只增强用户主动选区，不在无选区时自动抓评论区
+
+- **原因**：selection-first 是 ClipMate 的核心设计原则（D-v0.4-021）。评论区/论坛页/视频页/AI 对话页虽然有大量内容，但用户主动选区才是最高优先级意图信号。自动抓取评论区会带来隐私和用户体验风险。
+- **影响**：`handleGetSelection()` 中新增的逻辑仅在用户有选区时执行（已有 `extractSelection()` 返回 null 时返回 `NO_SELECTION` 的 guard）。`commentSelection` 模块的所有函数不包含任何自动抓取评论/论坛的逻辑。
+- **可反转性**：低。违反此决策等于覆盖用户明确意图（D-v0.4-021）。
+
+---
+
 ## v0.4 Session 3.2 决策
 
 ### D-v0.4-026：low-confidence + high-linkDensity 导航摘要仅作为 fallback，不覆盖有专属处理器的页面类型
