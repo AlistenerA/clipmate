@@ -4,6 +4,16 @@
 
 ---
 
+## v0.3 Public Snapshot and v0.4 Handoff (2026-06-13)
+
+- Published v0.3 public snapshot to https://github.com/AlistenerA/clipmate (commit `44d6fdc`, main branch).
+- Public repository now keeps latest public version only: `clipmate-v0.3`.
+- Added `docs/V0.4_HANDOFF.md` for next-version planning and scope definition.
+- Updated `docs/CURRENT_STATUS.md` with public snapshot status.
+- No source code changes, no package/manifest changes, no test changes.
+
+---
+
 ## v0.3 Session 8-D：选区优先模式小修 + 已知问题归档 + 文档脱敏 (2026-06-13)
 
 ### 修改文件

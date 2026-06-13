@@ -59,6 +59,14 @@
 
 ---
 
+## Public Snapshot Status
+
+- v0.3 public snapshot has been prepared and pushed to GitHub public repository.
+- Public repository: https://github.com/AlistenerA/clipmate
+- Public repository policy: keep latest public version only (currently clipmate-v0.3).
+- Next planned version: v0.4 — Site Profiles and Scenario Modes.
+- See `docs/V0.4_HANDOFF.md`.<｜end▁of▁thinking｜>
+
 ## 未完成（按优先级）
 
 1. v0.3 人工 QA 复测 — 选区优先模式需用户复测
