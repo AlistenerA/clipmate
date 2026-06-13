@@ -4,6 +4,57 @@
 
 ---
 
+## v0.4 Session 3：Navigation Summary Draft Builder (2026-06-13)
+
+### 性质
+
+代码实现：纯函数 draft builder + 单元测试。不接入保存流程，不改变 Popup UI，不接入 Markdown 复制或 Notion 保存。
+
+### 产出
+
+- `src/content/navigationSummary/navigationSummary.types.ts` — 类型定义
+- `src/content/navigationSummary/navigationSummaryBuilder.ts` — 7 个纯函数
+- `src/content/navigationSummary/index.ts` — 模块导出
+- `tests/navigation-summary-builder.test.ts` — 73 个测试
+
+### 新增文件
+
+- `src/content/navigationSummary/navigationSummary.types.ts` — 类型定义（~45 lines）
+  - `NavigationSummaryMode`：navigation / search-results / low-confidence
+  - `NavigationSummaryLink`：text, href, domain?, reason?
+  - `NavigationSummaryDraft`：title, url, domain, pageType, siteProfileId?, mode, warning, links, reasons
+  - `NavigationSummaryInput`：document, title, url, pageType, siteProfileMatch?, intentSnapshot?, articleConfidence?, linkDensity?, maxLinks?
+- `src/content/navigationSummary/navigationSummaryBuilder.ts` — 核心实现（~315 lines）
+  - `sanitizeLinkText(text, maxLength)` — trim、折叠空白、截断
+  - `isSafeLinkHref(href)` — 允许 http/https/relative，拒绝 javascript/data/mailto/tel/blob/chrome/edge/about/#
+  - `toAbsoluteHttpUrl(href, baseUrl)` — 相对链接转绝对 URL，仅 http/https
+  - `extractDomain(url)` — 提取 hostname
+  - `shouldBuildNavigationSummary(input)` — 6 级触发规则，selection-first 永远优先
+  - `collectNavigationSummaryLinks(input)` — 3 级优先级：searchResultCard > main/article > body fallback
+  - `buildNavigationSummaryDraft(input)` — 整合输出，异常返回安全空 draft
+- `src/content/navigationSummary/index.ts` — 模块导出
+
+### 未修改
+
+- 未修改 `src/content/index.ts`
+- 未修改 `src/content/extractors/articleBoundaryGuard.ts`
+- 未修改 `src/popup/`、`src/options/`、`src/background/`
+- 未修改保存流程、Popup UI、Notion 保存、Markdown 输出
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+
+### 改动摘要
+
+- 实现 Navigation Summary Draft Builder，7 个纯函数，不访问 chrome API / storage / 网络
+- shouldBuildNavigationSummary：6 级触发规则，selection-first 最高优先级
+- collectNavigationSummaryLinks：searchResultCard > main/content > body fallback，去重 + 每 domain 3 条 + 总数上限
+- buildNavigationSummaryDraft：异常安全（try-catch 返回空 draft）
+- 不保存 selected text、正文、评论、Markdown、完整 DOM/HTML
+- 不抓取目标链接内容，不访问网络
+- lint 0 / test 1009（+73 new）全部通过 / build success
+
+---
+
 ## v0.4 Session 3.0：Navigation Summary Mode Strategy Design (2026-06-13)
 
 ### 性质

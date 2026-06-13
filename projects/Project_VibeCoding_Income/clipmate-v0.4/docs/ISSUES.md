@@ -22,7 +22,7 @@
 |:---:|------|:---:|
 | F01 | 页面类型检测增强 | ✅ Session 1 已完成，已提交 |
 | F02 | 站点规则引擎 | ✅ Session 2 已完成 |
-| F03 | 导航页摘要模式 | Session 3 规划中 |
+| F03 | 导航页摘要模式 | ✅ Session 3 Draft Builder 已完成，Session 3.1 待集成 |
 | F04 | 评论选区模式 | Session 4 规划中 |
 | F05 | 标签搜索 UX | Session 5 规划中 |
 | F06 | 站点图标/主题缓存 | Session 6 规划中 |

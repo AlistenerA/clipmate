@@ -4,6 +4,65 @@
 
 ---
 
+## v0.4 Session 3 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 25 文件 1009 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：首次 1 错误（prefer-const），修复后通过（无输出）
+- `npm run test`：25 个测试文件，1009 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| navigation-summary-builder.test.ts | 73 | ✅ 全部通过（新增）|
+| 其余 24 个测试文件 | 936 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试（navigation-summary-builder.test.ts）
+
+- sanitizeLinkText：7 tests（trim、空白折叠、截断、空输入、中文）
+- isSafeLinkHref：16 tests（允许 http/https/relative/root，拒绝 7 种危险协议）
+- toAbsoluteHttpUrl：6 tests（相对/绝对/非法/空）
+- extractDomain：3 tests（正常/非法/空）
+- shouldBuildNavigationSummary：10 tests（6 级触发规则 + selection-first + null/undefined safety）
+- collectNavigationSummaryLinks：13 tests（过滤/去重/限制/搜索卡片/fallback/domain/相对链接解析）
+- buildNavigationSummaryDraft：12 tests（3 种 mode/warning/title fallback/domain/siteProfileId/空链接/reasons/异常安全）
+- Safety checks：6 tests（chrome API/storage/network/innerHTML/full-text fields/reason length）
+
+### 错误/修复
+
+1. lint prefer-const：`let collected` → `const collected`，已修复
+2. 其余无错误。
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1009 tests pass ✅
+- build success ✅
+- builder 不访问 chrome API / storage / network ✅
+- builder 不保存 selected text / 正文 / 评论 / Markdown / 完整 DOM ✅
+
+---
+
 ## v0.4 Session 3.0 (2026-06-13)
 
 ### 运行命令

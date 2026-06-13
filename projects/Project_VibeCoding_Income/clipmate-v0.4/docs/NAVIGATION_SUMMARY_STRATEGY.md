@@ -2,6 +2,8 @@
 
 > **Session 3.0 docs-only strategy design。** 本文档不包含代码实现。具体实现由 Session 3/3.1/3.2 完成。
 >
+> **Session 3 Draft Builder 已完成。** 实现文件：`src/content/navigationSummary/navigationSummaryBuilder.ts`（7 个纯函数）、`tests/navigation-summary-builder.test.ts`（73 tests）。仍未接入保存流程，Session 3.1 完成集成。
+>
 > 本文档在 Session 1/2/2.1/2.2 完成后编写，基于已有 PageTypeDetector、SiteProfileEngine、IntentSignalCollector 的能力。
 
 ---
@@ -226,24 +228,24 @@ callout block（warning 文案）
 
 拆分为 3 个子 Session，每个最小可提交：
 
-### Session 3：Navigation Summary Draft Builder
+### Session 3：Navigation Summary Draft Builder ✅ 已完成
 
 **性质**：纯函数实现 + 单元测试，不接入保存流程。
 
-**产出**：
-- 新增 `src/content/navigation/navigationSummary.types.ts` — 类型定义
-- 新增 `src/content/navigation/navigationSummaryBuilder.ts` — 纯函数构建器
-  - `extractCandidateLinks(doc, siteProfileMatch?)` → 候选链接
-  - `filterAndRankLinks(links, mode)` → 清洗排序截断
-  - `buildNavigationSummaryDraft(input)` → 整合输出
-- 新增 `tests/navigation-summary-builder.test.ts` — 单元测试（目标 ≥ 50 tests）
-- 不修改 `content/index.ts`、不修改 `articleBoundaryGuard.ts`
+**实际产出**：
+- `src/content/navigationSummary/navigationSummary.types.ts` — 类型定义（~45 lines）
+- `src/content/navigationSummary/navigationSummaryBuilder.ts` — 纯函数构建器（~315 lines）
+  - `sanitizeLinkText` / `isSafeLinkHref` / `toAbsoluteHttpUrl` / `extractDomain`
+  - `shouldBuildNavigationSummary` / `collectNavigationSummaryLinks` / `buildNavigationSummaryDraft`
+- `src/content/navigationSummary/index.ts` — 模块导出
+- `tests/navigation-summary-builder.test.ts` — 73 tests
+- 未修改 `content/index.ts`、未修改 `articleBoundaryGuard.ts`
 
-**边界**：
+**已验证**：
+- lint 0 / test 1009（+73 new）全部通过 / build success
 - 纯函数，不访问 chrome API / storage / 网络
 - 不改变保存行为
 - 不使用现有 `buildLowConfidenceSummary` 代码（独立实现新模块）
-- lint 0 / test pass / build success
 
 ### Session 3.1：Navigation Summary Integration
 

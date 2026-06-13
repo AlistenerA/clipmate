@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 3 决策
+
+### D-v0.4-023：Navigation Summary links 只从当前 DOM 的 a[href] 提取，不访问目标链接内容
+
+- **原因**：链接筛选的目的是提取当前页面内可见超链接的 text + href + domain，不是抓取目标页面内容。任何网络请求都需要新增 host_permissions 或绕过 CSP，与 v0.4 纯前端定位冲突。
+- **影响**：`collectNavigationSummaryLinks` 仅通过 `doc.querySelectorAll('a[href]')` 读取 DOM 属性。`domain` 字段通过 `new URL(href).hostname` 解析，不发起请求。`reason` 字段为固定短句（'search result' / 'main content' / 'navigation link'），不含正文。
+- **可反转性**：低。推翻此决策意味着引入网络权限和隐私风险。
+
+### D-v0.4-022：Navigation Summary Draft Builder 只生成内部 draft，不直接写入 Markdown/Notion
+
+- **原因**：参考 D-v0.4-019 的三步拆分（draft builder → 集成 → Notion blocks）。`buildNavigationSummaryDraft` 输出结构化 `NavigationSummaryDraft` 对象，由 Session 3.1 的下游（Markdown 序列化器、Notion block 转换器）消费。过早将 draft builder 与输出格式耦合会降低可测试性和可复用性。
+- **影响**：`buildNavigationSummaryDraft` 返回纯对象，不生成 Markdown 字符串或 Notion blocks。所有字段为统计量或短句（warning / reasons / link text / domain），不含正文全文、评论全文、完整 DOM。
+- **可反转性**：中。如果 Session 3.1 集成测试充分且无退化，此拆分验证有效后不再反转。
+
+---
+
 ## v0.4 Session 3.0 决策
 
 ### D-v0.4-021：有用户选区时，selection-first 永远优先于 navigation summary
