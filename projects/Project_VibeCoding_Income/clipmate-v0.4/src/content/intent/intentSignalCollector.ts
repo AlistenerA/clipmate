@@ -1,6 +1,8 @@
+import type { SiteProfileMatch } from '../../shared/siteProfiles'
 import type {
   IntentSignalInput,
   IntentSnapshot,
+  SelectionContext,
   VisibleContextSnapshot,
 } from './intent.types'
 
@@ -166,7 +168,20 @@ export function classifyElementContext(element: Element | null): SelectionContex
   return 'unknown'
 }
 
-export function collectVisibleContext(document: Document): VisibleContextSnapshot {
+function countSafeSelectors(doc: Document, selectors: string[]): number {
+  let count = 0
+  for (const sel of selectors) {
+    try {
+      count += doc.querySelectorAll(sel).length
+    } catch { /* ignore invalid selectors */ }
+  }
+  return count
+}
+
+export function collectVisibleContext(
+  document: Document,
+  siteProfileMatch?: SiteProfileMatch | null,
+): VisibleContextSnapshot {
   let visibleVideoCount = 0
   let visibleCommentLikeCount = 0
   let visibleSearchResultLikeCount = 0
@@ -174,16 +189,21 @@ export function collectVisibleContext(document: Document): VisibleContextSnapsho
 
   visibleVideoCount += document.querySelectorAll('video').length
 
-  const videoIframeSelectors = [
-    'iframe[src*="youtube"]',
-    'iframe[src*="bilibili"]',
-    'iframe[src*="youku"]',
+  const genericPlayerSelectors = [
     'iframe[src*="player"]',
+    '[class*="player"]',
+    '[id*="player"]',
+    '[class*="video"]',
+    '[id*="video"]',
   ]
-  for (const sel of videoIframeSelectors) {
-    try {
-      visibleVideoCount += document.querySelectorAll(sel).length
-    } catch { /* ignore */ }
+  visibleVideoCount += countSafeSelectors(document, genericPlayerSelectors)
+
+  if (siteProfileMatch?.profile.selectorHints?.videoPlayer) {
+    const siteSelectors = siteProfileMatch.profile.selectorHints.videoPlayer
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    visibleVideoCount += countSafeSelectors(document, siteSelectors)
   }
 
   const commentSelectors = [
@@ -414,7 +434,7 @@ export function collectIntentSnapshot(input: IntentSignalInput): IntentSnapshot 
     }
   }
 
-  const visibleContext = collectVisibleContext(document)
+  const visibleContext = collectVisibleContext(document, siteProfileMatch)
 
   const { intent, confidence, reasons } = detectClipIntent({
     pageType,

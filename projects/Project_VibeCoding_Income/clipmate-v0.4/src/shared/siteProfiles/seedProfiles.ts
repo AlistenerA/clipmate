@@ -44,6 +44,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     selectorHints: {
       contentContainer: '#above, #below',
       commentContainer: '#comments, ytd-comments',
+      videoPlayer: '#movie_player, #player',
     },
   },
   {
@@ -55,6 +56,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     priority: 20,
     selectorHints: {
       commentContainer: '.reply-list, .comment-list',
+      videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap',
     },
   },
   {
@@ -64,6 +66,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['iqiyi.com'],
     pageTypes: ['video'],
     priority: 15,
+    selectorHints: {
+      videoPlayer: '[data-player-hook], .iqp-player',
+    },
   },
   {
     id: 'youku-video',
@@ -72,6 +77,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['youku.com'],
     pageTypes: ['video'],
     priority: 15,
+    selectorHints: {
+      videoPlayer: '#youku-player, .yk-player',
+    },
   },
   {
     id: 'tencent-video',
@@ -80,6 +88,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['v.qq.com'],
     pageTypes: ['video'],
     priority: 15,
+    selectorHints: {
+      videoPlayer: '#tenvideo_player, .txp_player',
+    },
   },
   {
     id: 'tiktok-short-video',
@@ -88,6 +99,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['tiktok.com'],
     pageTypes: ['video'],
     priority: 20,
+    selectorHints: {
+      videoPlayer: '[data-e2e="video-player"], .video-player',
+    },
   },
   {
     id: 'douyin-short-video',
@@ -96,6 +110,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['douyin.com'],
     pageTypes: ['video'],
     priority: 20,
+    selectorHints: {
+      videoPlayer: '.video-player, .xgplayer',
+    },
   },
   {
     id: 'xiaohongshu-social',
@@ -116,6 +133,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['kuaishou.com'],
     pageTypes: ['video'],
     priority: 15,
+    selectorHints: {
+      videoPlayer: '.player-container, .video-player',
+    },
   },
   {
     id: 'zhihu-community',

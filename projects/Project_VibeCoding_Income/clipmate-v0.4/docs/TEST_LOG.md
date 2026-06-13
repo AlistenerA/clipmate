@@ -4,6 +4,74 @@
 
 ---
 
+## v0.4 Session 2.3.1 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 24 文件 928 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：24 个测试文件，928 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| intent-signal-collector.test.ts | 67 | ✅ 全部通过（Session 2.1 继承 61 + 本轮新增 6）|
+| 其余 23 个测试文件 | 861 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试
+
+- collectVisibleContext with siteProfileMatch.selectorHints.videoPlayer
+- comma-separated videoPlayer selectors
+- null siteProfileMatch handling
+- collectIntentSnapshot passes siteProfileMatch to collectVisibleContext
+- intentSignalCollector domain-free check（String(collectVisibleContext) 不含站点名）
+- 替代旧 "counts video iframes with youtube src" 为通用 "counts video iframes with player src" 和 "counts generic player class elements"
+
+### Session 2.3 回顾（只读审查发现）
+
+- Build 失败：TS2304: Cannot find name 'SelectionContext'（tsc --noEmit 报错）
+- M1 video iframe domain slop：iframe[src*="youtube/bilibili/youku"] 硬编码在 intentSignalCollector 中
+
+### 错误/修复
+
+1. Session 2.3 发现 build 失败 → Session 2.3.1 补充 SelectionContext 导入后修复
+2. Session 2.3 发现 domain 硬编码 → Session 2.3.1 迁移到 seedProfiles.ts 后清理
+3. 其余无错误。
+
+### 产出
+
+- 修改 `src/content/intent/intentSignalCollector.ts` — +SiteProfileMatch/SelectionContext 导入，collectVisibleContext 签名变更，移除 domain hardcode
+- 修改 `src/shared/siteProfiles/seedProfiles.ts` — 8 个 video profile 新增 videoPlayer selectorHints
+- 修改 `tests/intent-signal-collector.test.ts` — +6 tests
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 928 tests pass ✅
+- build success ✅
+- intent/content/ 无视频站点 domain 硬编码 ✅
+
+---
+
 ## v0.4 Session 2.1 (2026-06-13)
 
 ### 运行命令

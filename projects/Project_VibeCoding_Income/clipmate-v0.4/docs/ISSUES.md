@@ -62,6 +62,13 @@
 
 当前无 blocker。
 
+### Session 2.3 已修复问题
+
+| 编号 | 问题 | 级别 | 修复 Session |
+|:---:|------|:---:|:---:|
+| ✅ B1 | Build 失败：intentSignalCollector 缺少 SelectionContext 类型导入 (TS2304) | blocker | Session 2.3.1 |
+| ✅ M1 | intentSignalCollector.ts 硬编码视频站点 iframe selector（youtube/bilibili/youku）| major | Session 2.3.1 |
+
 ---
 
 *（v0.4 之前版本的问题见 clipmate-v0.3/docs/ISSUES.md）*

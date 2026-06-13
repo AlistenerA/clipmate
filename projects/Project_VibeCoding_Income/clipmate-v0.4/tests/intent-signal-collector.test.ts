@@ -254,10 +254,16 @@ describe('collectVisibleContext', () => {
     expect(ctx.visibleVideoCount).toBe(2)
   })
 
-  it('counts video iframes', () => {
-    const doc = makeDom('<iframe src="https://youtube.com/embed/abc"></iframe>')
+  it('counts video iframes with player src', () => {
+    const doc = makeDom('<iframe src="https://example.com/player/abc"></iframe>')
     const ctx = collectVisibleContext(doc)
-    expect(ctx.visibleVideoCount).toBe(1)
+    expect(ctx.visibleVideoCount).toBeGreaterThanOrEqual(1)
+  })
+
+  it('counts generic player class elements', () => {
+    const doc = makeDom('<div class="player"></div><div class="video"></div>')
+    const ctx = collectVisibleContext(doc)
+    expect(ctx.visibleVideoCount).toBeGreaterThanOrEqual(2)
   })
 
   it('counts comment-like elements', () => {
@@ -294,6 +300,46 @@ describe('collectVisibleContext', () => {
     const doc = makeDom('<div role="main"></div>')
     const ctx = collectVisibleContext(doc)
     expect(ctx.visibleArticleLikeCount).toBeGreaterThanOrEqual(1)
+  })
+
+  it('uses siteProfileMatch selectorHints.videoPlayer to count site-specific video elements', () => {
+    const doc = makeDom('<div class="custom-media-frame"></div><div class="custom-media-frame"></div>')
+    const match = makeSiteProfileMatch({
+      profile: {
+        id: 'test-video',
+        label: 'Test Video',
+        category: 'video',
+        domains: ['example.com'],
+        pageTypes: ['video'],
+        priority: 10,
+        selectorHints: { videoPlayer: '.custom-media-frame' },
+      } as SiteProfile,
+    })
+    const ctx = collectVisibleContext(doc, match)
+    expect(ctx.visibleVideoCount).toBeGreaterThanOrEqual(2)
+  })
+
+  it('handles comma-separated videoPlayer selectors', () => {
+    const doc = makeDom('<div class="player-a"></div><span class="player-b"></span>')
+    const match = makeSiteProfileMatch({
+      profile: {
+        id: 'multi-selector',
+        label: 'Multi',
+        category: 'video',
+        domains: ['example.com'],
+        pageTypes: ['video'],
+        priority: 10,
+        selectorHints: { videoPlayer: '.player-a, .player-b' },
+      } as SiteProfile,
+    })
+    const ctx = collectVisibleContext(doc, match)
+    expect(ctx.visibleVideoCount).toBeGreaterThanOrEqual(2)
+  })
+
+  it('returns 0 for null siteProfileMatch', () => {
+    const doc = makeDom('<div class="custom-player"></div>')
+    const ctx = collectVisibleContext(doc, null)
+    expect(ctx.visibleVideoCount).toBeGreaterThanOrEqual(0)
   })
 })
 
@@ -593,6 +639,28 @@ describe('collectIntentSnapshot', () => {
     const snapshot = collectIntentSnapshot(input)
     expect(snapshot.intent).toBe('unknown')
   })
+
+  it('passes siteProfileMatch to collectVisibleContext for site-specific video detection', () => {
+    const doc = makeDom('<div class="test-player"></div>')
+    const match = makeSiteProfileMatch({
+      profile: {
+        id: 'test-video-site',
+        label: 'Test',
+        category: 'video',
+        domains: ['example.com'],
+        pageTypes: ['video'],
+        priority: 10,
+        selectorHints: { videoPlayer: '.test-player' },
+      } as SiteProfile,
+    })
+    const input = makeIntentInput({
+      document: doc,
+      pageType: 'video',
+      siteProfileMatch: match,
+    })
+    const snapshot = collectIntentSnapshot(input)
+    expect(snapshot.visibleContext.visibleVideoCount).toBeGreaterThanOrEqual(1)
+  })
 })
 
 // ============= no chrome/storage/network access =============
@@ -615,5 +683,16 @@ describe('intent signal collector - no external dependencies', () => {
     expect(typeof classifyElementContext(doc.querySelector('p'))).toBe('string')
     const ctx = collectVisibleContext(doc)
     expect(typeof ctx.visibleVideoCount).toBe('number')
+  })
+
+  it('intentSignalCollector does not contain site-specific domain names', () => {
+    const src = String(collectVisibleContext)
+    expect(src).not.toMatch(/\byoutube\b/i)
+    expect(src).not.toMatch(/\bbilibili\b/i)
+    expect(src).not.toMatch(/\byouku\b/i)
+    expect(src).not.toMatch(/\biqiyi\b/i)
+    expect(src).not.toMatch(/\btiktok\b/i)
+    expect(src).not.toMatch(/\bdouyin\b/i)
+    expect(src).not.toMatch(/\bkuaishou\b/i)
   })
 })

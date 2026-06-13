@@ -4,6 +4,40 @@
 
 ---
 
+## v0.4 Session 2.3.1：Build Fix + Video Iframe Selector Migration (2026-06-13)
+
+### 性质
+
+最小修复：修复 Session 2.3 Anti-Slop Review 发现的 B1 build blocker 和 M1 video iframe domain slop。
+
+### 修复内容
+
+- B1：intentSignalCollector.ts 补充缺失的 `SelectionContext` 类型导入，修复 tsc --noEmit 报错
+- M1：移除 intentSignalCollector.ts 中硬编码的视频站点 iframe selector（youtube/bilibili/youku），改为通用 selector + SiteProfile.selectorHints.videoPlayer
+- seedProfiles.ts：为 8 个视频类 profile 补充 videoPlayer 提示选择器
+- 新增 `countSafeSelectors` 内部辅助函数统一 selector 查询
+
+### 修改文件
+
+- `src/content/intent/intentSignalCollector.ts` — 补充 SelectionContext/SiteProfileMatch 导入；collectVisibleContext 签名变更接受 siteProfileMatch；移除 3 条 domain iframe selector；新增 countSafeSelectors
+- `src/shared/siteProfiles/seedProfiles.ts` — 为 youtube/bilibili/iqiyi/youku/tencent/tiktok/douyin/kuaishou 8 个视频 profile 添加 videoPlayer selectorHints
+- `tests/intent-signal-collector.test.ts` — 更新 1 个旧测试（iframe src player）；新增 5 个测试（site-specific videoPlayer / comma-separated / null match / pass-through / domain-free check）；61→67 tests
+- `docs/CURRENT_STATUS.md` — 更新阶段、进度、下一步建议
+- `docs/CHANGELOG_AGENT.md` — 本记录
+- `docs/TEST_LOG.md` — Session 2.3.1 记录
+- `docs/ISSUES.md` — B1/M1 修复记录
+
+### 改动摘要
+
+- 修复 TypeScript 编译错误（B1 blocker）
+- 移除 Intent Signal Collector 中的视频站点 domain 硬编码（M1 major）
+- 视频站点 selector 迁移到 seedProfiles.ts 的结构化 profile 数据中
+- collectVisibleContext 通过 siteProfileMatch.profile.selectorHints.videoPlayer 访问站点级选择器
+- 不改变保存策略、不接入 Popup、不新增权限/依赖
+- lint 0 / test 928 passed (+6 new) / build success
+
+---
+
 ## v0.4 Session 2.1：Intent Signal Collector (2026-06-13)
 
 ### 性质

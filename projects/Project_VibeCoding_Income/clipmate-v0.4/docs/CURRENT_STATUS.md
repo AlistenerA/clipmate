@@ -12,14 +12,16 @@
 
 ## 当前阶段
 
-**v0.4 Session 2.1 已完成** — Intent Signal Collector（纯函数 + 61 个测试，待 ChatGPT 审查）。
+**v0.4 Session 2.3.1 已完成** — Build Fix + Video Iframe Selector Migration（待 ChatGPT 审查）。
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
 - v0.4 Session 2：完成 Site Profile Engine（siteProfile.types / seedProfiles / siteProfileEngine / index）— commit 006908e
-- v0.4 Session 2.1：完成 Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）— 本轮
+- v0.4 Session 2.1：完成 Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）— commit 72db8b6
+- v0.4 Session 2.3：Anti-Slop Review 发现 B1 build blocker（缺少 SelectionContext 导入）和 M1 video iframe domain slop
+- v0.4 Session 2.3.1：修复 B1 + M1，lint 0 / test 928 passed / build success
 - v0.4 中间目标从单纯 Site Profiles 扩展为 PageType + SiteProfile + IntentSnapshot + ClipStrategy
-- 建议后续进入 Session 2.2 (Seed Site Profiles) 或 Session 2.3 (Anti-Slop Review)，等待 ChatGPT 审查本 Session 后决定
+- 建议后续进入 Session 2.2 (Seed Site Profiles) 或 Session 3 (Navigation Summary Mode)，等待 ChatGPT 审查本 Session 后决定
 
 ---
 
@@ -33,9 +35,10 @@
 | Session 1 Page Type Detector | ✅ 已完成 | 已提交 commit 54a9957，支持 7 类 |
 | Session 1.1 Intent & Site Profile | ✅ 已完成 | docs-only：SITE_INTENT_MATRIX + QUALITY_GUARDRAILS |
 | Session 2 Site Profile Engine | ✅ 已完成 | 19 seed profiles + 纯函数匹配引擎，commit 006908e |
-| Session 2.1 Intent Signal Collector | ✅ 已完成 | 待 ChatGPT 审查 |
+| Session 2.1 Intent Signal Collector | ✅ 已完成 | commit 72db8b6，待 ChatGPT 审查 |
+| Session 2.3 Anti-Slop Review | ✅ 已完成 | read-only review，发现 B1 build blocker + M1 video slop |
+| Session 2.3.1 Build Fix & Migration | ✅ 已完成 | 待 ChatGPT 审查 |
 | Session 2.2 Seed Site Profiles | ⏳ 待启动 | 建议新增 |
-| Session 2.3 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 3 Navigation Summary Mode | ⏳ 待启动 | |
 | Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
@@ -54,6 +57,8 @@
 - [x] v0.4 Session 1.1：Intent & Site Profile Planning — docs-only（SITE_INTENT_MATRIX + QUALITY_GUARDRAILS）
 - [x] v0.4 Session 2：Site Profile Engine — 结构化 profile 数据 + 纯函数匹配引擎 + 19 seed profiles + 62 tests
 - [x] v0.4 Session 2.1：Intent Signal Collector — 意图信号采集（15 个函数 + 4 个类型/接口 + 61 tests）
+- [x] v0.4 Session 2.3：Anti-Slop Review — read-only review 发现 B1 build blocker + M1 video selector slop
+- [x] v0.4 Session 2.3.1：Build Fix + Video Iframe Selector Migration — 修复 B1/M1，lint 0 / test 928 / build success
 
 ---
 
@@ -85,5 +90,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本 Session 2.1 输出 → commit → 进入 Session 2.2 (Seed Site Profiles) 或 Session 2.3 (Anti-Slop Review)**
+**ChatGPT 审查本 Session 2.3.1 输出 → commit → 进入 Session 2.2 (Seed Site Profiles) 或 Session 3 (Navigation Summary Mode)**
 （注意：不要跳过 Intent Signal Collector 直接进入 Navigation Summary Mode 或 Comment/Selection Mode）
