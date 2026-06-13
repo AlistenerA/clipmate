@@ -11,7 +11,7 @@
 
 ## 当前阶段
 
-**v0.3 Session 6 已完成** — Article Boundary Guard：在 Readability 前后增加 DOM 噪音预清理、正文候选评分、正文尾部截断和低置信页面兜底。
+**v0.3 Session 7 已完成** — 文档、QA、版本号、打包：版本号升级到 0.3.0，更新所有发布文档和 QA 清单，lint/test/build/zip 全部通过。
 
 - v0.3 主线：内容保真增强版。
 - Session 6 交付：
@@ -42,10 +42,10 @@
 | Image / Link / Table Normalization | ✅ 已完成 | Session 4 — mediaLinkTableNormalizer 纯函数 + Turndown rules + 83 tests |
 | Markdown Preview | ✅ 已完成 | Session 5 |
 | Article Boundary Guard | ✅ 已完成 | Session 6 |
-| 文档、QA、版本号、打包 | ⬜ 待开始 | Session 7 |
+| 文档、QA、版本号、打包 | ✅ 已完成 | Session 7 — 版本号 0.3.0，所有发布文档更新，lint/test/build/zip 通过 |
 | 鲁棒性检查与修复 | ⬜ 待开始 | Session 8 |
-| package.json 版本号 | 0.2.0 | 未修改，留待 Session 7 |
-| manifest.config.ts 版本号 | 0.2.0 | 未修改，留待 Session 7 |
+| package.json 版本号 | 0.3.0 | Session 7 已升级 |
+| manifest.config.ts 版本号 | 0.3.0 | Session 7 已升级 |
 | manifest 权限 | 未变 | storage / activeTab / host_permissions api.notion.com |
 
 ---
@@ -60,14 +60,13 @@
 - [x] v0.3 Session 4：Image / Link / Table Normalization — mediaLinkTableNormalizer 纯函数、Turndown rules 增强、83 tests
 - [x] v0.3 Session 5：Markdown Preview — parseMarkdownPreview 纯函数、MarkdownPreview 安全组件、Popup 切换、41 tests（含卡住修复）
 - [x] v0.3 Session 6：Article Boundary Guard — DOM 噪音预清理、正文候选评分、尾部截断、低置信兜底、99 tests
+- [x] v0.3 Session 7：文档、QA、版本号、打包 — 版本号 0.3.0，README/隐私/权限/商店/测试计划/QA 清单更新，lint 0 errors / test 703 passed / build success / zip 129KB
 
 ---
 
 ## 未完成（按优先级）
 
-1. v0.3 Session 6：Article Boundary Guard
-2. v0.3 Session 7：文档、QA、版本号、打包
-3. v0.3 Session 8：鲁棒性检查与修复
+1. v0.3 Session 8：鲁棒性检查与修复
 5. v0.2 人工 QA（独立于 v0.3，由用户决定何时执行）
 6. v0.2 发布到 Edge Add-ons（独立于 v0.3，由用户决定何时执行）
 
@@ -75,4 +74,4 @@
 
 ## 下一阶段建议
 
-**由 ChatGPT 审查 Session 6 交付** → 用户确认 → 发送 v0.3 Session 7 专用 Prompt（文档、QA、版本号、打包）。
+**由 ChatGPT 审查 Session 7 交付** → 用户确认 → 发送 v0.3 Session 8 专用 Prompt（鲁棒性检查与修复）。

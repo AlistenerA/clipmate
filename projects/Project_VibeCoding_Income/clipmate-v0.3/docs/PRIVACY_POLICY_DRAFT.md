@@ -1,6 +1,6 @@
-# PRIVACY_POLICY_DRAFT.md — ClipMate v0.2 隐私政策定稿
+# PRIVACY_POLICY_DRAFT.md — ClipMate v0.3 隐私政策草稿
 
-> 上架 Edge Add-ons 时必须提供公开可访问的隐私政策 URL。建议将此内容托管到 GitHub Pages。
+> v0.3 发布候选草稿。上架 Edge Add-ons / Chrome Web Store 时必须提供公开可访问的隐私政策 URL。建议将此内容托管到 GitHub Pages。
 
 ---
 
@@ -53,7 +53,7 @@ ClipMate does **not** call any third-party favicon APIs. Website icons are extra
 - **We do not use** advertising identifiers or cookies.
 - **We do not execute** remote code — all extension code runs locally in your browser.
 - **We do not collect** personally identifiable information (PII).
-- **We do not process** user content with AI services.
+- **We do not process** user content with AI services or external language models.
 - **We do not sync** data to the cloud.
 - **We do not call** third-party favicon or API services for icons.
 
@@ -123,7 +123,7 @@ ClipMate **不调用**任何第三方 favicon API。网站图标从当前页面 
 - **不使用**广告标识符或 Cookie
 - **不执行**远程代码 — 所有扩展代码在浏览器本地运行
 - **不收集**个人身份信息（PII）
-- **不使用**AI 处理用户内容
+- **不使用** AI 或外部语言模型处理用户内容
 - **不做**云同步
 - **不调用**第三方 favicon API
 

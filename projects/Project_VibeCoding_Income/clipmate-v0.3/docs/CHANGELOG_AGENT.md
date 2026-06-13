@@ -4,6 +4,47 @@
 
 ---
 
+## v0.3 Session 7：文档、QA、版本号、打包 (2026-06-13)
+
+### 修改文件
+- `package.json` — version 0.2.0 → 0.3.0；zip 脚本输出 clipmate-v0.2.zip → clipmate-v0.3.zip
+- `manifest.config.ts` — version 0.2.0 → 0.3.0
+- `package-lock.json` — root package version 0.1.0 → 0.3.0（仅同步 version 字段，未改依赖）
+- `README.md` — 全面更新为 v0.3：新增内容保真增强 6 大特性、继承 v0.2 能力、项目结构更新（703 tests, 19 files）
+- `docs/PRIVACY_POLICY_DRAFT.md` — 标题更新为 v0.3 草稿；明确不接入 AI 或外部语言模型
+- `docs/PERMISSION_JUSTIFICATION.md` — 更新为 v0.3 权限对比表；v0.3 无权限变更；增加内容保真增强功能说明
+- `docs/STORE_LISTING_DRAFT.md` — 更新为 v0.3 草稿；增加 Markdown Target Profiles / 内容保真增强描述
+- `docs/TEST_PLAN.md` — 继承 v0.2 40 项 (TC-01~TC-40) + 新增 v0.3 内容保真 QA 18 项 (TC-41~TC-58)；增加真实网页人工 QA 建议表
+- `docs/RELEASE_CHECKLIST.md` — 更新为 v0.3；版本号 0.3.0；703 tests；新增鲁棒性检查项和 v0.3 QA 清单
+- `docs/MANUAL_QA_RESULT_TEMPLATE.md` — 更新为 v0.3；58 项可勾选模板 + 内容保真 QA 区块
+- `docs/CURRENT_STATUS.md` — Session 7 已完成
+- `docs/CHANGELOG_AGENT.md` — 本条记录
+- `docs/TEST_LOG.md` — Session 7 记录
+- `docs/ISSUES.md` — 更新状态
+- `docs/DECISIONS.md` — 新增 D-v0.3-034
+
+### 未修改文件
+- `clipmate-v0.1/` — 未修改
+- `clipmate-v0.2/` — 未修改
+- `clipmate-v0.3/src/` — 未修改
+- `clipmate-v0.3/tests/` — 未修改
+- `clipmate-v0.3/public/` — 未修改
+- `clipmate-v0.3/vite.config.ts` — 未修改
+- `clipmate-v0.3/tsconfig.json` — 未修改
+- `clipmate-v0.3/tailwind.config.js` — 未修改
+
+### 改动摘要
+- 版本号升级：package.json / manifest.config.ts / package-lock.json → 0.3.0
+- zip 脚本更新：clipmate-v0.2.zip → clipmate-v0.3.zip
+- 发布文档全面更新：README / 隐私政策 / 权限说明 / 商店文案 / 测试计划 / 发布清单 / QA 模板
+- 人工 QA 清单：从 40 项扩展到 58 项（新增 18 项 v0.3 内容保真 QA TC-41~TC-58）
+- 真实网页人工 QA 建议：网易/新浪/CSDN/掘金/GitHub/维基百科/百度搜索
+- 构建验证：lint 0 errors / test 703 passed / build success / zip clipmate-v0.3.zip (129KB)
+- 未新增权限、未新增依赖、未修改源码和测试
+- 未提交 dist/zip
+
+---
+
 ## v0.3 Session 6：Article Boundary Guard (2026-06-13)
 
 ### 新增文件

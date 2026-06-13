@@ -4,6 +4,64 @@
 
 ---
 
+## v0.3 Session 7 (2026-06-13)
+
+### 运行命令
+
+```
+npm run lint  → 0 errors, 0 warnings
+npm run test  → 703 passed (19 files), 0 failures
+npm run build → success (dist/manifest.json version = 0.3.0)
+npm run zip   → success (clipmate-v0.3.zip, 129,095 bytes)
+```
+
+### 版本号更新
+- package.json：0.2.0 → 0.3.0
+- manifest.config.ts：0.2.0 → 0.3.0
+- package-lock.json：0.1.0 → 0.3.0（仅同步 root version，未改依赖）
+
+### 文档更新
+- README.md：全面更新 v0.3 特性
+- PRIVACY_POLICY_DRAFT.md：v0.3 草稿标注 + AI 禁止声明
+- PERMISSION_JUSTIFICATION.md：v0.3 权限对比表
+- STORE_LISTING_DRAFT.md：v0.3 功能亮点
+- TEST_PLAN.md：58 项测试（继承 40 + 新增 18）
+- RELEASE_CHECKLIST.md：v0.3 发布清单
+- MANUAL_QA_RESULT_TEMPLATE.md：58 项可勾选模板
+
+### 构建产物
+- dist/ 生成，version 0.3.0 ✅
+- clipmate-v0.3.zip 生成，129,095 bytes ✅
+- 未提交 dist/zip
+
+### 检查项
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/src/ ✅
+- 未修改 clipmate-v0.3/tests/ ✅
+- lint 0 errors ✅
+- test 全部通过 ✅
+- build 成功 ✅
+- zip 成功 ✅
+- 未新增 manifest 权限 ✅
+- 未新增依赖 ✅
+- 未运行 npm install ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+
+### 安全搜索
+- 无真实 Token/API Key/Page ID ✅
+- 无 console.log 泄露正文/备注/Token ✅
+- 无 dangerouslySetInnerHTML / innerHTML 使用 ✅
+- 无 marked / markdown-it / react-markdown 依赖 ✅
+- 无 openai / deepseek / claude / zhipu API 调用 ✅
+- 无 screenshot / ocr ✅
+- manifest 无 tabs/downloads/scripting/identity/cookies 权限 ✅
+
+### 错误/失败
+无。
+
+---
+
 ## v0.3 Session 6 (2026-06-13)
 
 ### 运行命令

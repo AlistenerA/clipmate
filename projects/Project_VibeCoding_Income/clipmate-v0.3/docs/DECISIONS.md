@@ -3,6 +3,21 @@
 > 所有重要技术取舍必须记录在此，附带原因。后续轮次不能随意推翻。
 
 
+## v0.3 Session 7 决策
+
+### D-v0.3-034：Session 7 文档更新不修改源码和测试
+
+- **原因**：Session 7 是纯发布整理 Session，目标是把 v0.3 从"功能开发完成"整理为"可人工测试和候选发布"状态。所有内容保真增强已在 Session 1-6 完成且通过 lint/test/build 验证，Session 7 只做版本号升级、文档更新和构建产物生成。
+- **影响**：package.json / manifest.config.ts / package-lock.json 仅修改 version 字段；所有 src/ 和 tests/ 未修改；dist/ 和 zip 生成本地产物但未提交。
+- **可反转性**：高。版本号可随时回退，文档可恢复。
+
+### D-v0.3-035：人工 QA 从 40 项扩展到 58 项
+
+- **原因**：v0.3 新增 6 大内容保真增强模块，每个模块至少需要 2-3 项人工 QA 覆盖。新增 18 项 TC-41~TC-58 覆盖 Markdown Target Profiles / LaTeX / Code Block Cleaner / Image-Link-Table / Markdown Preview / Article Boundary Guard。
+- **影响**：TEST_PLAN.md 和 MANUAL_QA_RESULT_TEMPLATE.md 从 40 项扩展到 58 项，新增真实网页人工 QA 建议表。
+- **可反转性**：高。QA 项可增减。
+
+
 ## v0.3 Session 6 决策
 
 ### D-v0.3-029：articleBoundaryGuard 使用纯函数 + 分层清理策略

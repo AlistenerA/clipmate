@@ -6,9 +6,10 @@
 
 ## v0.3 开放问题
 
-### v0.3 Session 6 完成状态
+### v0.3 Session 7 完成状态
 
-- Session 6 Article Boundary Guard 已完成：preCleanDocument / isLikelyNoiseElement / calculateLinkDensity / hasEnoughArticleText / assessArticleConfidence / trimArticleBody / buildLowConfidenceSummary + 99 tests
+- Session 7 已完成：版本号 0.3.0，发布文档更新，QA 清单 58 项，lint/test/build/zip 全部通过
+- 下一步：Session 8 鲁棒性检查与修复
 
 ### v0.3 待决策问题（非 blocker）
 
