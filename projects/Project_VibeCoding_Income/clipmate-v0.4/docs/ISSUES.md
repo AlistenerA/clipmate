@@ -20,13 +20,23 @@
 
 | 编号 | 需求 | 状态 |
 |:---:|------|:---:|
-| F01 | 页面类型检测增强 | ✅ Session 1 已完成，待审查 |
+| F01 | 页面类型检测增强 | ✅ Session 1 已完成，已提交 |
 | F02 | 站点规则引擎 | Session 2 规划中 |
 | F03 | 导航页摘要模式 | Session 3 规划中 |
 | F04 | 评论选区模式 | Session 4 规划中 |
 | F05 | 标签搜索 UX | Session 5 规划中 |
 | F06 | 站点图标/主题缓存 | Session 6 规划中 |
 | F07 | 链接卡片预览 | Session 7 规划中 |
+
+---
+
+## v0.4 Session 1.1 新识别的风险
+
+| 编号 | 风险 | 关联 Session |
+|:---:|------|:--:|
+| R-v0.4-intent-001 | 短视频和视频评论区 DOM 动态变化（TikTok/Douyin/Bilibili 等），PageType 检测可能不准，需 Intent Snapshot 辅助判断 | Session 2.2 / Session 4 |
+| R-v0.4-intent-002 | 高访问站点适配若散落硬编码（domain if），会导致 vibe slop 和技术债务累积 | Session 2（必须通过 profile engine 管理）|
+| R-v0.4-intent-003 | 无法判断用户意图时应降级 unknown / needs-ai-later，不应强行猜 | Session 2.1 / 全局 |
 
 ---
 

@@ -4,6 +4,56 @@
 
 ---
 
+## v0.4 Session 1.1：Intent & Site Profile Planning (2026-06-13)
+
+### 性质
+
+docs-only，不修改业务代码。
+
+### 产出
+
+- `docs/SITE_INTENT_MATRIX.md` — 站点意图矩阵
+- `docs/QUALITY_GUARDRAILS.md` — 质量门禁
+
+### 新增文件
+
+- `docs/SITE_INTENT_MATRIX.md` — 站点意图矩阵
+  - 设计目标（5 类信号 + 隐私边界）
+  - 重点站点 Seed Profile 范围（搜索/长视频/短视频/社区/AI 对话，共 20+ 站点）
+  - 用户意图分类（14 种 Intent 类型）
+  - 判断优先级（8 条规则）
+  - IntentSnapshot 概念规划（类型定义 + 隐私约束）
+- `docs/QUALITY_GUARDRAILS.md` — 质量门禁
+  - Vibe Slop 定义（9 类风险）
+  - 模块边界建议（pageTypeDetector / siteProfileEngine / intentDetector / clipStrategy / extractors）
+  - 质量门禁时机（5 个 Anti-Slop Review 节点）
+  - 检查项清单（10 项）
+  - 后续 Session 命名建议
+  - 临时代码标记规范
+
+### 修改文件
+
+- `docs/V0.4_PLAN.md` — 补充：
+  - 中间目标从 Site Profiles 扩展为 PageType + SiteProfile + IntentSnapshot + ClipStrategy
+  - 增加 Session 2.1 / 2.2 / 2.3 建议
+  - 增加短视频/评论区风险说明
+  - 增加 unknown / needs-ai-later 处理策略
+- `docs/CURRENT_STATUS.md` — 更新进度表、已完成/未完成列表、下一阶段建议
+- `docs/DECISIONS.md` — 新增 4 项决策（D-v0.4-007 ~ D-v0.4-010）
+- `docs/ISSUES.md` — 新增 3 项风险（R-v0.4-intent-001 ~ R-v0.4-intent-003）
+- `docs/CHANGELOG_AGENT.md` — 本记录
+
+### 改动摘要
+
+- 为 v0.4 Session 2+ 提供完整的站点适配和用户意图判断设计规划
+- 明确短视频/评论区为 v0.4 高风险场景
+- 确立 Anti-Slop Review 机制，后续 Session 强制执行
+- 所有规划仅文档层面，未修改 src/ / tests/ / package / manifest
+- 所有站点规则必须通过结构化 profile engine 管理，禁止散落 domain if
+- 所有意图判断不依赖 AI，无法判断时降级 unknown / needs-ai-later
+
+---
+
 ## v0.4 Session 1：Page Type Detector (2026-06-13)
 
 ### 产出

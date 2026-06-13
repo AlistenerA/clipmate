@@ -4,6 +4,34 @@
 
 ---
 
+## v0.4 Session 1.1 决策
+
+### D-v0.4-010：v0.4 增加 Anti-Slop Review 节点，防止重复逻辑、紧耦合和目录失控
+
+- **原因**：v0.4 功能范围扩大（PageType + SiteProfile + Intent + ClipStrategy），多模块并行开发增加 vibe slop 风险。需要定期质量审查防止重复实现、散落硬编码、目录混乱。
+- **影响**：Session 2.3、Session 4.1、Session 8 前各增加一次 Anti-Slop Review。审查项定义在 `QUALITY_GUARDRAILS.md`。
+- **可反转性**：中。审查节点可调整频次。
+
+### D-v0.4-009：IntentSnapshot 默认只保存在当前 tab 内存，不持久化用户正文或评论全文
+
+- **原因**：用户意图判断需要 selection context + visible context + recent interaction 信息，但这些信息一旦持久化就可能包含用户内容。仅保留在当前 tab 内存可避免隐私风险。
+- **影响**：IntentSnapshot 不写入 chrome.storage，不发送到任何远程服务。tab 切换或关闭后信息自动清除。只保存统计量（如 selectionTextLength）、脱敏 hints（如 nearestTag），不保存原始内容。
+- **可反转性**：高。如果需要持久化统计量（如用于改善后续剪藏准确率），可以单独设计脱敏埋点。
+
+### D-v0.4-008：站点适配必须以结构化 profile seed list 管理，不写散落 domain if
+
+- **原因**：v0.4 的站点适配能力如果通过散落 `if (hostname === 'xxx')` 实现，将迅速劣化为 vibe slop。必须通过 Site Profile Engine 的结构化 profile（domain pattern + selector hints）统一管理。每个 profile 是数据配置，不是业务逻辑。
+- **影响**：Session 2 必须实现 Site Profile Engine 作为站点适配的唯一入口。Session 2.2 Seed Site Profiles 的 profile 配置文件通过引擎加载，不直接 hardcode 到 extractor / content script 中。
+- **可反转性**：低。推翻此决策等价于放弃 D-v0.4-004 和 D-v0.4-005 的架构原则。
+
+### D-v0.4-007：用户意图判断必须基于 PageType + SiteProfile + SelectionContext + VisibleContext，不依赖 AI
+
+- **原因**：v0.4 定位为无 AI 的纯前端增强版本。用户意图判断必须通过 DOM 结构、URL 模式、站点规则、用户交互信号等可解释的启发式方法实现。AI 辅助意图判断留到 v0.5+。
+- **影响**：Session 2.1 的 Intent Signal Collector 不接入任何 AI API。无法可靠判断的场景标记为 `unknown` 或 `needs-ai-later`，不强行猜。
+- **可反转性**：中。如果 Session 2.1 完成后意图准确率显著不足，可评估是否需要引入本地轻量模型（仍需 ChatGPT 审查）。
+
+---
+
 ## v0.4 Session 1 决策
 
 ### D-v0.4-006：检测结果先作为 metadata/report/summary 辅助，不直接改变保存策略

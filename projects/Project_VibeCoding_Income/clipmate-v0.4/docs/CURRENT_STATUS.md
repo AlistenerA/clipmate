@@ -12,13 +12,13 @@
 
 ## 当前阶段
 
-**v0.4 Session 1 已完成** — Page Type Detector，待 ChatGPT 审查。
+**v0.4 Session 1.1 已完成** — Intent & Site Profile Planning（docs-only，不写代码）。
 
-- 从稳定 `clipmate-v0.3/` 创建独立 `clipmate-v0.4/` 工作目录（Session 0）
-- 创建 `feature/clipmate-v0.4-site-profiles` 开发分支（Session 0）
-- 建立 v0.4 规划文档（Session 0）
-- 实现通用页面类型检测器，支持 7 类 PageType（Session 1）
-- 版本号策略：当前 package.json / manifest.config.ts 仍为 0.3.0，v0.4 release 前统一升级到 0.4.0
+- v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
+- v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
+- v0.4 中间目标从单纯 Site Profiles 扩展为 PageType + SiteProfile + IntentSnapshot + ClipStrategy
+- 建议后续增加 Session 2.1 (Intent Signal Collector) / 2.2 (Seed Site Profiles) / 2.3 (Anti-Slop Review)
+- 当前不直接进入 Session 2 Site Profile Engine 代码实现，等待 ChatGPT 审查本 Session
 
 ---
 
@@ -29,10 +29,15 @@
 | v0.4 工作区创建 | ✅ 已完成 | Session 0 |
 | v0.4 分支创建 | ✅ 已完成 | feature/clipmate-v0.4-site-profiles |
 | v0.4 规划文档 | ✅ 已完成 | V0.4_PLAN / AGENT_CONTEXT / CURRENT_STATUS 等 |
-| Session 1 Page Type Detector | ✅ 已完成 | 待 ChatGPT 审查，支持 7 类 |
+| Session 1 Page Type Detector | ✅ 已完成 | 已提交 commit 54a9957，支持 7 类 |
+| Session 1.1 Intent & Site Profile | ✅ 已完成 | docs-only：SITE_INTENT_MATRIX + QUALITY_GUARDRAILS |
 | Session 2 Site Profile Engine | ⏳ 待启动 | |
+| Session 2.1 Intent Signal Collector | ⏳ 待启动 | 建议新增 |
+| Session 2.2 Seed Site Profiles | ⏳ 待启动 | 建议新增 |
+| Session 2.3 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 3 Navigation Summary Mode | ⏳ 待启动 | |
 | Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
+| Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 5 Tag Search UX | ⏳ 待启动 | |
 | Session 6 Site Icon / Theme Cache | ⏳ 待启动 | |
 | Session 7 Link Card Preview | ⏳ 待启动 | |
@@ -44,20 +49,25 @@
 ## 已完成
 
 - [x] v0.4 Session 0：工作区创建与规划审查
-- [x] v0.4 Session 1：Page Type Detector — 页面类型识别增强（7 类，通用启发式）
+- [x] v0.4 Session 1：Page Type Detector — 页面类型识别增强（7 类，通用启发式，已提交）
+- [x] v0.4 Session 1.1：Intent & Site Profile Planning — docs-only（SITE_INTENT_MATRIX + QUALITY_GUARDRAILS）
 
 ---
 
 ## 未完成（按优先级）
 
 1. Session 2：Site Profile Engine — 站点规则引擎
-2. Session 3：Navigation Summary Mode — 导航页摘要模式
-3. Session 4：Comment / Selection Clip Mode — 评论选区模式
-4. Session 5：Tag Search UX — 标签搜索
-5. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
-6. Session 7：Link Card Preview — 链接卡片预览
-7. Session 8：Docs, QA, Version, Package
-8. Session 9：Robustness Check and Release Candidate Review
+2. Session 2.1：Intent Signal Collector — 意图信号采集（建议新增）
+3. Session 2.2：Seed Site Profiles — 重点站点 profile 种子（建议新增）
+4. Session 2.3：Anti-Slop Review — Profile + Intent 后质量审查（建议新增）
+5. Session 3：Navigation Summary Mode — 导航页摘要模式
+6. Session 4：Comment / Selection Clip Mode — 评论选区模式
+7. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
+8. Session 5：Tag Search UX — 标签搜索
+9. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
+10. Session 7：Link Card Preview — 链接卡片预览
+11. Session 8：Docs, QA, Version, Package
+12. Session 9：Robustness Check and Release Candidate Review
 
 ---
 
@@ -73,4 +83,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本 Session 1 输出 → 进入 Session 2 Site Profile Engine**
+**ChatGPT 审查本 Session 1.1 输出 → commit docs → 进入 Session 2 Site Profile Engine**
+（注意：不要直接跳到散落站点规则，必须通过结构化 profile engine）
