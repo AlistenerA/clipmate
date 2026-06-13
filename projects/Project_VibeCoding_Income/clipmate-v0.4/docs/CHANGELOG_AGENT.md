@@ -4,6 +4,44 @@
 
 ---
 
+## v0.4 Session 3.0：Navigation Summary Mode Strategy Design (2026-06-13)
+
+### 性质
+
+docs-only strategy design。不修改 src/tests，不改变保存策略。
+
+### 产出
+
+- `docs/NAVIGATION_SUMMARY_STRATEGY.md` — 导航摘要模式策略设计文档
+  - 目标：搜索页/导航页/低正文置信页的安全摘要流程
+  - 输入信号：明确可用的 PageType / SiteProfile / IntentSnapshot / Document 信号
+  - 触发条件草案：6 级优先级规则，selection-first 永远优先
+  - 输出结构草案：NavigationSummaryDraft + NavigationLink 概念设计
+  - 链接筛选策略：7 步流程（候选提取 → 清洗过滤 → 搜索页/导航页特殊策略）
+  - Notion / Markdown 关系：分阶段实现，先 draft builder 再接入
+  - Session 3 实现边界：拆分为 3.0/3.1/3.2 三个子 Session
+  - 风险：5 项已知风险，全部有缓解措施
+
+### 修改文件
+
+- `docs/NAVIGATION_SUMMARY_STRATEGY.md` — 新增（~350 lines）
+- `docs/CURRENT_STATUS.md` — 更新阶段、进度、下一步建议
+- `docs/CHANGELOG_AGENT.md` — 本记录
+- `docs/TEST_LOG.md` — Session 3.0 记录
+- `docs/ISSUES.md` — 新增 3 项导航摘要风险（R-v0.4-nav-001 ~ R-v0.4-nav-003）
+- `docs/DECISIONS.md` — 新增 3 项决策（D-v0.4-019 ~ D-v0.4-021）
+- `docs/SITE_INTENT_MATRIX.md` — 更新进度表，标记 Session 3.0 已完成
+
+### 改动摘要
+
+- 完成 Navigation Summary Mode 完整策略设计
+- 明确 Session 3 分 3 步实现：draft builder → 集成 → QA
+- 确立 selection-first > navigation summary 的优先级原则
+- 确立 "不抓取目标链接内容、不访问网络、不新增权限" 的安全底线
+- 本轮 docs-only，未修改 src/tests/package/manifest
+
+---
+
 ## v0.4 Session 2.2：Seed Profiles Manual QA / Refinement (2026-06-13)
 
 ### 性质

@@ -58,6 +58,18 @@
 
 ---
 
+## v0.4 Session 3.0 新识别风险
+
+| 编号 | 风险 | 关联 Session |
+|:---:|------|:--:|
+| R-v0.4-nav-001 | 导航页链接噪声高，可能超过候选链接处理能力，需限制每个 domain 3 条、总数 15 条、过滤噪音容器 | Session 3 |
+| R-v0.4-nav-002 | 搜索页 DOM 结构差异大，`searchResultCard` selector 为 seed/hint 级别，需有 fallback 到全页面提取 | Session 3 / Session 8 手动 QA |
+| R-v0.4-nav-003 | 低置信正文 fallback 可能覆盖用户本意保存的页面，须保证 selection-first 永远优先 | Session 3.1 |
+| R-v0.4-nav-004 | 搜索引擎结果页可能有 captcha/登录墙遮挡，DOM 受限时仅返回空列表，降级为安全 fallback | Session 3 |
+| R-v0.4-nav-005 | 搜索页动态加载结果（infinite scroll），首次 DOM 不完整，Session 3 仅基于首次 DOM 快照 | Session 3 / IS03（记录为后续版本考虑） |
+
+---
+
 ## v0.4 Session 2.2 新识别风险 / 待 QA
 
 | 编号 | 风险/待QA | 关联 Session |

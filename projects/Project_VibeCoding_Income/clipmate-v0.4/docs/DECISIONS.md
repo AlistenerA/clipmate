@@ -4,6 +4,28 @@
 
 ---
 
+## v0.4 Session 3.0 决策
+
+### D-v0.4-021：有用户选区时，selection-first 永远优先于 navigation summary
+
+- **原因**：用户主动划选内容是最明确的高优先级意图信号。无论页面是 navigation/search-results 还是低置信，只要用户划选了内容，必须走选区流程。Navigation summary 只在无选区时触发。
+- **影响**：触发条件规则优先级表中，规则 1（用户有选区 → 不触发）为最高优先级。Intent Signal Collector 的 selection-first 逻辑已经体现此原则（`detectClipIntent` 在有选区时优先返回 selection 相关 intent）。
+- **可反转性**：低。违反此决策等于覆盖用户明确意图。
+
+### D-v0.4-020：Navigation Summary 不抓取目标链接内容，不访问网络，不新增权限
+
+- **原因**：链接筛选的目的是提取当前页面内可见的超链接信息（text + href + domain），不是去抓取链接指向页面的内容。任何网络请求都需要新增 host_permissions 或绕过 CSP，与 v0.4 的纯前端定位冲突。
+- **影响**：Session 3 实现的链接提取仅限于 `doc.querySelectorAll('a[href]')` 的只读 DOM 操作。`NavigationLink` 结构的 `domain` 字段通过 `new URL(href).hostname` 从 href 字符串解析，不发起请求。
+- **可反转性**：低。推翻此决策意味着引入网络权限和隐私风险。
+
+### D-v0.4-019：Navigation Summary Mode 先实现内部 draft builder，再接入复制/保存流程
+
+- **原因**：当前 `buildLowConfidenceSummary` 直接将 Markdown 字符串拼接与链接提取耦合在一起，难以测试、难以接入 Notion block 转换。应先实现一个纯函数 draft builder，输出结构化的 `NavigationSummaryDraft`，再由下游（Markdown 序列化器、Notion block 转换器）消费。
+- **影响**：Session 3 实现纯函数 draft builder + 单元测试；Session 3.1 最小接入低置信 fallback，保持 Markdown 输出向后兼容；Session 3.2 做 Notion block 转换。
+- **可反转性**：中。如果 Session 3 测试覆盖充分且集成无退化，此拆分验证有效后不再反转。
+
+---
+
 ## v0.4 Session 2.2 决策
 
 ### D-v0.4-018：站点级 selector 只能保存在 seedProfiles.ts，Intent / PageType / Extractor 不写具体站点 domain 规则

@@ -4,6 +4,28 @@
 
 ---
 
+## v0.4 Session 3.0 (2026-06-13)
+
+### 运行命令
+
+本轮为 docs-only strategy design，未运行 lint/test/build。
+
+### 原因
+
+无代码变更。本轮产出为 `NAVIGATION_SUMMARY_STRATEGY.md` 及配套文档更新。
+
+### 检查项
+
+- git status --short：clean（仅 docs 文件变更）✅
+- git diff --stat：仅 docs 文件变更 ✅
+- git ls-files --others --exclude-standard：无输出 ✅
+- 敏感信息检查（rg）：无真实 Token/API Key/Page ID ✅
+- 未修改 clipmate-v0.1/v0.2/v0.3 ✅
+- 未修改 src/tests/package/manifest ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+
+---
+
 ## v0.4 Session 2.2 (2026-06-13)
 
 ### 运行命令

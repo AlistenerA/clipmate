@@ -191,19 +191,25 @@ Intent 判断建立在 PageType 之上但不取代：
 | Session 2.1 | ✅ 已完成 | Intent Signal Collector（intent.types / intentSignalCollector / 61 tests，commit 72db8b6）|
 | Session 2.3 | ✅ 已完成 | Anti-Slop Review（只读审查，发现 B1 + M1）|
 | Session 2.3.1 | ✅ 已完成 | Build Fix + Video Iframe Selector Migration（commit cf38675）|
-| Session 2.2 | ✅ 本轮 | Seed Profiles Manual QA / Refinement（11 profiles 补强，所有 19 profiles 至少 1 个 selectorHints）|
+| Session 2.2 | ✅ 完成 | Seed Profiles Manual QA / Refinement（11 profiles 补强，所有 19 profiles 至少 1 个 selectorHints，commit 36c638b）|
+| Session 3.0 | ✅ 完成 | Navigation Summary Mode Strategy Design（docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md，待 ChatGPT 审查）|
 
 **Session 2.2 实现要点：**
 
-1. 所有 19 个 seed profiles 现在至少有一个 selectorHints 字段。
-2. 搜索类（3 profiles）：均有 searchResultCard；长视频类（5 profiles）：均有 videoPlayer，其中 4 个补强了 contentContainer + commentContainer；短视频类（3 profiles）：均有 videoPlayer，全部补强了 contentContainer + commentContainer；社交/社区类（4 profiles）：均有 contentContainer 或 commentContainer；AI chat 类（4 profiles）：均有 contentContainer。
-3. 所有 selector 为 seed/hint 级别，基于通用 DOM 结构猜测，不承诺真实站点 100% 有效。需真实站点手动 QA 的 profile 记录在 ISSUES.md（QA01-QA05）。
-4. 站点级 selector 仅存在于 seedProfiles.ts，content/intent/ / pageTypeDetector.ts 中无任何站点 domain 硬编码。
-5. 本轮不改变 SiteProfile 类型、不修改 engine、不改变保存策略。
+...
+
+**Session 3.0 策略设计要点：**
+
+1. 明确了 Navigation Summary Mode 的输入信号范围：PageType + SiteProfile + IntentSnapshot + Document（只读 DOM）。
+2. 设计了 6 级触发条件优先级，最高优先级为 selection-first（有选区时不触发导航摘要）。
+3. 设计了 `NavigationSummaryDraft` 输出结构和链接筛选策略（优先 searchResultCard → main/article 区域 → 全页面 fallback）。
+4. 拆分了 Session 3 实现边界：Session 3 draft builder → Session 3.1 集成 → Session 3.2 QA + Notion block。
+5. `clip-navigation-summary` 对应的实现路径是 Navigation Summary Draft Builder（Session 3）。
+6. 确立 "不抓取目标链接内容、不访问网络、不新增权限" 的安全底线。
 
 **下一阶段：**
 
-Profile 数据层（PageType + SiteProfile + IntentSnapshot）已就绪，可进入 Session 3 Navigation Summary Mode。
+Session 3.0 策略设计完成后，进入 Session 3 Navigation Summary Draft Builder 纯函数实现。Profile 数据层（searchResultCard / contentContainer selectorHints）和 Intent 信号（clip-navigation-summary）已就绪，Session 3 可直接使用。
 
 ---
 

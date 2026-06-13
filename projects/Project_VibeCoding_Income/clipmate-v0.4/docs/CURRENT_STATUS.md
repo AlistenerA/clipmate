@@ -12,7 +12,11 @@
 
 ## 当前阶段
 
-**v0.4 Session 2.2 已完成** — Seed Profiles Manual QA / Refinement（待 ChatGPT 审查）。
+**v0.4 Session 3.0 已完成** — Navigation Summary Mode Strategy Design（待 ChatGPT 审查）。
+
+- 本轮 docs-only strategy design，未修改 src/tests
+- 产出 `NAVIGATION_SUMMARY_STRATEGY.md`
+- 下一步建议 Session 3：Navigation Summary Draft Builder
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
@@ -38,7 +42,8 @@
 | Session 2.1 Intent Signal Collector | ✅ 已完成 | commit 72db8b6，待 ChatGPT 审查 |
 | Session 2.3 Anti-Slop Review | ✅ 已完成 | read-only review，发现 B1 build blocker + M1 video slop |
 | Session 2.3.1 Build Fix & Migration | ✅ 已完成 | 待 ChatGPT 审查 |
-| Session 2.2 Seed Site Profiles | ✅ 已完成 | 本轮补强 11 profiles + 8 tests，待 ChatGPT 审查 |
+| Session 2.2 Seed Site Profiles | ✅ 已完成 | 本轮补强 11 profiles + 8 tests，commit 36c638b |
+| Session 3.0 Strategy Design | ✅ 已完成 | docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md，待 ChatGPT 审查 |
 | Session 3 Navigation Summary Mode | ⏳ 待启动 | |
 | Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
@@ -60,6 +65,7 @@
 - [x] v0.4 Session 2.3：Anti-Slop Review — read-only review 发现 B1 build blocker + M1 video selector slop
 - [x] v0.4 Session 2.3.1：Build Fix + Video Iframe Selector Migration — 修复 B1/M1，lint 0 / test 928 / build success
 - [x] v0.4 Session 2.2：Seed Profiles Manual QA / Refinement — 补强 11 个 profile selectorHints，8 个新测试，所有 19 个 profile 至少 1 个 hint
+- [x] v0.4 Session 3.0：Navigation Summary Mode Strategy Design — docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md
 
 ---
 
@@ -88,5 +94,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本 Session 2.2 输出 → commit → 进入 Session 3 Navigation Summary Mode**
-（v0.4 中间目标 PageType + SiteProfile + IntentSnapshot 的 profile 数据层已就绪，下游 Session 3 可使用 siteProfileMatch.selectorHints 信息）
+**ChatGPT 审查本 Session 3.0 输出 → commit → 进入 Session 3 Navigation Summary Draft Builder**
+（Navigation Summary Mode 策略设计已完成，明确了触发条件、输入信号、链接筛选策略、输出结构、Session 拆分和风险。Session 3 可直接实现 draft builder。）
