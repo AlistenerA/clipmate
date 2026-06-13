@@ -4,6 +4,71 @@
 
 ---
 
+## v0.4 Session 3.1 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 26 文件 1067 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：26 个测试文件，1067 个测试，全部通过
+- `npm run build`：构建成功，104 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| navigation-summary-markdown.test.ts | 55 | ✅ 全部通过（新增）|
+| article-boundary-guard.test.ts | 114 | ✅ 全部通过（更新 5 tests，Session 3 继承 111）|
+| 其余 24 个测试文件 | 898 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试（navigation-summary-markdown.test.ts）
+
+- escapeMarkdownText：20 tests（16 种 Markdown 控制字符转义、空输入、中文、多字符序列）
+- formatNavigationSummaryMarkdown：20 tests（标题/warning/URL/pageType/domain/siteProfileId/links/text escape/domain escape/空链接/reasons/escape/上限 5/空 reasons/不含 body/innerHTML/comment/DOM）
+- buildNavigationMarkdownFallback：9 tests（search-results/navigation/low-confidence+high-linkDensity/article/forum-or-comment/video/selection-first/dangerous links/DOM-free）
+- Safety checks：6 tests（chrome API/storage/document/network/full-text fields）
+
+### 本轮更新测试（article-boundary-guard.test.ts）
+
+- 更新 search-results pageType 测试：适配新结构化 Markdown 输出
+- 更新 navigation pageType 测试：适配新结构化 Markdown 输出
+- 新增 low-confidence+high-linkDensity 集成测试
+- 新增旧 fallback 不退化的验证测试
+- 新增 video pageType 不走新路径的验证测试
+
+### 错误/修复
+
+1. `formatWarning(draft)` 误传完整 draft 对象而非 `draft.warning` → 已修复
+2. 4 个测试预期值需适配 Markdown escape（domain 的 `.`、siteProfile 的 `-`、reasons count filter 需限定 section、低置信中文匹配）→ 已修复
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1067 tests pass ✅
+- build success ✅
+- serializer 不访问 chrome API / storage / network ✅
+- serializer 不访问 document ✅
+- serializer 不保存 selected text / 正文 / 评论 / Markdown / 完整 DOM ✅
+
+---
+
 ## v0.4 Session 3 (2026-06-13)
 
 ### 运行命令

@@ -870,18 +870,46 @@ describe('buildLowConfidenceSummary', () => {
     expect(result).toContain('Link')
   })
 
-  it('uses search results message for search page type', () => {
+  it('uses navigation summary draft for search-results page type', () => {
     const doc = makeDom('<body><a href="/a">Link</a></body>')
     const result = buildLowConfidenceSummary(doc, '', '', 'search-results')
     expect(result).toContain('搜索结果页')
-    expect(result).toContain('少量主要结果链接')
+    expect(result).toContain('主要结果摘要')
+    expect(result).toContain('- Source:')
+    expect(result).toContain('## 主要链接')
   })
 
-  it('uses navigation message for navigation page type', () => {
+  it('uses navigation summary draft for navigation page type', () => {
     const doc = makeDom('<body><a href="/a">Link</a></body>')
     const result = buildLowConfidenceSummary(doc, '', '', 'navigation')
-    expect(result).toContain('导航或聚合页')
-    expect(result).toContain('无关链接')
+    expect(result).toContain('导航/目录页')
+    expect(result).toContain('主要链接摘要')
+    expect(result).toContain('- Source:')
+    expect(result).toContain('## 主要链接')
+  })
+
+  it('uses navigation summary draft for low confidence + high link density', () => {
+    const doc = makeDom('<body><a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'LowConf', 'https://x.com', 'unknown', 0.3, 0.7)
+    expect(result).toContain('# LowConf')
+    expect(result).toContain('置信度较低')
+    expect(result).toContain('- Source:')
+    expect(result).toContain('## 主要链接')
+  })
+
+  it('falls back to old summary when navigation summary not triggered', () => {
+    const doc = makeDom('<body><p>some content</p></body>')
+    const result = buildLowConfidenceSummary(doc, 'Test Page', 'https://example.com')
+    expect(result).toContain('当前页面可能不是文章页')
+    expect(result).toContain('**Test Page**')
+  })
+
+  it('falls back to old summary for video page type', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, '', '', 'video')
+    expect(result).toContain('视频页')
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
   })
 })
 

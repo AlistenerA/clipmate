@@ -2,7 +2,11 @@
 
 > **Session 3.0 docs-only strategy design。** 本文档不包含代码实现。具体实现由 Session 3/3.1/3.2 完成。
 >
-> **Session 3 Draft Builder 已完成。** 实现文件：`src/content/navigationSummary/navigationSummaryBuilder.ts`（7 个纯函数）、`tests/navigation-summary-builder.test.ts`（73 tests）。仍未接入保存流程，Session 3.1 完成集成。
+> **Session 3 Draft Builder 已完成。** 实现文件：`src/content/navigationSummary/navigationSummaryBuilder.ts`（7 个纯函数）、`tests/navigation-summary-builder.test.ts`（73 tests）。
+>
+> **Session 3.1 Markdown + Minimal Integration 已完成。** 实现文件：`src/content/navigationSummary/navigationSummaryMarkdown.ts`（escapeMarkdownText / formatNavigationSummaryMarkdown / buildNavigationMarkdownFallback）、`tests/navigation-summary-markdown.test.ts`（55 tests）。`buildLowConfidenceSummary` 已委托给 draft builder + serializer。
+>
+> **仍未接入 Notion block 转换。** Session 3.2 完成 Notion block 转换。
 >
 > 本文档在 Session 1/2/2.1/2.2 完成后编写，基于已有 PageTypeDetector、SiteProfileEngine、IntentSignalCollector 的能力。
 
@@ -247,20 +251,26 @@ callout block（warning 文案）
 - 不改变保存行为
 - 不使用现有 `buildLowConfidenceSummary` 代码（独立实现新模块）
 
-### Session 3.1：Navigation Summary Integration
+### Session 3.1：Navigation Summary Integration ✅ 已完成
 
-**性质**：最小接入现有低置信 fallback 路径。
+**性质**：Markdown serializer + 最小接入现有低置信 fallback 路径。
 
-**产出**：
-- 修改 `content/index.ts` 或 `articleBoundaryGuard.ts` 的低置信分支，使用 draft builder 生成结构化摘要再转 Markdown
-- 保持 selection-first 不变
-- 验证 Markdown 输出向后兼容（现有测试不退化）
-- 补充集成测试
+**实际产出**：
+- `src/content/navigationSummary/navigationSummaryMarkdown.ts` — 安全 Markdown serializer
+  - `escapeMarkdownText(text)` — 转义 16 种 Markdown 控制字符
+  - `formatNavigationSummaryMarkdown(draft)` — draft → 结构化 Markdown 字符串
+  - `buildNavigationMarkdownFallback(input)` — 最小集成函数，返回 string | null
+- 修改 `articleBoundaryGuard.ts`：`buildLowConfidenceSummary` 内部委托给 draft builder + serializer
+- 未修改 `content/index.ts`（向后兼容）
+- `tests/navigation-summary-markdown.test.ts` — 55 tests
+- 更新 `tests/article-boundary-guard.test.ts` — 5 tests（适配新格式）
 
-**边界**：
-- 只在 `assessArticleConfidence === 'low'` 或 `pageType` 为 navigation/search-results 时接入
-- 不改变 Popup UI
-- 不改变 Notion 保存流程（Markdown 字符串接口不变）
+**已验证**：
+- lint 0 / test 1067（+58 new）全部通过 / build success（104 modules）
+- Markdown serializer 为纯函数，不访问 document/storage/chrome API/network
+- `buildLowConfidenceSummary` 对 navigation/search-results 自动走新路径
+- 旧 fallback 在不触发场景下不退化的验证通过
+- 保持不变：selection-first、Popup UI、Notion 保存流程、background route
 
 ### Session 3.2：Navigation Summary QA / Fix + Notion Block
 

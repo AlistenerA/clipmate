@@ -22,7 +22,7 @@
 |:---:|------|:---:|
 | F01 | 页面类型检测增强 | ✅ Session 1 已完成，已提交 |
 | F02 | 站点规则引擎 | ✅ Session 2 已完成 |
-| F03 | 导航页摘要模式 | ✅ Session 3 Draft Builder 已完成，Session 3.1 待集成 |
+| F03 | 导航页摘要模式 | ✅ Session 3 Draft Builder 已完成，Session 3.1 Markdown + Minimal Integration 已完成 |
 | F04 | 评论选区模式 | Session 4 规划中 |
 | F05 | 标签搜索 UX | Session 5 规划中 |
 | F06 | 站点图标/主题缓存 | Session 6 规划中 |
@@ -85,6 +85,12 @@
 ## v0.4 Blocker
 
 当前无 blocker。
+
+### Session 3.1 已知限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS01 | low-confidence+high-linkDensity 路径未从 content/index.ts 触发 | minor | `buildLowConfidenceSummary` 已支持 articleConfidence/linkDensity 参数，但 content/index.ts 尚未传递报告值。navigation/search-results pageType 路径已完成闭环。 |
 
 ### Session 2.3 已修复问题
 

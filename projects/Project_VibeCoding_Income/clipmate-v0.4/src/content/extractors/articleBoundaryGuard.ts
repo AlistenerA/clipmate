@@ -1,5 +1,7 @@
 import type { PageType } from '../../shared/utils/pageTypeDetector'
 import { extractSignalsFromDocument, detectPageType } from '../../shared/utils/pageTypeDetector'
+import { buildNavigationMarkdownFallback } from '../navigationSummary/navigationSummaryMarkdown'
+import type { NavigationSummaryInput } from '../navigationSummary/navigationSummary.types'
 
 export type { PageType }
 
@@ -319,18 +321,35 @@ export function buildLowConfidenceSummary(
   title: string,
   url: string,
   pageType?: PageType,
+  articleConfidence?: number,
+  linkDensity?: number,
 ): string {
+  const resolvedPageType: PageType = pageType ?? 'unknown'
+  const navInput: NavigationSummaryInput = {
+    document: doc,
+    title,
+    url,
+    pageType: resolvedPageType,
+    siteProfileMatch: null,
+    intentSnapshot: null,
+    articleConfidence,
+    linkDensity,
+  }
+
+  const navMarkdown = buildNavigationMarkdownFallback(navInput)
+  if (navMarkdown) return navMarkdown
+
   const parts: string[] = []
 
-  if (pageType === 'search-results') {
+  if (resolvedPageType === 'search-results') {
     parts.push('> 当前页面可能是搜索结果页，已仅保留少量主要结果链接。')
-  } else if (pageType === 'navigation') {
+  } else if (resolvedPageType === 'navigation') {
     parts.push('> 当前页面可能是导航或聚合页，已避免保存大量无关链接。')
-  } else if (pageType === 'forum-or-comment') {
+  } else if (resolvedPageType === 'forum-or-comment') {
     parts.push('> 当前页面可能是评论或论坛页，已避免保存大量楼层。')
-  } else if (pageType === 'video') {
+  } else if (resolvedPageType === 'video') {
     parts.push('> 当前页面可能是视频页，已避免保存大量媒体元素。')
-  } else if (pageType === 'ai-answer') {
+  } else if (resolvedPageType === 'ai-answer') {
     parts.push('> 当前页面可能是 AI 对话页，已避免保存完整对话内容。')
   } else {
     parts.push('> 当前页面可能不是文章页，已避免保存大量导航或推荐链接。')

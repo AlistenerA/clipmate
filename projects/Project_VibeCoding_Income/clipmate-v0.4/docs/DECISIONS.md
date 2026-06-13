@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 3.1 决策
+
+### D-v0.4-025：Navigation Summary minimal integration 只接入低置信 fallback，不覆盖 selection-first
+
+- **原因**：`buildLowConfidenceSummary` 的旧调用点（content/index.ts）只在 `report.confidence === 'low'` 或 fallback 路径中触发，这些场景下用户无选区概率极高。selection-first 由 Intent Signal Collector 在 `shouldBuildNavigationSummary` 中通过 `intentSnapshot.selectionPresent` 再次验证。新增集成不拦截任何有选区的场景。
+- **影响**：`buildNavigationMarkdownFallback` 在 `intentSnapshot.selectionPresent && selectionTextLength > 0` 时返回 null，确保 selection-first 不被覆盖。`buildLowConfidenceSummary` 的新代码路径同样遵循此原则。
+- **可反转性**：低。违反此决策等于覆盖用户明确意图（D-v0.4-021）。
+
+### D-v0.4-024：Navigation Summary Markdown serializer 只格式化已有 draft，不读取 DOM、不访问网络、不写 storage
+
+- **原因**：Markdown serializer 的职责是将已构建的 NavigationSummaryDraft 转换为安全 Markdown 字符串。访问 DOM、网络或 storage 会引入副作用、降低可测试性，并与 v0.4 纯前端安全定位冲突。
+- **影响**：`escapeMarkdownText` 和 `formatNavigationSummaryMarkdown` 均为纯函数，接收字符串或结构化对象，返回字符串。`buildNavigationMarkdownFallback` 仅组合已有纯函数（shouldBuild + buildDraft + formatMarkdown），不新增副作用。
+- **可反转性**：低。推翻此决策需要重新设计 serializer 模块边界。
+
+---
+
 ## v0.4 Session 3 决策
 
 ### D-v0.4-023：Navigation Summary links 只从当前 DOM 的 a[href] 提取，不访问目标链接内容

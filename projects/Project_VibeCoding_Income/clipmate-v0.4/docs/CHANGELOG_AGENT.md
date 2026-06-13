@@ -4,6 +4,66 @@
 
 ---
 
+## v0.4 Session 3.1：Navigation Summary Markdown + Minimal Integration (2026-06-13)
+
+### 性质
+
+代码实现：Markdown serializer + 最小低置信 fallback 接入。未改 content/index.ts，未接入 Notion block，未改 Popup UI。
+
+### 产出
+
+- `src/content/navigationSummary/navigationSummaryMarkdown.ts` — Markdown serializer（~95 lines）
+  - `escapeMarkdownText(text)` — 转义 16 种 Markdown 控制字符
+  - `formatNavigationSummaryMarkdown(draft)` — draft → 安全 Markdown 字符串
+  - `buildNavigationMarkdownFallback(input)` — 最小集成函数，返回 string | null
+- `tests/navigation-summary-markdown.test.ts` — 55 tests
+
+### 新增文件
+
+- `src/content/navigationSummary/navigationSummaryMarkdown.ts` — Markdown serializer 与集成函数
+  - `escapeMarkdownText(text: string): string` — 遍历字符，对 16 种 Markdown 特殊字符加反斜杠前缀，不破坏中文/英文
+  - `formatNavigationSummaryMarkdown(draft: NavigationSummaryDraft): string` — 生成标题 H1、warning blockquote、metadata 列表、主要链接编号列表（带 domain）、生成原因列表（最多 5 条）
+  - `buildNavigationMarkdownFallback(input: NavigationSummaryInput): string | null` — 调用 shouldBuildNavigationSummary → null 或 buildDraft + formatMarkdown → string
+  - 不访问 document/storage/chrome API/network，不保存 selected text/正文/评论/完整 DOM
+- `tests/navigation-summary-markdown.test.ts` — 55 tests
+  - escapeMarkdownText：20 tests（16 种特殊字符 + 空输入 + 中文 + 混合 + 多字符序列）
+  - formatNavigationSummaryMarkdown：20 tests（标题/warning/URL/pageType/domain/siteProfileId/链接/text escape/domain escape/空链接/生成原因/reason escape/上限 5/空 reasons 省略/不包含 body/innerHTML/comment/DOM）
+  - buildNavigationMarkdownFallback：9 tests（search-results/navigation/low-confidence+high-linkDensity/article/forum-or-comment/video/selection-first/dangerous links/不包含 DOM）
+  - Safety checks：6 tests（chrome API/storage/document/network/full-text fields）
+
+### 修改文件
+
+- `src/content/navigationSummary/index.ts` — +1 行 export
+- `src/content/extractors/articleBoundaryGuard.ts` — 29 行变更
+  - 导入 `buildNavigationMarkdownFallback` 和 `NavigationSummaryInput`
+  - `buildLowConfidenceSummary` 签名扩展：新增可选 `articleConfidence?` 和 `linkDensity?` 参数
+  - 内部优先调用 `buildNavigationMarkdownFallback`，返回结构化 Markdown 时直接返回
+  - navigation/search-results 页面类型会自动走新的 draft builder + serializer 路径
+  - 旧触发条件（无 pageType 或非触发类型）仍走原有 fallback 逻辑
+- `tests/article-boundary-guard.test.ts` — 38 行变更
+  - 更新 2 个旧测试（search-results/navigation pageType）：适配新结构化 Markdown 输出格式
+  - 新增 3 个测试：low-confidence+high-linkDensity 集成、旧 fallback 不退化的验证、video pageType 不走新路径
+
+### 未修改
+
+- 未修改 `src/content/index.ts`（旧调用点只需 4 args，新 params 可选，向后兼容）
+- 未修改 `src/popup/`、`src/options/`、`src/background/`
+- 未修改 Notion 保存流程、Notion block 转换
+- 未修改 selection-first 行为
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+
+### 改动摘要
+
+- 实现安全 Markdown serializer：16 种控制字符转义，不破坏 URL href
+- `buildLowConfidenceSummary` 委托给新的 draft builder + serializer，navigation/search-results 页面类型自动走新路径
+- low-confidence+high-linkDensity 路径已实现但需 content/index.ts 传递报告值才能触发（deferred）
+- 纯函数设计：不访问 document/storage/chrome API/network
+- 不保存 selected text、正文、评论、完整 DOM
+- lint 0 / test 1067（+58 new）全部通过 / build success（104 modules）
+
+---
+
 ## v0.4 Session 3：Navigation Summary Draft Builder (2026-06-13)
 
 ### 性质
