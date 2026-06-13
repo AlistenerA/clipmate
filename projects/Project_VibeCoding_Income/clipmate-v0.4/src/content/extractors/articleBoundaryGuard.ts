@@ -62,6 +62,16 @@ const TAIL_CUT_PATTERNS = [
   '广告', '推广',
 ]
 
+const ARTICLE_CONFIDENCE_NUMERIC: Record<string, number> = {
+  high: 0.9,
+  medium: 0.5,
+  low: 0.2,
+}
+
+export function confidenceToNumeric(confidence: string): number {
+  return ARTICLE_CONFIDENCE_NUMERIC[confidence] ?? 0
+}
+
 const MIN_ARTICLE_TEXT_LENGTH = 200
 const MIN_PARAGRAPH_COUNT = 2
 const MAX_LINK_DENSITY_HIGH = 0.3

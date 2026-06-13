@@ -4,6 +4,16 @@
 
 ---
 
+## v0.4 Session 3.2 决策
+
+### D-v0.4-026：low-confidence + high-linkDensity 导航摘要仅作为 fallback，不覆盖有专属处理器的页面类型
+
+- **原因**：视频页、论坛评论页、AI 对话页已有自己的专属低置信 fallback 消息（如 "已避免保存大量媒体元素" "已避免保存大量楼层" 等）。低置信 + 高链接密度触发条件对这类页面无意义——视频页天然链接密度高但不应被当导航页。
+- **影响**：`shouldBuildNavigationSummary` 新增 `SPECIALIZED_NON_NAV_PAGE_TYPES` 集合（video / forum-or-comment / ai-answer），规则 4/5（低置信+高链接密度 / unknown+高链接密度）不对此类页面触发。显式 intent（clip-navigation-summary）和显式 pageType（navigation / search-results）不受影响。
+- **可反转性**：中。若后续发现典型视频页经常被误分类为文章页且需要 navigation summary，可重新评估是否移除 guard 或将 guard 升级为更智能的判断。
+
+---
+
 ## v0.4 Session 3.1 决策
 
 ### D-v0.4-025：Navigation Summary minimal integration 只接入低置信 fallback，不覆盖 selection-first

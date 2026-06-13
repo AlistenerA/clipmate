@@ -12,15 +12,15 @@
 
 ## 当前阶段
 
-**v0.4 Session 3.1 已完成** — Navigation Summary Markdown + Minimal Integration（待 ChatGPT 审查）。
+**v0.4 Session 3.2 已完成** — Navigation Summary QA Fix + IS01 Completion（待 ChatGPT 审查）。
 
-- 本轮实现 Markdown serializer + 最小 low-confidence fallback 接入
-- 新增 `navigationSummaryMarkdown.ts`（escapeMarkdownText / formatNavigationSummaryMarkdown / buildNavigationMarkdownFallback）
-- 修改 `articleBoundaryGuard.ts`：`buildLowConfidenceSummary` 新增可选 articleConfidence/linkDensity 参数，内部调用新的 draft builder + serializer 生成结构化 Markdown
-- 新增 55 tests + 更新 5 tests，总测试数 1067
-- 未修改 content/index.ts（向后兼容，旧调用点无需修改）
-- 未接入 Notion block，未改 Popup UI，未改变 selection-first
-- 下一步建议 Session 3.2 QA Fix 或 Session 4 Comment / Selection Core
+- IS01 修复：`content/index.ts` 两个调用点传递 `confidenceToNumeric(report.confidence)` 和 `report.linkDensity`
+- Guard：视频/论坛/AI-answer 页面的低置信+高链接密度不误触发 Navigation Summary
+- 新增 `confidenceToNumeric` 函数（high→0.9, medium→0.5, low→0.2）
+- 新增 17 个测试（article-boundary-guard +7, builder +7, markdown +3），总测试数 1084
+- 新增 `docs/NAVIGATION_SUMMARY_QA.md` — 7 场景人工测试文档
+- 未接入 Notion block，未改 Popup/Options/Background
+- 下一步建议 Session 4 Comment / Selection Core，或 Session 3.3 Anti-Slop Review
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
@@ -50,6 +50,7 @@
 | Session 3.0 Strategy Design | ✅ 已完成 | docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md |
 | Session 3 Navigation Summary Draft Builder | ✅ 已完成 | 纯函数 draft builder + 73 tests，待 ChatGPT 审查 |
 | Session 3.1 Navigation Summary Integration | ✅ 已完成 | Markdown serializer + minimal fallback，待 ChatGPT 审查 |
+| Session 3.2 Navigation Summary QA Fix + IS01 | ✅ 已完成 | IS01 修复 + guard + 17 tests + QA doc，待 ChatGPT 审查 |
 | Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 5 Tag Search UX | ⏳ 待启动 | |
@@ -73,6 +74,7 @@
 - [x] v0.4 Session 3.0：Navigation Summary Mode Strategy Design — docs-only，产出 NAVIGATION_SUMMARY_STRATEGY.md
 - [x] v0.4 Session 3：Navigation Summary Draft Builder — 纯函数 draft builder + 73 tests + 文档更新
 - [x] v0.4 Session 3.1：Navigation Summary Markdown + Minimal Integration — Markdown serializer + buildLowConfidenceSummary delegate + 55 new tests
+- [x] v0.4 Session 3.2：Navigation Summary QA Fix + IS01 Completion — IS01 fix + guard + 17 new tests + NAVIGATION_SUMMARY_QA.md
 
 ---
 
@@ -101,5 +103,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 3.1 输出 → commit → 进入 Session 3.2 Navigation Summary QA Fix / Notion Block**
-（Navigation Summary Markdown serializer 已完成，buildLowConfidenceSummary 已委托给 draft builder + serializer。Session 3.2 可做 QA 修复和 Notion block 转换。）
+**ChatGPT 审查本轮 Session 3.2 输出 → commit → 进入 Session 3.3 Anti-Slop Review 或 Session 4 Comment / Selection Core**
+（IS01 已修复：low-confidence + high-linkDensity 现在可从 content/index.ts 传递评估值触发 Navigation Summary Markdown fallback。Guard 防止视频/论坛/AI-answer 误触发。1084 tests，lint 0，build success。Notion block 转换未实现。）

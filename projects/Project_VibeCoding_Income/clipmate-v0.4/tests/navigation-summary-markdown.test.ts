@@ -357,6 +357,25 @@ describe('buildNavigationMarkdownFallback', () => {
     expect(result).not.toContain('<div')
     expect(result).not.toContain('<!DOCTYPE')
   })
+
+  it('returns null for video with low confidence + high link density (guarded)', () => {
+    const doc = makeDom('<a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const input = makeInput({ document: doc, pageType: 'video', articleConfidence: 0.2, linkDensity: 0.7 })
+    const result = buildNavigationMarkdownFallback(input)
+    expect(result).toBeNull()
+  })
+
+  it('returns null for forum-or-comment with low confidence + high link density (guarded)', () => {
+    const input = makeInput({ pageType: 'forum-or-comment', articleConfidence: 0.2, linkDensity: 0.7 })
+    const result = buildNavigationMarkdownFallback(input)
+    expect(result).toBeNull()
+  })
+
+  it('returns null for ai-answer with low confidence + high link density (guarded)', () => {
+    const input = makeInput({ pageType: 'ai-answer', articleConfidence: 0.2, linkDensity: 0.7 })
+    const result = buildNavigationMarkdownFallback(input)
+    expect(result).toBeNull()
+  })
 })
 
 // ============= Safety Checks =============

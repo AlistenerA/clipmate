@@ -296,6 +296,101 @@ describe('shouldBuildNavigationSummary', () => {
     const input = makeInput({ pageType: 'search-results' })
     expect(shouldBuildNavigationSummary(input)).toBe(true)
   })
+
+  it('returns false for video pageType with low confidence + high link density (guarded)', () => {
+    const input = makeInput({
+      pageType: 'video',
+      articleConfidence: 0.2,
+      linkDensity: 0.7,
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(false)
+  })
+
+  it('returns false for forum-or-comment with low confidence + high link density (guarded)', () => {
+    const input = makeInput({
+      pageType: 'forum-or-comment',
+      articleConfidence: 0.2,
+      linkDensity: 0.7,
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(false)
+  })
+
+  it('returns false for ai-answer with low confidence + high link density (guarded)', () => {
+    const input = makeInput({
+      pageType: 'ai-answer',
+      articleConfidence: 0.2,
+      linkDensity: 0.7,
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(false)
+  })
+
+  it('returns true for article pageType with low confidence + high link density', () => {
+    const input = makeInput({
+      pageType: 'article',
+      articleConfidence: 0.3,
+      linkDensity: 0.7,
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(true)
+  })
+
+  it('returns false for article pageType with low confidence + low link density', () => {
+    const input = makeInput({
+      pageType: 'article',
+      articleConfidence: 0.2,
+      linkDensity: 0.3,
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(false)
+  })
+
+  it('video pageType with navigation intent still triggers (intent overrides guard)', () => {
+    const input = makeInput({
+      pageType: 'video',
+      articleConfidence: 0.2,
+      linkDensity: 0.7,
+      intentSnapshot: {
+        pageType: 'video',
+        selectionPresent: false,
+        selectionTextLength: 0,
+        selectionContext: 'unknown',
+        nearestClassHints: [],
+        visibleContext: {
+          visibleVideoCount: 0,
+          visibleCommentLikeCount: 0,
+          visibleSearchResultLikeCount: 0,
+          visibleArticleLikeCount: 0,
+        },
+        confidence: 0.9,
+        intent: 'clip-navigation-summary',
+        reasons: [],
+      },
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(true)
+  })
+
+  it('returns false for video with selection present (selection-first overrides all)', () => {
+    const input = makeInput({
+      pageType: 'video',
+      articleConfidence: 0.2,
+      linkDensity: 0.7,
+      intentSnapshot: {
+        pageType: 'video',
+        selectionPresent: true,
+        selectionTextLength: 30,
+        selectionContext: 'unknown',
+        nearestClassHints: [],
+        visibleContext: {
+          visibleVideoCount: 0,
+          visibleCommentLikeCount: 0,
+          visibleSearchResultLikeCount: 0,
+          visibleArticleLikeCount: 0,
+        },
+        confidence: 0.5,
+        intent: 'clip-selection-generic',
+        reasons: [],
+      },
+    })
+    expect(shouldBuildNavigationSummary(input)).toBe(false)
+  })
 })
 
 // ============= collectNavigationSummaryLinks =============

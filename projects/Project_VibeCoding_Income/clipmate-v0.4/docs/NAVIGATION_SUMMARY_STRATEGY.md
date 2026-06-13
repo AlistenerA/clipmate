@@ -6,7 +6,7 @@
 >
 > **Session 3.1 Markdown + Minimal Integration 已完成。** 实现文件：`src/content/navigationSummary/navigationSummaryMarkdown.ts`（escapeMarkdownText / formatNavigationSummaryMarkdown / buildNavigationMarkdownFallback）、`tests/navigation-summary-markdown.test.ts`（55 tests）。`buildLowConfidenceSummary` 已委托给 draft builder + serializer。
 >
-> **仍未接入 Notion block 转换。** Session 3.2 完成 Notion block 转换。
+> **仍未接入 Notion block 转换。** Session 3.2 已完成 QA Fix + IS01 Completion，Notion block 转换推迟到后续 Session。
 >
 > 本文档在 Session 1/2/2.1/2.2 完成后编写，基于已有 PageTypeDetector、SiteProfileEngine、IntentSignalCollector 的能力。
 
@@ -272,19 +272,31 @@ callout block（warning 文案）
 - 旧 fallback 在不触发场景下不退化的验证通过
 - 保持不变：selection-first、Popup UI、Notion 保存流程、background route
 
-### Session 3.2：Navigation Summary QA / Fix + Notion Block
+### Session 3.2：Navigation Summary QA Fix + IS01 Completion ✅ 已完成
 
-**性质**：修复 Session 3.1 发现的问题，完成 Notion block 转换。
+**性质**：修复 IS01 + 补强测试 + 人工 QA 文档，不接入 Notion block。
 
-**产出**：
-- 新增 `src/content/navigation/navigationToNotion.ts` — NavigationSummary → Notion blocks
-- 修复任何 QA 发现的问题
-- 补充边界测试（空链接、全过滤、极端 DOM）
-- 更新 docs
+**实际产出**：
+- IS01 修复：`content/index.ts` 两个调用点现在传递 `confidenceToNumeric(report.confidence)` 和 `report.linkDensity` 到 `buildLowConfidenceSummary`
+- `confidenceToNumeric` 新增函数：high→0.9, medium→0.5, low→0.2
+- Guard：`shouldBuildNavigationSummary` 新增 `SPECIALIZED_NON_NAV_PAGE_TYPES` 集合（video/forum-or-comment/ai-answer），防止低置信+高链接密度误触发
+- 新增 8 个 article-boundary-guard 测试（视频/论坛/AI 不触发、article 触发、阈值边界）
+- 新增 7 个 shouldBuildNavigationSummary 测试（guard 规则、article 触发、intent override）
+- 新增 3 个 buildNavigationMarkdownFallback 测试（视频/论坛/AI guard 集成验证）
+- 新增 `docs/NAVIGATION_SUMMARY_QA.md` — 人工测试文档（7 个场景 + 隐私检查）
+- 总测试数：1067 → 1084（+17）
+
+**已验证**：
+- lint 0 / test 1084 全部通过 / build success（104 modules）
+- 普通高置信 article 不触发 navigation summary
+- video/forum/ai-answer 低置信+高链接密度不触发（guard 生效）
+- article 低置信+高链接密度触发 navigation summary
+- selection-first 不变（有选区时不触发）
+- 未修改 Popup/Options/Background/Notion 保存路径
 
 **边界**：
-- 不新增 manifest 权限
-- 不改变 Notion API 调用方式（复用现有 `appendBlocks` 路径）
+- 未接入 Notion block 转换（推迟到后续 Session）
+- 未新增 manifest 权限、未新增依赖
 
 ---
 

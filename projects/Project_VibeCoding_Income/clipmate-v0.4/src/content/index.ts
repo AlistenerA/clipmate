@@ -13,6 +13,7 @@ import {
   assessArticleConfidence,
   buildLowConfidenceSummary,
   classifyPageType,
+  confidenceToNumeric,
 } from './extractors/articleBoundaryGuard'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
@@ -100,6 +101,8 @@ function handleExtractFullpage(): HandlerResult {
           fallbackMeta.title,
           fallbackMeta.url,
           pageType,
+          confidenceToNumeric(report.confidence),
+          report.linkDensity,
         )
         return {
           success: true,
@@ -136,7 +139,14 @@ function handleExtractFullpage(): HandlerResult {
     if (report.confidence === 'low') {
       const meta = parseMetadata(docClone)
       const pageType = classifyPageType(docClone)
-      const summary = buildLowConfidenceSummary(docClone, meta.title, meta.url, pageType)
+      const summary = buildLowConfidenceSummary(
+        docClone,
+        meta.title,
+        meta.url,
+        pageType,
+        confidenceToNumeric(report.confidence),
+        report.linkDensity,
+      )
       return {
         success: true,
         data: {

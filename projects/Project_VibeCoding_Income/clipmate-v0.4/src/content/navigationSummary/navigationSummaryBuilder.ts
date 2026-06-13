@@ -12,6 +12,12 @@ const DEFAULT_MAX_LINKS = 15
 const MAX_LINKS_PER_DOMAIN = 3
 const MIN_LINK_TEXT_LENGTH = 2
 
+const SPECIALIZED_NON_NAV_PAGE_TYPES = new Set<PageType>([
+  'video',
+  'forum-or-comment',
+  'ai-answer',
+])
+
 const REJECTED_PROTOCOLS = new Set([
   'javascript:',
   'data:',
@@ -80,19 +86,21 @@ export function shouldBuildNavigationSummary(input: NavigationSummaryInput): boo
   if (input.pageType === 'navigation') return true
   if (input.pageType === 'search-results') return true
 
-  if (
-    input.articleConfidence != null &&
-    input.articleConfidence < 0.45 &&
-    (input.linkDensity ?? 0) >= 0.55
-  ) {
-    return true
-  }
+  if (!SPECIALIZED_NON_NAV_PAGE_TYPES.has(input.pageType)) {
+    if (
+      input.articleConfidence != null &&
+      input.articleConfidence < 0.45 &&
+      (input.linkDensity ?? 0) >= 0.55
+    ) {
+      return true
+    }
 
-  if (
-    input.pageType === 'unknown' &&
-    (input.linkDensity ?? 0) >= 0.65
-  ) {
-    return true
+    if (
+      input.pageType === 'unknown' &&
+      (input.linkDensity ?? 0) >= 0.65
+    ) {
+      return true
+    }
   }
 
   return false

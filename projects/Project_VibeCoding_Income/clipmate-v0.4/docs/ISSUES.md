@@ -86,6 +86,14 @@
 
 当前无 blocker。
 
+### Session 3.2 已修复
+
+| 编号 | 问题 | 级别 | 修复 Session |
+|:---:|------|:---:|:---:|
+| ✅ IS01 | low-confidence+high-linkDensity 路径未从 content/index.ts 触发 | minor | Session 3.2 |
+
+**IS01 修复详情：** `content/index.ts` 两个调用点现在传递 `confidenceToNumeric(report.confidence)` 和 `report.linkDensity`。同时新增 guard 防止 video/forum/ai-answer 页面误触发。修复验证：1084 tests，lint 0，build success。
+
 ### Session 3.1 已知限制
 
 | 编号 | 限制 | 级别 | 说明 |

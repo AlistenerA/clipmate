@@ -4,6 +4,73 @@
 
 ---
 
+## v0.4 Session 3.2 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 26 文件 1084 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：26 个测试文件，1084 个测试，全部通过
+- `npm run build`：构建成功，104 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| article-boundary-guard.test.ts | 121 | ✅ 全部通过（Session 3.1 继承 114 + 本轮新增 7）|
+| navigation-summary-builder.test.ts | 80 | ✅ 全部通过（Session 3 继承 73 + 本轮新增 7）|
+| navigation-summary-markdown.test.ts | 58 | ✅ 全部通过（Session 3.1 继承 55 + 本轮新增 3）|
+| 其余 23 个测试文件 | 819 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试（article-boundary-guard.test.ts）
+
+- video + low confidence + high link density → 不触发 nav summary
+- forum-or-comment + low confidence + high link density → 不触发 nav summary
+- ai-answer + low confidence + high link density → 不触发 nav summary
+- article + low confidence + high link density → 触发 nav summary
+- article + medium confidence + high link density → 不触发
+- article + high confidence + high link density → 不触发
+- article + low confidence + low link density → 不触发
+
+### 本轮新增测试（navigation-summary-builder.test.ts）
+
+- video/forum/ai-answer + low confidence + high link density → false（3 tests）
+- article + low confidence + high link density → true
+- article + low confidence + low link density → false
+- video + navigation intent → true（intent override guard）
+- video + selection present → false（selection-first override all）
+
+### 本轮新增测试（navigation-summary-markdown.test.ts）
+
+- video/forum/ai-answer + low confidence + high link density → null（3 tests，guard 集成验证）
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1084 tests pass ✅
+- build success ✅
+- IS01 修复：content/index.ts 传递 articleConfidence + linkDensity ✅
+- Guard：视频/论坛/AI-answer 不误触发 ✅
+
+---
+
 ## v0.4 Session 3.1 (2026-06-13)
 
 ### 运行命令

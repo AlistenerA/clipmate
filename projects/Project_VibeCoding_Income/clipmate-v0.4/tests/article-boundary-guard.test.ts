@@ -911,6 +911,60 @@ describe('buildLowConfidenceSummary', () => {
     expect(result).not.toContain('## 主要链接')
     expect(result).not.toContain('- Source:')
   })
+
+  it('video page with low confidence + high link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'VideoPage', 'https://x.com', 'video', 0.2, 0.7)
+    expect(result).toContain('视频页')
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
+
+  it('forum-or-comment page with low confidence + high link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'ForumPage', 'https://x.com', 'forum-or-comment', 0.2, 0.7)
+    expect(result).toContain('评论或论坛页')
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
+
+  it('ai-answer page with low confidence + high link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'AIPage', 'https://x.com', 'ai-answer', 0.2, 0.7)
+    expect(result).toContain('AI 对话页')
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
+
+  it('article pageType with low confidence + high link density triggers nav summary', () => {
+    const doc = makeDom('<body><a href="https://x.com/a">Link A</a><a href="https://x.com/b">Link B</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'ArticlePage', 'https://x.com', 'article', 0.3, 0.7)
+    expect(result).toContain('# ArticlePage')
+    expect(result).toContain('置信度较低')
+    expect(result).toContain('- Source:')
+    expect(result).toContain('## 主要链接')
+  })
+
+  it('article with medium confidence + high link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'MediumPage', 'https://x.com', 'article', 0.5, 0.7)
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
+
+  it('article with high confidence + high link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'HighPage', 'https://x.com', 'article', 0.9, 0.7)
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
+
+  it('article with low confidence + low link density does NOT trigger nav summary', () => {
+    const doc = makeDom('<body><a href="/a">Link</a></body>')
+    const result = buildLowConfidenceSummary(doc, 'LowPage', 'https://x.com', 'article', 0.2, 0.3)
+    expect(result).not.toContain('## 主要链接')
+    expect(result).not.toContain('- Source:')
+  })
 })
 
 describe('classifyPageType', () => {

@@ -4,6 +4,88 @@
 
 ---
 
+## v0.4 Session 3.2：Navigation Summary QA Fix + IS01 Completion (2026-06-13)
+
+### 性质
+
+代码修复 + QA hardening + 人工测试文档。不接入 Notion block。
+
+### IS01 修复
+
+- **`src/content/index.ts`** — 8 行变更
+  - 导入 `confidenceToNumeric`
+  - 两个 `buildLowConfidenceSummary` 调用点新增 `confidenceToNumeric(report.confidence)` 和 `report.linkDensity` 参数
+  - Readability fallback 路径（原 line 98）和 Readability success + low confidence 路径（原 line 139）均传递新参数
+- **`src/content/extractors/articleBoundaryGuard.ts`** — 10 行新增
+  - 新增 `ARTICLE_CONFIDENCE_NUMERIC` 映射表：high→0.9, medium→0.5, low→0.2
+  - 新增 `confidenceToNumeric(confidence: string): number` 导出函数
+
+### Guard
+
+- **`src/content/navigationSummary/navigationSummaryBuilder.ts`** — 8 行变更
+  - 新增 `SPECIALIZED_NON_NAV_PAGE_TYPES` 集合：video / forum-or-comment / ai-answer
+  - `shouldBuildNavigationSummary` 中规则 4/5（低置信+高链接密度 / unknown+高链接密度）被该集合 guard，防止视频/论坛/AI-answer 页面误触发
+
+### QA hardening 测试
+
+- **`tests/article-boundary-guard.test.ts`** — 新增 8 个测试（114→121）
+  - video/forum/ai-answer + 低置信+高链接密度 → 不触发（3 tests）
+  - article + 低置信+高链接密度 → 触发（1 test）
+  - article + 中/高置信+高链接密度 → 不触发（2 tests）
+  - article + 低置信+低链接密度 → 不触发（1 test）
+- **`tests/navigation-summary-builder.test.ts`** — 新增 7 个测试（73→80）
+  - video/forum/ai-answer + 低置信+高链接密度 → false（3 tests）
+  - article + 低置信+高链接密度 → true（1 test）
+  - article + 低置信+低链接密度 → false（1 test）
+  - video + intent=clip-navigation-summary → true（intent 覆盖 guard，1 test）
+  - video + selection present → false（selection-first 覆盖所有，1 test）
+- **`tests/navigation-summary-markdown.test.ts`** — 新增 3 个测试（55→58）
+  - video/forum/ai-answer + 低置信+高链接密度 → null（guard 集成验证）
+
+### 新增文档
+
+- **`docs/NAVIGATION_SUMMARY_QA.md`** — 人工测试文档
+  - 7 个测试场景（搜索/导航/低置信/文章/视频/选区/论坛）
+  - 隐私检查清单
+  - 已知限制
+  - QA 结果记录表
+
+### 修改文件汇总
+
+- `src/content/index.ts` — IS01 修复（传递 articleConfidence + linkDensity）
+- `src/content/extractors/articleBoundaryGuard.ts` — 新增 confidenceToNumeric
+- `src/content/navigationSummary/navigationSummaryBuilder.ts` — guard 防止误触发
+- `tests/article-boundary-guard.test.ts` — +8 tests
+- `tests/navigation-summary-builder.test.ts` — +7 tests
+- `tests/navigation-summary-markdown.test.ts` — +3 tests
+- `docs/NAVIGATION_SUMMARY_QA.md` — 新增
+- `docs/CURRENT_STATUS.md` — 更新
+- `docs/CHANGELOG_AGENT.md` — 本记录
+- `docs/TEST_LOG.md` — 更新
+- `docs/ISSUES.md` — 更新
+- `docs/DECISIONS.md` — 更新
+- `docs/NAVIGATION_SUMMARY_STRATEGY.md` — 更新
+
+### 未修改
+
+- 未修改 Popup UI、Options UI、Background route
+- 未修改 Notion 保存主链路
+- 未修改 selection-first 行为
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未新增依赖、未新增 manifest 权限
+- 未接入 Notion block 转换
+
+### 改动摘要
+
+- IS01 修复：low-confidence + high-linkDensity 路径现在从 content/index.ts 传递评估值触发
+- Guard：视频/论坛/AI-answer 低置信+高链接密度不误触发 Navigation Summary
+- 17 个新测试覆盖触发/不触发/guard/intent-override/selection-first
+- 总测试数：1067 → 1084
+- lint 0 / test 1084 pass / build success（104 modules）
+- 人工 QA 文档覆盖 7 个测试场景 + 隐私检查
+
+---
+
 ## v0.4 Session 3.1：Navigation Summary Markdown + Minimal Integration (2026-06-13)
 
 ### 性质
