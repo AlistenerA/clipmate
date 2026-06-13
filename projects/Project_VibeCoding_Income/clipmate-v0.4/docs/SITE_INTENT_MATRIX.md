@@ -188,16 +188,22 @@ Intent 判断建立在 PageType 之上但不取代：
 | Session 1 | ✅ 已完成 | Page Type Detector（7 类通用启发式检测，commit 54a9957）|
 | Session 1.1 | ✅ 已完成 | SITE_INTENT_MATRIX.md / QUALITY_GUARDRAILS.md |
 | Session 2 | ✅ 已完成 | Site Profile Engine（19 seed profiles + 纯函数匹配引擎，commit 006908e）|
-| Session 2.1 | ✅ 本轮 | Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）|
+| Session 2.1 | ✅ 已完成 | Intent Signal Collector（intent.types / intentSignalCollector / 61 tests，commit 72db8b6）|
+| Session 2.3 | ✅ 已完成 | Anti-Slop Review（只读审查，发现 B1 + M1）|
+| Session 2.3.1 | ✅ 已完成 | Build Fix + Video Iframe Selector Migration（commit cf38675）|
+| Session 2.2 | ✅ 本轮 | Seed Profiles Manual QA / Refinement（11 profiles 补强，所有 19 profiles 至少 1 个 selectorHints）|
 
-**本轮实现要点：**
+**Session 2.2 实现要点：**
 
-1. Session 2 Site Profile Engine 已完成并提交 006908e。
-2. Session 2.1 Intent Signal Collector 已完成。
-3. IntentSnapshot 只在 `collectIntentSnapshot()` 调用时生成，不持久化到 storage。
-4. 本轮不改变保存策略，不实现评论区剪藏 UI。
-5. `detectClipIntent` 按 11 级优先级输出建议意图，但不对接实际剪藏流程。
-6. 所有函数为纯函数或只读 DOM，不访问 chrome API / storage / 网络。
+1. 所有 19 个 seed profiles 现在至少有一个 selectorHints 字段。
+2. 搜索类（3 profiles）：均有 searchResultCard；长视频类（5 profiles）：均有 videoPlayer，其中 4 个补强了 contentContainer + commentContainer；短视频类（3 profiles）：均有 videoPlayer，全部补强了 contentContainer + commentContainer；社交/社区类（4 profiles）：均有 contentContainer 或 commentContainer；AI chat 类（4 profiles）：均有 contentContainer。
+3. 所有 selector 为 seed/hint 级别，基于通用 DOM 结构猜测，不承诺真实站点 100% 有效。需真实站点手动 QA 的 profile 记录在 ISSUES.md（QA01-QA05）。
+4. 站点级 selector 仅存在于 seedProfiles.ts，content/intent/ / pageTypeDetector.ts 中无任何站点 domain 硬编码。
+5. 本轮不改变 SiteProfile 类型、不修改 engine、不改变保存策略。
+
+**下一阶段：**
+
+Profile 数据层（PageType + SiteProfile + IntentSnapshot）已就绪，可进入 Session 3 Navigation Summary Mode。
 
 ---
 

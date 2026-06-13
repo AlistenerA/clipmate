@@ -6,7 +6,7 @@ import {
   listSiteProfiles,
 } from '../src/shared/siteProfiles/siteProfileEngine'
 import { SEED_PROFILES } from '../src/shared/siteProfiles/seedProfiles'
-import type { SiteProfile } from '../src/shared/siteProfiles/siteProfile.types'
+import type { SiteProfile, SiteProfileCategory } from '../src/shared/siteProfiles/siteProfile.types'
 
 describe('normalizeHostname', () => {
   it('extracts hostname from full URL', () => {
@@ -446,5 +446,104 @@ describe('seed profiles count', () => {
   it('all seed profile ids are unique', () => {
     const ids = SEED_PROFILES.map((p) => p.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe('seed profiles structural QA', () => {
+  const VALID_CATEGORIES: SiteProfileCategory[] = [
+    'search', 'video', 'short-video', 'social', 'community', 'ai-chat',
+  ]
+
+  it('all seed profiles have a selectorHints object', () => {
+    for (const profile of SEED_PROFILES) {
+      expect(
+        profile.selectorHints,
+        `${profile.id}: missing selectorHints`,
+      ).toBeDefined()
+      expect(
+        typeof profile.selectorHints,
+        `${profile.id}: selectorHints must be object`,
+      ).toBe('object')
+      expect(
+        Object.keys(profile.selectorHints!).length,
+        `${profile.id}: selectorHints must have at least 1 key`,
+      ).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it('all seed profiles have a valid category', () => {
+    for (const profile of SEED_PROFILES) {
+      expect(
+        VALID_CATEGORIES.includes(profile.category),
+        `${profile.id}: invalid category "${profile.category}"`,
+      ).toBe(true)
+    }
+  })
+
+  it('search profiles have searchResultCard selector', () => {
+    for (const profile of SEED_PROFILES) {
+      if (profile.category === 'search') {
+        expect(
+          profile.selectorHints?.searchResultCard,
+          `${profile.id}: search profile missing searchResultCard`,
+        ).toBeTruthy()
+      }
+    }
+  })
+
+  it('video and short-video profiles have videoPlayer selector', () => {
+    for (const profile of SEED_PROFILES) {
+      if (profile.category === 'video' || profile.category === 'short-video') {
+        expect(
+          profile.selectorHints?.videoPlayer,
+          `${profile.id}: video profile missing videoPlayer`,
+        ).toBeTruthy()
+      }
+    }
+  })
+
+  it('social and community profiles have contentContainer or commentContainer', () => {
+    for (const profile of SEED_PROFILES) {
+      if (profile.category === 'social' || profile.category === 'community') {
+        const hasContent = !!profile.selectorHints?.contentContainer
+        const hasComment = !!profile.selectorHints?.commentContainer
+        expect(
+          hasContent || hasComment,
+          `${profile.id}: social/community profile missing contentContainer and commentContainer`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('ai-chat profiles have contentContainer selector', () => {
+    for (const profile of SEED_PROFILES) {
+      if (profile.category === 'ai-chat') {
+        expect(
+          profile.selectorHints?.contentContainer,
+          `${profile.id}: ai-chat profile missing contentContainer`,
+        ).toBeTruthy()
+      }
+    }
+  })
+
+  it('seedProfiles.ts does not contain real tokens, API keys, or page IDs', () => {
+    const src = JSON.stringify(SEED_PROFILES)
+    const sensitivePatterns = [
+      /ntn_/,
+      /secret_/,
+      /Bearer\s+/,
+      /api[_-]?key/i,
+      /passw(or)?d/i,
+    ]
+    for (const pattern of sensitivePatterns) {
+      expect(
+        src,
+        `seedProfiles contains sensitive pattern: ${pattern}`,
+      ).not.toMatch(pattern)
+    }
+  })
+
+  it('counts exactly 19 seed profiles', () => {
+    expect(SEED_PROFILES.length).toBe(19)
   })
 })

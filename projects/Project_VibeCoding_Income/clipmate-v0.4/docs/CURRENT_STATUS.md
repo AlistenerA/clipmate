@@ -12,7 +12,7 @@
 
 ## 当前阶段
 
-**v0.4 Session 2.3.1 已完成** — Build Fix + Video Iframe Selector Migration（待 ChatGPT 审查）。
+**v0.4 Session 2.2 已完成** — Seed Profiles Manual QA / Refinement（待 ChatGPT 审查）。
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
@@ -20,8 +20,8 @@
 - v0.4 Session 2.1：完成 Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）— commit 72db8b6
 - v0.4 Session 2.3：Anti-Slop Review 发现 B1 build blocker（缺少 SelectionContext 导入）和 M1 video iframe domain slop
 - v0.4 Session 2.3.1：修复 B1 + M1，lint 0 / test 928 passed / build success
-- v0.4 中间目标从单纯 Site Profiles 扩展为 PageType + SiteProfile + IntentSnapshot + ClipStrategy
-- 建议后续进入 Session 2.2 (Seed Site Profiles) 或 Session 3 (Navigation Summary Mode)，等待 ChatGPT 审查本 Session 后决定
+- v0.4 Session 2.2：补强 11 个 profile 的 selectorHints（contentContainer / commentContainer），所有 19 个 profile 现在至少有 1 个 selectorHints 字段；新增 8 个 profile 结构验证测试；总测试数 936
+- 建议后续进入 Session 3 Navigation Summary Mode，等待 ChatGPT 审查本 Session 后决定
 
 ---
 
@@ -38,7 +38,7 @@
 | Session 2.1 Intent Signal Collector | ✅ 已完成 | commit 72db8b6，待 ChatGPT 审查 |
 | Session 2.3 Anti-Slop Review | ✅ 已完成 | read-only review，发现 B1 build blocker + M1 video slop |
 | Session 2.3.1 Build Fix & Migration | ✅ 已完成 | 待 ChatGPT 审查 |
-| Session 2.2 Seed Site Profiles | ⏳ 待启动 | 建议新增 |
+| Session 2.2 Seed Site Profiles | ✅ 已完成 | 本轮补强 11 profiles + 8 tests，待 ChatGPT 审查 |
 | Session 3 Navigation Summary Mode | ⏳ 待启动 | |
 | Session 4 Comment / Selection Clip Mode | ⏳ 待启动 | |
 | Session 4.1 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
@@ -59,22 +59,20 @@
 - [x] v0.4 Session 2.1：Intent Signal Collector — 意图信号采集（15 个函数 + 4 个类型/接口 + 61 tests）
 - [x] v0.4 Session 2.3：Anti-Slop Review — read-only review 发现 B1 build blocker + M1 video selector slop
 - [x] v0.4 Session 2.3.1：Build Fix + Video Iframe Selector Migration — 修复 B1/M1，lint 0 / test 928 / build success
+- [x] v0.4 Session 2.2：Seed Profiles Manual QA / Refinement — 补强 11 个 profile selectorHints，8 个新测试，所有 19 个 profile 至少 1 个 hint
 
 ---
 
 ## 未完成（按优先级）
 
-1. Session 2.2：Seed Site Profiles — 重点站点 profile 种子（建议新增）
-2. Session 2.3：Anti-Slop Review — Profile + Intent 后质量审查（建议新增）
-3. Session 3：Navigation Summary Mode — 导航页摘要模式
-5. Session 3：Navigation Summary Mode — 导航页摘要模式
-6. Session 4：Comment / Selection Clip Mode — 评论选区模式
-7. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
-8. Session 5：Tag Search UX — 标签搜索
-9. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
-10. Session 7：Link Card Preview — 链接卡片预览
-11. Session 8：Docs, QA, Version, Package
-12. Session 9：Robustness Check and Release Candidate Review
+1. Session 3：Navigation Summary Mode — 导航页摘要模式
+2. Session 4：Comment / Selection Clip Mode — 评论选区模式
+3. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
+4. Session 5：Tag Search UX — 标签搜索
+5. Session 6：Site Icon / Theme Cache — 站点图标/主题缓存
+6. Session 7：Link Card Preview — 链接卡片预览
+7. Session 8：Docs, QA, Version, Package
+8. Session 9：Robustness Check and Release Candidate Review
 
 ---
 
@@ -90,5 +88,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本 Session 2.3.1 输出 → commit → 进入 Session 2.2 (Seed Site Profiles) 或 Session 3 (Navigation Summary Mode)**
-（注意：不要跳过 Intent Signal Collector 直接进入 Navigation Summary Mode 或 Comment/Selection Mode）
+**ChatGPT 审查本 Session 2.2 输出 → commit → 进入 Session 3 Navigation Summary Mode**
+（v0.4 中间目标 PageType + SiteProfile + IntentSnapshot 的 profile 数据层已就绪，下游 Session 3 可使用 siteProfileMatch.selectorHints 信息）

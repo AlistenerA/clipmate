@@ -687,12 +687,19 @@ describe('intent signal collector - no external dependencies', () => {
 
   it('intentSignalCollector does not contain site-specific domain names', () => {
     const src = String(collectVisibleContext)
-    expect(src).not.toMatch(/\byoutube\b/i)
-    expect(src).not.toMatch(/\bbilibili\b/i)
-    expect(src).not.toMatch(/\byouku\b/i)
-    expect(src).not.toMatch(/\biqiyi\b/i)
-    expect(src).not.toMatch(/\btiktok\b/i)
-    expect(src).not.toMatch(/\bdouyin\b/i)
-    expect(src).not.toMatch(/\bkuaishou\b/i)
+    const domainNames = [
+      'youtube', 'bilibili', 'youku', 'iqiyi',
+      'tiktok', 'douyin', 'kuaishou',
+      'google', 'bing', 'baidu',
+      'zhihu', 'reddit', 'weibo',
+      'chatgpt', 'claude', 'gemini', 'copilot',
+      'xiaohongshu',
+    ]
+    for (const name of domainNames) {
+      expect(
+        src,
+        `collectVisibleContext contains site domain name: "${name}"`,
+      ).not.toMatch(new RegExp(`\\b${name}\\b`, 'i'))
+    }
   })
 })

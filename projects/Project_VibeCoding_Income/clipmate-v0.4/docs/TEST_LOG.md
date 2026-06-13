@@ -4,6 +4,59 @@
 
 ---
 
+## v0.4 Session 2.2 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 24 文件 936 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：24 个测试文件，936 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| site-profile-engine.test.ts | 70 | ✅ 全部通过（Session 2 继承 62 + 本轮新增 8）|
+| intent-signal-collector.test.ts | 67 | ✅ 全部通过（已扩展 domain-free 检查覆盖全部 18 站点名）|
+| 其余 22 个测试文件 | 799 | ✅ 全部通过（无退化）|
+
+### 本轮新增测试（site-profile-engine.test.ts）
+
+- all seed profiles have a selectorHints object
+- all seed profiles have a valid category
+- search profiles have searchResultCard selector
+- video and short-video profiles have videoPlayer selector
+- social and community profiles have contentContainer or commentContainer
+- ai-chat profiles have contentContainer selector
+- seedProfiles.ts does not contain real tokens, API keys, or page IDs
+- counts exactly 19 seed profiles
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 936 tests pass ✅
+- build success ✅
+- content/ 无站点 domain 硬编码 ✅
+- pageTypeDetector.ts AI 产品名关键词记录为 minor（本轮不处理）✅
+
 ## v0.4 Session 2.3.1 (2026-06-13)
 
 ### 运行命令

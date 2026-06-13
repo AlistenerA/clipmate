@@ -4,6 +4,55 @@
 
 ---
 
+## v0.4 Session 2.2：Seed Profiles Manual QA / Refinement (2026-06-13)
+
+### 性质
+
+数据结构补强：对现有 19 个 seed profiles 做结构化 selectorHints 补齐和静态 QA。不改引擎、不改 Intent、不改保存策略。
+
+### 修改 profile
+
+- **bilibili-video**：新增 `contentContainer: '.video-desc-container, .video-info-detail'`
+- **iqiyi-video**：新增 `contentContainer: '.iqp-intro, .video-info'`, `commentContainer: '.iqp-comment, .comment-list'`
+- **youku-video**：新增 `contentContainer: '.video-info, .yk-video-info'`, `commentContainer: '.comment-box, .comment-list'`
+- **tencent-video**：新增 `contentContainer: '.video-info, .mod_intro'`, `commentContainer: '.comment-list, .mod_comment'`
+- **tiktok-short-video**：新增 `contentContainer: '[data-e2e="video-desc"], .DivVideoInfoContainer'`, `commentContainer: '[data-e2e="comment"], .DivCommentContainer'`
+- **douyin-short-video**：新增 `contentContainer: '.video-info-desc, .desc'`, `commentContainer: '.comment-container, .comment-list'`
+- **kuaishou-short-video**：新增 `contentContainer: '.video-info-container, .desc'`, `commentContainer: '.comment-container, .comment-list'`
+- **reddit-community**：新增 `contentContainer: 'shreddit-post, [slot="post"]'`
+- **claude-ai-chat**：新增 `selectorHints: { contentContainer: '[data-message-author-role]' }`（之前无 selectorHints）
+- **gemini-ai-chat**：新增 `selectorHints: { contentContainer: '.chat-turn, .message-content' }`（之前无 selectorHints）
+- **copilot-ai-chat**：新增 `selectorHints: { contentContainer: '.chat-message, .message-content' }`（之前无 selectorHints）
+
+### 未修改
+
+- 未新增/删除 profile
+- 未修改 profile id / domains / category / priority
+- 未修改 SiteProfile 类型（selectorHints 结构足够）
+- 未修改 siteProfileEngine
+- 未修改 intentSignalCollector
+- 未改变保存策略
+- 未接入 Popup UI
+
+### 修改文件
+
+- `src/shared/siteProfiles/seedProfiles.ts` — 11 个 profile 补强 selectorHints
+- `tests/site-profile-engine.test.ts` — 新增 8 个结构验证测试（selectorHints 要求 / category 验证 / searchResultCard / videoPlayer / contentCommentContainer / ai-chat contentContainer / 敏感信息 / 计数）
+- `tests/intent-signal-collector.test.ts` — 扩展 domain-free 检查覆盖所有 18 个站点名
+- `docs/CURRENT_STATUS.md` — 更新阶段、进度、下一步建议
+- `docs/CHANGELOG_AGENT.md` — 本记录
+- `docs/TEST_LOG.md` — Session 2.2 记录
+- `docs/ISSUES.md` — 新增需真实站点 QA 的 profile 和 DOM 动态风险记录
+- `docs/DECISIONS.md` — 新增 D-v0.4-017 / D-v0.4-018
+- `docs/SITE_INTENT_MATRIX.md` — 更新各 Session 完成状态
+
+### 改动摘要
+
+- 所有 19 个 seed profiles 现在至少有 1 个 selectorHints 字段
+- selectorHints 全部为 seed/hint 级别，不承诺真实站点 100% 有效
+- 站点级 selector 仅存在于 seedProfiles.ts，未扩散到 pageTypeDetector / intentSignalCollector / extractors
+- lint 0 / test 936 passed (+8 new) / build success
+
 ## v0.4 Session 2.3.1：Build Fix + Video Iframe Selector Migration (2026-06-13)
 
 ### 性质

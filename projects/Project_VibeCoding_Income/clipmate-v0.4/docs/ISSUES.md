@@ -58,6 +58,18 @@
 
 ---
 
+## v0.4 Session 2.2 新识别风险 / 待 QA
+
+| 编号 | 风险/待QA | 关联 Session |
+|:---:|------|:--:|
+| QA01 | 长视频站点（iqiyi/youku/tencent）commentContainer selector 需真实站点 DOM 验证（`.iqp-comment`, `.comment-box`, `.mod_comment` 等）| Session 8 手动 QA |
+| QA02 | 短视频站点（tiktok/douyin/kuaishou）contentContainer / commentContainer selector 依赖高度动态 DOM，需以实际加载后 DOM 为准 | Session 4 / Session 8 手动 QA |
+| QA03 | claude.ai / gemini.google.com / copilot.microsoft.com 的 contentContainer selector 为通用猜测（`[data-message-author-role]` / `.chat-turn` / `.chat-message`），需在真实站点上确认匹配 | Session 8 手动 QA |
+| QA04 | reddit-community.contentContainer `shreddit-post, [slot="post"]` 依赖新版 Reddit Web Components，旧版 reddit 不适用 | Session 8 手动 QA |
+| QA05 | tiktok data-e2e selector（`[data-e2e="video-desc"]`, `[data-e2e="comment"]`）可能随版本变化，建议后续定期复查 | Session 7 / Session 9 |
+
+---
+
 ## v0.4 Blocker
 
 当前无 blocker。

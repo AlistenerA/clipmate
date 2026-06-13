@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 2.2 决策
+
+### D-v0.4-018：站点级 selector 只能保存在 seedProfiles.ts，Intent / PageType / Extractor 不写具体站点 domain 规则
+
+- **原因**：v0.4 架构要求所有站点适配规则通过结构化 Site Profile Engine 管理（D-v0.4-004、D-v0.4-008、D-v0.4-011）。Session 2.2 补强后验证：content/intent/、content/extractors/、pageTypeDetector.ts 中无任何站点 domain 硬编码。selectorHints.videoPlayer 作为站点级选择器的唯一入口，由 collectVisibleContext 通过 siteProfileMatch.profile 访问。
+- **影响**：新增站点适配只需在 seedProfiles.ts 添加结构化 profile，下游 Intent / ClipStrategy 通过 siteProfileMatch.profile.selectorHints 间接使用。任何试图在 Intent/PageType/Extractor 中直接写站点 domain 规则的代码应在 code review 中拒绝。
+- **可反转性**：低。推翻此决策意味着放弃 profile engine 的架构意义。
+
+### D-v0.4-017：Seed profiles 只提供 selector hints，不承诺真实站点完整适配
+
+- **原因**：所有 selectorHints 为 seed/hint 级别数据，基于对站点 DOM 结构的通用猜测，不经过真实浏览器自动化验证。真实站点 DOM 可能因版本更新、A/B 测试、用户登录状态、地区差异等因素变化。
+- **影响**：selectorHints 作为下游模块（Navigation Summary / Comment Mode / Intent Signal Collector）的辅助信息使用，不应作为唯一依据。所有依赖 selectorHints 的下游逻辑必须有 fallback 到通用提取器的能力。ISSUES.md 记录需真实站点手动 QA 的 profile 清单（QA01-QA05）。
+- **可反转性**：中。后续版本可通过真实浏览器自动化 QA 提升 selector 置信度，将 selector 从 seed 升级为 verified。但核心原则（不承诺完整适配）应保持不变。
+
+---
+
 ## v0.4 Session 2.1 决策
 
 ### D-v0.4-016：Intent 检测只输出建议意图，不直接改变 fullpage / selection 保存策略

@@ -55,6 +55,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 20,
     selectorHints: {
+      contentContainer: '.video-desc-container, .video-info-detail',
       commentContainer: '.reply-list, .comment-list',
       videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap',
     },
@@ -67,6 +68,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 15,
     selectorHints: {
+      contentContainer: '.iqp-intro, .video-info',
+      commentContainer: '.iqp-comment, .comment-list',
       videoPlayer: '[data-player-hook], .iqp-player',
     },
   },
@@ -78,6 +81,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 15,
     selectorHints: {
+      contentContainer: '.video-info, .yk-video-info',
+      commentContainer: '.comment-box, .comment-list',
       videoPlayer: '#youku-player, .yk-player',
     },
   },
@@ -89,6 +94,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 15,
     selectorHints: {
+      contentContainer: '.video-info, .mod_intro',
+      commentContainer: '.comment-list, .mod_comment',
       videoPlayer: '#tenvideo_player, .txp_player',
     },
   },
@@ -100,6 +107,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 20,
     selectorHints: {
+      contentContainer: '[data-e2e="video-desc"], .DivVideoInfoContainer',
+      commentContainer: '[data-e2e="comment"], .DivCommentContainer',
       videoPlayer: '[data-e2e="video-player"], .video-player',
     },
   },
@@ -111,6 +120,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 20,
     selectorHints: {
+      contentContainer: '.video-info-desc, .desc',
+      commentContainer: '.comment-container, .comment-list',
       videoPlayer: '.video-player, .xgplayer',
     },
   },
@@ -134,6 +145,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 15,
     selectorHints: {
+      contentContainer: '.video-info-container, .desc',
+      commentContainer: '.comment-container, .comment-list',
       videoPlayer: '.player-container, .video-player',
     },
   },
@@ -157,6 +170,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['forum-or-comment', 'article'],
     priority: 20,
     selectorHints: {
+      contentContainer: 'shreddit-post, [slot="post"]',
       commentContainer: 'shreddit-comment, [slot="comment"]',
     },
   },
@@ -190,6 +204,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['claude.ai'],
     pageTypes: ['ai-answer'],
     priority: 25,
+    selectorHints: {
+      contentContainer: '[data-message-author-role]',
+    },
   },
   {
     id: 'gemini-ai-chat',
@@ -198,6 +215,9 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['gemini.google.com'],
     pageTypes: ['ai-answer'],
     priority: 25,
+    selectorHints: {
+      contentContainer: '.chat-turn, .message-content',
+    },
   },
   {
     id: 'copilot-ai-chat',
@@ -206,5 +226,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     domains: ['copilot.microsoft.com'],
     pageTypes: ['ai-answer'],
     priority: 25,
+    selectorHints: {
+      contentContainer: '.chat-message, .message-content',
+    },
   },
 ]
