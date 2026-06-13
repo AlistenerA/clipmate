@@ -1,3 +1,8 @@
+import type { PageType } from '../../shared/utils/pageTypeDetector'
+import { extractSignalsFromDocument, detectPageType } from '../../shared/utils/pageTypeDetector'
+
+export type { PageType }
+
 const NOISE_TAG_NAMES = new Set([
   'script', 'style', 'noscript', 'iframe',
   'form', 'canvas', 'button', 'input', 'select', 'textarea',
@@ -72,8 +77,6 @@ export interface ArticleBoundaryReport {
   pageType?: PageType
 }
 
-export type PageType = 'article' | 'search-results' | 'navigation' | 'unknown'
-
 function matchesCssPattern(text: string, patterns: string[]): boolean {
   const lower = text.toLowerCase()
   return patterns.some((kw) => lower.includes(kw.toLowerCase()))
@@ -144,39 +147,9 @@ export function calculateLinkDensity(element: Element): number {
 }
 
 export function classifyPageType(doc: Document): PageType {
-  const title = (doc.title || '').toLowerCase()
-  const bodyText = (doc.body.textContent || '').trim()
-  const links = doc.querySelectorAll('a[href]')
-  const paragraphs = bodyText.split(/\n\s*\n/).filter((p) => p.trim().length > 20)
-
-  const hasSearchInput = doc.querySelector('input[type="search"], input[name="q"], input[name="query"], input[name="search"]') !== null
-  const hasSearchRole = doc.querySelector('[role="search"]') !== null
-  const searchTitleWords = ['search', '搜索', 'result', '结果', '查询']
-  const hasSearchTitle = searchTitleWords.some((w) => title.includes(w))
-
-  const searchSignals = [hasSearchInput, hasSearchRole, hasSearchTitle].filter(Boolean).length
-
-  if (searchSignals >= 2) {
-    return 'search-results'
-  }
-
-  if (searchSignals >= 1 && paragraphs.length < 4 && links.length > paragraphs.length * 3) {
-    return 'search-results'
-  }
-
-  const linkCount = links.length
-  const pCount = paragraphs.length
-  const avgLen = pCount > 0 ? bodyText.length / pCount : 0
-
-  if (linkCount > 8 && pCount < 3 && avgLen < 200 && bodyText.length < 800) {
-    return 'navigation'
-  }
-
-  if (pCount >= 2 && avgLen > 80) {
-    return 'article'
-  }
-
-  return 'unknown'
+  const signals = extractSignalsFromDocument(doc)
+  const result = detectPageType(signals)
+  return result.type
 }
 
 export function hasEnoughArticleText(text: string): boolean {
@@ -353,6 +326,12 @@ export function buildLowConfidenceSummary(
     parts.push('> 当前页面可能是搜索结果页，已仅保留少量主要结果链接。')
   } else if (pageType === 'navigation') {
     parts.push('> 当前页面可能是导航或聚合页，已避免保存大量无关链接。')
+  } else if (pageType === 'forum-or-comment') {
+    parts.push('> 当前页面可能是评论或论坛页，已避免保存大量楼层。')
+  } else if (pageType === 'video') {
+    parts.push('> 当前页面可能是视频页，已避免保存大量媒体元素。')
+  } else if (pageType === 'ai-answer') {
+    parts.push('> 当前页面可能是 AI 对话页，已避免保存完整对话内容。')
   } else {
     parts.push('> 当前页面可能不是文章页，已避免保存大量导航或推荐链接。')
   }

@@ -11,10 +11,11 @@ import {
   classifyPageType,
 } from '../src/content/extractors/articleBoundaryGuard'
 
-function makeDom(bodyHtml: string): Document {
+function makeDom(bodyHtml: string, url = 'https://example.com/', title?: string): Document {
+  const titleTag = title ? `<title>${title}</title>` : ''
   const dom = new JSDOM(
-    `<!DOCTYPE html><html><body>${bodyHtml}</body></html>`,
-    { url: 'https://example.com/' },
+    `<!DOCTYPE html><html><head>${titleTag}</head><body>${bodyHtml}</body></html>`,
+    { url },
   )
   return dom.window.document
 }
@@ -902,7 +903,6 @@ describe('classifyPageType', () => {
 
   it('identifies Baidu-like search results page', () => {
     const doc = makeDom(`
-      <title>搜索结果_百度搜索</title>
       <input type="text" id="kw">
       <div>
         <a href="http://example1.com">结果标题一</a>
@@ -910,7 +910,7 @@ describe('classifyPageType', () => {
         <a href="http://example3.com">结果标题三</a>
         <a href="http://example4.com">结果标题四</a>
       </div>
-    `)
+    `, 'https://example.com/search?wd=test', '搜索结果_百度搜索')
     expect(classifyPageType(doc)).toBe('search-results')
   })
 

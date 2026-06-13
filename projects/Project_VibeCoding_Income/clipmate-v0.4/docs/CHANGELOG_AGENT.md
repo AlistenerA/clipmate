@@ -4,44 +4,51 @@
 
 ---
 
+## v0.4 Session 1：Page Type Detector (2026-06-13)
+
+### 产出
+
+- `src/shared/utils/pageTypeDetector.ts` — 通用页面类型检测器
+- `tests/page-type-detector.test.ts` — 42 个单元测试
+
+### 新增/修改文件
+
+- `src/shared/utils/pageTypeDetector.ts` — 新增：纯函数检测模块
+  - 导出 `PageType` 类型（7 类）
+  - 导出 `PageTypeDetectionSignals` 接口
+  - 导出 `PageTypeDetectionResult` 接口
+  - 导出 `detectPageType(input)` 纯函数
+  - 导出 `extractSignalsFromDocument(doc)` DOM 提取函数
+  - 导出 `detectPageTypeFromDocument(doc)` 便捷包装
+  - 6 个内部 assessor：assessArticle / assessSearchResults / assessNavigation / assessForumOrComment / assessVideo / assessAiAnswer
+- `src/content/extractors/articleBoundaryGuard.ts` — 修改：
+  - 导入新 detector，替换旧 `classifyPageType` 实现
+  - 保持 `classifyPageType` 对外签名不变
+  - `buildLowConfidenceSummary` 新增 forum-or-comment / video / ai-answer 的提示文案
+- `src/shared/utils/index.ts` — 新增 `pageTypeDetector` 导出
+- `tests/article-boundary-guard.test.ts` — 修改：
+  - `makeDom` 函数新增 `title` 参数支持
+  - Baidu 搜索测试适配新 detector（URL + title 参数）
+- `tests/page-type-detector.test.ts` — 新增：42 个测试覆盖 7 类类型 + 混合场景 + 脱敏检查
+
+### 改动摘要
+
+- 实现通用页面类型检测器，从旧的 4 类扩展到 7 类
+- 检测逻辑为纯函数，可独立单元测试，无外部依赖
+- 旧 `classifyPageType` 已安全接入新 detector，保持向后兼容
+- 检测结果作为 metadata/report 辅助，不改变保存策略
+- 所有规则基于通用启发式（URL/title/DOM 结构），无站点硬编码
+- lint 0，799 tests 全部通过，build 成功
+- 未新增权限、未新增依赖、未修改版本号
+
+---
+
 ## v0.4 Session 0：工作区创建与规划审查 (2026-06-13)
 
 ### 产出
 
 - `clipmate-v0.4/` — 从 v0.3 复制的完整项目目录（排除 node_modules/dist/build/coverage/*.zip/.env/.wolf/.opencode/.playwright-mcp）
 - `feature/clipmate-v0.4-site-profiles` — 新开发分支
-
-### 新增/修改文件
-
-- `docs/V0.4_PLAN.md` — v0.4 规划文档（9 个 Session 拆分、核心目标、非目标、权限策略、commit 策略）
-- `docs/AGENT_CONTEXT.md` — 重写为 v0.4 版本上下文
-- `docs/CURRENT_STATUS.md` — 更新为 Session 0 完成状态
-- `docs/CHANGELOG_AGENT.md` — 本条记录（基于 v0.3 CHANGELOG 清除旧记录，新建 v0.4 记录）
-- `docs/TEST_LOG.md` — Session 0 记录（docs/workspace setup only）
-- `docs/ISSUES.md` — 记录 v0.3 继承的 known issues
-- `docs/DECISIONS.md` — 新增 D-v0.4-001 ~ D-v0.4-004
-
-### 未修改文件
-
-- `clipmate-v0.1/` — 未修改
-- `clipmate-v0.2/` — 未修改
-- `clipmate-v0.3/` — 未修改
-- `clipmate-v0.4/src/` — 未修改
-- `clipmate-v0.4/tests/` — 未修改
-- `clipmate-v0.4/package.json` — 未修改（版本号保持 0.3.0）
-- `clipmate-v0.4/manifest.config.ts` — 未修改（版本号保持 0.3.0）
-- `clipmate-v0.4/package-lock.json` — 未修改
-
-### 改动摘要
-
-- 从稳定 v0.3 创建 v0.4 工作目录，排除 node_modules/dist/build/coverage/zip/.env/.wolf/.opencode/.playwright-mcp
-- 创建 feature/clipmate-v0.4-site-profiles 分支
-- 建立 v0.4 规划文档：7 个 Session + 2 个发布 Session，明确非目标和权限策略
-- 版本号推迟策略：当前 package/manifest 保持 0.3.0，release 前统一升 0.4.0
-- 本轮 docs + workspace setup only，未修改业务代码
-- 未新增权限、未新增依赖
-- 未运行 lint/test/build（无代码变更）
-- 未 commit
 
 ---
 

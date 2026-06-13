@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 1 决策
+
+### D-v0.4-006：检测结果先作为 metadata/report/summary 辅助，不直接改变保存策略
+
+- **原因**：v0.4 Session 1 的 Page Type Detector 刚完成，分类准确率需要后续 Session 的 Site Profile Engine 和 Navigation Summary Mode 增强后才能保证。在检测结果充分验证前，只作为 assessArticleConfidence / buildLowConfidenceSummary 的低置信兜底判断辅助，不改变 fullpage/selection 的正常保存行为。
+- **影响**：`classifyPageType` 继续在 `content/index.ts` 中用于低置信 fallback summary，不新增对保存策略的拦截。Session 3 Navigation Summary Mode 完成后可重新评估。
+- **可反转性**：高。后续 Session 可随时接入。
+
+### D-v0.4-005：Page Type Detector 先做通用启发式，不写站点硬编码
+
+- **原因**：检测逻辑应基于 URL pattern、title keyword、DOM 结构统计量等通用信号，不写 `if domain === 'zhihu.com'` 等具体站点判断。站点级规则由 Session 2 Site Profile Engine 通过结构化 profile 统一管理。
+- **影响**：detector 的 6 个内部 assessor 函数全部基于通用信号，代码中的 SEARCH_URL_PATTERNS / SEARCH_TITLE_KEYWORDS / VIDEO_TITLE_KEYWORDS 等列表都是通用关键词（如 search/搜索/video/视频/chat/对话），不与任何具体域名绑定。
+- **可反转性**：低。推翻此决策意味着放弃 profile engine 的架构意义。
+
+---
+
 ## v0.4 Session 0 决策
 
 ### D-v0.4-004：站点适配必须通过 profile engine，不允许散落硬编码 if

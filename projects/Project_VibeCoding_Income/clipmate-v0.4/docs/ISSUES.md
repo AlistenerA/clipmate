@@ -9,8 +9,8 @@
 | 编号 | 问题 | 关联 Session |
 |:---:|------|:--:|
 | I01 | CSDN / LaTeX 站点渲染公式残留 | Session 2 (Site Profile Engine) |
-| I02 | 搜索页/导航页分类体验不理想 | Session 1 (Page Type Detector) / Session 3 |
-| I03 | 本地 .md 保存按钮（含目录选择与记忆） | v0.4+ |
+| I02 | 搜索页/导航页分类体验已改善（Session 1 通用启发式），但仍需 Site Profile Engine 和 Navigation Summary Mode 增强 | Session 1 (已改善) / Session 2 / Session 3 |
+| I03 | 本地 .md 保存按钮（含目录选择与记忆）| v0.4+ |
 | I04 | 最近复制历史模块 | v0.4+ |
 | I05 | Typora / Obsidian 上次保存目录记忆 | v0.4+ |
 
@@ -20,7 +20,7 @@
 
 | 编号 | 需求 | 状态 |
 |:---:|------|:---:|
-| F01 | 页面类型检测增强 | Session 1 规划中 |
+| F01 | 页面类型检测增强 | ✅ Session 1 已完成，待审查 |
 | F02 | 站点规则引擎 | Session 2 规划中 |
 | F03 | 导航页摘要模式 | Session 3 规划中 |
 | F04 | 评论选区模式 | Session 4 规划中 |

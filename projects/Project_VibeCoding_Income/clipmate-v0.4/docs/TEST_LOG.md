@@ -4,37 +4,73 @@
 
 ---
 
-## v0.4 Session 0 (2026-06-13)
+## v0.4 Session 1 (2026-06-13)
 
 ### 运行命令
 
-本轮为 docs/workspace setup only 任务。未修改业务代码。
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 22 文件 799 tests)
+npm run build   # tsc --noEmit && vite build
+```
 
-未运行 npm run lint / test / build（本轮无代码变更，不需要）。
+### 结果
+
+- `npm run lint`：通过（无输出）
+- `npm run test`：22 个测试文件，799 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| article-boundary-guard.test.ts | 111 | ✅ 全部通过 |
+| page-type-detector.test.ts | 42 | ✅ 全部通过（新增）|
+| 其余 20 个测试文件 | 646 | ✅ 全部通过（无退化）|
+
+### 调试/修复历史
+
+- linkCount 字段遗漏：PageTypeDetectionSignals 接口和 extractSignalsFromDocument 缺少 linkCount，已补充
+- 信号权重 bug：assessor 在信号缺失时未增加 weightSum 分母，导致 confidence 虚高，已修复为所有信号始终计入 weight
+- 导航过度检测：linkCount < 3 时仍可能命中 navigation，已添加 early return guard
+- 搜索信号被导航压制：hasSearchInput / title 搜索关键词不在导航评估中考虑，已添加搜索标题信号降权
+- 视频被文章压制：视频信号存在时文章仍可高分，已添加视频/iframe 检测对文章的降权
+- 短文本被误判 article：textLength < 50 时 article confidence 异常，已添加降权
+- makeDom 不支持 title 参数：旧 article-boundary-guard 测试中 makeDom 只接受 bodyHtml，已修改支持 title 参数
 
 ### 产出
 
-- `clipmate-v0.4/` — 从 v0.3 复制的完整项目目录
-- `docs/V0.4_PLAN.md` — v0.4 规划文档
-- 更新 AGENT_CONTEXT / CURRENT_STATUS / CHANGELOG_AGENT / TEST_LOG / ISSUES / DECISIONS
+- `src/shared/utils/pageTypeDetector.ts` — 289 lines
+- `tests/page-type-detector.test.ts` — ~550 lines
 
 ### 检查项
 
 - 未修改 clipmate-v0.1/ ✅
 - 未修改 clipmate-v0.2/ ✅
 - 未修改 clipmate-v0.3/ ✅
-- 未修改 clipmate-v0.4/src/ ✅
-- 未修改 clipmate-v0.4/tests/ ✅
-- 未修改 clipmate-v0.4/package.json ✅
-- 未修改 clipmate-v0.4/manifest.config.ts ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
 - 未新增依赖 ✅
 - 未新增 manifest 权限 ✅
-- 未运行 lint/test/build ✅（原因：无代码变更）
-- 无 dist/、build/、zip、node_modules、.env、.wolf/、.opencode/、.playwright-mcp/ 复制 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 799 tests pass ✅
+- build success ✅
 
 ### 错误/失败
 
 无。
+
+---
+
+## v0.4 Session 0 (2026-06-13)
+
+### 运行命令
+
+本轮为 docs/workspace setup only 任务。未修改业务代码。
+未运行 npm run lint / test / build（本轮无代码变更，不需要）。
 
 ---
 
