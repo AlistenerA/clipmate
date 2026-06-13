@@ -12,13 +12,14 @@
 
 ## 当前阶段
 
-**v0.4 Session 2 已完成** — Site Profile Engine（纯函数实现，待 ChatGPT 审查）。
+**v0.4 Session 2.1 已完成** — Intent Signal Collector（纯函数 + 61 个测试，待 ChatGPT 审查）。
 
 - v0.4 Session 1：Page Type Detector 已提交（commit 54a9957）
 - v0.4 Session 1.1：完成 SITE_INTENT_MATRIX.md 和 QUALITY_GUARDRAILS.md
-- v0.4 Session 2：完成 Site Profile Engine（siteProfile.types / seedProfiles / siteProfileEngine / index）
+- v0.4 Session 2：完成 Site Profile Engine（siteProfile.types / seedProfiles / siteProfileEngine / index）— commit 006908e
+- v0.4 Session 2.1：完成 Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）— 本轮
 - v0.4 中间目标从单纯 Site Profiles 扩展为 PageType + SiteProfile + IntentSnapshot + ClipStrategy
-- 建议后续进入 Session 2.1 (Intent Signal Collector)，等待 ChatGPT 审查本 Session
+- 建议后续进入 Session 2.2 (Seed Site Profiles) 或 Session 2.3 (Anti-Slop Review)，等待 ChatGPT 审查本 Session 后决定
 
 ---
 
@@ -31,8 +32,8 @@
 | v0.4 规划文档 | ✅ 已完成 | V0.4_PLAN / AGENT_CONTEXT / CURRENT_STATUS 等 |
 | Session 1 Page Type Detector | ✅ 已完成 | 已提交 commit 54a9957，支持 7 类 |
 | Session 1.1 Intent & Site Profile | ✅ 已完成 | docs-only：SITE_INTENT_MATRIX + QUALITY_GUARDRAILS |
-| Session 2 Site Profile Engine | ✅ 已完成 | 19 seed profiles + 纯函数匹配引擎 |
-| Session 2.1 Intent Signal Collector | ⏳ 待启动 | 建议新增 |
+| Session 2 Site Profile Engine | ✅ 已完成 | 19 seed profiles + 纯函数匹配引擎，commit 006908e |
+| Session 2.1 Intent Signal Collector | ✅ 已完成 | 待 ChatGPT 审查 |
 | Session 2.2 Seed Site Profiles | ⏳ 待启动 | 建议新增 |
 | Session 2.3 Anti-Slop Review | ⏳ 待启动 | 建议新增 |
 | Session 3 Navigation Summary Mode | ⏳ 待启动 | |
@@ -52,15 +53,15 @@
 - [x] v0.4 Session 1：Page Type Detector — 页面类型识别增强（7 类，通用启发式，已提交）
 - [x] v0.4 Session 1.1：Intent & Site Profile Planning — docs-only（SITE_INTENT_MATRIX + QUALITY_GUARDRAILS）
 - [x] v0.4 Session 2：Site Profile Engine — 结构化 profile 数据 + 纯函数匹配引擎 + 19 seed profiles + 62 tests
+- [x] v0.4 Session 2.1：Intent Signal Collector — 意图信号采集（15 个函数 + 4 个类型/接口 + 61 tests）
 
 ---
 
 ## 未完成（按优先级）
 
-1. Session 2：Site Profile Engine — 站点规则引擎
-2. Session 2.1：Intent Signal Collector — 意图信号采集（建议新增）
-3. Session 2.2：Seed Site Profiles — 重点站点 profile 种子（建议新增）
-4. Session 2.3：Anti-Slop Review — Profile + Intent 后质量审查（建议新增）
+1. Session 2.2：Seed Site Profiles — 重点站点 profile 种子（建议新增）
+2. Session 2.3：Anti-Slop Review — Profile + Intent 后质量审查（建议新增）
+3. Session 3：Navigation Summary Mode — 导航页摘要模式
 5. Session 3：Navigation Summary Mode — 导航页摘要模式
 6. Session 4：Comment / Selection Clip Mode — 评论选区模式
 7. Session 4.1：Anti-Slop Review — Comment Mode 后质量审查（建议新增）
@@ -84,5 +85,5 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本 Session 2 输出 → commit → 进入 Session 2.1 Intent Signal Collector**
+**ChatGPT 审查本 Session 2.1 输出 → commit → 进入 Session 2.2 (Seed Site Profiles) 或 Session 2.3 (Anti-Slop Review)**
 （注意：不要跳过 Intent Signal Collector 直接进入 Navigation Summary Mode 或 Comment/Selection Mode）

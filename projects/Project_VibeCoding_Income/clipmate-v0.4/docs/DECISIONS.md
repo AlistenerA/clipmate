@@ -4,6 +4,28 @@
 
 ---
 
+## v0.4 Session 2.1 决策
+
+### D-v0.4-016：Intent 检测只输出建议意图，不直接改变 fullpage / selection 保存策略
+
+- **原因**：Intent Signal Collector 的职责是收集信号并输出意图建议，不应直接修改现有的 fullpage / selection 保存行为。clipStrategy 层将在后续 Session 中根据 IntentSnapshot 决定是否调整剪藏策略。
+- **影响**：`detectClipIntent` 返回 `{ intent, confidence, reasons }`，但不调用任何保存/提取函数。Content Script 的现有 save 流程不受影响。
+- **可反转性**：高。Session 3/4 实现 clipStrategy 时可接入。
+
+### D-v0.4-015：IntentSnapshot 不保存 selected text、正文、评论、Markdown，只保存长度、枚举上下文和脱敏 hints
+
+- **原因**：隐私和安全底线要求不持久化用户内容。IntentSnapshot 设计时所有字段均为统计量或枚举值：selectionTextLength 为数字、selectionContext 为枚举、nearestClassHints 为白名单过滤后的语义 hint、reasons 为短句。不包含完整文本。
+- **影响**：所有函数均遵循此原则。`getSelectionTextLength` 只返回数字不返回文本。`sanitizeClassHints` 只保留白名单语义词。
+- **可反转性**：低。推翻此决策意味着引入隐私风险。
+
+### D-v0.4-014：Intent Signal Collector 只在剪藏触发时生成脱敏 IntentSnapshot，不做长期监听
+
+- **原因**：长期 DOM 监听（MutationObserver / scroll / click tracking）会引入性能开销、隐私风险和 manifest 权限问题。Intent 判断应在用户主动触发剪藏时基于当前 Document + Selection 快照一次性计算。
+- **影响**：`collectIntentSnapshot` 为纯函数 + DOM 只读操作，不注册任何 event listener、不持久化任何状态到 storage、不在 background worker 中运行。
+- **可反转性**：中。如果后续发现需要 RecentInteraction 信号（如最近点击位置），可在单次 session 内通过 content script 的 tab 内存轻量缓存实现，不升级为长期监听。
+
+---
+
 ## v0.4 Session 2 决策
 
 ### D-v0.4-013：Site Profile 匹配函数保持纯函数，不访问 chrome API、DOM、storage 或网络

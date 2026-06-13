@@ -4,6 +4,59 @@
 
 ---
 
+## v0.4 Session 2.1 (2026-06-13)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run (完整 24 文件 922 tests)
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：首次 5 错误（unused imports/vars），修复后通过（无输出）
+- `npm run test`：24 个测试文件，922 个测试，全部通过
+- `npm run build`：构建成功，102 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 结果 |
+|----------|:---:|:---:|
+| intent-signal-collector.test.ts | 61 | ✅ 全部通过（新增）|
+| 其余 23 个测试文件 | 861 | ✅ 全部通过（无退化）|
+
+### 产出
+
+- `src/content/intent/intent.types.ts` — ~65 lines
+- `src/content/intent/intentSignalCollector.ts` — ~280 lines
+- `src/content/intent/index.ts` — ~2 lines
+- `tests/intent-signal-collector.test.ts` — ~410 lines
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json version ✅
+- 未修改 manifest.config.ts version ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 922 tests pass ✅
+- build success ✅
+
+### 错误/修复
+
+1. lint: 5 个 unused import/var（PageType, SiteProfileMatch, ClipIntent, CONTEXT_NAV_KEYWORDS, CONTEXT_ARTICLE_KEYWORDS）→ 已移除无用导入和变量
+2. 其余无错误。
+
+---
+
 ## v0.4 Session 2 (2026-06-13)
 
 ### 运行命令

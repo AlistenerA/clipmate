@@ -179,4 +179,26 @@ Intent 判断建立在 PageType 之上但不取代：
 
 ---
 
+---
+
+## 7. 实现进度
+
+| 阶段 | 状态 | 内容 |
+|------|:---:|------|
+| Session 1 | ✅ 已完成 | Page Type Detector（7 类通用启发式检测，commit 54a9957）|
+| Session 1.1 | ✅ 已完成 | SITE_INTENT_MATRIX.md / QUALITY_GUARDRAILS.md |
+| Session 2 | ✅ 已完成 | Site Profile Engine（19 seed profiles + 纯函数匹配引擎，commit 006908e）|
+| Session 2.1 | ✅ 本轮 | Intent Signal Collector（intent.types / intentSignalCollector / 61 tests）|
+
+**本轮实现要点：**
+
+1. Session 2 Site Profile Engine 已完成并提交 006908e。
+2. Session 2.1 Intent Signal Collector 已完成。
+3. IntentSnapshot 只在 `collectIntentSnapshot()` 调用时生成，不持久化到 storage。
+4. 本轮不改变保存策略，不实现评论区剪藏 UI。
+5. `detectClipIntent` 按 11 级优先级输出建议意图，但不对接实际剪藏流程。
+6. 所有函数为纯函数或只读 DOM，不访问 chrome API / storage / 网络。
+
+---
+
 *（此文档随 Session 2/2.1/2.2 迭代更新）*

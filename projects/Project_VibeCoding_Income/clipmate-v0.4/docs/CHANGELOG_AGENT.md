@@ -4,6 +4,51 @@
 
 ---
 
+## v0.4 Session 2.1：Intent Signal Collector (2026-06-13)
+
+### 性质
+
+代码实现：脱敏 Intent Snapshot 数据结构、纯函数、轻量 DOM 信号采集。不改变保存策略。
+
+### 产出
+
+- `src/content/intent/intent.types.ts` — ClipIntent / SelectionContext / IntentSnapshot / IntentSignalInput 类型定义
+- `src/content/intent/intentSignalCollector.ts` — 9 个纯函数 + 3 个内部辅助函数
+- `src/content/intent/index.ts` — 模块导出
+- `tests/intent-signal-collector.test.ts` — 61 个测试
+
+### 新增文件
+
+- `src/content/intent/intent.types.ts` — 类型定义（~65 lines）
+  - `ClipIntent`：14 个意图值（clip-article ~ needs-ai-later）
+  - `SelectionContext`：7 个选区上下文（article / comment / video-description / search-result / navigation / ai-answer / unknown）
+  - `VisibleContextSnapshot`：4 个可见信号统计量
+  - `IntentSnapshot`：完整的意图快照数据结构（pageType, siteProfileId, selectionPresent, selectionTextLength, selectionContext, nearestRole, nearestTag, nearestClassHints, visibleContext, confidence, intent, reasons）
+  - `IntentSignalInput`：函数输入接口
+- `src/content/intent/intentSignalCollector.ts` — 核心实现（~280 lines）
+  - `sanitizeClassHints(className)` → 白名单语义 hint（去重，最多 8 个）
+  - `getSelectionTextLength(selection?)` → 只返回长度，不返回文本
+  - `getSelectionRootElement(selection?)` → 选区祖先 Element
+  - `classifyElementContext(element)` → DOM 祖先向上遍历，返回 SelectionContext 枚举
+  - `collectVisibleContext(document)` → 统计 video/comment/search/article 信号量
+  - `detectClipIntent(snapshot)` → 11 级优先级判断，返回 intent + confidence + reasons
+  - `collectIntentSnapshot(input)` → 综合所有函数输出完整 IntentSnapshot
+- `src/content/intent/index.ts` — re-export 所有导出
+
+### 改动摘要
+
+- 实现脱敏 Intent Signal Collector，输入 PageType + SiteProfile + Selection + Document，输出 IntentSnapshot
+- 所有函数为纯函数或只读 DOM，不访问 chrome API / storage / 网络
+- 不保存 selected text / 正文 / 评论 / Markdown，reasons 为短句
+- nearestClassHints 通过白名单过滤，去重，最多 8 个，不含完整 className
+- 不改变 fullpage / selection 保存策略
+- 不接入 Popup UI
+- 不实现评论区剪藏 UI
+- 不实现长期监听或持久化
+- lint 0，922 tests（含 61 new）全部通过，build 成功
+
+---
+
 ## v0.4 Session 2：Site Profile Engine (2026-06-13)
 
 ### 性质

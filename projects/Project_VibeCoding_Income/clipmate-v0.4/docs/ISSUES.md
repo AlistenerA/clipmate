@@ -49,6 +49,15 @@
 
 ---
 
+## v0.4 Session 2.1 新识别的风险
+
+| 编号 | 风险 | 关联 Session |
+|:---:|------|:--:|
+| R-v0.4-intent-004 | DOM 语义 hint 对真实站点准确率有限，classifyElementContext 依赖 class/id 关键词匹配，非标准站点可能误判或漏判，需要后续手动 QA | Session 2.2 / Session 8 |
+| R-v0.4-intent-005 | 短视频评论区动态加载可能导致 visible context 统计滞后（初次加载时不包含异步评论），Session 4 Comment Mode 需结合人工测试 | Session 2.2 / Session 4 |
+
+---
+
 ## v0.4 Blocker
 
 当前无 blocker。
