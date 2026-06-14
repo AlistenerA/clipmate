@@ -2,6 +2,52 @@
 
 ---
 
+## v0.5 Session 1：Article Image Extraction Core (2026-06-14)
+
+### 性质
+
+实现纯函数文章图片候选提取核心模块。只做提取+测试+文档，不做 Markdown/Notion/UI 接入。
+
+### 新增文件
+
+- `src/content/extractors/articleImages.ts` — 图片候选提取模块
+- `tests/article-images.test.ts` — 62 个测试
+
+### 核心能力
+
+- 从 Document/Element 提取所有 `<img>` 元素
+- 通过 `determineOrigin()` 单次遍历识别 `img` / `picture` / `figure` 来源
+- `getBestSrc()` 从 src / currentSrc / `el.src` 取最优 URL
+- `resolveUrl()` 把相对 URL、协议相对 URL 转绝对 URL
+- `extractCaption()` 从 `<figcaption>` 提取 caption（最长 300 字截断）
+- 噪声过滤：avatar/icon/logo/badge/emoji/sprite/thumb/favicon/qr/loading 等 class/id 和 URL 模式
+- 过滤 tracking pixel（1x1 或小尺寸+关键词）
+- 过滤 data: URI（可选保留）和 blob: URI
+- 按 minWidth/minHeight 过滤过小图片
+- 去重、maxImages 限制
+- 纯函数，不访问网络/chrome API/storage
+- 不下载/上传/缓存图片
+
+### 修改文件
+
+- 无（仅新增文件，未修改现有代码）
+
+### 验证
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：42 文件，1753 测试全部通过（新增 62）
+- `npm run build`：构建成功
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改 `package.json` / `manifest.config.ts` version
+- 未新增依赖、未新增权限
+- 未接入 Markdown / Notion / Popup / History
+
+---
+
 ## v0.5 Session 0：版本交接、目录创建与文章图片保存规划 (2026-06-14)
 
 ### 性质

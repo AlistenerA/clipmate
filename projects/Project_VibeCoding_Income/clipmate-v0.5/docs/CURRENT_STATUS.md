@@ -13,11 +13,11 @@
 
 ## 当前阶段
 
-**v0.5 Session 0 已完成** — 版本交接、目录创建与文章图片保存规划。
+**v0.5 Session 1 已完成** — Article Image Extraction Core。
 
-从 clipmate-v0.4 稳定基线（1850c64）复制创建 clipmate-v0.5 开发目录。lint 0 / 1691 tests pass / build success。文档更新完成。
+实现了纯函数文章图片候选提取模块 `src/content/extractors/articleImages.ts`，支持 img/picture/figure 图片提取、srcset 解析、相对 URL 归一化、alt/title/caption 保留、噪声过滤（avatar/icon/logo/emoji/tracking/data/blob）、去重和数量限制。62 个新测试。lint 0 / 1753 tests pass / build success。
 
-*下一步：v0.5 Session 1 — Article Image Extraction Core。*
+*下一步：v0.5 Session 2 — Markdown Image Preservation。*
 
 ---
 
@@ -26,7 +26,7 @@
 | Session | 状态 | 描述 |
 |:---:|:---:|------|
 | Session 0 | ✅ 已完成 | 版本交接、目录创建、规划 |
-| Session 1 | ⏳ 待开始 | Article Image Extraction Core |
+| Session 1 | ✅ 已完成 | Article Image Extraction Core |
 | Session 2 | ⏳ 待开始 | Markdown Image Preservation |
 | Session 3 | ⏳ 待开始 | Notion External Image Blocks |
 | Session 4 | ⏳ 待开始 | Popup/History Lightweight Image Metadata |
@@ -38,3 +38,4 @@
 ## 已完成
 
 - [x] v0.5 Session 0：版本交接、目录创建、文档更新
+- [x] v0.5 Session 1：Article Image Extraction Core

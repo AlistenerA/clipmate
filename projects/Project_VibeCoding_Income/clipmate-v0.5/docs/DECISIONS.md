@@ -26,7 +26,31 @@
 
 ---
 
-## 继承自 v0.4 的决策
+## v0.5 Session 1 决策
+
+### D-v0.5-004：图片提取核心为纯函数，不访问网络/storage/chrome API
+
+- **原因**：Content Script 中提取图片应无副作用，不发起网络请求（避免隐私风险），不写 storage（避免竞态），不调 chrome API（避免依赖扩展运行时）。纯函数设计便于测试，62 个测试无需 mock。
+- **影响**：extractArticleImages 只读 DOM，不验证图片可达性。图片 URL 可能指向 404、跨域禁止等。
+- **可反转性**：高。后续如需验证图片可达性，可新增可选参数或包装函数。
+
+### D-v0.5-005：默认过滤 data/blob/base64/tracking/icon/avatar/logo/emoji 等噪声图
+
+- **原因**：文章正文图片与 UI 装饰图片在 DOM 中混杂，需在提取阶段区分。噪声图片进入 Markdown 会降低可读性、增大保存负担、可能触发 Notion 审核。
+- **影响**：avator/icon/logo/badge/emoji/sprite/tracking pixel/data URI/blob URI 等默认过滤。allowDataUri 选项可选择性保留 data URI。
+- **可反转性**：高。噪声规则可扩展或禁用。
+
+### D-v0.5-006：单次遍历 img 元素，通过祖先元素 determineOrigin 识别 figure/picture
+
+- **原因**：避免多次遍历 DOM 导致重复 counting 和图片顺序混乱。figure/picture 内 img 通过检查 parentElement 链识别 origin，一次 querySelectorAll 完成。
+- **影响**：totalFound 计数准确（不会重复计算 figure 和 picture 内图片）。
+- **可反转性**：中。如需更复杂的 origin 判断（如多层嵌套），可增强 determineOrigin。
+
+### D-v0.5-007：本轮不接入 ExtractedContent / Markdown / Notion
+
+- **原因**：Session 1 目标只做提取核心和测试。接入 Markdown 是 Session 2 任务，接入 Notion 是 Session 3 任务。
+- **影响**：extractArticleImages 是独立纯函数，未被 index.ts 调用。Session 2/3 再接入。
+- **可反转性**：N/A（按规划执行）。
 
 v0.4 决策文档见 `clipmate-v0.4/docs/DECISIONS.md`。与本轮相关的继承决策：
 
