@@ -12,18 +12,17 @@
 
 ## 当前阶段
 
-**v0.4 Session 7 + 7.1 已完成** — Docs, Manual QA, Version Bump, Package（待 ChatGPT 审查）。
+**v0.4 Session 8.1 已完成** — Bilibili Video Page Manual QA Fix。
 
-- 版本号已升级：package.json / manifest.config.ts 0.3.0 → 0.4.0
-- 发布文档已更新：README / PRIVACY / STORE_SUBMISSION / V0.4_RELEASE_NOTES / RELEASE_CHECKLIST / MANUAL_QA
-- 状态文档已更新：CURRENT_STATUS / V0.4_PLAN / CHANGELOG_AGENT / TEST_LOG / ISSUES / DECISIONS / SITE_INTENT_MATRIX
-- QA 文档已标注 release status：NAVIGATION_SUMMARY_QA / COMMENT_SELECTION_QA / SITE_VISUAL_QA / LINK_CARD_QA
-- Session 7.1 docs completion fix applied after ChatGPT review：
-  - TEST_LOG 已记录 Session 7 真实 lint/test/build/zip 结果
-  - package.json zip script 变更已明确说明（输出文件名同步版本号）
-  - zip 检查范围已明确：基于打包脚本逻辑检查，逐文件解压推迟到 Session 8
-  - 新增 V0.4_PACKAGE_NOTES.md
-- 下一步：ChatGPT 审查 → commit → 进入 v0.4 Session 8 Release Robustness Review
+- **问题**：人工 QA 发现 B 站视频页全文剪藏会抓取弹幕内容，选区剪藏检测不到或不正确
+- **修复**：
+  - 新增 `excludeSelector` 到 SiteProfileSelectorHints，bilibili-video profile 添加弹幕排除选择器
+  - `NOISE_CSS_KEYWORDS` 新增 `danmaku`/`danmu`/`弹幕` 关键词
+  - `preCleanDocument` 接受可选 `excludeSelectors` 参数
+  - `handleExtractFullpage` 调用 `matchSiteProfile` 传递 excludeSelectors
+  - 选区提取器增强：`getSelectionText` 去除零宽字符，`getSelectionHtml` 添加错误处理，`extractSelection` 在 html 提取失败时提供兜底
+- 测试：新增 24 个测试（danmu 过滤 + 选区鲁棒性 + profile 结构验证）
+- 下一步：ChatGPT 审查 → commit → 用户人工复测 B 站视频页
 
 ---
 
@@ -52,7 +51,8 @@
 | Session 6 Link Card Preview | ✅ 已完成 | a36da4e |
 | Session 6.1 Anti-Slop Review | ✅ 已完成 | ChatGPT 审查通过 |
 | Session 7 Docs, QA, Version, Package | ✅ 已完成 | 本轮，待 ChatGPT 审查 |
-| Session 8 Robustness Check and Release | ⏳ 待启动 | |
+| Session 8 Robustness Check and Release | ✅ 已完成 | Session 8 (只读审查，通过) |
+| Session 8.1 Bilibili QA Fix | ✅ 已完成 | 本轮 |
 
 ---
 
@@ -77,13 +77,14 @@
 - [x] v0.4 Session 6：Link Card Preview Core
 - [x] v0.4 Session 6.1：Anti-Slop Review
 - [x] v0.4 Session 7：Docs, Manual QA, Version Bump to 0.4.0, Package
+- [x] v0.4 Session 8：Release Robustness Review（只读审查，通过）
+- [x] v0.4 Session 8.1：Bilibili Video Page Manual QA Fix
 
 ---
 
 ## 未完成（按优先级）
 
-1. Session 8：Robustness Check and Release Candidate Review
-2. 所有手动 QA 场景待用户真实浏览器验证
+1. B 站视频页人工复测：用户需重新验证全文剪藏（不抓弹幕）和选区剪藏
 
 ### Deferred（延后到 v0.5 或独立专项）
 

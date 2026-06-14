@@ -32,8 +32,8 @@ export function extractSelection(): SelectionResult | null {
   const text = getSelectionText()
   if (!text) return null
 
-  const rawHtml = getSelectionHtml() || ''
-  const html = normalizeSelectionHtml(rawHtml)
+  const rawHtml = getSelectionHtml()
+  const html = rawHtml ? normalizeSelectionHtml(rawHtml) : `<p>${text}</p>`
 
   return { html, text }
 }

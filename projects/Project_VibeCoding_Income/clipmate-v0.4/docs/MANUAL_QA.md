@@ -148,6 +148,18 @@
 
 ---
 
+## 9. Session 8.1 B 站修复记录
+
+| 检查项 | 修复状态 | 备注 |
+|------|:---:|------|
+| B 站全文剪藏不抓弹幕 | ✅ 已修复 | excludeSelectors + noise keywords |
+| B 站选区剪藏正常检测 | ✅ 已修复 | 零宽字符剥离 + html 兜底 |
+| 普通文章全文剪藏不受影响 | ✅ 自动化测试通过 | article-boundary-guard + content-parser tests |
+| 普通文章选区剪藏不受影响 | ✅ 自动化测试通过 | selection-extractor tests |
+| 弹幕通用过滤（非 B 站） | ✅ 已实现 | danmaku/danmu noise keywords |
+
+---
+
 ## 已知限制
 
 - Site Visual 不验证 favicon 可访问性

@@ -4,6 +4,77 @@
 
 ---
 
+## v0.4 Session 8.1 (2026-06-14)
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings（无输出）
+- `npm run test`：33 个测试文件，1407 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 变化 | 结果 |
+|----------|:---:|:---:|:---:|
+| selection-extractor.test.ts | 18 | 新增 | ✅ 全部通过 |
+| article-boundary-guard.test.ts | 126 | +5（原 121） | ✅ 全部通过 |
+| site-profile-engine.test.ts | 71 | +1（原 70） | ✅ 全部通过 |
+| 其余 30 个测试文件 | 1192 | 无退化 | ✅ 全部通过 |
+
+### 本轮新增测试明细
+
+**selection-extractor.test.ts（18 tests）**：
+- getSelectionText：6 tests（正常选区、无选区、零宽字符剥离、纯零宽字符返回 null、纯空白返回 null、脱敏后长度）
+- getSelectionHtml：3 tests（正常 html、无选区 null、空结果 null）
+- extractSelection：3 tests（有效选区、空选区 null、html 失败兜底 `<p>`）
+- normalizeSelectionHtml：6 tests（纯文本包装、block 开头保留、带空白前缀、空/block 元素 div/h1）
+
+**article-boundary-guard.test.ts 新增（5 tests）**：
+- danmaku class 关键词过滤
+- danmu class 关键词过滤
+- excludeSelectors 参数：精准删除匹配元素
+- excludeSelectors：不删除不匹配内容
+- excludeSelectors：非法选择器不抛异常
+
+**site-profile-engine.test.ts 新增（1 test）**：
+- bilibili-video 的 excludeSelector 包含 danmaku 和 danmu
+
+### 错误/修复
+
+1. test: selection-extractor 的 `getSelectionText()` 在 jsdom 中调用 `window.getSelection()` 返回 null → 通过 `vi.stubGlobal('window', ...)` mock 全局 window 对象解决
+2. test: danmaku fixture 中 `"<danmaku text 2"` 未闭合标签导致 jsdom 解析异常 → 修复为合法 HTML
+3. test: `mockSelection` 返回 HTMLDivElement 而非 DocumentFragment，导致 `getSelectionHtml` 返回 `<div></div>` 而非空字符串 → 空 html 时返回 `createDocumentFragment()`
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1407 tests pass ✅
+- build success ✅
+- danmu/danmaku 元素在 preCleanDocument 中被移除 ✅
+- excludeSelectors 通过 site profile 驱动，无域名硬编码 ✅
+- 选区提取器零宽字符 + 错误处理增强 ✅
+- 不访问网络/chrome API/storage ✅
+
+---
+
 ## v0.4 Session 7 (2026-06-13)
 
 ### 运行命令

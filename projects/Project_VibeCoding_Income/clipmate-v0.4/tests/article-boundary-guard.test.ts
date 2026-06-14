@@ -612,6 +612,54 @@ describe('preCleanDocument', () => {
     expect(bodyText).toContain('LaTeX')
     expect(bodyText).toContain('Greek')
   })
+
+  it('removes div with danmaku class via noise keyword', () => {
+    const doc = makeDom(
+      '<div class="bpx-player-danmaku">danmaku text</div><article>article content</article>',
+    )
+    const removed = preCleanDocument(doc)
+    expect(doc.querySelector('.bpx-player-danmaku')).toBeNull()
+    expect(doc.querySelector('article')).not.toBeNull()
+    expect(removed).toBeGreaterThan(0)
+  })
+
+  it('removes div with danmu class via noise keyword', () => {
+    const doc = makeDom(
+      '<div class="danmu-container">弹幕内容</div><p>real paragraph</p>',
+    )
+    preCleanDocument(doc)
+    expect(doc.querySelector('.danmu-container')).toBeNull()
+    expect(doc.querySelector('p')?.textContent).toContain('real paragraph')
+  })
+
+  it('removes elements matching excludeSelectors string', () => {
+    const doc = makeDom(`
+      <div class="bpx-player-danmaku">danmaku noise</div>
+      <div class="danmaku-info-row">danmaku info</div>
+      <article><h1>Video Title</h1><p>Video description text here.</p></article>
+      <div class="danmu-wrap">more danmu</div>
+    `)
+    preCleanDocument(doc, '.bpx-player-danmaku, .danmaku-info-row, .danmu-wrap')
+    expect(doc.querySelector('.bpx-player-danmaku')).toBeNull()
+    expect(doc.querySelector('.danmaku-info-row')).toBeNull()
+    expect(doc.querySelector('.danmu-wrap')).toBeNull()
+    expect(doc.querySelector('article')).not.toBeNull()
+    expect(doc.querySelector('p')?.textContent).toContain('Video description')
+  })
+
+  it('excludeSelectors does not remove non-matching content', () => {
+    const doc = makeDom('<article><h1>Title</h1><p>Paragraph text</p></article>')
+    preCleanDocument(doc, '.bpx-player-danmaku, .danmaku-wrap')
+    expect(doc.querySelector('article')).not.toBeNull()
+    expect(doc.querySelector('h1')?.textContent).toContain('Title')
+    expect(doc.querySelector('p')?.textContent).toContain('Paragraph text')
+  })
+
+  it('excludeSelectors with invalid selector does not throw', () => {
+    const doc = makeDom('<article><p>content</p></article>')
+    expect(() => preCleanDocument(doc, ':bad(]selector, .valid-class')).not.toThrow()
+    expect(doc.querySelector('article')).not.toBeNull()
+  })
 })
 
 describe('trimArticleBody', () => {

@@ -546,4 +546,13 @@ describe('seed profiles structural QA', () => {
   it('counts exactly 19 seed profiles', () => {
     expect(SEED_PROFILES.length).toBe(19)
   })
+
+  it('bilibili-video profile has danmu excludeSelector', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    expect(bilibili!.selectorHints?.excludeSelector).toBeDefined()
+    const excludeSel = bilibili!.selectorHints!.excludeSelector!
+    expect(excludeSel).toContain('danmaku')
+    expect(excludeSel).toContain('danmu')
+  })
 })

@@ -89,7 +89,15 @@ function handleExtractFullpage(): HandlerResult {
     const docClone = document.cloneNode(true) as Document
     extractMathJaxFormulas(docClone)
     cleanDocument(docClone)
-    const noiseRemoved = preCleanDocument(docClone)
+
+    const pageType = classifyPageType(docClone)
+    const siteProfileMatch = matchSiteProfile({
+      url: document.URL,
+      pageType,
+    })
+    const excludeSelectors = siteProfileMatch?.profile.selectorHints?.excludeSelector
+
+    const noiseRemoved = preCleanDocument(docClone, excludeSelectors)
     logger.info(`Pre-clean removed ${noiseRemoved} noise nodes`)
 
     const extracted = extractFullpage(docClone)

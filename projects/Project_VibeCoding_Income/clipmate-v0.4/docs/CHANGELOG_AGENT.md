@@ -4,6 +4,75 @@
 
 ---
 
+## v0.4 Session 8.1：Bilibili Video Page Manual QA Fix (2026-06-14)
+
+### 性质
+
+人工 QA Bug 修复。不新增功能、权限、依赖。不修改 Popup/Options/Background/Notion 链路。
+
+### 问题
+
+- B 站视频页全文剪藏（`handleExtractFullpage`）通过 Readability 提取内容，弹幕 DOM（bpx-player-danmaku 等）被误判为正文
+- 选区提取器在特殊 DOM 结构中检测不到选区或结果不正确
+
+### 根因
+
+1. `preCleanDocument` 未移除弹幕元素：`NOISE_CSS_KEYWORDS` 缺少 `danmaku`/`danmu` 关键词，且 site profile 的排除选择器未接入清洗管道
+2. `getSelectionText` 未处理零宽字符导致的选区误判为空
+3. `getSelectionHtml` 缺少 try-catch 错误处理
+4. `extractSelection` 在 html 提取失败时返回 `''` 而非兜底 HTML
+
+### 修复摘要
+
+- `src/shared/siteProfiles/siteProfile.types.ts` — `SiteProfileSelectorHints` 新增 `excludeSelector` 字段
+- `src/shared/siteProfiles/seedProfiles.ts` — bilibili-video profile 新增 `excludeSelector`（danmaku/danmu 容器选择器）
+- `src/content/extractors/articleBoundaryGuard.ts` — `NOISE_CSS_KEYWORDS` 新增 `danmaku`/`danmu`/`弹幕`；`preCleanDocument` 签名新增可选 `excludeSelectors` 参数
+- `src/content/index.ts` — `handleExtractFullpage` 调用 `matchSiteProfile` 并传递 `excludeSelectors` 到 `preCleanDocument`
+- `src/content/selection/getSelectionText.ts` — 去除零宽字符（\u200B-\u200F、\uFEFF、\u00A0 等）
+- `src/content/selection/getSelectionHtml.ts` — `cloneContents` 添加 try-catch 错误处理
+- `src/content/extractors/selectionExtractor.ts` — html 提取失败时兜底 `<p>${text}</p>`
+
+### 测试
+
+- `tests/article-boundary-guard.test.ts` — 新增 5 tests：danmaku/danmu 关键词过滤、excludeSelectors 参数、异常安全
+- `tests/selection-extractor.test.ts` — 新增 18 tests：零宽字符剥离、html 提取错误处理、兜底 html、normalizeSelectionHtml
+- `tests/site-profile-engine.test.ts` — 新增 1 test：bilibili 的 excludeSelector 包含 danmaku/danmu
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：33 files, 1407 tests passed（+24 new）
+- `npm run build`：success, 116 modules
+
+### 修改文件
+
+- `src/shared/siteProfiles/siteProfile.types.ts`
+- `src/shared/siteProfiles/seedProfiles.ts`
+- `src/content/extractors/articleBoundaryGuard.ts`
+- `src/content/index.ts`
+- `src/content/selection/getSelectionText.ts`
+- `src/content/selection/getSelectionHtml.ts`
+- `src/content/extractors/selectionExtractor.ts`
+
+### 新增文件
+
+- `tests/selection-extractor.test.ts`
+
+### 新增测试文件
+
+- `tests/selection-extractor.test.ts`
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- `.wolf/`、`.opencode/`、`.playwright-mcp/`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
 ## v0.4 Session 7.1：Release Docs Completion Fix (2026-06-13)
 
 ### 性质

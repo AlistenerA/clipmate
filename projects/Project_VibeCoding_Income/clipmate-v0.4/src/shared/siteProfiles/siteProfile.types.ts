@@ -14,6 +14,7 @@ export interface SiteProfileSelectorHints {
   videoPlayer?: string
   mainHeading?: string
   searchResultCard?: string
+  excludeSelector?: string
 }
 
 export interface SiteProfile {

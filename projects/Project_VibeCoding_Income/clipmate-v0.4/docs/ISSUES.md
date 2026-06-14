@@ -4,6 +4,14 @@
 
 ---
 
+## v0.4 Session 8.1 状态
+
+- 当前无 blocker
+- 人工 QA C2（B 站视频页全文抓弹幕 / 选区异常）已修复，待用户复测
+- I10（B 站弹幕）+ I11（B 站选区）已修复
+
+---
+
 ## v0.4 Session 7 状态
 
 - 当前无 blocker
@@ -136,6 +144,17 @@
 | QA08 | 视频简介区选区 → 应触发 video-description-selection | Session 4 / Session 8 手动 QA |
 | QA09 | AI 对话页选区（ChatGPT/Claude 等）→ 应触发 ai-answer-selection | Session 4 / Session 8 手动 QA |
 | QA10 | 普通文章页选区 → 应保持 selection-generic，不误触发 comment/forum warning | Session 4 / Session 8 手动 QA |
+
+### Session 8.1 已修复
+
+| 编号 | 问题 | 级别 | 修复 Session |
+|:---:|------|:---:|:---:|
+| ✅ I10 | B 站视频页全文剪藏抓取弹幕内容（danmaku/danmu DOM 被 Readability 误判为正文） | blocker | Session 8.1 |
+| ✅ I11 | B 站选区检测不到（选区提取器零宽字符 + html 提取失败无兜底） | major | Session 8.1 |
+
+**I10 修复详情：** `preCleanDocument` 新增 `excludeSelectors` 参数，bilibili-video profile 添加 danmaku/danmu 容器排除选择器（`.bpx-player-danmaku, .danmaku-wrap, .danmu-wrap` 等）。`NOISE_CSS_KEYWORDS` 新增 `danmaku`/`danmu`/`弹幕` 关键词作通用兜底。`handleExtractFullpage` 调用 `matchSiteProfile` 传递排除选择器到清洗管道。
+
+**I11 修复详情：** `getSelectionText` 去除零宽字符（\u200B-\u200F、\uFEFF 等）后再判断是否为空。`getSelectionHtml` 添加 try-catch 包裹 `cloneContents`。`extractSelection` 在 html 提取失败时兜底为 `<p>{text}</p>`。
 
 ### Session 3.2 已修复
 

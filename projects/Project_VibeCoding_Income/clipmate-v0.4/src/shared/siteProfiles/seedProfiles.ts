@@ -58,6 +58,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
       contentContainer: '.video-desc-container, .video-info-detail',
       commentContainer: '.reply-list, .comment-list',
       videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap',
+      excludeSelector: '.bpx-player-danmaku, .bpx-player-sending-bar, .danmaku-wrap, .danmaku-container, .danmu-wrap, .danmu-container, .danmaku-info-row, .player-danmaku',
     },
   },
   {

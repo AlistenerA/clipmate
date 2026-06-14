@@ -31,6 +31,7 @@ const NOISE_CSS_KEYWORDS = [
   'article-bar-bottom', 'more-toolbox', 'article-info-box',
   'read-count-box', 'blog-tags-box', 'copyright-box',
   'second-recommend', 'column-group',
+  'danmaku', 'danmu',
   '广告', '推广', '赞助', '弹窗',
   '登录', '注册',
   '分享', '微博', '微信', '收藏', '点赞',
@@ -41,6 +42,7 @@ const NOISE_CSS_KEYWORDS = [
   '听全文', '字号', '责任编辑', '版权声明', '免责声明',
   '举报', '反馈',
   '目录', '版权',
+  '弹幕',
 ]
 
 const CONTENT_CSS_KEYWORDS = [
@@ -174,8 +176,25 @@ export function hasEnoughArticleText(text: string): boolean {
   return true
 }
 
-export function preCleanDocument(doc: Document): number {
+export function preCleanDocument(doc: Document, excludeSelectors?: string): number {
   let removedCount = 0
+
+  if (excludeSelectors) {
+    const selectors = excludeSelectors
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    for (const sel of selectors) {
+      try {
+        doc.querySelectorAll(sel).forEach((el) => {
+          el.remove()
+          removedCount++
+        })
+      } catch {
+        // skip invalid selector
+      }
+    }
+  }
 
   const tagSelectors = [
     'form', 'canvas', 'button', 'input', 'select', 'textarea',
