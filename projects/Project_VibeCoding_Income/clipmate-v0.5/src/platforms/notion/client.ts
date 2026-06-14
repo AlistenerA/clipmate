@@ -20,11 +20,14 @@ async function makeRequest(token: string, url: string, body: unknown): Promise<v
       },
       body: JSON.stringify(body),
     })
-  } catch {
+  } catch (err) {
+    const fetchMsg = err instanceof Error ? err.message : String(err)
+    console.warn(`[ClipMate] Notion fetch failed: ${fetchMsg}`)
     throw new Error('NETWORK_ERROR')
   }
 
   if (!response.ok) {
+    console.warn(`[ClipMate] Notion API ${response.status}: ${response.statusText}`)
     if (response.status === 401 || response.status === 403) {
       throw new Error('NOTION_AUTH_FAILED')
     }

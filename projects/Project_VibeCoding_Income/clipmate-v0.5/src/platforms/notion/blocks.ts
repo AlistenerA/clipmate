@@ -9,6 +9,8 @@ interface BlockObjectRequest {
 
 const MAX_TEXT_LENGTH = 2000
 
+const IMAGE_MARKDOWN_RE = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/
+
 function chunkText(text: string): string[] {
   const chunks: string[] = []
   let remaining = text
@@ -49,15 +51,56 @@ function splitParagraphs(contentText: string): string[] {
     .filter((p) => p.length > 0)
 }
 
-function chunkedParagraphBlocks(contentText: string): BlockObjectRequest[] {
+function isValidExternalImageUrl(url: string): boolean {
+  const trimmed = url.trim()
+  if (!trimmed) return false
+  if (!/^https?:\/\//.test(trimmed)) return false
+  if (trimmed.length > MAX_TEXT_LENGTH) return false
+  return true
+}
+
+function tryImageBlock(rawUrl: string, alt: string): BlockObjectRequest | null {
+  const url = rawUrl.trim()
+  if (!isValidExternalImageUrl(url)) return null
+
+  try {
+    const captionText = alt.trim()
+    return {
+      object: 'block',
+      type: 'image',
+      image: {
+        type: 'external',
+        external: { url },
+        caption: captionText ? richText(captionText) : [],
+      },
+    }
+  } catch {
+    return null
+  }
+}
+
+export function markdownToContentBlocks(contentText: string): BlockObjectRequest[] {
   const blocks: BlockObjectRequest[] = []
   const paragraphs = splitParagraphs(contentText)
 
   for (const para of paragraphs) {
-    if (para.length <= MAX_TEXT_LENGTH) {
-      blocks.push(paragraphBlock(para))
+    const trimmed = para.trim()
+    const imageMatch = IMAGE_MARKDOWN_RE.exec(trimmed)
+
+    if (imageMatch) {
+      const alt = imageMatch[1] || ''
+      const rawUrl = imageMatch[2] || ''
+      const imageBlock = tryImageBlock(rawUrl, alt)
+      if (imageBlock) {
+        blocks.push(imageBlock)
+        continue
+      }
+    }
+
+    if (trimmed.length <= MAX_TEXT_LENGTH) {
+      blocks.push(paragraphBlock(trimmed))
     } else {
-      const chunks = chunkText(para)
+      const chunks = chunkText(trimmed)
       for (const chunk of chunks) {
         blocks.push(paragraphBlock(chunk))
       }
@@ -73,7 +116,7 @@ export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
   if (draft.content?.clipMode === 'comment-context') {
     const contentText = draft.content?.markdown || draft.content?.contentText || ''
     if (contentText.trim()) {
-      blocks.push(...chunkedParagraphBlocks(contentText.trim()))
+      blocks.push(...markdownToContentBlocks(contentText.trim()))
     }
     return blocks
   }
@@ -164,7 +207,7 @@ export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
 
   const contentText = draft.content?.markdown || draft.content?.contentText || ''
   if (contentText.trim()) {
-    blocks.push(...chunkedParagraphBlocks(contentText.trim()))
+    blocks.push(...markdownToContentBlocks(contentText.trim()))
   }
 
   return blocks

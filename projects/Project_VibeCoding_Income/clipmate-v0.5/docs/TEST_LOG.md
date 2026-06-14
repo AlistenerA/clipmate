@@ -2,7 +2,50 @@
 
 ---
 
-## v0.5 Session 2 (2026-06-14)
+## v0.5 Session 3 (2026-06-14)
+
+### 性质
+
+Notion External Image Blocks 测试。验证 `markdownToContentBlocks` 和 `buildNotionBlocks` 将 Markdown 图片语法 `![alt](url)` 转换为 Notion `image` block (type: external) 的能力，以及降级和兼容性。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：44 个测试文件，1810 个测试，全部通过（新增 29 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/notion-image-blocks.test.ts, 29 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| image block 基本转换 | 2 | standalone image → external block、external URL |
+| caption | 3 | alt → caption、空 alt → 空 caption、纯空白 alt → 空 caption |
+| 段落保持 | 2 | 纯文本段落、段落顺序保持（文本+图片交错） |
+| 多图片 | 2 | 3 张独立图片、重复图片均转换 |
+| data/blob URI 降级 | 2 | data: URI → paragraph、blob: URI → paragraph |
+| 非 http URL 降级 | 2 | 相对 URL → paragraph、协议相对 URL → paragraph |
+| 行内图片 | 1 | 段落内图片保持为 paragraph |
+| URL 边界 | 3 | 超长 URL 降级、空 URL 降级、带 query params |
+| 特殊字符 alt | 1 | 中文 + 括号 + 数字 |
+| 空内容 | 2 | 空字符串、纯空白 |
+| 降级不影响周围 | 1 | 失败的图片两侧段落不受影响 |
+| 纯文本无图片 | 1 | 无 image block 生成 |
+| fullpage 集成 | 4 | image blocks + chrome blocks 并存、selection callout、无图片时零 image、多图片 |
+| comment-context 集成 | 2 | image blocks 生成、无 chrome outer blocks |
+| data URI in fullpage | 1 | fullpage data URI 降级为 paragraph |
+
+### 已有测试
+
+- 1781 个已有测试全部通过，无新增失败、无删除、无降低
+- `notion-blocks.test.ts` (21 tests) 全部通过，comment-context behavior 未改变
 
 ### 性质
 

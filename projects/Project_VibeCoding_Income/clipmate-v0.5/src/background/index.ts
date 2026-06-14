@@ -10,8 +10,9 @@ chrome.runtime.onMessage.addListener((message: ClipMateMessage, _sender, sendRes
   if (message?.type === MESSAGE_TYPES.SAVE_TO_NOTION) {
     handleSaveToNotion(message.payload as SaveToNotionPayload)
       .then(sendResponse)
-      .catch(() => {
-        logger.error('Background save to notion failed')
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err)
+        logger.error(`Background save to notion failed: ${msg}`)
         sendResponse({ success: false, error: 'NOTION_SAVE_FAILED' })
       })
     return true

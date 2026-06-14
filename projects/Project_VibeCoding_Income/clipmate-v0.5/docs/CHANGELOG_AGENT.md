@@ -2,7 +2,45 @@
 
 ---
 
-## v0.5 Session 2：Markdown Image Preservation (2026-06-14)
+## v0.5 Session 3：Notion External Image Blocks (2026-06-14)
+
+### 性质
+
+将 Markdown 图片语法 `![alt](url)` 转换为 Notion `image` block（type: external）。替换 `chunkedParagraphBlocks` 为 `markdownToContentBlocks`，逐段落检测图片并生成 image block。不接入 Notion File Upload API，不下载/上传/缓存图片。
+
+### 修改文件
+
+- `src/platforms/notion/blocks.ts` — 新增 `IMAGE_MARKDOWN_RE`、`isValidExternalImageUrl()`、`tryImageBlock()`、`markdownToContentBlocks()`（导出）；移除未使用的 `chunkedParagraphBlocks`；`buildNotionBlocks()` 使用 `markdownToContentBlocks()`
+
+### 新增文件
+
+- `tests/notion-image-blocks.test.ts` — 29 个测试
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改 `package.json` / `manifest.config.ts` version
+- 未新增依赖、未新增权限
+- 未修改 Popup/History UI
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未新增 FileReader/canvas/toDataURL/createObjectURL
+
+### 核心能力
+
+- `markdownToContentBlocks()`：替换 `chunkedParagraphBlocks`，逐段落检测 `![alt](url)` 语法
+- 仅接受 http/https external URL；data:/blob:/非 http URL 降级为 paragraph block
+- image block 使用 `{ type: 'external', external: { url } }` 结构
+- alt 文本作为 caption（空 alt → 空 caption）
+- 图片转换失败不影响正文段落保存
+- comment-context 模式同步受益（共用 `markdownToContentBlocks`）
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：44 files, 1810 tests pass（新增 29 个）
+- `npm run build`：成功
 
 ### 性质
 
