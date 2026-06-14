@@ -2,6 +2,44 @@
 
 ---
 
+## v0.5 Session 2 (2026-06-14)
+
+### 性质
+
+Markdown 图片保留测试。验证 Turndown `img` rule 的噪声过滤、去重、alt 兜底、相对 URL 解析，以及 `injectMissingImages` 安全网行为。不修改已有测试。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：43 个测试文件，1781 个测试，全部通过（新增 28 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/markdown-images.test.ts, 28 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 噪声过滤 | 11 | data/blob URI、avatar/icon/logo/emoji class、tracking pixel 1x1、noise id、noise URL pattern、small size |
+| 去重 | 1 | 重复 URL 只保留首次出现 |
+| alt fallback | 3 | 空 alt→"image"、给定 alt、空白 trim |
+| 相对 URL 解析 | 4 | pageUrl 解析、协议相对、绝对保留、无 pageUrl |
+| 无回归 | 5 | 文本段落、headings、links、空 HTML、纯空白 |
+| figure 支持 | 2 | 有效 figure 保留、噪声 figure 过滤 |
+| 非影响性 | 2 | 纯文本无图片语法、混合文本图片 |
+
+### 已有测试
+
+- 1753 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
 ## v0.5 Session 1 (2026-06-14)
 
 ### 性质

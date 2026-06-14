@@ -28,6 +28,7 @@ import {
 } from './commentSelection'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
+import { extractArticleImages } from './extractors/articleImages'
 
 function extractMathJaxFormulas(doc: Document): void {
   const scripts = doc.querySelectorAll('script[type^="math/tex"]')
@@ -56,13 +57,38 @@ interface ResultErr {
 
 type HandlerResult = ResultOk | ResultErr
 
+function injectMissingImages(markdown: string, doc: Document, pageUrl: string): string {
+  try {
+    const imageResult = extractArticleImages(doc, { pageUrl })
+    if (imageResult.images.length === 0) return markdown
+
+    const mdLower = markdown.toLowerCase()
+    const missingImages = imageResult.images.filter(
+      (img) => !mdLower.includes(img.url.toLowerCase()),
+    )
+    if (missingImages.length === 0) return markdown
+
+    const lines = ['\n---\n', '## Images\n']
+    for (const img of missingImages) {
+      const alt = img.alt || 'image'
+      lines.push(`![${alt}](${img.url})`)
+      if (img.caption && img.caption !== img.alt) {
+        lines.push(`*${img.caption}*`)
+      }
+    }
+    return markdown + '\n' + lines.join('\n')
+  } catch {
+    return markdown
+  }
+}
+
 function buildContent(
   mode: 'fullpage' | 'selection',
   extracted: { content: string; textContent: string },
   metaDoc: Document,
 ): ExtractedContent {
   const meta = parseMetadata(metaDoc)
-  const markdown = htmlToMarkdown(extracted.content)
+  const markdown = htmlToMarkdown(extracted.content, meta.url)
   const wordCount = countWords(extracted.textContent)
 
   return {
@@ -108,7 +134,7 @@ function handleExtractFullpage(): HandlerResult {
       logger.info('Readability failed, falling back to improved fallback')
       const fallbackMeta = parseMetadata(docClone)
       const fallbackResult = fallbackExtract(docClone)
-      const fallbackMd = htmlToMarkdown(fallbackResult.content)
+      const fallbackMd = htmlToMarkdown(fallbackResult.content, document.URL)
       const trimmed = trimArticleBody(fallbackMd)
       const fallbackWordCount = countWords(fallbackResult.textContent)
       const report = assessArticleConfidence(fallbackResult.textContent, fallbackResult.content)
@@ -149,6 +175,7 @@ function handleExtractFullpage(): HandlerResult {
 
       const content = buildContent('fullpage', fallbackResult, docClone)
       content.markdown = trimmed
+      content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
       logger.info(`Fullpage fallback: ${fallbackWordCount} words`)
       return { success: true, data: content }
     }
@@ -192,6 +219,7 @@ function handleExtractFullpage(): HandlerResult {
 
     const content = buildContent('fullpage', extracted, docClone)
     content.markdown = trimArticleBody(content.markdown)
+    content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
     logger.info(`Fullpage: ${content.wordCount} words (${report.confidence} confidence)`)
 
     return { success: true, data: content }

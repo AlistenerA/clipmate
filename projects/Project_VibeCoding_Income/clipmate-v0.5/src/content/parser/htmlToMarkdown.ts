@@ -8,12 +8,23 @@ import {
   sanitizeMarkdownCell,
   normalizeImageMarkdown,
 } from '../../shared/markdown/mediaLinkTableNormalizer'
+import {
+  isNoiseByClassName,
+  isNoiseByAttribute,
+  isNoiseUrl,
+  isTrackingPixel,
+  isDataUri,
+  isBlobUri,
+  resolveUrl,
+} from '../extractors/articleImages'
 
 const turndown = new TurndownService({
   headingStyle: 'atx',
   codeBlockStyle: 'fenced',
   emDelimiter: '*',
 })
+
+let imagePageUrl: string | undefined
 
 turndown.addRule('strikethrough', {
   filter: ['del', 's'],
@@ -24,6 +35,13 @@ turndown.addRule('img', {
   filter: 'img',
   replacement: (_content, node) => {
     const el = node as HTMLImageElement
+
+    if (isNoiseByClassName(el) || isNoiseByAttribute(el)) return ''
+
+    const rawWidth = el.getAttribute('width')
+    const rawHeight = el.getAttribute('height')
+    const width = rawWidth ? parseInt(rawWidth, 10) : 0
+    const height = rawHeight ? parseInt(rawHeight, 10) : 0
 
     const srcCandidates = [
       el.getAttribute('src'),
@@ -37,9 +55,21 @@ turndown.addRule('img', {
     ]
 
     const bestSrc = srcCandidates.find((s) => isLikelyImageUrl(s)) ?? undefined
-    const alt = el.getAttribute('alt') || ''
 
-    return normalizeImageMarkdown({ src: bestSrc, alt })
+    if (bestSrc) {
+      if (isDataUri(bestSrc) || isBlobUri(bestSrc)) return ''
+      if (isNoiseUrl(bestSrc)) return ''
+    }
+
+    if (isTrackingPixel(width, height, bestSrc || el.src || el.getAttribute('src') || '')) return ''
+
+    if (width > 0 && width < 60) return ''
+    if (height > 0 && height < 40) return ''
+
+    const resolvedSrc = bestSrc && imagePageUrl ? resolveUrl(bestSrc, imagePageUrl) : bestSrc
+    const alt = el.getAttribute('alt')?.trim() || 'image'
+
+    return normalizeImageMarkdown({ src: resolvedSrc, alt })
   },
 })
 
@@ -185,13 +215,24 @@ function cleanBlockFormulaTrailingDigits(markdown: string): string {
   return markdown.replace(/\$\$([\s\S]*?)\$\$\s*(\d+)/g, '$$$1$$')
 }
 
-export function htmlToMarkdown(html: string): string {
+function deduplicateImageMarkdown(md: string): string {
+  const seen = new Set<string>()
+  return md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, _alt, url) => {
+    if (seen.has(url)) return ''
+    seen.add(url)
+    return match
+  })
+}
+
+export function htmlToMarkdown(html: string, pageUrl?: string): string {
   if (!html) return ''
   try {
+    imagePageUrl = pageUrl
     const formulaPreservedHtml = preserveMathHtml(html)
     const preprocessed = mergeAdjacentBold(formulaPreservedHtml)
     const raw = turndown.turndown(preprocessed)
-    const cleaned = cleanMarkdown(raw)
+    const deduped = deduplicateImageMarkdown(raw)
+    const cleaned = cleanMarkdown(deduped)
     const withCleanCode = cleanMarkdownCodeBlocks(cleaned)
     return cleanBlockFormulaTrailingDigits(withCleanCode)
   } catch {

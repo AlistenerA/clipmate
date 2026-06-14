@@ -2,6 +2,37 @@
 
 ---
 
+## v0.5 Session 2：Markdown Image Preservation (2026-06-14)
+
+### 性质
+
+将 Session 1 的图片提取能力接入 Markdown 生成链路。增强 Turndown `img` rule 的噪声过滤，添加去重后处理，在 Fullpage article clipping 的 Markdown 中保留正文图片语法 `![alt](url)`。
+
+### 修改文件
+
+- `src/content/extractors/articleImages.ts` — 导出 `isNoiseByClassName` / `isNoiseByAttribute` / `isDataUri` / `isBlobUri` 供 Markdown 层复用
+- `src/content/parser/htmlToMarkdown.ts` — 增强 `img` Turndown rule（噪声过滤 + 尺寸过滤 + 去重 + alt 兜底 + 相对 URL 解析）；新增 `deduplicateImageMarkdown()` 后处理；新增 `pageUrl` 参数
+- `src/content/index.ts` — 引入 `extractArticleImages`；新增 `injectMissingImages()` 安全网（将 Markdown 遗漏的图片追加到末尾 Images 区块）；`buildContent` 和 fallback 路径传递 `pageUrl`
+
+### 新增文件
+
+- `tests/markdown-images.test.ts` — 28 个测试
+
+### 未修改
+
+- 未修改 selection / comment-context 链路
+- 未修改 Notion blocks 保存链路
+- 未修改 Popup/History UI
+- 未新增依赖/权限/版本号
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：43 files, 1781 tests pass（新增 28 个）
+- `npm run build`：成功
+
+---
+
 ## v0.5 Session 1：Article Image Extraction Core (2026-06-14)
 
 ### 性质

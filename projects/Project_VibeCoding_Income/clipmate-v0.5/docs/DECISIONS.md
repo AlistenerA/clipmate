@@ -52,6 +52,40 @@
 - **影响**：extractArticleImages 是独立纯函数，未被 index.ts 调用。Session 2/3 再接入。
 - **可反转性**：N/A（按规划执行）。
 
+---
+
+## v0.5 Session 2 决策
+
+### D-v0.5-008：Markdown 图片保留只使用 external http/https URL，不下载/上传图片
+
+- **原因**：遵循 D-v0.5-002，v0.5.0 不下载、不上传、不缓存图片。Turndown img rule 和 extractArticleImages 均只保留 http/https external URL，过滤 data:/blob: URI。
+- **影响**：功能受限于源站图片可访问性。失效 URL 显示 broken image（IS25）。
+- **可反转性**：中。后续版本可增加 File Upload 作为补充方案。
+
+### D-v0.5-009：Notion image block 延后到 Session 3，Session 2 不改变 Notion 保存链路
+
+- **原因**：Session 2 只做 Markdown 图片保留，不修改 Notion API 调用、blocks 构建或 rich_text 转换。Notion 侧图片处理（external image block）留给 Session 3。
+- **影响**：当前保存到 Notion 时，Markdown 中 `![alt](url)` 图片语法会作为普通 rich_text 显示为 `![alt](url)` 文本，不会渲染为图片。Session 3 将修复此问题。
+- **可反转性**：N/A（按规划执行）。
+
+### D-v0.5-010：Turndown img rule 复用 extractArticleImages 的噪声过滤逻辑
+
+- **原因**：避免两套图片过滤规则不一致。增强 Turndown img rule 使用 isNoiseByClassName / isNoiseByAttribute / isNoiseUrl / isTrackingPixel / isDataUri / isBlobUri 与 extractArticleImages 保持一致。
+- **影响**：Turndown 处理的图片与 extractArticleImages 提取的图片过滤标准一致。部分原有测试中可能通过但无噪声的图片仍然通过。
+- **可反转性**：中。过滤规则可在 articleImages.ts 中统一调优。
+
+### D-v0.5-011：htmlToMarkdown 支持 pageUrl 参数解析相对图片 URL
+
+- **原因**：Turndown 输出的 Markdown 中图片 URL 保持原始格式（相对路径可能不被 Notion/阅读器解析）。提供 pageUrl 可解析相对 URL 为绝对 URL。
+- **影响**：`htmlToMarkdown` 签名从 `(html)` 变为 `(html, pageUrl?)`。兼容所有现有调用方（无 pageUrl 时行为不变）。buildContent 和 fallback 路径已传入 pageUrl。
+- **可反转性**：低。签名已公开，但 pageUrl 为可选参数。
+
+### D-v0.5-012：injectMissingImages 作为安全网，在 Fullpage 末尾补充遗漏图片
+
+- **原因**：Readability 或 Turndown 可能因 HTML 结构遗漏部分正文图片（Strategy B）。使用 extractArticleImages 在原始 DOM 上提取，与 Markdown 对比，将缺失图片追加到末尾 `## Images` 区块。
+- **影响**：仅当 extractArticleImages 发现 Markdown 中不存在的图片 URL 时生效。不改变已有图片位置。末尾区块格式为 `\n---\n\n## Images\n![alt](url)\n*caption*`。
+- **可反转性**：高。如发现误追加，可增强 URL 匹配逻辑或移除安全网。
+
 v0.4 决策文档见 `clipmate-v0.4/docs/DECISIONS.md`。与本轮相关的继承决策：
 
 - D-v0.4-039：comment-context 主链路以 resolveCommentContext 为入口（v0.5 继承此实现）

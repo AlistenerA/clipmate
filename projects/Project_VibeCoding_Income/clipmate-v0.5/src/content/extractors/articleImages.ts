@@ -347,4 +347,15 @@ export function extractArticleImages(
   }
 }
 
-export { getSrcsetCandidate, resolveUrl, isNoiseUrl, isTrackingPixel, getBestSrc, extractCaption }
+export {
+  getSrcsetCandidate,
+  resolveUrl,
+  isNoiseUrl,
+  isTrackingPixel,
+  getBestSrc,
+  extractCaption,
+  isNoiseByClassName,
+  isNoiseByAttribute,
+  isDataUri,
+  isBlobUri,
+}
