@@ -2,6 +2,39 @@
 
 ---
 
+## v0.5 Session 6 (2026-06-14)
+
+### 性质
+
+Release Readiness 测试。验证版本号变更后的构建和全量测试。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 个测试文件，1922 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.0
+- `npm run zip`：成功，clipmate-v0.5.zip (146KB)
+
+### 测试文件列表（48 files, 1922 tests）
+
+所有已有测试全部通过，无新增失败、无删除、无降低。
+
+### 安全扫描
+- Token/API Key 扫描：0 真实泄露
+- 危险 API 扫描：0 发现
+- 远程代码风险扫描：0 发现
+
+---
+
 ## v0.5 Session 5.2 (2026-06-14)
 
 ### 性质

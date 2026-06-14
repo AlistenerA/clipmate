@@ -13,17 +13,17 @@
 
 ## 当前阶段
 
-**v0.5 Session 5.2 已完成** — Image Caption Placement & Markdown Image Layout Polish。
+**v0.5 Session 6 已完成** — Release Readiness。
 
-用户真实测试发现图片题注粘连问题：`![△特朗普（资料图）](url)△特朗普（资料图）` 在同一行。
+发布前准备工作完成：
+- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.0
+- zip 脚本更新为 clipmate-v0.5.zip
+- 发布文档更新：README / STORE_LISTING / PRIVACY_POLICY / PERMISSION_JUSTIFICATION / TEST_PLAN / RELEASE_CHECKLIST
+- 安全扫描通过（无 Token/API Key 泄露、无危险 API、无远程代码风险）
+- lint 0 / test 1922 pass / build 成功 / zip 生成 clipmate-v0.5.zip (146KB)
+- 已知限制记录完整（external image URL、Notion File Upload 未接入、image block 居中不支持等）
 
-修复：
-- `htmlToMarkdown.ts`：新增 `splitImageCaptionGlue()` 后处理，将 `![alt](url)caption` 粘连拆分为 `![alt](url)\n\n*caption*`
-- `blocks.ts`：`markdownToContentBlocks` 增强为识别 `*caption*` 紧接图片后的模式，将题注合并为 `image.caption`，不再额外输出 caption paragraph
-- caption 长度限制 200 字符，超出回退为 alt
-- 新增 14 个图片题注布局测试
-
-*下一步：v0.5 Session 6 — Release Readiness。*
+*下一步：等待用户 ChatGPT 审查，审查通过后由用户决定 commit 和 push。*
 
 ---
 
@@ -39,7 +39,7 @@
 | Session 5 | ✅ 已完成 | Manual QA and Site Cases |
 | Session 5.1 | ✅ 已完成 | Sina Image Pollution Guard & Notion Image URL Compatibility |
 | Session 5.2 | ✅ 已完成 | Image Caption Placement & Markdown Image Layout Polish |
-| Session 6 | ⏳ 待开始 | Release Readiness |
+| Session 6 | ✅ 已完成 | Release Readiness |
 
 ---
 
@@ -53,3 +53,4 @@
 - [x] v0.5 Session 5：Manual QA and Site Cases
 - [x] v0.5 Session 5.1：Sina Image Pollution Guard & Notion Image URL Compatibility
 - [x] v0.5 Session 5.2：Image Caption Placement & Markdown Image Layout Polish
+- [x] v0.5 Session 6：Release Readiness

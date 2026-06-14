@@ -2,6 +2,57 @@
 
 ---
 
+## v0.5 Session 6：Release Readiness (2026-06-14)
+
+### 性质
+
+v0.5 发布前准备和最终审查。不新增功能，不做代码修复。
+
+### 版本统一
+- `package.json` version: 0.4.0 → 0.5.0
+- `manifest.config.ts` version: 0.4.0 → 0.5.0
+- `package-lock.json` version: 0.4.0 → 0.5.0 (2 处)
+- zip 脚本: clipmate-v0.4.zip → clipmate-v0.5.zip
+- 未修改依赖版本
+
+### 发布文档更新
+- `README.md` — 更新为 v0.5，新增 Article Image Saving 章节，更新已知限制、隐私说明、测试数量
+- `STORE_LISTING_DRAFT.md` — 更新为 v0.5，新增文章图片保存描述
+- `PRIVACY_POLICY_DRAFT.md` — 更新为 v0.5，新增图片 external URL 策略说明、不保存完整图片 URL 列表说明
+- `PERMISSION_JUSTIFICATION.md` — 更新为 v0.5，新增 v0.5 权限对比、图片提取不发起网络请求说明
+- `TEST_PLAN.md` — 更新为 v0.5，新增 TC-59~TC-73（15 项图片功能 QA）
+- `RELEASE_CHECKLIST.md` — 更新为 v0.5，更新版本号/测试数量/图片功能 QA 项
+
+### 安全扫描
+- Token/API Key 扫描：0 真实泄露（均为代码变量名/测试假 Token/否定断言）
+- 危险 API 扫描：0 发现（无 FileReader/canvas/toDataURL/createObjectURL/file_upload 等）
+- 远程代码风险扫描：0 发现（无 eval/new Function/动态 import/远程 script）
+
+### 文档更新
+- `docs/CURRENT_STATUS.md` — Session 6 完成
+- `docs/CHANGELOG_AGENT.md` — 本轮记录
+- `docs/TEST_LOG.md` — 本轮测试记录
+- `docs/ISSUES.md` — 更新为 v0.5 发布状态
+- `docs/DECISIONS.md` — 新增 D-v0.5-027/D-v0.5-028
+
+### 测试
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 files, 1922 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.5.0
+- `npm run zip`：成功，clipmate-v0.5.zip (146KB)
+
+### 未修改
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改源码（`src/` 目录零变更）
+- 未新增依赖、未新增权限
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未新增 FileReader/canvas/toDataURL/createObjectURL
+- 未 git add / commit / push
+
+---
+
 ## v0.5 Session 5.2：Image Caption Placement & Markdown Image Layout Polish (2026-06-14)
 
 ### 性质
