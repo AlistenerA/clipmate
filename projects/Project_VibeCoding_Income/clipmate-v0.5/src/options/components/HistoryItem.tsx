@@ -149,6 +149,9 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1.5 text-xs text-gray-400">
             {item.targetName && <span>目标：{item.targetName}</span>}
             <span>{item.wordCount} 字</span>
+            {(item.imageCount ?? 0) > 0 && item.mode === 'fullpage' && (
+              <span className="text-purple-500">图片 {item.imageCount}</span>
+            )}
             {item.savedAt && <span>保存于 {formatHistoryTime(item.savedAt)}</span>}
             {!item.savedAt && <span>创建于 {formatHistoryTime(item.createdAt)}</span>}
             {item.errorCode && (

@@ -13,16 +13,18 @@
 
 ## 当前阶段
 
-**v0.5 Session 3 已完成** — Notion External Image Blocks。
+**v0.5 Session 4 已完成** — Popup / History Lightweight Image Metadata。
 
-将 Markdown 中的图片语法 `![alt](url)` 转换为 Notion `image` block (type: external)：
-- 新增 `markdownToContentBlocks()` 替换 `chunkedParagraphBlocks`，逐段落检测图片语法
-- 只接受 http/https external URL；data/blob/非 http URL 降级为 paragraph block
-- image block 使用 Notion external URL，alt 文本作为 caption
-- 图片转换失败不影响正文段落保存
-- 29 个新测试。lint 0 / 1810 tests pass / build success。
+在 Popup 和 History 中轻量展示文章图片信息：
+- `ExtractedContent` 和 `ClipHistoryItem` 新增 `imageCount` / `firstImageUrl` / `skippedImageCount` 可选字段
+- fullpage 提取路径自动附加 image 元数据（通过 `attachImageMetadata()`）
+- selection / comment-context mode：imageCount=0，不显示图片信息
+- Popup StatusBar：图片>0 时显示紫色「图片 N」徽章
+- HistoryItem：fullpage 且 imageCount>0 时显示紫色「图片 N」标签
+- 保存/重试/失败路径均保留 image 元数据（updateHistoryItem merge 自动保留）
+- 18 个新测试。lint 0 / 1828 tests pass / build success。
 
-*下一步：v0.5 Session 4 — Popup/History Lightweight Image Metadata。*
+*下一步：v0.5 Session 5 — Manual QA and Site Cases。*
 
 ---
 
@@ -34,7 +36,7 @@
 | Session 1 | ✅ 已完成 | Article Image Extraction Core |
 | Session 2 | ✅ 已完成 | Markdown Image Preservation |
 | Session 3 | ✅ 已完成 | Notion External Image Blocks |
-| Session 4 | ⏳ 待开始 | Popup/History Lightweight Image Metadata |
+| Session 4 | ✅ 已完成 | Popup/History Lightweight Image Metadata |
 | Session 5 | ⏳ 待开始 | Manual QA and Site Cases |
 | Session 6 | ⏳ 待开始 | Release Readiness |
 
@@ -46,3 +48,4 @@
 - [x] v0.5 Session 1：Article Image Extraction Core
 - [x] v0.5 Session 2：Markdown Image Preservation
 - [x] v0.5 Session 3：Notion External Image Blocks
+- [x] v0.5 Session 4：Popup/History Lightweight Image Metadata

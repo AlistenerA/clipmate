@@ -2,6 +2,42 @@
 
 ---
 
+## v0.5 Session 4 (2026-06-14)
+
+### 性质
+
+Popup / History Lightweight Image Metadata 测试。验证 imageCount / firstImageUrl / skippedImageCount 从提取到存储到展示的完整链路。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：45 个测试文件，1828 个测试，全部通过（新增 18 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-metadata.test.ts, 18 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| extractArticleImages 元数据 | 5 | imageCount、skippedImageCount、firstImageUrl、空页面、全噪声页面 |
+| buildHistoryInput 元数据 | 3 | 有 image 元数据、无元数据、selection mode imageCount=0 |
+| handleSaveToNotion 历史记录 | 5 | 成功保存带 image 元数据、失败保存带 image 元数据、无元数据、selection imageCount=0、retry 保留 image 元数据 |
+| type safety | 3 | firstImageUrl 不是长文本 blob、imageCount 安全整数、仅记录首图不记录全部 URL |
+| selection safety | 2 | selection 不含 fullpage 图片计数、fullpage 正确显示元数据 |
+
+### 已有测试
+
+- 1810 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
 ## v0.5 Session 3 (2026-06-14)
 
 ### 性质

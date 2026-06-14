@@ -2,6 +2,57 @@
 
 ---
 
+## v0.5 Session 4：Popup / History Lightweight Image Metadata (2026-06-14)
+
+### 性质
+
+在 Popup 和 History 中轻量展示文章图片信息（imageCount / firstImageUrl / skippedImageCount），不下载/上传/缓存图片，不保存完整图片 URL 列表。
+
+### 修改文件
+
+- `src/shared/types/clip.types.ts` — `ExtractedContent` 新增 `imageCount?` / `firstImageUrl?` / `skippedImageCount?`
+- `src/shared/types/settings.types.ts` — `ClipHistoryItem` 新增 `imageCount?` / `firstImageUrl?` / `skippedImageCount?`
+- `src/shared/storage/storage.ts` — `CreateHistoryItemInput` 和 `addHistoryItem()` 新增 image 元数据字段
+- `src/popup/utils/historyPayload.ts` — `HistoryInput` 和 `buildHistoryInput()` 新增 image 元数据字段
+- `src/background/handlers/notionHandler.ts` — 成功/失败保存路径传递 image 元数据到历史记录；retry update 通过 merge 保留已有 image 元数据
+- `src/content/index.ts` — `buildContent()` 默认 selection mode imageCount=0；新增 `attachImageMetadata()` 在 fullpage 路径注入 image 元数据；低信心路径 imageCount=0
+- `src/popup/components/StatusBar.tsx` — 新增 `imageCount?` prop，图片>0 时显示紫色「图片 N」徽章
+- `src/popup/App.tsx` — 传递 `content.imageCount` 到 StatusBar
+- `src/options/components/HistoryItem.tsx` — fullpage mode 下 imageCount>0 时显示紫色「图片 N」标签
+
+### 新增文件
+
+- `tests/image-metadata.test.ts` — 18 个测试
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改 `package.json` / `manifest.config.ts` version
+- 未新增依赖、未新增权限
+- 未修改 Notion image block 核心逻辑
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未修改 selection / comment-context 图片逻辑
+- 未记录完整图片 URL 列表到 history
+
+### 核心能力
+
+- fullpage extraction 自动附加 imageCount / firstImageUrl / skippedImageCount
+- selection / comment-context mode：imageCount=0，不显示图片信息
+- Popup StatusBar：图片>0 时显示紫色「图片 N」徽章
+- HistoryItem：fullpage 且 imageCount>0 时显示紫色「图片 N」标签
+- History 存储：save/retry/failed 路径均保留 image 元数据
+- updateHistoryItem merge 机制自动保留 retry 时的 image 元数据
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：45 files, 1828 tests pass（新增 18 个）
+- `npm run build`：成功
+
+---
+
 ## v0.5 Session 3：Notion External Image Blocks (2026-06-14)
 
 ### 性质

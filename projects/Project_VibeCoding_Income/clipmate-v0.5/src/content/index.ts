@@ -109,6 +109,20 @@ function buildContent(
       siteIconUrl: meta.siteIconUrl,
       themeColor: meta.themeColor,
     },
+    imageCount: mode === 'fullpage' ? undefined : 0,
+    skippedImageCount: mode === 'fullpage' ? undefined : 0,
+  }
+}
+
+function attachImageMetadata(content: ExtractedContent, doc: Document, pageUrl: string): void {
+  try {
+    const imageResult = extractArticleImages(doc, { pageUrl })
+    content.imageCount = imageResult.images.length
+    content.firstImageUrl = imageResult.images[0]?.url
+    content.skippedImageCount = imageResult.skipped.length
+  } catch {
+    content.imageCount = 0
+    content.skippedImageCount = 0
   }
 }
 
@@ -160,6 +174,8 @@ function handleExtractFullpage(): HandlerResult {
             contentHtml: '',
             markdown: summary,
             wordCount: 0,
+            imageCount: 0,
+            skippedImageCount: 0,
             metadata: {
               url: fallbackMeta.url,
               title: fallbackMeta.title,
@@ -176,6 +192,7 @@ function handleExtractFullpage(): HandlerResult {
       const content = buildContent('fullpage', fallbackResult, docClone)
       content.markdown = trimmed
       content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
+      attachImageMetadata(content, docClone, document.URL)
       logger.info(`Fullpage fallback: ${fallbackWordCount} words`)
       return { success: true, data: content }
     }
@@ -204,6 +221,8 @@ function handleExtractFullpage(): HandlerResult {
           contentHtml: '',
           markdown: summary,
           wordCount: 0,
+          imageCount: 0,
+          skippedImageCount: 0,
           metadata: {
             url: meta.url,
             title: meta.title,
@@ -220,6 +239,7 @@ function handleExtractFullpage(): HandlerResult {
     const content = buildContent('fullpage', extracted, docClone)
     content.markdown = trimArticleBody(content.markdown)
     content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
+    attachImageMetadata(content, docClone, document.URL)
     logger.info(`Fullpage: ${content.wordCount} words (${report.confidence} confidence)`)
 
     return { success: true, data: content }

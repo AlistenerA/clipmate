@@ -73,6 +73,9 @@ export async function handleSaveToNotion(
         siteIconUrl: meta?.siteIconUrl,
         themeColor: meta?.themeColor,
         descriptionPreview: meta?.description,
+        imageCount: draft.content.imageCount,
+        firstImageUrl: draft.content.firstImageUrl,
+        skippedImageCount: draft.content.skippedImageCount,
       })
     }
 
@@ -118,6 +121,9 @@ export async function handleSaveToNotion(
         siteIconUrl: meta?.siteIconUrl,
         themeColor: meta?.themeColor,
         descriptionPreview: meta?.description,
+        imageCount: draft.content.imageCount,
+        firstImageUrl: draft.content.firstImageUrl,
+        skippedImageCount: draft.content.skippedImageCount,
       })
     }
 

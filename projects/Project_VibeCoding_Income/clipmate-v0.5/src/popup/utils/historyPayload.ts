@@ -17,6 +17,9 @@ export interface HistoryInput {
   siteIconUrl?: string
   themeColor?: string
   descriptionPreview?: string
+  imageCount?: number
+  firstImageUrl?: string
+  skippedImageCount?: number
 }
 
 export function buildHistoryInput(
@@ -43,5 +46,8 @@ export function buildHistoryInput(
     siteIconUrl: meta?.siteIconUrl,
     themeColor: meta?.themeColor,
     descriptionPreview: meta?.description,
+    imageCount: draft.content.imageCount,
+    firstImageUrl: draft.content.firstImageUrl,
+    skippedImageCount: draft.content.skippedImageCount,
   }
 }

@@ -202,6 +202,7 @@ export default function App() {
         mode={mode}
         wordCount={content?.wordCount ?? 0}
         modeLabel={statusLabel}
+        imageCount={content?.imageCount}
       />
 
       <TagEditor tags={tags} onAdd={addTag} onRemove={removeTag} disabled={loading} />

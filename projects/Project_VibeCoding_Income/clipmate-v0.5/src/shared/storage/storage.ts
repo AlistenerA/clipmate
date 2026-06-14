@@ -136,6 +136,9 @@ export interface CreateHistoryItemInput {
   siteIconUrl?: string
   themeColor?: string
   descriptionPreview?: string
+  imageCount?: number
+  firstImageUrl?: string
+  skippedImageCount?: number
 }
 
 export async function addHistoryItem(input: CreateHistoryItemInput): Promise<ClipHistoryItem> {
@@ -171,6 +174,9 @@ export async function addHistoryItem(input: CreateHistoryItemInput): Promise<Cli
       siteIconUrl: input.siteIconUrl,
       themeColor: input.themeColor,
       descriptionPreview: input.descriptionPreview,
+      imageCount: input.imageCount,
+      firstImageUrl: input.firstImageUrl,
+      skippedImageCount: input.skippedImageCount,
     }
 
     const history = await getHistoryRaw()

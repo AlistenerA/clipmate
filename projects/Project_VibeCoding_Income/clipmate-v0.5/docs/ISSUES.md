@@ -2,10 +2,11 @@
 
 ---
 
-## v0.5 Session 3 状态
+## v0.5 Session 4 状态
 
-- 新增 `markdownToContentBlocks()` 将 Markdown 图片语法转为 Notion image block (type: external)
-- 29 个新测试 / lint 0 / 1810 tests pass / build success
+- Popup StatusBar 和 HistoryItem 新增轻量图片数量展示（紫色「图片 N」徽章）
+- image metadata (imageCount / firstImageUrl / skippedImageCount) 通过 save/retry/failed 路径完整保留
+- 18 个新测试 / lint 0 / 1828 tests pass / build success
 
 ---
 

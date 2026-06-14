@@ -23,6 +23,9 @@ export interface ExtractedContent {
   wordCount: number
   metadata: ClipMetadata
   clipMode?: 'comment-context'
+  imageCount?: number
+  firstImageUrl?: string
+  skippedImageCount?: number
 }
 
 export interface ClipDraft {

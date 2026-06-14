@@ -4,9 +4,11 @@ interface Props {
   mode: ClipMode
   wordCount: number
   modeLabel: 'idle' | 'loading' | 'success' | 'error'
+  imageCount?: number
 }
 
-export default function StatusBar({ mode, wordCount, modeLabel }: Props) {
+export default function StatusBar({ mode, wordCount, modeLabel, imageCount }: Props) {
+  const hasImages = (imageCount ?? 0) > 0
   const statusText =
     modeLabel === 'loading'
       ? '提取中…'
@@ -29,7 +31,14 @@ export default function StatusBar({ mode, wordCount, modeLabel }: Props) {
 
   return (
     <div className="flex items-center justify-between text-xs">
-      <span className={`px-2 py-0.5 rounded ${bgColor}`}>{statusText}</span>
+      <div className="flex items-center gap-1.5">
+        <span className={`px-2 py-0.5 rounded ${bgColor}`}>{statusText}</span>
+        {hasImages && (
+          <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-600">
+            图片 {imageCount}
+          </span>
+        )}
+      </div>
       <span className="text-gray-400">模式：{modeText}</span>
     </div>
   )

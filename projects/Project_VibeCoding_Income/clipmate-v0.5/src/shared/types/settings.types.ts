@@ -39,6 +39,9 @@ export interface ClipHistoryItem {
   siteIconUrl?: string
   themeColor?: string
   descriptionPreview?: string
+  imageCount?: number
+  firstImageUrl?: string
+  skippedImageCount?: number
 }
 
 export interface ClipMateSettingsV2 extends ClipMateSettings {
