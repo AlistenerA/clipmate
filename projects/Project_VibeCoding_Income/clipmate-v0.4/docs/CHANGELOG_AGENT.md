@@ -4,6 +4,125 @@
 
 ---
 
+## v0.4 Session 8.3.1：Stabilize Playwright Site QA Patch (2026-06-14)
+
+### 性质
+
+ChatGPT 审查后最小修正。不新增功能、权限、依赖。不改变核心链路。
+
+### 修正原因
+
+ChatGPT 审查 S8.3 发现 3 个不稳定点：
+1. Weibo `commentContainer` 使用 `[class*="comment"], [class*="reply"]` 过宽
+2. Bilibili 移除了无害兼容 selector（`#bilibiliPlayer`, `.danmaku-info-row`, `.player-danmaku`）
+3. S8.3 未新增/更新测试
+
+### 修正内容
+
+- **Weibo**：移除 `[class*="comment"], [class*="reply"]` commentContainer（CSS Modules 随机类名导致评论区不可靠自动定位）
+- **Bilibili**：恢复 `#bilibiliPlayer` 至 videoPlayer（兼容旧版播放器/AB 实验）；恢复 `.danmaku-info-row` / `.player-danmaku` 至 excludeSelector（无害保留兼容）
+- **测试**：site-profile-engine.test.ts 新增 4 个 test（excludeSelector 完整性、不过宽、videoPlayer 兼容性、Weibo 保守评论处理、全局无过宽 commentSelector）；article-boundary-guard.test.ts 新增 3 个 test（commentary/reply-box 非评论元素不被误删）
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：33 files, 1414 tests passed (+7 new)
+- `npm run build`：success, 116 modules
+
+### 修改文件
+
+- `src/shared/siteProfiles/seedProfiles.ts` — Weibo commentContainer 回退 / Bilibili selector 恢复
+- `tests/site-profile-engine.test.ts` — 新增 4 个 test
+- `tests/article-boundary-guard.test.ts` — 新增 3 个 test
+- `docs/PLAYWRIGHT_SITE_OBSERVATION_LOG.md` — S8.3.1 变更记录
+- `docs/CURRENT_STATUS.md`
+- `docs/CHANGELOG_AGENT.md`
+- `docs/TEST_LOG.md`
+- `docs/ISSUES.md`
+- `docs/MANUAL_QA.md`
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- `.wolf/`、`.opencode/`、`.playwright-mcp/`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
+## v0.4 Session 8.3：Playwright-assisted Site Classification & Comment Boundary QA (2026-06-14)
+
+### 性质
+
+Playwright 辅助真实页面结构观察 + 最小 profile 修复。不新增功能、权限、依赖。不改变核心链路。
+
+### 观察范围
+
+通过 Playwright bundled Chromium 观察 9 个公开页面：
+- Bilibili 视频页：✅ 可访问
+- Weibo 详情页：✅ 可访问
+- Xiaohongshu 首页：❌ 反爬拦截
+- Douyin 首页：❌ 验证码拦截
+- Google 搜索：❌ reCAPTCHA 拦截
+- Bing 搜索：✅ 可访问
+- GitHub Issue/PR：✅ 可访问
+- Wikipedia：✅ 可访问
+- MDN：✅ 可访问
+- Rust Blog：✅ 可访问
+
+### 发现与修复
+
+1. **Weibo profile 完全过时**：`.WB_feed` 和 `.comment_list` 在当前 Weibo DOM 中为 0 匹配（Weibo 已迁移为 React + CSS Modules 随机类名）。更新 `contentContainer` → `main`，`commentContainer` → `[class*="comment"], [class*="reply"]`。
+2. **Bilibili excludeSelector 含 stale selector**：`.danmaku-info-row` 和 `.player-danmaku` 在真实 DOM 中为 0 匹配。已从 excludeSelector 中移除。
+3. **Bilibili videoPlayer**：`#bilibiliPlayer` 已不存在，替换为 `.bpx-player-video-wrap, .bpx-player-video-area`。
+
+### 保留不修改的平台
+
+- Xiaohongshu / Douyin / Google：因反爬/验证码阻截，无法自动验证。保留现有 profile。
+- Bing 搜索：`searchResultCard` selector 完全匹配。
+- GitHub / Wikipedia / MDN：检测正常。
+- 普通文章页：`[class*="comment"]` 未造成误判（Rust Blog 0 匹配）。
+
+### 测试
+
+- 现有 1407 个测试全部通过，无新增测试（profile 字段更新不影响现有测试断言）
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：33 files, 1407 tests passed
+- `npm run build`：success, 116 modules
+- 安全审计：无真实 token/API key/Page ID 泄露；无新增网络请求/权限
+
+### 修改文件
+
+- `src/shared/siteProfiles/seedProfiles.ts` — Weibo profile selectorHints 更新 + Bilibili videoPlayer/excludeSelector 清理
+
+### 新增文件
+
+- `docs/PLAYWRIGHT_SITE_OBSERVATION_LOG.md` — 站点结构观察日志
+
+### 文档更新
+
+- `docs/CURRENT_STATUS.md`
+- `docs/CHANGELOG_AGENT.md`
+- `docs/TEST_LOG.md`
+- `docs/ISSUES.md`
+- `docs/MANUAL_QA.md`
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- `.wolf/`、`.opencode/`、`.playwright-mcp/`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
 ## v0.4 Session 8.2：Playwright QA Workflow Integration (2026-06-14)
 
 ### 性质

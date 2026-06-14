@@ -4,6 +4,116 @@
 
 ---
 
+## v0.4 Session 8.3.1 (2026-06-14)
+
+### 性质
+
+ChatGPT 审查后最小修正：Weibo 回退过宽 selector + Bilibili 恢复兼容 selector + 补测试。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings（无输出）
+- `npm run test`：33 个测试文件，1414 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+
+### 测试详情
+
+| 测试文件 | 测试数 | 变化 | 结果 |
+|----------|:---:|:---:|:---:|
+| site-profile-engine.test.ts | 75 | +4（原 71） | ✅ 全部通过 |
+| article-boundary-guard.test.ts | 129 | +3（原 126） | ✅ 全部通过 |
+| 其余 31 个测试文件 | 1210 | 无退化 | ✅ 全部通过 |
+
+### 本轮新增测试（site-profile-engine.test.ts）
+
+- bilibili excludeSelector 包含全部 8 个预期 selector（含恢复的 danmaku-info-row / player-danmaku）
+- bilibili excludeSelector 不包含过宽 selector（[class*="content"] 等 6 种）
+- bilibili videoPlayer 保留 legacy #bilibiliPlayer 兼容
+- Weibo commentContainer 为 undefined（保守处理）
+- 全局无 profile 的 commentContainer 使用 [class*="comment"] / [class*="reply"] 过宽 selector
+
+### 本轮新增测试（article-boundary-guard.test.ts）
+
+- class="commentary" 含 501+ 字符文本不被当作噪声移除
+- class="reply-box" 含 501+ 字符文本不被当作噪声移除
+- class="commentary" 在 article 内不被移除
+
+### 错误/失败
+
+无。
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1414 tests pass ✅
+- build success ✅
+
+---
+
+## v0.4 Session 8.3 (2026-06-14)
+
+### 性质
+
+Playwright-assisted site observation + minimal profile fix。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings（无输出）
+- `npm run test`：33 个测试文件，1407 个测试，全部通过
+- `npm run build`：构建成功，116 modules，dist/ 产出正常
+
+### 测试详情
+
+本轮无新增测试文件。现有 `site-profile-engine.test.ts` (71 tests) 全部通过。
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts version ✅
+- 未修改 package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1407 tests pass ✅
+- build success ✅
+- Weibo profile contentContainer/commentContainer 已更新 ✅
+- Bilibili profile excludeSelector 已清理 stale selector ✅
+- Bilibili profile videoPlayer 已更新 ✅
+- 未访问网络/chrome API/storage ✅
+
+---
+
 ## v0.4 Session 8.2 (2026-06-14)
 
 ### 性质

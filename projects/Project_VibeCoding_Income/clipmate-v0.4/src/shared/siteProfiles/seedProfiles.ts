@@ -57,7 +57,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     selectorHints: {
       contentContainer: '.video-desc-container, .video-info-detail',
       commentContainer: '.reply-list, .comment-list',
-      videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap',
+      videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap, .bpx-player-video-area',
       excludeSelector: '.bpx-player-danmaku, .bpx-player-sending-bar, .danmaku-wrap, .danmaku-container, .danmu-wrap, .danmu-container, .danmaku-info-row, .player-danmaku',
     },
   },
@@ -183,8 +183,7 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['forum-or-comment'],
     priority: 20,
     selectorHints: {
-      contentContainer: '.WB_feed',
-      commentContainer: '.comment_list',
+      contentContainer: 'main',
     },
   },
   {

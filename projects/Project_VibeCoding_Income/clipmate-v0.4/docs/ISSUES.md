@@ -4,6 +4,58 @@
 
 ---
 
+## v0.4 Session 8.3.1 状态
+
+- ChatGPT 审查 S8.3 后完成 3 项修正
+- Weibo 回退过宽 `[class*="comment"], [class*="reply"]` commentContainer
+- Bilibili 恢复兼容旧 selector（`#bilibiliPlayer`, `.danmaku-info-row`, `.player-danmaku`）
+- 新增 7 个测试（4 site-profile-engine + 3 article-boundary-guard）
+- 当前无 blocker
+- 详细观察日志见 `PLAYWRIGHT_SITE_OBSERVATION_LOG.md`
+
+### Session 8.3.1 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS15 | Weibo commentContainer 使用 `[class*="comment"], [class*="reply"]` 过宽 | minor | 移除过宽 selector，Weibo 评论区走 conservative / selection-generic |
+
+### Session 8.3.1 更新限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS12 | Xiaohongshu 无法自动验证 | minor | 反爬拦截，需用户人工测试 |
+| IS13 | Douyin 无法自动验证 | minor | 验证码拦截，需用户人工测试 |
+| IS14 | Google 搜索无法自动验证 | minor | reCAPTCHA 拦截，需用户人工测试或用 Bing 替代 |
+| IS15 | Weibo CSS Modules 随机类名 | minor | 评论区无法可靠自动定位，依赖 selection-first + 人工复测 |
+
+---
+
+## v0.4 Session 8.3 状态
+
+- Playwright 观察 9 个平台实际页面结构
+- 发现 2 个 profile 问题并修复
+- 3 个平台因反爬阻截无法自动验证
+- 当前无 blocker
+- 详细观察日志见 `PLAYWRIGHT_SITE_OBSERVATION_LOG.md`
+
+### Session 8.3 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ I12 | Weibo profile 完全过时：`.WB_feed` / `.comment_list` 在当前 DOM 0 匹配 | major | contentContainer → `main`，commentContainer → `[class*="comment"], [class*="reply"]` |
+| ✅ I13 | Bilibili excludeSelector 含 2 个 stale selector（`.danmaku-info-row`, `.player-danmaku`）| minor | 从 excludeSelector 移除不存在的 selector |
+
+### Session 8.3 新增限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS12 | Xiaohongshu 无法自动验证 | minor | 反爬拦截（IP 风险），需用户人工测试 |
+| IS13 | Douyin 无法自动验证 | minor | 验证码拦截，需用户人工测试 |
+| IS14 | Google 搜索无法自动验证 | minor | reCAPTCHA 拦截，需用户人工测试或用 Bing 替代 |
+| IS15 | Weibo 使用 CSS Modules 随机类名 | minor | commentContainer 使用宽泛选择器，精确匹配不可行 |
+
+---
+
 ## v0.4 Session 8.2 状态
 
 - Playwright QA workflow 已文档化（`docs/PLAYWRIGHT_QA_WORKFLOW.md`）

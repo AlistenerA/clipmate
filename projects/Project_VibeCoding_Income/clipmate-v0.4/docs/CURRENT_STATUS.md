@@ -12,12 +12,13 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.2 已完成** — Playwright QA Workflow Integration。
+**v0.4 Session 8.3.1 已完成** — Stabilize Playwright Site QA Patch。
 
-- Session 8.1 Bilibili QA fix 已完成并 commit（`e071bc1`）
-- Session 8.2 docs-only：新增 `PLAYWRIGHT_QA_WORKFLOW.md`，更新 WORKFLOW_RULES / AGENT_CONTEXT / MANUAL_QA / RELEASE_CHECKLIST / CHANGELOG_AGENT / TEST_LOG / ISSUES
-- 本轮未修改 src/tests/package/manifest，未新增依赖，未修改 .playwright-mcp
-- 下一步：ChatGPT 审查 → commit → 用户重载 dist/ + Playwright 辅助复测 B 站视频页
+- Session 8.3：Playwright 观察 9 个平台 → Weibo/Bilibili profile 修正
+- Session 8.3.1：ChatGPT 审查后修正 S8.3 不稳定点 — Weibo 移除过宽 commentSelector、Bilibili 恢复兼容 selector、新增 7 个测试
+- 修复后：lint 0 / 1414 tests pass / build success
+- Xiaohongshu（反爬）、Douyin（验证码）、Google（reCAPTCHA）无法自动验证
+- 下一步：ChatGPT 审查 → commit → 用户人工复测重点平台
 
 ---
 
@@ -49,6 +50,8 @@
 | Session 8 Robustness Check and Release | ✅ 已完成 | Session 8 (只读审查，通过) |
 | Session 8.1 Bilibili QA Fix | ✅ 已完成 | commit e071bc1 |
 | Session 8.2 Playwright QA Integration | ✅ 已完成 | 本轮 docs-only |
+| Session 8.3 Playwright Site QA | ✅ 已完成 | Weibo/Bilibili profile 修正 |
+| Session 8.3.1 Stabilize QA Patch | ✅ 已完成 | ChatGPT 审查修正 |
 
 ---
 
@@ -76,12 +79,15 @@
 - [x] v0.4 Session 8：Release Robustness Review（只读审查，通过）
 - [x] v0.4 Session 8.1：Bilibili Video Page Manual QA Fix
 - [x] v0.4 Session 8.2：Playwright QA Workflow Integration
+- [x] v0.4 Session 8.3：Playwright-assisted Site Classification & Comment Boundary QA
+- [x] v0.4 Session 8.3.1：Stabilize Playwright Site QA Patch
 
 ---
 
 ## 未完成（按优先级）
 
-1. B 站视频页人工复测：用户需重新验证全文剪藏（不抓弹幕）和选区剪藏
+1. 用户人工复测重点平台：B 站视频页、微博详情页
+2. Xiaohongshu / Douyin / Google 因反爬无法自动验证 → 需用户人工测试
 
 ### Deferred（延后到 v0.5 或独立专项）
 
@@ -106,4 +112,4 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 7 → commit → 进入 v0.4 Session 8：Release Robustness Review**
+**ChatGPT 审查本轮 Session 8.3 → commit → 用户重新加载 clipmate-v0.4/dist/ 并人工复测重点平台（B 站、微博）。**

@@ -660,6 +660,28 @@ describe('preCleanDocument', () => {
     expect(() => preCleanDocument(doc, ':bad(]selector, .valid-class')).not.toThrow()
     expect(doc.querySelector('article')).not.toBeNull()
   })
+
+  it('does not remove div with class="commentary" as noise (not a real comment section)', () => {
+    const longText = 'x'.repeat(501)
+    const doc = makeDom(`<main><div class="commentary"><p>${longText}</p></div></main>`)
+    const removed = preCleanDocument(doc)
+    expect(doc.querySelector('.commentary')).not.toBeNull()
+    expect(doc.querySelector('.commentary p')?.textContent?.trim().length).toBeGreaterThan(500)
+  })
+
+  it('does not remove div with class="reply-box" as noise when has substantial text', () => {
+    const longText = 'y'.repeat(501)
+    const doc = makeDom(`<main><div class="reply-box"><p>${longText}</p></div></main>`)
+    preCleanDocument(doc)
+    expect(doc.querySelector('.reply-box')).not.toBeNull()
+  })
+
+  it('does not remove div with class="commentary" inside article container as noise', () => {
+    const longText = 'z'.repeat(501)
+    const doc = makeDom(`<article><div class="commentary"><p>${longText}</p></div></article>`)
+    preCleanDocument(doc)
+    expect(doc.querySelector('.commentary')).not.toBeNull()
+  })
 })
 
 describe('trimArticleBody', () => {

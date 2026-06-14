@@ -160,6 +160,25 @@
 
 ---
 
+## Session 8.3 Playwright Site QA 结果
+
+> Playwright 观察真实页面 selector 结构后完成 profile 修正。以下平台需要用户人工复测：
+
+| 平台 | Playwright 可访问 | 修复 | 仍需用户人工复测 |
+|------|:---:|------|:---:|
+| Bilibili 视频页 | ✅ | 保留旧 selector 兼容，新增 .bpx-player-video-area | 全文/选区剪藏无弹幕污染 |
+| Weibo 详情页 | ✅ | contentContainer → main，无 commentContainer（CSS Modules） | 首页需登录；正文边界基于 main + selection-first |
+| Weibo 评论区 ⚠️ | ✅ | 无可靠 commentContainer（CSS Modules 随机类名） | 选区方式剪藏评论区；需人工验证 |
+| Xiaohongshu | ❌ 反爬 | 保留 | 需登录后人工测试 |
+| Douyin | ❌ 验证码 | 保留 | 需登录后人工测试 |
+| Bing 搜索 | ✅ | 无需修改 | 检查 navigation summary |
+| Wikipedia | ✅ | 无需修改 | 普通文章兼容性 |
+| GitHub Issue | ✅ | 无需修改 | 评论选区 |
+
+详见 `PLAYWRIGHT_SITE_OBSERVATION_LOG.md`。
+
+---
+
 ## 已知限制
 
 - Site Visual 不验证 favicon 可访问性
@@ -168,4 +187,5 @@
 - Link Card Popup UI 未实现
 - Tag Search UX 延后到 v0.5
 - Better History Config 延后到 v0.5
-- Playwright-assisted QA 是可选辅助链路，B 站复测仍以用户真实扩展操作为准
+- Playwright-assisted QA 是可选辅助链路，最终以用户真实扩展操作为准
+- Xiaohongshu / Douyin / Google 因反爬限制无法 Playwright 自动验证

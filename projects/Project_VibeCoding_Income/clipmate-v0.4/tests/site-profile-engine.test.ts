@@ -547,12 +547,72 @@ describe('seed profiles structural QA', () => {
     expect(SEED_PROFILES.length).toBe(19)
   })
 
-  it('bilibili-video profile has danmu excludeSelector', () => {
+  it('bilibili-video excludeSelector contains all expected danmaku/player exclusions', () => {
     const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
     expect(bilibili).toBeDefined()
-    expect(bilibili!.selectorHints?.excludeSelector).toBeDefined()
     const excludeSel = bilibili!.selectorHints!.excludeSelector!
+    expect(excludeSel).toBeDefined()
     expect(excludeSel).toContain('danmaku')
     expect(excludeSel).toContain('danmu')
+    const expectedSelectors = [
+      '.bpx-player-danmaku',
+      '.bpx-player-sending-bar',
+      '.danmaku-wrap',
+      '.danmaku-container',
+      '.danmu-wrap',
+      '.danmu-container',
+      '.danmaku-info-row',
+      '.player-danmaku',
+    ]
+    for (const expected of expectedSelectors) {
+      expect(excludeSel).toContain(expected)
+    }
+  })
+
+  it('bilibili-video excludeSelector does not contain over-broad selectors', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    const excludeSel = bilibili!.selectorHints!.excludeSelector!
+    const dangerousPatterns = [
+      '[class*="content"]',
+      '[class*="article"]',
+      '[class*="post"]',
+      '[class*="text"]',
+      '[class*="body"]',
+      '[class*="page"]',
+    ]
+    for (const pattern of dangerousPatterns) {
+      expect(excludeSel, `excludeSelector should not contain "${pattern}"`).not.toContain(pattern)
+    }
+  })
+
+  it('bilibili-video videoPlayer retains legacy #bilibiliPlayer for compatibility', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    const videoPlayer = bilibili!.selectorHints!.videoPlayer!
+    expect(videoPlayer).toBeDefined()
+    expect(videoPlayer).toContain('#bilibiliPlayer')
+    expect(videoPlayer).toContain('.bpx-player-video-wrap')
+  })
+
+  it('weibo-social profile has conservative comment handling without over-broad selectors', () => {
+    const weibo = SEED_PROFILES.find((p) => p.id === 'weibo-social')
+    expect(weibo).toBeDefined()
+    expect(weibo!.selectorHints?.contentContainer).toBe('main')
+    expect(weibo!.selectorHints?.commentContainer).toBeUndefined()
+  })
+
+  it('social and community profiles do not use over-broad comment selectors', () => {
+    const overBroadPatterns = [
+      '[class*="comment"]',
+      '[class*="reply"]',
+    ]
+    for (const profile of SEED_PROFILES) {
+      const commentContainer = profile.selectorHints?.commentContainer || ''
+      for (const pattern of overBroadPatterns) {
+        expect(commentContainer, `${profile.id}: commentContainer should not use "${pattern}"`)
+          .not.toContain(pattern)
+      }
+    }
   })
 })
