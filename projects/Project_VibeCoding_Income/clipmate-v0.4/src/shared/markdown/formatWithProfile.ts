@@ -10,6 +10,7 @@ export interface FormatMarkdownInput {
   bodyMarkdown: string
   createdAt?: string
   mode?: 'fullpage' | 'selection'
+  clipMode?: 'comment-context'
 }
 
 function escapeYamlValue(value: string): string {
@@ -76,6 +77,19 @@ export function formatMarkdownWithProfile(
   const body = cleanMarkdown(input.bodyMarkdown)
   const parts: string[] = []
   const createdAt = input.createdAt ?? new Date().toISOString()
+
+  if (input.clipMode === 'comment-context') {
+    if (profile.frontmatter) {
+      const fm = buildYamlFrontmatter(input.title, input.url, input.tags, createdAt)
+      if (fm) {
+        parts.push(fm)
+      }
+    }
+    if (body.trim()) {
+      parts.push(body.trim())
+    }
+    return parts.join('\n')
+  }
 
   if (profile.frontmatter) {
     const fm = buildYamlFrontmatter(input.title, input.url, input.tags, createdAt)

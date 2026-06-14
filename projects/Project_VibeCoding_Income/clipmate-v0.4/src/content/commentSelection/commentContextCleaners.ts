@@ -3,7 +3,9 @@ import type { CommentSourceMedia } from './commentSelection.types'
 const UI_NOISE_PATTERNS: RegExp[] = [
   /返回\s*/g,
   /公开\s*/g,
-  /来自\s*\S*/g,
+  /来自\s*\S+/g,
+  /发布于\s*\S+/g,
+  /自主创\s*作\s*/g,
   /关注\s*/g,
   /微博直播平台\s*/g,
   /转发\s*\d*/g,
@@ -12,11 +14,14 @@ const UI_NOISE_PATTERNS: RegExp[] = [
   /分享\s*/g,
   /收藏\s*/g,
   /投诉\s*/g,
+  /举报\s*/g,
+  /置顶\s*/g,
+  /推荐\s*/g,
+  /阅读\s*全文\s*/g,
   /\d{4}[-/]\d{1,2}[-/]\d{1,2}\s*/g,
   /\d{1,2}[-/]\d{1,2}\s+\d{1,2}:\d{2}(:\d{2})?\s*/g,
   /\d{1,2}:\d{2}(:\d{2})?\s*/g,
   /编辑\s*\d{2,}[-/]\d{2,}\s*/g,
-  /置顶\s*/g,
   /热\s*门\s*/g,
   /最\s*新\s*/g,
   /最\s*早\s*/g,
@@ -27,6 +32,10 @@ const UI_NOISE_PATTERNS: RegExp[] = [
   /粉丝\s*/g,
   /\S+\s*与\s*\S+\s*的共创微博\s*/g,
   /的共创微博\s*/g,
+  /有用\s*\d*/g,
+  /没用\s*\d*/g,
+  /回应\s*/g,
+  /目录\s*/g,
 ]
 
 const AUTHOR_RELATION_PATTERNS: RegExp[] = [
@@ -245,4 +254,73 @@ export function isContainerCommentOnly(el: Element): boolean {
     classStr.includes('comment') || classStr.includes('reply') ||
     id.includes('comment') || id.includes('reply')
   )
+}
+
+// ===== Source media quality guard =====
+
+const LOW_QUALITY_ALT_PATTERNS: RegExp[] = [
+  /^image$/i,
+  /^images$/i,
+  /^图片$/,
+  /^等比图$/,
+  /^等比图片$/,
+  /^图标$/,
+  /^icon$/i,
+  /^logo$/i,
+  /^avatar$/i,
+  /^badge$/i,
+  /^表情$/,
+  /^emoji$/i,
+  /^默认图片$/,
+  /^placeholder$/i,
+  /^default$/i,
+  /^pic$/i,
+]
+
+const LOW_QUALITY_URL_PATTERNS: RegExp[] = [
+  /avatar/i,
+  /\/icon\//i,
+  /\/badge\//i,
+  /\/logo\//i,
+  /\/emoji\//i,
+  /\/face\//i,
+  /\/profile\//i,
+  /\/default\//i,
+  /placeholder/i,
+]
+
+export function isLowQualitySourceMedia(media: CommentSourceMedia): boolean {
+  if (!media.url) return true
+
+  const altLabel = (media.alt || media.label || '').toLowerCase()
+  for (const pattern of LOW_QUALITY_ALT_PATTERNS) {
+    if (pattern.test(altLabel)) return true
+  }
+
+  const url = media.url.toLowerCase()
+  for (const pattern of LOW_QUALITY_URL_PATTERNS) {
+    if (pattern.test(url)) return true
+  }
+
+  return false
+}
+
+export function hasMeaningfulSourceExcerpt(text?: string): boolean {
+  if (!text || text.trim().length < 3) return false
+
+  const noBareMetadata = text
+    .replace(/^\d{1,2}[-/]\d{1,2}\s+\d{1,2}:\d{2}/, '')
+    .replace(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}/, '')
+    .trim()
+
+  if (noBareMetadata.length < 3) return false
+
+  const urlLikeCount = (text.match(/https?:\/\//g) || []).length
+  if (urlLikeCount > text.length / 20) return false
+
+  return true
+}
+
+export function filterHighQualityMedia(media: CommentSourceMedia[]): CommentSourceMedia[] {
+  return media.filter((m) => !isLowQualitySourceMedia(m))
 }

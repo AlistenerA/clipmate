@@ -4,6 +4,22 @@
 
 ---
 
+## v0.4 Session 8.12 决策
+
+### D-v0.4-039：comment-context 主链路以 resolveCommentContext 为入口，resolver 无匹配时才 fallback 到 genericSocialCommentResolver
+
+- **原因**：commentContextResolvers.ts 已实现 Weibo/Bilibili/Douban/Blog 4 个平台解析器及 genericSocialCommentResolver fallback，但 content/index.ts 的 comment-context 路径调用旧 buildCommentClipContext()。旧 builder 不填充 sourceDate/sourceLocation/sourceObjectType/sourceSectionLabel，导致 semantic title 降级。resolveCommentContext 内部已通过 findResolver() → FALLBACK_RESOLVER 覆盖 fallback 场景。
+- **影响**：content/index.ts 的 comment-context 路径 context 构造从 buildCommentClipContext() 切换为 resolveCommentContext()。resolveCommentContext 已内部 fallback 到 genericSocialCommentResolver，无需在 content/index.ts 新增额外 fallback 分支。copy/popup/notion/history wrapper 策略不变。
+- **可反转性**：中。如需回退，可将 import 和调用改回旧 builder。
+
+### D-v0.4-040：本轮不修改 Popup/Copy Markdown/Notion/History wrapper 策略
+
+- **原因**：S8.10.2 已建立 comment-context short-circuit 机制（formatCopyMarkdown/formatMarkdownWithProfile/buildNotionBlocks），本次修复仅改变 context 数据来源（从旧 builder 到 resolver pipeline），不改变下游格式化/包装链路。
+- **影响**：无代码变更。仅记录为决策约束。
+- **可反转性**：高。
+
+---
+
 ## v0.4 Session 7 决策
 
 ### D-v0.4-036：v0.4 发布包不提交 dist/build/zip，仅在本地生成用于人工验证

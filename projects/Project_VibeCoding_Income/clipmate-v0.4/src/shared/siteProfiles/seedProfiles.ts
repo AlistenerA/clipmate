@@ -230,4 +230,28 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
       contentContainer: '.chat-message, .message-content',
     },
   },
+  {
+    id: 'douban-review',
+    label: 'Douban',
+    category: 'community',
+    domains: ['douban.com'],
+    pageTypes: ['forum-or-comment', 'article'],
+    priority: 20,
+    selectorHints: {
+      contentContainer: '#content .article, #wrapper, .article',
+      commentContainer: '.comment-item, .review-item',
+    },
+  },
+  {
+    id: 'blog-tech',
+    label: 'Blog',
+    category: 'social',
+    domains: ['csdn.net', 'cnblogs.com'],
+    pageTypes: ['article', 'forum-or-comment'],
+    priority: 15,
+    selectorHints: {
+      contentContainer: 'article, #article_content, #content_views, .article_content, main',
+      commentContainer: '#commentBox, #comments, .comment-list',
+    },
+  },
 ]

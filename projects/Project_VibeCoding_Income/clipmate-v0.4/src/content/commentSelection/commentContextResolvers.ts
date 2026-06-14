@@ -4,7 +4,7 @@ import type {
   CommentContextInput,
   CommentSourceMedia,
 } from './commentSelection.types'
-import { cleanSourceText, extractFirstTopicOrSentence, isAuthorRelationLike, hasDateLeading, stripAuthorRelationPrefix, filterSourceMedia, isContainerCommentOnly } from './commentContextCleaners'
+import { cleanSourceText, extractFirstTopicOrSentence, isAuthorRelationLike, hasDateLeading, stripAuthorRelationPrefix, filterSourceMedia, isContainerCommentOnly, filterHighQualityMedia } from './commentContextCleaners'
 
 export interface CommentContextResolver {
   id: string
@@ -216,6 +216,26 @@ function makeSourceExcerpt(sourceContainer: Element | null, maxLength: number = 
 
 // ===== Weibo Resolver =====
 
+function extractWeiboMeta(sourceContainer: Element | null): { date?: string; location?: string } {
+  const result: { date?: string; location?: string } = {}
+  if (!sourceContainer) return result
+
+  const text = sourceContainer.textContent || ''
+  const dateMatch = text.match(/(\d{2}-\d{1,2}\s+\d{1,2}:\d{2})/)
+  if (dateMatch) {
+    result.date = dateMatch[1]
+  } else {
+    const altDateMatch = text.match(/(\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2})/)
+    if (altDateMatch) result.date = altDateMatch[1]
+  }
+  const locMatch = text.match(/发布于\s*(\S+)/)
+  if (locMatch) {
+    const loc = locMatch[1].replace(/[，,。.\s].*$/, '')
+    if (loc.length < 10) result.location = loc
+  }
+  return result
+}
+
 const weiboResolver: CommentContextResolver = {
   id: 'weibo',
   match(input: CommentContextInput): boolean {
@@ -238,13 +258,13 @@ const weiboResolver: CommentContextResolver = {
         }
       }
       if (!sourceTitle) {
-        const rawText = extractSourceText(sourceContainer, 120)
-        let cleaned = cleanSourceText(rawText, 80)
+        const rawText = extractSourceText(sourceContainer, 200)
+        let cleaned = cleanSourceText(rawText, 120)
         if (hasDateLeading(cleaned) || isAuthorRelationLike(cleaned)) {
           cleaned = stripAuthorRelationPrefix(cleaned)
-          cleaned = cleanSourceText(cleaned, 80)
+          cleaned = cleanSourceText(cleaned, 120)
         }
-        const topicSentence = extractFirstTopicOrSentence(cleaned, 80)
+        const topicSentence = extractFirstTopicOrSentence(cleaned, 120)
         sourceTitle = topicSentence ? `微博：${topicSentence}` : `微博评论摘录`
       }
     }
@@ -260,7 +280,7 @@ const weiboResolver: CommentContextResolver = {
       sourceTitle = makeSourceTitle('微博评论摘录', sourceContainer, '微博')
     }
 
-    const sourceExcerpt = makeSourceExcerpt(sourceContainer, 50)
+    const sourceExcerpt = makeSourceExcerpt(sourceContainer, 120)
 
     let sourceMedia = extractMediaFromContainer(sourceContainer, 'weibo')
     if (sourceMedia.length === 0) {
@@ -276,10 +296,12 @@ const weiboResolver: CommentContextResolver = {
     if (sourceMedia.length === 0) warnings.push('no-media')
     if (!sourceExcerpt) warnings.push('no-excerpt')
 
+    const weiboMeta = extractWeiboMeta(sourceContainer)
+
     return {
       siteName,
       sourceTitle,
-      sourceAuthor: undefined,
+      sourceAuthor: author,
       sourceExcerpt,
       sourceMedia,
       selectedComment: { author, text: input.selectionText },
@@ -288,6 +310,10 @@ const weiboResolver: CommentContextResolver = {
       reasons: input.reasons,
       pageTitle: input.pageTitle,
       pageUrl: input.pageUrl,
+      sourceDate: weiboMeta.date,
+      sourceLocation: weiboMeta.location,
+      sourceObjectType: 'post',
+      sourceSectionLabel: '博文内容',
     }
   },
 }
@@ -375,6 +401,208 @@ const bilibiliResolver: CommentContextResolver = {
   },
 }
 
+// ===== Douban Review Resolver =====
+
+function matchesDoubanUrl(input: CommentContextInput): boolean {
+  const profileId = input.siteProfileMatch?.profile.id || ''
+  if (profileId === 'douban-review') return true
+  try {
+    const hostname = new URL(input.pageUrl || '').hostname
+    return hostname.includes('douban.com')
+  } catch { return false }
+}
+
+const doubanReviewResolver: CommentContextResolver = {
+  id: 'douban',
+  match(input: CommentContextInput): boolean {
+    return matchesDoubanUrl(input)
+  },
+  resolve(input: CommentContextInput): Partial<CommentClipContext> {
+    const sourceContainer = resolveSourceContainer(input.document, input.selectionRoot ?? null, input.siteProfileMatch)
+    const author = resolveCommentAuthor(input.document, input.selectionRoot ?? null)
+
+    let sourceTitle = ''
+
+    const ogTitle = getMetaContent(input.document, 'og:title', true)
+    if (ogTitle) {
+      const cleaned = ogTitle
+        .replace(/\s*\(豆瓣\)\s*$/g, '')
+        .replace(/\s*-\s*豆瓣\s*$/g, '')
+        .trim()
+      if (cleaned) sourceTitle = `豆瓣：${cleaned}`
+    }
+
+    if (!sourceTitle) {
+      const h1 = input.document.querySelector('h1')
+      if (h1) {
+        const h1Text = h1.textContent?.trim()
+        if (h1Text && h1Text.length > 0 && h1Text.length < 200) {
+          const cleaned = h1Text.replace(/\s*\(豆瓣\)\s*$/g, '').replace(/\s*-\s*豆瓣\s*$/g, '').trim()
+          if (cleaned) sourceTitle = `豆瓣：${cleaned}`
+        }
+      }
+    }
+
+    if (!sourceTitle) {
+      const pageTitle = input.pageTitle || input.document.title || ''
+      const cleaned = pageTitle.replace(/\s*\(豆瓣\)\s*$/g, '').replace(/\s*-\s*豆瓣\s*$/g, '').trim()
+      if (cleaned && cleaned.length > 0) sourceTitle = `豆瓣：${cleanSourceText(cleaned, 200)}`
+    }
+
+    if (!sourceTitle) {
+      sourceTitle = '豆瓣评论摘录'
+    }
+
+    let sourceExcerpt = makeSourceExcerpt(sourceContainer, 120)
+
+    if (sourceExcerpt) {
+      sourceExcerpt = sourceExcerpt
+        .replace(/有用\s*\d*/g, '')
+        .replace(/没用\s*\d*/g, '')
+        .replace(/回应\s*/g, '')
+        .replace(/转发\s*/g, '')
+        .replace(/收藏\s*/g, '')
+        .replace(/举报\s*/g, '')
+        .replace(/推荐\s*/g, '')
+        .trim()
+      if (!sourceExcerpt) sourceExcerpt = undefined
+    }
+
+    let sourceMedia = extractMediaFromContainer(sourceContainer, 'douban')
+    if (sourceMedia.length === 0) {
+      sourceMedia = extractMetaMedia(input.document).slice(0, 1)
+    }
+
+    const warnings: string[] = []
+    if (!author) warnings.push('author-unresolved')
+    if (sourceMedia.length === 0) warnings.push('no-media')
+
+    let doubanObjectType: 'book' | 'movie' | 'music' | 'review' | 'unknown' = 'unknown'
+    try {
+      const hostname = new URL(input.pageUrl || '').hostname
+      if (hostname.includes('book.douban')) doubanObjectType = 'book'
+      else if (hostname.includes('movie.douban')) doubanObjectType = 'movie'
+      else if (hostname.includes('music.douban')) doubanObjectType = 'music'
+      else doubanObjectType = 'review'
+    } catch { /* url parse error */ }
+
+    const objectTitle = sourceTitle ? sourceTitle.replace(/^豆瓣[：:]/, '').replace(/\s*的豆瓣.*$/, '') : undefined
+
+    return {
+      siteName: '豆瓣',
+      sourceTitle,
+      sourceAuthor: undefined,
+      sourceExcerpt,
+      sourceMedia,
+      selectedComment: { author, text: input.selectionText },
+      warnings,
+      mode: input.mode,
+      reasons: input.reasons,
+      pageTitle: input.pageTitle,
+      pageUrl: input.pageUrl,
+      sourceObjectType: doubanObjectType,
+      sourceObjectTitle: objectTitle,
+      sourceSectionLabel: '条目详情',
+    }
+  },
+}
+
+// ===== Generic Blog Comment Resolver (CSDN, cnblogs, etc.) =====
+
+function matchesBlogUrl(input: CommentContextInput): boolean {
+  const profileId = input.siteProfileMatch?.profile.id || ''
+  if (profileId === 'blog-tech') return true
+  try {
+    const hostname = new URL(input.pageUrl || '').hostname
+    return hostname.includes('csdn.net') || hostname.includes('cnblogs.com')
+  } catch { return false }
+}
+
+function getBlogPlatformLabel(input: CommentContextInput): string {
+  const hostname = (() => { try { return new URL(input.pageUrl || '').hostname } catch { return '' } })()
+  if (hostname.includes('csdn.net')) return 'CSDN'
+  if (hostname.includes('cnblogs.com')) return 'cnblogs'
+  return '博客'
+}
+
+const genericBlogCommentResolver: CommentContextResolver = {
+  id: 'blog',
+  match(input: CommentContextInput): boolean {
+    return matchesBlogUrl(input)
+  },
+  resolve(input: CommentContextInput): Partial<CommentClipContext> {
+    const sourceContainer = resolveSourceContainer(input.document, input.selectionRoot ?? null, input.siteProfileMatch)
+    const author = resolveCommentAuthor(input.document, input.selectionRoot ?? null)
+    const platformLabel = getBlogPlatformLabel(input)
+
+    let sourceTitle = ''
+
+    const h1 = input.document.querySelector('h1')
+    if (h1) {
+      const h1Text = h1.textContent?.trim()
+      if (h1Text && h1Text.length < 200) {
+        sourceTitle = cleanSourceText(h1Text, 200)
+      }
+    }
+
+    if (!sourceTitle) {
+      const ogTitle = getMetaContent(input.document, 'og:title', true)
+      if (ogTitle) {
+        sourceTitle = cleanSourceText(ogTitle, 200)
+      }
+    }
+
+    if (!sourceTitle) {
+      const pageTitle = input.pageTitle || input.document.title || ''
+      if (pageTitle && pageTitle.length > 0) {
+        sourceTitle = cleanSourceText(pageTitle, 200)
+      }
+    }
+
+    if (sourceTitle) {
+      sourceTitle = `${platformLabel}：${sourceTitle}`
+    } else {
+      sourceTitle = `${platformLabel}评论摘录`
+    }
+
+    let sourceExcerpt = makeSourceExcerpt(sourceContainer, 200)
+
+    if (sourceExcerpt) {
+      sourceExcerpt = sourceExcerpt
+        .replace(/目录\s*/g, '')
+        .replace(/收藏\s*/g, '')
+        .replace(/点赞\s*/g, '')
+        .replace(/举报\s*/g, '')
+        .trim()
+      if (!sourceExcerpt) sourceExcerpt = undefined
+    }
+
+    let sourceMedia = extractMediaFromContainer(sourceContainer, 'generic')
+    if (sourceMedia.length === 0) {
+      sourceMedia = extractMetaMedia(input.document).slice(0, 1)
+    }
+
+    const warnings: string[] = []
+    if (!author) warnings.push('author-unresolved')
+
+    return {
+      siteName: platformLabel,
+      sourceTitle,
+      sourceAuthor: author,
+      sourceExcerpt,
+      sourceMedia,
+      selectedComment: { author, text: input.selectionText },
+      warnings,
+      mode: input.mode,
+      reasons: input.reasons,
+      pageTitle: input.pageTitle,
+      pageUrl: input.pageUrl,
+      sourceObjectType: 'article',
+      sourceSectionLabel: '文章内容',
+    }
+  },
+}
+
 // ===== Generic Social Resolver (Douyin, Xiaohongshu, etc.) =====
 
 const genericSocialCommentResolver: CommentContextResolver = {
@@ -389,7 +617,7 @@ const genericSocialCommentResolver: CommentContextResolver = {
     const author = resolveCommentAuthor(input.document, input.selectionRoot ?? null)
 
     const sourceTitle = makeSourceTitle(input.pageTitle, sourceContainer, siteName)
-    const sourceExcerpt = makeSourceExcerpt(sourceContainer, 80)
+    const sourceExcerpt = makeSourceExcerpt(sourceContainer, 120)
 
     let platform = 'generic'
     const profileId = input.siteProfileMatch?.profile.id || ''
@@ -431,6 +659,8 @@ const genericSocialCommentResolver: CommentContextResolver = {
 const RESOLVERS: CommentContextResolver[] = [
   weiboResolver,
   bilibiliResolver,
+  doubanReviewResolver,
+  genericBlogCommentResolver,
 ]
 
 const FALLBACK_RESOLVER: CommentContextResolver = genericSocialCommentResolver
@@ -446,7 +676,7 @@ export function resolveCommentContext(input: CommentContextInput): CommentClipCo
   const resolver = findResolver(input)
   const partial = resolver.resolve(input)
 
-  const fallback = FALLBACK_RESOLVER.match(input) === true && resolver.id !== 'generic-social'
+  const fallback = resolver.id !== 'generic-social' && resolver.id !== 'douban' && resolver.id !== 'blog'
     ? FALLBACK_RESOLVER.resolve(input)
     : null
 
@@ -467,7 +697,7 @@ export function resolveCommentContext(input: CommentContextInput): CommentClipCo
     sourceTitle,
     sourceAuthor: partial.sourceAuthor || fallback?.sourceAuthor,
     sourceExcerpt: sourceExcerpt || undefined,
-    sourceMedia: sourceMedia || [],
+    sourceMedia: filterHighQualityMedia(sourceMedia || []),
     selectedComment: {
       author,
       text: input.selectionText,
@@ -475,5 +705,10 @@ export function resolveCommentContext(input: CommentContextInput): CommentClipCo
     warnings: warnings.filter((w, i, arr) => arr.indexOf(w) === i),
     mode: input.mode,
     reasons: input.reasons,
+    sourceDate: partial.sourceDate || fallback?.sourceDate,
+    sourceLocation: partial.sourceLocation || fallback?.sourceLocation,
+    sourceObjectType: partial.sourceObjectType || fallback?.sourceObjectType,
+    sourceObjectTitle: partial.sourceObjectTitle || fallback?.sourceObjectTitle,
+    sourceSectionLabel: partial.sourceSectionLabel || fallback?.sourceSectionLabel,
   }
 }

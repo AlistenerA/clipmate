@@ -12,14 +12,11 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.9.3 已完成** — Bilibili Selector Patch & Resolver Guard。
+**v0.4 Session 8.12 已完成** — Wire Comment Context Resolver Pipeline。
 
-基于 S8.9.2 Playwright 观察发现 B站旧 selector（`.video-info-detail`、`.reply-list`、`.comment-list`）在真实页面中 0 命中，本轮更新：
-- `seedProfiles.ts` bilibili-video：`contentContainer` 新增 `.video-info-container`，`commentContainer` 新增 `[class*="message-inner-list__item"]`，旧 selector 保留兼容
-- `bilibiliResolver`：新增 `_哔哩哔哩_bilibili` / `_哔哩哔哩` 后缀 cleanup，新增 `.video-info-title` heading 查找，新增 `h1` 作为 title fallback
-- 测试：+7（5 selector + 2 title cleanup），总 1603 pass / 40 files / lint 0 / build success
+content/index.ts 的 comment-context 主链路从旧 buildCommentClipContext() 接入 resolveCommentContext() resolver pipeline。Weibo/Douban/Bilibili/Blog 解析器已实际生效，sourceDate/sourceLocation/sourceObjectType/sourceSectionLabel 字段正确填充，semantic title 可生成"转自 @用户 日期 发布于某地"完整格式。
 
-*S8.9 完成情况：1596 tests pass / lint 0 / build success。S8.9.2 为只读 Playwright 观察。*
+*上一轮 S8.10.4：Semantic Comment Titles & Blockquote Flattening Patch。*
 
 ---
 
@@ -59,6 +56,9 @@
 | Session 8.6.2 Debug & Mode Fix | ✅ 已完成 | 根因定位 + selection-generic bypass fix + debug summary |
 | Session 8.8 Markdown Cleanup | ✅ 已完成 | S8.9 替代 |
 | Session 8.9 Resolver Pipeline | ✅ 已完成 | Comment Context Resolver + Cleaners
+| Session 8.9.3 Bilibili Patch | ✅ 已完成 | S8.9 子 session |
+| Session 8.10.2 Markdown Wrapper Short-circuit | ✅ 已完成 | 本轮 |
+| Session 8.12 Wire Resolver Pipeline | ✅ 已完成 | 主链路接入 resolveCommentContext |
 
 ---
 
@@ -93,6 +93,10 @@
 - [x] v0.4 Session 8.6.1：Comment Source Title Resolver Fix
 - [x] v0.4 Session 8.6.2：Low-token Extraction Debug & Website Reading Workflow
 - [x] v0.4 Session 8.8：Comment Context Markdown Cleanup & Media Filter
+- [x] v0.4 Session 8.9：Comment Context Multi-site Resolver Pipeline
+- [x] v0.4 Session 8.9.3：Bilibili Selector Patch & Resolver Guard
+- [x] v0.4 Session 8.10.2：Comment Context Markdown Wrapper Short-circuit
+- [x] v0.4 Session 8.12：Wire Comment Context Resolver Pipeline
 
 ---
 

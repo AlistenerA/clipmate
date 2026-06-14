@@ -41,6 +41,42 @@ function makeBilibiliMatch(): SiteProfileMatch {
   }
 }
 
+function makeDoubanMatch(): SiteProfileMatch {
+  return {
+    profile: {
+      id: 'douban-review',
+      label: 'Douban',
+      category: 'community',
+      domains: ['douban.com'],
+      pageTypes: ['forum-or-comment'] as PageType[],
+      priority: 20,
+      selectorHints: { contentContainer: '#content .article', commentContainer: '[class*="comment-item"]' },
+    } as SiteProfile,
+    matchedDomain: 'douban.com',
+    matchedPageType: 'forum-or-comment' as PageType,
+    confidence: 0.9,
+    reasons: ['test'],
+  }
+}
+
+function makeBlogMatch(domain: string = 'csdn.net'): SiteProfileMatch {
+  return {
+    profile: {
+      id: 'blog-tech',
+      label: 'Blog',
+      category: 'article',
+      domains: [domain],
+      pageTypes: ['article'] as PageType[],
+      priority: 15,
+      selectorHints: { contentContainer: 'article, main', commentContainer: '#commentBox' },
+    } as SiteProfile,
+    matchedDomain: domain,
+    matchedPageType: 'article' as PageType,
+    confidence: 0.9,
+    reasons: ['test'],
+  }
+}
+
 function makeDom(headHtml: string, bodyHtml: string, url?: string): { doc: Document } {
   const fullHtml = `<!DOCTYPE html><html><head>${headHtml}</head><body>${bodyHtml}</body></html>`
   const dom = new JSDOM(fullHtml, { url: url || 'https://weibo.com/status/12345' })
@@ -313,6 +349,284 @@ describe('resolveCommentContext', () => {
     })
     expect(context.sourceTitle).not.toContain('微博')
     expect(context.sourceTitle).not.toContain('Weibo')
+  })
+
+  // ===== Douban resolver =====
+
+  it('Douban resolver matches douban.com URL', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html>
+<head><meta property="og:title" content="Test Book (豆瓣)" /></head>
+<body>
+  <div id="content"><div class="article"><h1>Test Book</h1><p>Description here</p></div></div>
+  <div class="comment-item"><div class="author">Alice</div><p id="sel">Good!</p></div>
+</body></html>`,
+      { url: 'https://book.douban.com/subject/fake/' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Test Book (豆瓣)',
+      pageUrl: 'https://book.douban.com/subject/fake/',
+      siteProfileMatch: makeDoubanMatch(),
+      selectionText: 'Good!',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.siteName).toBe('豆瓣')
+    expect(context.sourceTitle).toContain('豆瓣')
+    expect(context.sourceTitle).toContain('Test Book')
+  })
+
+  it('Douban resolver strips (豆瓣) suffix from og:title', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html>
+<head><meta property="og:title" content="Movie Title (豆瓣)" /></head>
+<body>
+  <div id="content"><div class="article"><p>Movie description</p></div></div>
+  <div class="comment-item"><div class="author">Bob</div><p id="sel">Loved it</p></div>
+</body></html>`,
+      { url: 'https://movie.douban.com/subject/fake/' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Movie Title (豆瓣)',
+      pageUrl: 'https://movie.douban.com/subject/fake/',
+      siteProfileMatch: makeDoubanMatch(),
+      selectionText: 'Loved it',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.sourceTitle).not.toContain('(豆瓣)')
+    expect(context.sourceTitle).toContain('Movie Title')
+  })
+
+  it('Douban resolver strips 有用/没用/举报 from excerpt', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html>
+<head><meta property="og:title" content="Book (豆瓣)" /></head>
+<body>
+  <div id="content"><div class="article"><p>Real summary text 有用 12 没用 3 举报</p></div></div>
+  <div class="comment-item"><p id="sel">Nice book</p></div>
+</body></html>`,
+      { url: 'https://book.douban.com/subject/fake2/' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Book (豆瓣)',
+      pageUrl: 'https://book.douban.com/subject/fake2/',
+      siteProfileMatch: makeDoubanMatch(),
+      selectionText: 'Nice book',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    if (context.sourceExcerpt) {
+      expect(context.sourceExcerpt).not.toContain('有用')
+      expect(context.sourceExcerpt).not.toContain('没用')
+      expect(context.sourceExcerpt).not.toContain('举报')
+    }
+  })
+
+  it('Douban resolver comment only from user selection', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html>
+<body>
+  <div id="content"><div class="article"><p>Book description</p></div></div>
+  <div class="comment-item"><div class="author">A</div><p id="sel">Selected only</p></div>
+  <div class="comment-item"><div class="author">B</div><p>Other comment</p></div>
+</body></html>`,
+      { url: 'https://book.douban.com/subject/fake3/' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Book',
+      pageUrl: 'https://book.douban.com/subject/fake3/',
+      siteProfileMatch: makeDoubanMatch(),
+      selectionText: 'Selected only',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.selectedComment.text).toBe('Selected only')
+    expect(context.selectedComment.text).not.toContain('Other comment')
+  })
+
+  // ===== Blog resolver =====
+
+  it('Blog resolver matches CSDN article URL', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html><body>
+<main><article id="article_content"><h1>CSDN Article Title</h1><p>content</p></article></main>
+<div id="commentBox"><div class="comment-item"><span class="user-name">User</span><p id="sel">Comment</p></div></div>
+</body></html>`,
+      { url: 'https://blog.csdn.net/fake/article/details/123' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'CSDN Article Title - CSDN博客',
+      pageUrl: 'https://blog.csdn.net/fake/article/details/123',
+      siteProfileMatch: makeBlogMatch('csdn.net'),
+      selectionText: 'Comment',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.siteName).toBe('CSDN')
+    expect(context.sourceTitle).toContain('CSDN')
+    expect(context.sourceTitle).toContain('CSDN Article Title')
+  })
+
+  it('Blog resolver matches cnblogs article URL', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html><body>
+<main><article><h1>Blog Post</h1><p>content</p></article></main>
+<div class="comment-list"><p id="sel">Reply</p></div>
+</body></html>`,
+      { url: 'https://www.cnblogs.com/fake/p/123.html' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Blog Post - 博客园',
+      pageUrl: 'https://www.cnblogs.com/fake/p/123.html',
+      siteProfileMatch: makeBlogMatch('cnblogs.com'),
+      selectionText: 'Reply',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.siteName).toBe('cnblogs')
+    expect(context.sourceTitle).toContain('cnblogs')
+  })
+
+  it('Blog resolver uses h1 for title', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html><body>
+<main><article><h1>My Blog Post</h1><p>content</p></article></main>
+<div id="commentBox"><p id="sel">Comment</p></div>
+</body></html>`,
+      { url: 'https://blog.csdn.net/fake/article/details/456' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'My Blog Post',
+      pageUrl: 'https://blog.csdn.net/fake/article/details/456',
+      siteProfileMatch: makeBlogMatch(),
+      selectionText: 'Comment',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.sourceTitle).toContain('My Blog Post')
+  })
+
+  it('Blog resolver sourceExcerpt from article content, not navigation', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html><body>
+<nav>Navigation: Home About Contact</nav>
+<main><article id="article_content"><h1>Post Title</h1><p>This is the real article content for excerpt testing.</p></article></main>
+<div id="commentBox"><p id="sel">Comment</p></div>
+</body></html>`,
+      { url: 'https://blog.csdn.net/fake/article/details/789' },
+    )
+    const doc = dom.window.document
+    const sel = doc.querySelector('#sel')
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Post Title',
+      pageUrl: 'https://blog.csdn.net/fake/article/details/789',
+      siteProfileMatch: makeBlogMatch(),
+      selectionText: 'Comment',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    if (context.sourceExcerpt) {
+      expect(context.sourceExcerpt).not.toContain('Navigation')
+      expect(context.sourceExcerpt).toContain('real article')
+    }
+  })
+
+  it('Blog resolver media max 1', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html>
+<head><meta property="og:image" content="https://img.example.com/fake-cover.jpg" /></head>
+<body>
+<main><article><h1>Post</h1><p>content</p>
+  <img src="https://img.example.com/fake-cover.jpg" width="400" height="300" alt="cover" />
+  <img src="https://img.example.com/fake-avatar.jpg" width="32" height="32" alt="avatar" />
+</article></main>
+</body></html>`,
+      { url: 'https://blog.csdn.net/fake/article/details/999' },
+    )
+    const doc = dom.window.document
+    const context = resolveCommentContext({
+      document: doc,
+      pageTitle: 'Post',
+      pageUrl: 'https://blog.csdn.net/fake/article/details/999',
+      siteProfileMatch: makeBlogMatch(),
+      selectionText: 'c',
+      selectionRoot: null,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.sourceMedia.length).toBeLessThanOrEqual(1)
+  })
+
+  // ===== Fallback: Xiaohongshu/Douyin NOT hijacked by blog/douban =====
+
+  it('Xiaohongshu URL does not match douban resolver', () => {
+    const dom = new JSDOM(
+      '<!DOCTYPE html><html><body><div class="note-content"><p>note</p></div></body></html>',
+      { url: 'https://www.xiaohongshu.com/explore/fake' },
+    )
+    const context = resolveCommentContext({
+      document: dom.window.document,
+      pageTitle: 'Note',
+      pageUrl: 'https://www.xiaohongshu.com/explore/fake',
+      siteProfileMatch: null,
+      selectionText: 'c',
+      selectionRoot: null,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.siteName).not.toBe('豆瓣')
+    expect(context.siteName).not.toBe('CSDN')
+    expect(context.sourceTitle).not.toContain('豆瓣')
+  })
+
+  it('Douyin URL does not match blog resolver', () => {
+    const dom = new JSDOM(
+      '<!DOCTYPE html><html><body></body></html>',
+      { url: 'https://www.douyin.com/video/fake' },
+    )
+    const context = resolveCommentContext({
+      document: dom.window.document,
+      pageTitle: 'Video',
+      pageUrl: 'https://www.douyin.com/video/fake',
+      siteProfileMatch: null,
+      selectionText: 'c',
+      selectionRoot: null,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.siteName).not.toBe('CSDN')
+    expect(context.siteName).not.toBe('cnblogs')
   })
 
   it('Generic social resolver handles unknown profiles', () => {

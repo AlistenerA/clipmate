@@ -70,6 +70,14 @@ function chunkedParagraphBlocks(contentText: string): BlockObjectRequest[] {
 export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
   const blocks: BlockObjectRequest[] = []
 
+  if (draft.content?.clipMode === 'comment-context') {
+    const contentText = draft.content?.markdown || draft.content?.contentText || ''
+    if (contentText.trim()) {
+      blocks.push(...chunkedParagraphBlocks(contentText.trim()))
+    }
+    return blocks
+  }
+
   const title = (draft.title || draft.content?.title || '未命名剪藏').slice(0, MAX_TEXT_LENGTH)
   blocks.push({
     object: 'block',

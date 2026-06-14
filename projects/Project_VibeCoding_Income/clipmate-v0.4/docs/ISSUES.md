@@ -4,6 +4,37 @@
 
 ---
 
+## v0.4 Session 8.12 状态
+
+- content/index.ts comment-context 主链路接入 resolveCommentContext() resolver pipeline
+- Weibo resolver 的 sourceDate/sourceLocation/sourceObjectType/sourceSectionLabel 现在正确填充
+- buildSemanticCommentContextTitle 可生成 "转自 @用户 日期 发布于某地" 完整格式
+- Douban/Blog resolver 的 sourceObjectType/sourceSectionLabel 正确填充
+- 旧 buildCommentClipContext 未删除，resolver 无匹配时 fallback 到 genericSocialCommentResolver
+
+### Session 8.12 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS21 | content/index.ts 未接入 resolveCommentContext resolver pipeline，导致 sourceDate/sourceLocation/sourceObjectType/sourceSectionLabel 始终为空 | blocker | content/index.ts 切换为 resolveCommentContext |
+
+---
+
+## v0.4 Session 8.10.2 状态
+
+- 修复 comment-context markdown 被普通选区 wrapper 二次包装的问题
+- Notion / Typora / Obsidian / Copy Markdown 中 comment-context 不再出现外层普通选区标题和免责声明
+- 普通 selection-generic 行为不变
+- Bilibili fallback 仍为普通选区剪藏
+
+### Session 8.10.2 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS20 | Comment-context markdown 被普通选区 wrapper 二次包装，导致 Notion/Typora/Obsidian 输出中出现双层 H1、双层来源、双层 disclaimer | blocker | clipMode short-circuit in formatCopyMarkdown / formatMarkdownWithProfile / buildNotionBlocks |
+
+---
+
 ## v0.4 Session 8.6.2 状态
 
 - 根因定位完成：Weibo CSS Modules → classifyElementContext 'unknown' → selection-generic bypass

@@ -4,6 +4,112 @@
 
 ---
 
+## v0.4 Session 8.12 (2026-06-14)
+
+### 性质
+
+最小修复：content/index.ts comment-context 主链路从 buildCommentClipContext 接入 resolveCommentContext resolver pipeline。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：41 个测试文件，1691 个测试，全部通过 (+12 new)
+- `npm run build`：构建成功，120 modules
+
+### 新增测试
+
+| 文件 | 测试数 | 描述 |
+|------|:---:|------|
+| `comment-context-pipeline-integration.test.ts` | 12 | resolver pipeline → semantic title 集成 |
+
+**comment-context-pipeline-integration.test.ts (12 tests):**
+- Weibo resolver produces sourceDate from content text
+- Weibo resolver produces sourceDate with alt date format
+- Weibo resolver sets sourceObjectType to post
+- Weibo resolver sets sourceSectionLabel to 博文内容
+- buildSemanticCommentContextTitle produces rich title with date + location
+- buildSemanticCommentContextTitle: author + date only
+- buildSemanticCommentContextTitle: author + location only
+- buildSemanticCommentContextTitle: author only (no date/location)
+- formatCommentContextMarkdown H1 matches buildSemanticCommentContextTitle output
+- Douban resolver produces sourceObjectType and sourceSectionLabel
+- Blog resolver produces sourceObjectType=article and sourceSectionLabel=文章内容
+- Resolver context sourceMedia filtered by filterHighQualityMedia
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts / package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- lint 0 ✅
+- 1691 tests pass ✅
+- build success ✅
+- content/index.ts import/调用已切换 ✅
+- 不访问网络/chrome API/storage ✅
+
+---
+
+## v0.4 Session 8.10.2 (2026-06-14)
+
+### 性质
+
+Comment Context Markdown Wrapper Short-circuit：修复 comment-context markdown 被普通选区 wrapper 二次包装的问题。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：40 个测试文件，1651 个测试，全部通过 (+16 new)
+- `npm run build`：构建成功，120 modules
+
+### 新增测试
+
+| 文件 | 测试数 | 描述 |
+|------|:---:|------|
+| `shared-utils.test.ts` | 3 | formatCopyMarkdown comment-context short-circuit |
+| `markdown-profiles.test.ts` | 7 | formatMarkdownWithProfile comment-context (Notion/Typora/Generic/Obsidian) |
+| `notion-blocks.test.ts` | 6 | buildNotionBlocks comment-context short-circuit |
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts / package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1651 tests pass ✅
+- build success ✅
+- 未改变 Notion API 请求结构 ✅
+- 未改变 resolver 业务逻辑 ✅
+- 不访问网络/chrome API/storage ✅
+
+---
+
 ## v0.4 Session 8.6.2 (2026-06-14)
 
 ### 性质

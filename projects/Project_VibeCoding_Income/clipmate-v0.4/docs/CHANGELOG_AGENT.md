@@ -4,6 +4,137 @@
 
 ---
 
+## v0.4 Session 8.12：Wire Comment Context Resolver Pipeline (2026-06-14)
+
+### 性质
+
+最小修复：将 content/index.ts 的 comment-context 主链路从旧 buildCommentClipContext() 接入已实现的 resolveCommentContext() resolver pipeline。
+
+### 问题
+
+上一轮 S8.11 只读诊断发现：commentContextResolvers.ts 中已实现 Weibo/Bilibili/Douban/Blog 4 个平台的 resolveCommentContext() resolver pipeline，但 content/index.ts 的 comment-context 路径仍调用旧 buildCommentClipContext()。旧 builder 不填充 sourceDate/sourceLocation/sourceObjectType/sourceSectionLabel，导致 buildSemanticCommentContextTitle 无法生成"转自 @用户 日期 发布于某地"完整格式。
+
+### 修复
+
+1. **content/index.ts**：import 从 buildCommentClipContext 改为 resolveCommentContext；handleGetSelection 中 comment-context 路径调用 resolveCommentContext() 替代 buildCommentClipContext()
+2. resolveCommentContext 内部已含 fallback（genericSocialCommentResolver），无需额外 fallback 逻辑
+
+### 不变行为
+
+- content.title / content.metadata.title / content.markdown / content.clipMode 的写入位置和语义不变
+- buildSemanticCommentContextTitle(context) 仍用于生成 canonicalTitle 和 markdown H1
+- Popup preview / Copy Markdown / Notion / History / Retry 链路不改
+- formatMarkdownWithProfile / formatCopyMarkdown / buildNotionBlocks 的 comment-context shortcut 不改
+- Bilibili selection-generic 降级不改
+
+### 修改文件
+
+- `src/content/index.ts` — import resolveCommentContext 替代 buildCommentClipContext，comment-context 路径调用替换
+
+### 新增文件
+
+- `tests/comment-context-pipeline-integration.test.ts` — 12 tests
+
+### 新增/更新测试
+
+- `tests/comment-context-pipeline-integration.test.ts` (12 tests):
+  - Weibo resolver produces sourceDate from content text
+  - Weibo resolver produces sourceDate with alt date format
+  - Weibo resolver sets sourceObjectType to post
+  - Weibo resolver sets sourceSectionLabel to 博文内容
+  - buildSemanticCommentContextTitle produces rich title with date and location
+  - buildSemanticCommentContextTitle with resolver context: author + date only
+  - buildSemanticCommentContextTitle with resolver context: author + location only
+  - buildSemanticCommentContextTitle with resolver context: author only
+  - formatCommentContextMarkdown H1 matches buildSemanticCommentContextTitle output
+  - Douban resolver produces sourceObjectType and sourceSectionLabel
+  - Blog resolver produces sourceObjectType=article and sourceSectionLabel=文章内容
+  - Resolver context sourceMedia is filtered by filterHighQualityMedia
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：41 files, 1691 tests passed (+12 new)
+- `npm run build`：success, 120 modules
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`（除已存在的 notionHandler.ts）
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- `formatWithProfile.ts` / `formatMarkdown.ts` / `blocks.ts`
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
+## v0.4 Session 8.10.2：Comment Context Markdown Wrapper Short-circuit (2026-06-14)
+
+### 性质
+
+Bug 修复：修复 comment-context markdown 被普通选区 markdown wrapper 二次包装的问题。不新增平台适配、不改 resolver、不改 Notion API 保存链路。
+
+### 问题
+
+用户人工复核发现微博评论剪藏在 Notion、Typora、Obsidian 输出中均出现双层包装：
+- 外层：普通选区 H1 + 来源 + "> 注：以下内容为网页选区摘录，并非全文。"
+- 内层：comment-context markdown（自身已有 H1/来源/platform/disclaimer）
+
+### 根因
+
+`handleGetSelection` 中生成的 `content.markdown` 已包含完整 comment-context markdown，但下游 3 个 formatter 均将其当作普通 body 内容重新包装：
+
+1. `formatCopyMarkdown()` — history storage wrapper
+2. `formatMarkdownWithProfile()` — Copy Markdown / Typora / Obsidian 输出
+3. `buildNotionBlocks()` — Notion API blocks
+
+### 修复
+
+1. **新增 `clipMode` 字段**：`ExtractedContent.clipMode?: 'comment-context'`，在 `handleGetSelection` comment-context 路径中设置
+2. **`formatCopyMarkdown` 短路**：`clipMode === 'comment-context'` 时直接返回 bodyMarkdown，不添加外层 H1/source/disclaimer
+3. **`formatMarkdownWithProfile` 短路**：`clipMode === 'comment-context'` 时跳过外层包装；Obsidian 保留 YAML frontmatter
+4. **`buildNotionBlocks` 短路**：`clipMode === 'comment-context'` 时跳过 heading_2/source/divider/selection callout，仅输出 body 段落
+5. **传递链路**：`notionHandler.ts` 和 `App.tsx` 分别传递 `clipMode` 到对应 formatter
+
+### 不变行为
+
+- Selection-generic 输出保持原有外层包装（H1/来源/disclaimer）
+- Bilibili fallback 后为 selection-generic，保持正常 selection wrapper
+- 不改变 Notion API 请求结构和 block 构建器
+- 不修改 resolver 业务逻辑
+
+### 修改文件
+
+- `src/shared/types/clip.types.ts` — `ExtractedContent` 新增 `clipMode?` 字段
+- `src/content/index.ts` — `handleGetSelection` 中设置 `content.clipMode = 'comment-context'`
+- `src/shared/utils/formatMarkdown.ts` — `formatCopyMarkdown` 新增 `clipMode` 参数，comment-context 直接返回 body
+- `src/shared/markdown/formatWithProfile.ts` — `FormatMarkdownInput` 新增 `clipMode`；`formatMarkdownWithProfile` 中 comment-context 短路（Obsidian 保留 frontmatter）
+- `src/platforms/notion/blocks.ts` — `buildNotionBlocks` 中 comment-context 跳过外层 metadata blocks
+- `src/background/handlers/notionHandler.ts` — 传递 `draft.content.clipMode` 到 `formatCopyMarkdown`
+- `src/popup/App.tsx` — 传递 `content.clipMode` 到 `formatMarkdownWithProfile`
+
+### 新增/更新测试
+
+- `tests/shared-utils.test.ts` — +3 tests（comment-context short-circuit / empty / selection-generic unchanged）
+- `tests/markdown-profiles.test.ts` — +7 tests（Notion/Typora/Generic/Obsidian comment-context short-circuit）
+- `tests/notion-blocks.test.ts` — +6 tests（comment-context: skip heading/divider/callout, include body, empty, selection-generic unchanged）
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：40 files, 1651 tests passed（+16 new）
+- `npm run build`：success, 120 modules
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`（除 App.tsx 一行）、`src/options/`、`src/background/`（除 notionHandler.ts）
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- Notion API 请求结构和 block 构建器（除跳过 metadata blocks）
+- resolver 业务逻辑
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
 ## v0.4 Session 8.9：Comment Context Multi-site Resolver Pipeline (2026-06-14)
 
 ### 性质

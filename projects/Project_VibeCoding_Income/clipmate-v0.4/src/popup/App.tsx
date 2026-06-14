@@ -108,6 +108,7 @@ export default function App() {
         bodyMarkdown: content.markdown,
         createdAt: content.metadata?.createdAt,
         mode: content.mode,
+        clipMode: content.clipMode,
       },
       mdTarget,
     )

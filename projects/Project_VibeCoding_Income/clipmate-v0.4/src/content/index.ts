@@ -23,7 +23,8 @@ import {
 import {
   buildCommentSelectionDraft,
   formatCommentContextMarkdown,
-  buildCommentClipContext,
+  resolveCommentContext,
+  buildSemanticCommentContextTitle,
 } from './commentSelection'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
@@ -240,7 +241,15 @@ function handleGetSelection(): HandlerResult {
     })
 
     if (draft.mode !== 'selection-generic') {
-      const context = buildCommentClipContext({
+      const hostname = (() => { try { return new URL(document.URL).hostname } catch { return '' } })()
+
+      if (hostname.includes('bilibili.com')) {
+        draft.mode = 'selection-generic'
+      }
+    }
+
+    if (draft.mode !== 'selection-generic') {
+      const context = resolveCommentContext({
         document,
         pageTitle: content.title,
         pageUrl: content.url,
@@ -253,9 +262,11 @@ function handleGetSelection(): HandlerResult {
       content.markdown = formatCommentContextMarkdown(context)
       content.contentText = content.markdown
       content.contentHtml = ''
-      content.title = context.sourceTitle
-      content.metadata.title = context.sourceTitle
+      const canonicalTitle = buildSemanticCommentContextTitle(context)
+      content.title = canonicalTitle
+      content.metadata.title = canonicalTitle
       content.description = context.sourceExcerpt || ''
+      content.clipMode = 'comment-context'
     }
 
     logger.info(`Selection: ${content.wordCount} words (${draft.mode})`)

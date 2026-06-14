@@ -22,6 +22,7 @@ export interface ExtractedContent {
   markdown: string
   wordCount: number
   metadata: ClipMetadata
+  clipMode?: 'comment-context'
 }
 
 export interface ClipDraft {

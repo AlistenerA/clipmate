@@ -543,8 +543,8 @@ describe('seed profiles structural QA', () => {
     }
   })
 
-  it('counts exactly 19 seed profiles', () => {
-    expect(SEED_PROFILES.length).toBe(19)
+  it('counts exactly 21 seed profiles', () => {
+    expect(SEED_PROFILES.length).toBe(21)
   })
 
   it('bilibili-video excludeSelector contains all expected danmaku/player exclusions', () => {

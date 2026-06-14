@@ -62,6 +62,11 @@ export interface CommentClipContext {
   warnings: string[]
   mode: CommentSelectionMode
   reasons: string[]
+  sourceDate?: string
+  sourceLocation?: string
+  sourceObjectType?: 'post' | 'book' | 'movie' | 'music' | 'article' | 'review' | 'unknown'
+  sourceObjectTitle?: string
+  sourceSectionLabel?: string
 }
 
 export interface CommentContextInput {

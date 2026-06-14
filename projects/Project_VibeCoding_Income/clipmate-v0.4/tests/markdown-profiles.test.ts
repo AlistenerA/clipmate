@@ -385,6 +385,86 @@ describe('formatMarkdownWithProfile', () => {
     })
   })
 
+  describe('comment-context short-circuit', () => {
+    const commentContextBody = '# 评论标题\n\n平台：Weibo\n\n来源：https://example.com/comment\n\n## 选中评论\n\n评论者：Alice\n\n这是评论正文\n\n---\n\n> 注：以上内容为网页选区评论剪藏，并非全文。'
+    const ccInput = {
+      title: '外层标题',
+      url: 'https://example.com/page',
+      tags: ['标签1'],
+      note: '备注',
+      bodyMarkdown: commentContextBody,
+      createdAt: '2026-06-12T10:00:00.000Z',
+      mode: 'selection' as const,
+      clipMode: 'comment-context' as const,
+    }
+
+    it('Notion: no outer H1, no outer source, no selection disclaimer', () => {
+      const result = formatMarkdownWithProfile(ccInput, 'notion')
+      expect(result).not.toContain('# 外层标题')
+      expect(result).not.toContain('来源：https://example.com/page')
+      expect(result).not.toContain('标签：#标签1')
+      expect(result).not.toContain('> 备注')
+      expect(result).not.toContain('> 注：以下内容为网页选区摘录，并非全文。')
+      expect(result).toContain('# 评论标题')
+      expect(result).toContain('> 注：以上内容为网页选区评论剪藏，并非全文。')
+      expect(result).not.toMatch(/^---/)
+    })
+
+    it('Typora: no outer wrapper, body content included', () => {
+      const result = formatMarkdownWithProfile(ccInput, 'typora')
+      expect(result).not.toContain('# 外层标题')
+      expect(result).not.toContain('[来源]')
+      expect(result).not.toContain('> 注：以下内容为网页选区摘录，并非全文。')
+      expect(result).toContain('# 评论标题')
+      expect(result).toContain('> 注：以上内容为网页选区评论剪藏，并非全文。')
+    })
+
+    it('Generic: no outer wrapper, body content included', () => {
+      const result = formatMarkdownWithProfile(ccInput, 'generic')
+      expect(result).not.toContain('# 外层标题')
+      expect(result).not.toContain('来源：https://example.com/page')
+      expect(result).not.toContain('> 注：以下内容为网页选区摘录，并非全文。')
+      expect(result).toContain('# 评论标题')
+      expect(result).toContain('> 注：以上内容为网页选区评论剪藏，并非全文。')
+    })
+
+    it('Obsidian: has YAML frontmatter, no outer heading/source/disclaimer in body', () => {
+      const result = formatMarkdownWithProfile(ccInput, 'obsidian')
+      expect(result).toMatch(/^---/)
+      expect(result).toMatch(/title:.*外层标题/)
+      expect(result).toMatch(/source:.*example\.com/)
+      const afterFrontmatter = result.replace(/^---[\s\S]*?---\n\n?/, '')
+      expect(afterFrontmatter).not.toContain('# 外层标题')
+      expect(afterFrontmatter).not.toContain('来源：https://example.com/page')
+      expect(afterFrontmatter).not.toContain('标签：#标签1')
+      expect(afterFrontmatter).not.toContain('> 注：以下内容为网页选区摘录，并非全文。')
+      expect(afterFrontmatter).toContain('# 评论标题')
+      expect(afterFrontmatter).toContain('来源：https://example.com/comment')
+      expect(afterFrontmatter).toContain('> 注：以上内容为网页选区评论剪藏，并非全文。')
+    })
+
+    it('Obsidian: frontmatter followed by only one H1', () => {
+      const result = formatMarkdownWithProfile(ccInput, 'obsidian')
+      const afterFrontmatter = result.replace(/^---[\s\S]*?---\n\n?/, '')
+      const h1Count = (afterFrontmatter.match(/^# /gm) || []).length
+      expect(h1Count).toBe(1)
+    })
+
+    it('comment-context with empty body returns frontmatter only for Obsidian', () => {
+      const emptyCc = { ...ccInput, bodyMarkdown: '' }
+      const result = formatMarkdownWithProfile(emptyCc, 'obsidian')
+      expect(result).toMatch(/^---/)
+      const afterFrontmatter = result.replace(/^---[\s\S]*?---\n\n?/, '')
+      expect(afterFrontmatter.trim()).toBe('')
+    })
+
+    it('comment-context with empty body returns empty for Notion', () => {
+      const emptyCc = { ...ccInput, bodyMarkdown: '' }
+      const result = formatMarkdownWithProfile(emptyCc, 'notion')
+      expect(result).toBe('')
+    })
+  })
+
   describe('profile properties', () => {
     it('all profiles have required fields (notion)', () => {
       const p: MarkdownProfile = getMarkdownProfile('notion')

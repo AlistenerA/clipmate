@@ -218,3 +218,81 @@ describe('buildNotionBlocks', () => {
     expect(excerptCallout).toBeUndefined()
   })
 })
+
+describe('buildNotionBlocks with comment-context', () => {
+  const commentContextMd = '# 评论标题\n\n平台：Weibo\n\n来源：https://example.com/comment\n\n## 选中评论\n\n评论者：Alice\n\n这是评论正文'
+
+  it('skips outer heading_2/source/divider/selection callout', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.markdown = commentContextMd
+    draft.content.clipMode = 'comment-context'
+    const blocks = buildNotionBlocks(draft)
+
+    expect(blocks.every((b) => b.type === 'paragraph')).toBe(true)
+    const blockJson = JSON.stringify(blocks)
+    expect(blockJson).not.toContain('外层标题')
+    expect(blockJson).not.toContain('来源：https://example.com/article/1')
+    expect(blockJson).not.toContain('标签：')
+    expect(blockJson).not.toContain('📋')
+    expect(blockJson).not.toContain('网页选区摘录')
+  })
+
+  it('includes comment-context body paragraphs', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.markdown = commentContextMd
+    draft.content.clipMode = 'comment-context'
+    const blocks = buildNotionBlocks(draft)
+
+    const blockJson = JSON.stringify(blocks)
+    expect(blockJson).toContain('评论标题')
+    expect(blockJson).toContain('评论者：Alice')
+  })
+
+  it('does not contain heading_2 block', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.markdown = commentContextMd
+    draft.content.clipMode = 'comment-context'
+    const blocks = buildNotionBlocks(draft)
+
+    expect(blocks.some((b) => b.type === 'heading_2')).toBe(false)
+  })
+
+  it('does not contain divider block', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.markdown = commentContextMd
+    draft.content.clipMode = 'comment-context'
+    const blocks = buildNotionBlocks(draft)
+
+    expect(blocks.some((b) => b.type === 'divider')).toBe(false)
+  })
+
+  it('empty comment-context content produces no blocks', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.markdown = ''
+    draft.content.contentText = ''
+    draft.content.clipMode = 'comment-context'
+    const blocks = buildNotionBlocks(draft)
+
+    expect(blocks).toHaveLength(0)
+  })
+
+  it('selection-generic without clipMode still gets full outer wrapping', () => {
+    const draft = makeDraft({ mode: 'selection' })
+    draft.content.mode = 'selection'
+    draft.content.clipMode = undefined
+    const blocks = buildNotionBlocks(draft)
+
+    expect(blocks.some((b) => b.type === 'heading_2')).toBe(true)
+    expect(blocks.some((b) => b.type === 'divider')).toBe(true)
+    const excerpt = blocks.find((b) => {
+      if (b.type !== 'callout') return false
+      return JSON.stringify(b).includes('网页选区摘录')
+    })
+    expect(excerpt).toBeDefined()
+  })
+})

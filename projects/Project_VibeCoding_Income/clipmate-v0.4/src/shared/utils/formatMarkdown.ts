@@ -58,7 +58,12 @@ export function formatCopyMarkdown(
   note: string,
   bodyMarkdown: string,
   mode?: 'fullpage' | 'selection',
+  clipMode?: 'comment-context',
 ): string {
+  if (clipMode === 'comment-context') {
+    return bodyMarkdown.trim()
+  }
+
   const parts: string[] = []
 
   if (title) {

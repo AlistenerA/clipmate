@@ -165,6 +165,54 @@ describe('formatMarkdown', () => {
       expect(idxNote).toBeLessThan(idxDivider)
       expect(idxDivider).toBeLessThan(idxBody)
     })
+
+    it('comment-context mode returns bodyMarkdown directly without wrapper', () => {
+      const bodyMd = '# 评论标题\n\n平台：Weibo\n\n来源：https://example.com/comment\n\n## 选中评论\n\n评论者：Alice\n\n这是评论正文\n\n---\n\n> 注：以上内容为网页选区评论剪藏，并非全文。'
+      const result = formatCopyMarkdown(
+        '外层标题',
+        'https://example.com/page',
+        ['标签1'],
+        '备注',
+        bodyMd,
+        'selection',
+        'comment-context',
+      )
+      expect(result).toBe(bodyMd)
+      expect(result).not.toContain('# 外层标题')
+      expect(result).not.toContain('标签1')
+      expect(result).not.toContain('备注')
+      expect(result).not.toContain('> 注：以下内容为网页选区摘录，并非全文。')
+    })
+
+    it('comment-context with empty bodyMarkdown returns empty', () => {
+      const result = formatCopyMarkdown(
+        'Title',
+        'https://a.com',
+        ['tag'],
+        'note',
+        '',
+        'selection',
+        'comment-context',
+      )
+      expect(result).toBe('')
+    })
+
+    it('selection-generic without clipMode still gets full wrapper', () => {
+      const result = formatCopyMarkdown(
+        'Title',
+        'https://a.com',
+        ['tag'],
+        'note',
+        'body text',
+        'selection',
+      )
+      expect(result).toContain('# Title')
+      expect(result).toContain('来源：https://a.com')
+      expect(result).toContain('标签：#tag')
+      expect(result).toContain('---')
+      expect(result).toContain('> 注：以下内容为网页选区摘录，并非全文。')
+      expect(result).toContain('body text')
+    })
   })
 
   describe('snippet', () => {

@@ -51,6 +51,7 @@ export async function handleSaveToNotion(
         draft.note,
         draft.content.markdown,
         draft.mode,
+        draft.content.clipMode,
       )
 
       const now = new Date().toISOString()
@@ -96,6 +97,7 @@ export async function handleSaveToNotion(
         draft.note,
         draft.content.markdown,
         draft.mode,
+        draft.content.clipMode,
       )
 
       const meta = draft.content?.metadata
