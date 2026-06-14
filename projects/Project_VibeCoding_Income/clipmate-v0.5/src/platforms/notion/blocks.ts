@@ -11,6 +11,8 @@ const MAX_TEXT_LENGTH = 2000
 
 const IMAGE_MARKDOWN_RE = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/
 
+const ITALIC_CAPTION_RE = /^\*([^*]+)\*$/
+
 function chunkText(text: string): string[] {
   const chunks: string[] = []
   let remaining = text
@@ -59,9 +61,34 @@ function isValidExternalImageUrl(url: string): boolean {
   return true
 }
 
+const NON_DIRECT_IMAGE_HOST_PATTERNS = [
+  /\/api\/auto\/resize\b/i,
+  /\/api\/[^/]*\.(?:jpg|png|gif|webp)/i,
+  /\/(?:resize|crop|thumbnail|thumb)\b/i,
+  /[?&]img=(?:https?:\/\/|[^&]*\/)/i,
+]
+
+function isLikelyDirectImageHosting(url: string): boolean {
+  const path = (() => {
+    try {
+      const u = new URL(url)
+      return u.pathname + u.search
+    } catch {
+      return url
+    }
+  })()
+
+  for (const pattern of NON_DIRECT_IMAGE_HOST_PATTERNS) {
+    if (pattern.test(path)) return false
+  }
+
+  return true
+}
+
 function tryImageBlock(rawUrl: string, alt: string): BlockObjectRequest | null {
   const url = rawUrl.trim()
   if (!isValidExternalImageUrl(url)) return null
+  if (!isLikelyDirectImageHosting(url)) return null
 
   try {
     const captionText = alt.trim()
@@ -83,14 +110,28 @@ export function markdownToContentBlocks(contentText: string): BlockObjectRequest
   const blocks: BlockObjectRequest[] = []
   const paragraphs = splitParagraphs(contentText)
 
-  for (const para of paragraphs) {
-    const trimmed = para.trim()
+  for (let i = 0; i < paragraphs.length; i++) {
+    const trimmed = paragraphs[i].trim()
     const imageMatch = IMAGE_MARKDOWN_RE.exec(trimmed)
 
     if (imageMatch) {
       const alt = imageMatch[1] || ''
       const rawUrl = imageMatch[2] || ''
-      const imageBlock = tryImageBlock(rawUrl, alt)
+      let caption = alt.trim()
+
+      if (i + 1 < paragraphs.length) {
+        const nextTrimmed = paragraphs[i + 1].trim()
+        const captionMatch = ITALIC_CAPTION_RE.exec(nextTrimmed)
+        if (captionMatch) {
+          const captionText = captionMatch[1].trim()
+          if (captionText.length <= 200) {
+            caption = captionText
+            i++
+          }
+        }
+      }
+
+      const imageBlock = tryImageBlock(rawUrl, caption)
       if (imageBlock) {
         blocks.push(imageBlock)
         continue

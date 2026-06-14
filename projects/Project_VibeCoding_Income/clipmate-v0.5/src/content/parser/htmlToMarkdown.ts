@@ -224,6 +224,28 @@ function deduplicateImageMarkdown(md: string): string {
   })
 }
 
+function splitImageCaptionGlue(md: string): string {
+  return md.replace(
+    /!\[([^\]]*)\]\(([^)]+)\)\s*(\S[^\n]*)/g,
+    (match, alt, url, trailing) => {
+      const trimAlt = alt.trim()
+      const trimTrail = trailing.trim()
+
+      if (!trimTrail) return match
+
+      if (trimTrail === trimAlt) {
+        return `![${alt}](${url})\n\n*${trimTrail}*`
+      }
+
+      if (trimTrail.startsWith(trimAlt) && trimTrail.length <= trimAlt.length + 5) {
+        return `![${alt}](${url})\n\n*${trimTrail}*`
+      }
+
+      return match
+    },
+  )
+}
+
 export function htmlToMarkdown(html: string, pageUrl?: string): string {
   if (!html) return ''
   try {
@@ -232,7 +254,8 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
     const preprocessed = mergeAdjacentBold(formulaPreservedHtml)
     const raw = turndown.turndown(preprocessed)
     const deduped = deduplicateImageMarkdown(raw)
-    const cleaned = cleanMarkdown(deduped)
+    const captionFixed = splitImageCaptionGlue(deduped)
+    const cleaned = cleanMarkdown(captionFixed)
     const withCleanCode = cleanMarkdownCodeBlocks(cleaned)
     return cleanBlockFormulaTrailingDigits(withCleanCode)
   } catch {

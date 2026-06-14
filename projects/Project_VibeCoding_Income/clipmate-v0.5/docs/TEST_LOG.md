@@ -2,6 +2,82 @@
 
 ---
 
+## v0.5 Session 5.2 (2026-06-14)
+
+### 性质
+
+Image Caption Placement & Markdown Image Layout Polish 测试。覆盖 Markdown 题注拆分、Notion image.caption 合并、selection 回归。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 个测试文件，1922 个测试，全部通过（新增 14 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-caption-layout.test.ts, 14 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Markdown 题注拆分 | 6 | Sina-like glue 拆分、分行、正文保留、figure+figcaption、去重、无题注图片 |
+| Notion image.caption | 7 | 合并 caption、alt fallback、无题注、长 caption 截断、不紧跟图片的 italic 保留、混合场景 |
+| 回归 | 1 | selection/comment-context 不受影响 |
+
+### 已有测试
+
+- 1908 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
+## v0.5 Session 5.1 (2026-06-14)
+
+### 性质
+
+Sina Image Pollution Guard & Notion Image URL Compatibility 测试。覆盖正文防污染、祖先噪声检测、Notion URL 兼容性过滤、selection 回归。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：47 个测试文件，1908 个测试，全部通过（新增 28 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/sina-image-pollution.test.ts, 28 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 正文图片保留 | 3 | Sina 全页 4 张正文图 + article-only 提取 + fragment 提取 |
+| 噪声过滤 | 7 | n.sinaimg.cn/default 过滤、sinakd 过滤、k.sinaimg.cn 正文图保留、isNoiseUrl 单元测试 |
+| 祖先噪声检测 | 8 | recommend/hot-news/sidebar/related-articles/feed-card/trending 检测 + article 不应检测 + ranking |
+| Notion URL 兼容性 | 7 | body CDN 图片转 image block、api/resize URL 降级为 paragraph、混合场景、降级不阻断 |
+| Markdown 纯净度 | 2 | 正文 HTML 无污染 URL、article element 只含正文图 |
+| selection 回归 | 2 | selection 无图片语法、零图片 fragment 返回空 |
+
+### 已有测试
+
+- 1880 个已有测试全部通过，无新增失败、无删除、无降低
+
+### 已有测试调整
+
+- `image-site-cases.test.ts`：CSDN 推荐图期望从 >=2 调整为 >=1（推荐图现在被 ancestor 噪声检测正确过滤）
+- `sina-image-pollution.test.ts`：维度查询参数 URL 期望从 paragraph 改为 image（CDN 直接参数兼容）
+
+---
+
 ## v0.5 Session 5 (2026-06-14)
 
 ### 性质

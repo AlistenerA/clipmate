@@ -489,11 +489,11 @@ describe('Site Case 4: CSDN-like lazy loading', () => {
     expect(urls).not.toContain('https://csdnimg.cn/badge/vip.png')
   })
 
-  it('extracts srcset and recommend images that pass size filter', () => {
+  it('extracts srcset images that pass size filter (recommend-list images filtered by ancestor)', () => {
     const { doc, pageUrl } = createFullPage(CSDN_LIKE_HTML)
     const result = extractArticleImages(doc, { pageUrl })
 
-    expect(result.images.length).toBeGreaterThanOrEqual(2)
+    expect(result.images.length).toBeGreaterThanOrEqual(1)
     const urls = result.images.map(i => i.url)
     expect(urls).toContain('https://img-blog.csdnimg.cn/20210102_def456.png')
   })

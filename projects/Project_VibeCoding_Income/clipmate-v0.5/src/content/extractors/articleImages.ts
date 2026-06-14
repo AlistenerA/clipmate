@@ -60,6 +60,9 @@ const NOISE_SRC_PATTERNS = [
   /\/?(?:sprite)(?:\/|\.)/i,
   /\/?(?:favicon)/i,
   /\/?(?:qr-?code)/i,
+  /\/default\//i,
+  /\/api\/auto\/resize\b/i,
+  /\/sinakd[/.]/i,
 ]
 
 function isDataUri(url: string): boolean {
@@ -100,6 +103,34 @@ function isNoiseByAttribute(el: Element): boolean {
   const role = el.getAttribute('role')
   if (role === 'presentation' || role === 'none') return true
 
+  return false
+}
+
+const NOISE_ANCESTOR_PATTERNS = [
+  /\b(?:recommend|recommended)\b/i,
+  /\b(?:related|related-?(?:articles?|posts?|news?|content))\b/i,
+  /\b(?:hot|hot-?(?:news?|articles?|topics?|content)|trending)\b/i,
+  /\b(?:rank|ranking)\b/i,
+  /\b(?:sidebar|side-?bar|aside)\b/i,
+  /\b(?:feed-?card|feed-?item)\b/i,
+  /\b(?:news-?list|article-?list)\b/i,
+  /\b(?:sinakd)\b/i,
+  /\b(?:bottom-?recommend)\b/i,
+  /\b(?:popular|popular-?(?:articles?|posts?))\b/i,
+]
+
+function isNoiseByAncestor(el: Element): boolean {
+  let parent = el.parentElement
+  for (let depth = 0; depth < 8 && parent; depth++) {
+    const tag = parent.tagName
+    if (tag === 'BODY' || tag === 'HTML') break
+
+    const raw = (parent.getAttribute('class') || '') + ' ' + (parent.getAttribute('id') || '')
+    for (const pattern of NOISE_ANCESTOR_PATTERNS) {
+      if (pattern.test(raw)) return true
+    }
+    parent = parent.parentElement
+  }
   return false
 }
 
@@ -236,8 +267,7 @@ export function extractArticleImages(
   const skipped: Array<{ url?: string; reason: string }> = []
   const seenUrls = new Set<string>()
 
-  const doc = root instanceof Document ? root : root.ownerDocument || root
-  const imgElements = doc.querySelectorAll('img')
+  const imgElements = root.querySelectorAll('img')
 
   let totalFound = 0
   let index = 0
@@ -245,7 +275,7 @@ export function extractArticleImages(
   for (const img of imgElements) {
     totalFound++
 
-    if (isNoiseByClassName(img) || isNoiseByAttribute(img)) {
+    if (isNoiseByClassName(img) || isNoiseByAttribute(img) || isNoiseByAncestor(img)) {
       skipped.push({ url: img.src || undefined, reason: 'noise_class_or_attr' })
       continue
     }
@@ -356,6 +386,7 @@ export {
   extractCaption,
   isNoiseByClassName,
   isNoiseByAttribute,
+  isNoiseByAncestor,
   isDataUri,
   isBlobUri,
 }

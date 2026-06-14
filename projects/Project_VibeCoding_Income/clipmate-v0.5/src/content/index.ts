@@ -57,9 +57,17 @@ interface ResultErr {
 
 type HandlerResult = ResultOk | ResultErr
 
-function injectMissingImages(markdown: string, doc: Document, pageUrl: string): string {
+function createFragmentDocument(html: string): Document {
+  const dom = new DOMParser().parseFromString(html, 'text/html')
+  return dom
+}
+
+function injectMissingImages(markdown: string, contentHtml: string, pageUrl: string): string {
   try {
-    const imageResult = extractArticleImages(doc, { pageUrl })
+    if (!contentHtml || !contentHtml.trim()) return markdown
+
+    const fragmentDoc = createFragmentDocument(contentHtml)
+    const imageResult = extractArticleImages(fragmentDoc.body || fragmentDoc.documentElement, { pageUrl })
     if (imageResult.images.length === 0) return markdown
 
     const mdLower = markdown.toLowerCase()
@@ -114,9 +122,10 @@ function buildContent(
   }
 }
 
-function attachImageMetadata(content: ExtractedContent, doc: Document, pageUrl: string): void {
+function attachImageMetadata(content: ExtractedContent, contentHtml: string, pageUrl: string): void {
   try {
-    const imageResult = extractArticleImages(doc, { pageUrl })
+    const fragmentDoc = createFragmentDocument(contentHtml)
+    const imageResult = extractArticleImages(fragmentDoc.body || fragmentDoc.documentElement, { pageUrl })
     content.imageCount = imageResult.images.length
     content.firstImageUrl = imageResult.images[0]?.url
     content.skippedImageCount = imageResult.skipped.length
@@ -191,8 +200,8 @@ function handleExtractFullpage(): HandlerResult {
 
       const content = buildContent('fullpage', fallbackResult, docClone)
       content.markdown = trimmed
-      content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
-      attachImageMetadata(content, docClone, document.URL)
+      content.markdown = injectMissingImages(content.markdown, fallbackResult.content, document.URL)
+      attachImageMetadata(content, fallbackResult.content, document.URL)
       logger.info(`Fullpage fallback: ${fallbackWordCount} words`)
       return { success: true, data: content }
     }
@@ -238,8 +247,8 @@ function handleExtractFullpage(): HandlerResult {
 
     const content = buildContent('fullpage', extracted, docClone)
     content.markdown = trimArticleBody(content.markdown)
-    content.markdown = injectMissingImages(content.markdown, docClone, document.URL)
-    attachImageMetadata(content, docClone, document.URL)
+    content.markdown = injectMissingImages(content.markdown, extracted.content, document.URL)
+    attachImageMetadata(content, extracted.content, document.URL)
     logger.info(`Fullpage: ${content.wordCount} words (${report.confidence} confidence)`)
 
     return { success: true, data: content }

@@ -2,10 +2,14 @@
 
 ---
 
-## v0.5 Session 5 状态
+## v0.5 Session 5.1 状态
 
-- 52 个 fixture QA 测试全部通过，覆盖 12 个站点场景
-- extractArticleImages / Markdown / Notion blocks / Popup/History 全链路验证通过
+- 28 个 Sina 防污染测试全部通过
+- 推荐区/热搜区/侧栏图片不再污染 ## Images
+- 不兼容 Notion external image URL 降级为 paragraph
+- ~~IS29（extraction 不处理 data-src）~~ — 仍为 minor，Turndown 正确处理
+- ~~IS32（Sina 图片污染）~~ — Session 5.1 修复 → ✅
+- ~~IS33（Notion URL 不兼容）~~ — Session 5.1 修复 → ✅
 
 ---
 
@@ -23,6 +27,11 @@
 | IS29 | extractArticleImages.getBestSrc 不处理 data-src/data-original 等懒加载属性 | minor | 🆕 Session 5 QA 发现：Turndown img rule 正确处理，extraction 层面仅处理 src/currentSrc/el.src |
 | IS30 | markdownToContentBlocks 当前仅输出 paragraph/image blocks，不处理 heading | minor | 🆕 Session 5 QA 发现：heading markdown 作为 paragraph block 输出，功能正确但不精确 |
 | IS31 | "ad-banner" class 不在已知噪声 class 列表中 | minor | 🆕 Session 5 QA 发现：广告图类名多样性（ad-banner/ad-bnr/ad-image 等），已知局限 |
+| IS32 | Sina 推荐区/热搜区/侧栏缩略图进入 ## Images 区块 | major | ✅ Session 5.1 修复：injectMissingImages 改为基于正文 HTML fragment + ancestor 噪声检测 |
+| IS33 | Sina resize/proxy 图片 URL 在 Notion 无法渲染 | major | ✅ Session 5.1 修复：isLikelyDirectImageHosting() 过滤不兼容 URL 并降级为 paragraph |
+| IS34 | 图片题注与 Markdown 图片语法粘连在同一行 | major | ✅ Session 5.2 修复：splitImageCaptionGlue() 拆分 + markdownToContentBlocks 合并 caption |
+| IS35 | Notion image block 未正确吸收 `*caption*` 题注 | major | ✅ Session 5.2 修复：indexed loop 识别图片后紧跟 italic 并合并为 image.caption |
+| IS36 | Markdown/Notion 图片居中 | minor | 已知限制：Notion API 不支持稳定设置 image block align。复制 Markdown 居中 HTML 暂缓（P2，会引发兼容性风险）|
 
 ---
 

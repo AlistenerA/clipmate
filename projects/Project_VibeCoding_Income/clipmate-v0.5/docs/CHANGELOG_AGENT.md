@@ -2,6 +2,88 @@
 
 ---
 
+## v0.5 Session 5.2：Image Caption Placement & Markdown Image Layout Polish (2026-06-14)
+
+### 性质
+
+用户真实测试发现图片题注粘连：`![△特朗普（资料图）](url)△特朗普（资料图）`。
+
+修复 A（Markdown 题注粘连）：
+- `htmlToMarkdown.ts` 新增 `splitImageCaptionGlue()` 后处理函数
+- 检测 `![alt](url)caption` 粘连模式，当 caption 与 alt 匹配时拆分为 `![alt](url)\n\n*caption*`
+
+修复 B（Notion image.caption）：
+- `blocks.ts` `markdownToContentBlocks` 改为 indexed loop，识别图片后紧跟的 `*caption*` 段落
+- 合并为单一 image block 的 `image.caption`，不额外输出 caption paragraph
+- caption 长度限制 200 字符，超出回退使用 alt
+
+未实现：复制 Markdown 居中 HTML（P2，暂缓；Notion API 不支持 align）
+
+### 修改文件
+
+- `src/content/parser/htmlToMarkdown.ts` — 新增 splitImageCaptionGlue()；在 htmlToMarkdown 管道调用
+- `src/platforms/notion/blocks.ts` — markdownToContentBlocks 改为 indexed loop；新增 ITALIC_CAPTION_RE；合并 image+caption
+
+### 新增文件
+
+- `tests/image-caption-layout.test.ts` — 14 个测试
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 files, 1922 tests pass（+14）
+- `npm run build`：成功
+
+---
+
+## v0.5 Session 5.1：Sina Image Pollution Guard & Notion Image URL Compatibility (2026-06-14)
+
+### 性质
+
+用户真实测试 Sina 新闻页发现两个发布前质量问题：
+1. 推荐区/热搜区/侧栏缩略图通过 `injectMissingImages` 污染 Markdown 末尾 `## Images`
+2. Sina resize/proxy 型图片 URL 在 Notion 无法渲染
+
+修复 A（正文图片污染）：
+- `injectMissingImages` 改为基于正文 HTML fragment（`createFragmentDocument`），不再从整个 document 提取
+- `attachImageMetadata` 同样改为基于正文 fragment
+- `extractArticleImages` `querySelectorAll` 修复为基于 `root` 元素，修复 Element 参数被忽略的 bug
+- 新增 `isNoiseByAncestor()` — 检测 recommend/related/hot/rank/sidebar/feed-card/news-list/trending 等祖先容器
+- 新增 Sina 特定噪声 URL 模式：`/default/`、`/sinakd[/.]`、`/api/auto/resize`
+
+修复 B（Notion URL 兼容性）：
+- 新增 `isLikelyDirectImageHosting()` — 过滤 resize/proxy 型 URL
+- 不兼容 URL（含 `/api/auto/resize`、`/api/` 代理路径、`/resize|crop|thumbnail|thumb` 路径、`?img=` 代理查询）降级为 paragraph block
+- 不会阻断正文保存
+
+### 修改文件
+
+- `src/content/extractors/articleImages.ts` — 修复 querySelectorAll 作用域；新增 isNoiseByAncestor()；新增 Sina 特定噪声 URL 模式；导出 isNoiseByAncestor
+- `src/content/index.ts` — injectMissingImages / attachImageMetadata 改为基于 createFragmentDocument(contentHtml)；移除未使用的 doc 变量
+- `src/platforms/notion/blocks.ts` — 新增 isLikelyDirectImageHosting() 兼容性过滤；tryImageBlock 增加过滤调用
+
+### 新增文件
+
+- `tests/sina-image-pollution.test.ts` — 28 个测试
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改 `package.json` / `manifest.config.ts` version
+- 未新增依赖、未新增权限
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未新增 FileReader/canvas/toDataURL/createObjectURL
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：47 files, 1908 tests pass（新增 28 个）
+- `npm run build`：成功
+
+---
+
 ## v0.5 Session 5：Manual QA and Site Cases (2026-06-14)
 
 ### 性质
