@@ -31,6 +31,8 @@ export const MAX_HISTORY_LIMIT = 500
 export const ERROR_MESSAGES: Record<string, string> = {
   NO_SELECTION: '请先选中页面文字后再提取',
   EXTRACTION_FAILED: '内容提取失败，请尝试全文模式',
+  CONTENT_SCRIPT_UNAVAILABLE:
+    'ClipMate 未能连接到当前页面。请刷新当前网页后重试；如刚重新加载过扩展，需刷新当前网页以使内容脚本生效。',
   NOTION_TOKEN_MISSING: '请先在设置页填写 Notion Token',
   NOTION_PAGE_ID_MISSING: '请先在设置页添加 Notion 目标页面',
   NOTION_TARGETS_EMPTY: '请先在设置页添加 Notion 目标页面',

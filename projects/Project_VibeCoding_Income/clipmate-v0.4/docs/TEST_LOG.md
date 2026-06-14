@@ -4,6 +4,57 @@
 
 ---
 
+## v0.4 Session 8.5 (2026-06-14)
+
+### 性质
+
+Content script 连接失败友好错误提示修复。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：34 个测试文件，1426 个测试，全部通过
+- `npm run build`：构建成功，116 modules
+
+### 新增测试
+
+| 文件 | 测试数 |
+|------|:---:|
+| `connection-error.test.ts` | 12 |
+
+**isContentScriptUnavailableError tests (7):**
+- "Could not establish connection" → true
+- "Receiving end does not exist" → true
+- Native host communication error → true
+- Other errors → false
+- null/undefined/string → false
+
+**normalizeContentScriptConnectionError tests (5):**
+- Connection error → friendly message
+- Non-connection error → preserved unchanged
+- Non-Error → generic wrapper
+- Friendly message free of technical details
+- "No active tab found" → preserved unchanged
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 manifest.config.ts ✅
+- 未新增依赖/权限 ✅
+- lint 0 / 1426 tests pass / build success ✅
+
+---
+
 ## v0.4 Session 8.3.1 (2026-06-14)
 
 ### 性质

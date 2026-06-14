@@ -12,13 +12,12 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.3.1 已完成** — Stabilize Playwright Site QA Patch。
+**v0.4 Session 8.5 已完成** — Content Script Connection Failure Fix。
 
-- Session 8.3：Playwright 观察 9 个平台 → Weibo/Bilibili profile 修正
-- Session 8.3.1：ChatGPT 审查后修正 S8.3 不稳定点 — Weibo 移除过宽 commentSelector、Bilibili 恢复兼容 selector、新增 7 个测试
-- 修复后：lint 0 / 1414 tests pass / build success
-- Xiaohongshu（反爬）、Douyin（验证码）、Google（reCAPTCHA）无法自动验证
-- 下一步：ChatGPT 审查 → commit → 用户人工复测重点平台
+- 真实 Edge 微博测试发现 "Receiving end does not exist" 错误
+- 修复：友好错误提示 + 纯函数 error detection + 早期检测
+- 修复后：lint 0 / 1426 tests pass / build success
+- 下一步：ChatGPT 审查 → commit → 用户刷新微博详情页重新测试
 
 ---
 
@@ -52,6 +51,7 @@
 | Session 8.2 Playwright QA Integration | ✅ 已完成 | 本轮 docs-only |
 | Session 8.3 Playwright Site QA | ✅ 已完成 | Weibo/Bilibili profile 修正 |
 | Session 8.3.1 Stabilize QA Patch | ✅ 已完成 | ChatGPT 审查修正 |
+| Session 8.5 Connection Fix | ✅ 已完成 | 友好错误提示，微博 blocker 修复 |
 
 ---
 
@@ -81,12 +81,13 @@
 - [x] v0.4 Session 8.2：Playwright QA Workflow Integration
 - [x] v0.4 Session 8.3：Playwright-assisted Site Classification & Comment Boundary QA
 - [x] v0.4 Session 8.3.1：Stabilize Playwright Site QA Patch
+- [x] v0.4 Session 8.5：Content Script Connection Failure Fix
 
 ---
 
 ## 未完成（按优先级）
 
-1. 用户人工复测重点平台：B 站视频页、微博详情页
+1. 用户刷新微博详情页后重新测试全文/选区剪藏（验证 S8.5 修复）
 2. Xiaohongshu / Douyin / Google 因反爬无法自动验证 → 需用户人工测试
 
 ### Deferred（延后到 v0.5 或独立专项）
@@ -112,4 +113,4 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 8.3 → commit → 用户重新加载 clipmate-v0.4/dist/ 并人工复测重点平台（B 站、微博）。**
+**ChatGPT 审查本轮 Session 8.5 → commit → 用户刷新微博详情页并重新测试全文/选区剪藏。**

@@ -4,6 +4,21 @@
 
 ---
 
+## v0.4 Session 8.5 状态
+
+- 真实 Edge 微博测试发现 `Could not establish connection. Receiving end does not exist.` blocker
+- 修复：友好错误提示 + isContentScriptUnavailableError / normalizeContentScriptConnectionError 纯函数
+- 当前无 blocker
+- 详细 QA 文档见 `CONTENT_SCRIPT_CONNECTION_QA.md`
+
+### Session 8.5 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS16 | Popup 显示英文 Chrome 底层错误 "Receiving end does not exist" | blocker | 新增友好错误提示；纯函数错误检测/转换；early detection |
+
+---
+
 ## v0.4 Session 8.3.1 状态
 
 - ChatGPT 审查 S8.3 后完成 3 项修正

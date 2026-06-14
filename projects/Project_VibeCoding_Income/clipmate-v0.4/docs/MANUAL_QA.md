@@ -160,6 +160,18 @@
 
 ---
 
+## Session 8.5 Content Script Connection Fix
+
+| 修复项 | 状态 | 说明 |
+|------|:---:|------|
+| 连接失败友好提示 | ✅ | 显示中文提示而非 Chrome 底层英文错误 |
+| 错误检测纯函数 | ✅ | `isContentScriptUnavailableError` / `normalizeContentScriptConnectionError` |
+| 用户复测 | ⬜ | 需刷新微博详情页后重新测试全文/选区剪藏 |
+
+**复测提示**：扩展 reload 后务必刷新当前网页，使 content script 重新注入。
+
+---
+
 ## Session 8.3 Playwright Site QA 结果
 
 > Playwright 观察真实页面 selector 结构后完成 profile 修正。以下平台需要用户人工复测：

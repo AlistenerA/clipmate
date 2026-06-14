@@ -4,6 +4,61 @@
 
 ---
 
+## v0.4 Session 8.5：Content Script Connection Failure Fix (2026-06-14)
+
+### 性质
+
+修复微博真实测试中发现的 Popup → content script 连接失败 blocker。不新增权限、依赖、manifest 权限。不改变 Notion 链路。
+
+### 问题
+
+用户在真实 Edge 中测试微博详情页时，ClipMate Popup 显示：
+```
+提取异常：Could not establish connection. Receiving end does not exist.
+```
+
+### 根因
+
+`chrome.tabs.sendMessage` 在 content script 未注入时抛出底层错误。触发场景：
+1. 扩展 reload 后旧页面 content script 失效
+2. 页面未刷新无法重新注入
+
+### 修复
+
+1. **友好错误提示**：新增 `CONTENT_SCRIPT_UNAVAILABLE` 错误消息常量 → 用户看到中文提示而非英文 Chrome 错误
+2. **纯函数抽出**：`isContentScriptUnavailableError()` / `normalizeContentScriptConnectionError()` 检测并转换连接失败错误
+3. **早期检测**：`tryExtractPrioritizeSelection` 中提前检测连接失败，避免无意义 fullpage 回退
+4. **测试**：12 个新测试覆盖错误检测/转换函数
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：34 files, 1426 tests passed (+12 new)
+- `npm run build`：success, 116 modules
+
+### 修改文件
+
+- `src/shared/constants/defaults.ts` — 新增 `CONTENT_SCRIPT_UNAVAILABLE` 错误消息
+- `src/shared/messaging/sendMessage.ts` — 新增 2 个纯函数错误处理
+- `src/popup/hooks/useExtractContent.ts` — 使用新错误处理函数
+- `tests/connection-error.test.ts` — 新增 12 个测试
+
+### 新增文件
+
+- `tests/connection-error.test.ts`
+- `docs/CONTENT_SCRIPT_CONNECTION_QA.md`
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `manifest.config.ts`、`package.json`、`package-lock.json`
+- `src/popup/App.tsx`、`src/options/`、`src/background/`
+- `src/content/index.ts`
+- Notion 保存链路
+- 未新增依赖、未新增 manifest 权限、未新增 `chrome.scripting`
+
+---
+
 ## v0.4 Session 8.3.1：Stabilize Playwright Site QA Patch (2026-06-14)
 
 ### 性质

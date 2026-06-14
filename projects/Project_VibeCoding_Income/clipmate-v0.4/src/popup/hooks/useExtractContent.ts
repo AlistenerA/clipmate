@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { sendToActiveTab } from '../../shared/messaging/sendMessage'
+import { sendToActiveTab, normalizeContentScriptConnectionError, isContentScriptUnavailableError } from '../../shared/messaging/sendMessage'
 import { MESSAGE_TYPES } from '../../shared/constants/messageTypes'
 import { ERROR_MESSAGES } from '../../shared/constants/defaults'
 import type { ExtractedContent, ClipMode } from '../../shared/types/clip.types'
@@ -36,8 +36,8 @@ export function useExtractContent() {
       }
     } catch (err) {
       if (abortRef.current) return
-      const msg = err instanceof Error ? err.message : '提取失败'
-      setError(msg === 'No active tab found' ? '未找到活动标签页' : `提取异常：${msg}`)
+      const normalized = normalizeContentScriptConnectionError(err)
+      setError(normalized.message)
       setContent(null)
     } finally {
       if (!abortRef.current) {
@@ -71,8 +71,12 @@ export function useExtractContent() {
       }
 
       return { content: null, mode: 'fullpage' }
-    } catch {
+    } catch (err) {
       if (abortRef.current) return null
+      if (isContentScriptUnavailableError(err)) {
+        const normalized = normalizeContentScriptConnectionError(err)
+        setError(normalized.message)
+      }
       return { content: null, mode: 'fullpage' }
     } finally {
       if (!abortRef.current) {

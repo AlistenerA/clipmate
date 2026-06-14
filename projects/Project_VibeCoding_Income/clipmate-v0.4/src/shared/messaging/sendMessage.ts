@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger'
+import { ERROR_MESSAGES } from '../constants/defaults'
 import type { ClipMateMessage } from '../types/message.types'
 
 export async function sendToActiveTab<TResponse = unknown>(
@@ -17,4 +18,20 @@ export async function sendToRuntime<TResponse = unknown>(
   message: ClipMateMessage,
 ): Promise<TResponse> {
   return chrome.runtime.sendMessage(message) as Promise<TResponse>
+}
+
+export function isContentScriptUnavailableError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false
+  const message = error.message
+  return message.includes('Could not establish connection') ||
+    message.includes('Receiving end does not exist') ||
+    message.includes('Error communicating with the native message host')
+}
+
+export function normalizeContentScriptConnectionError(error: unknown): Error {
+  if (isContentScriptUnavailableError(error)) {
+    return new Error(ERROR_MESSAGES.CONTENT_SCRIPT_UNAVAILABLE)
+  }
+  if (error instanceof Error) return error
+  return new Error('提取失败')
 }
