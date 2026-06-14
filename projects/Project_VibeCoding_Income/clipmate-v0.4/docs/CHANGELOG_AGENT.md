@@ -4,6 +4,192 @@
 
 ---
 
+## v0.4 Session 8.6.2：Low-token Extraction Debug & Mode Fix (2026-06-14)
+
+### 性质
+
+根因定位 + 最小修复：Weibo 评论选区不进入 comment-context 路径导致标题保持泛化平台标题。新增 dev-only 调试链路。
+
+### 根因
+
+Weibo CSS Modules 随机类名导致 `classifyElementContext` 返回 `'unknown'` → `detectCommentSelectionMode` 中 `unknown` 与 `forum-or-comment` 组合命中 `selection-generic` 分支 → `handleGetSelection` 不进入 comment-context 路径 → `content.title` 保持 `parseMetadata` 返回的 "微博正文 - 微博"。
+
+### 修复
+
+1. **`detectCommentSelectionMode`**：新增 `selectionContext === 'unknown' && pageType === 'forum-or-comment'` → `'comment-selection'` 回退
+2. **`content/index.ts`**：`content.metadata.title` 同步更新为 `context.sourceTitle`
+3. **`extractionDebugSummary`**：新增去内容化调试函数（`src/content/debug/`），仅输出长度桶/来源枚举/布尔值，不输出标题文本/正文/评论
+4. **`LOW_TOKEN_SITE_RECOGNITION_WORKFLOW.md`**：网站识别工作流文档
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：38 files, 1528 tests passed (+19 new)
+- `npm run build`：success, 118 modules
+
+### 新增文件
+
+- `src/content/debug/extractionDebugSummary.ts`
+- `tests/weibo-comment-detection.test.ts` — 9 tests
+- `tests/extraction-debug-summary.test.ts` — 10 tests
+- `docs/LOW_TOKEN_SITE_RECOGNITION_WORKFLOW.md`
+
+### 修改文件
+
+- `src/content/commentSelection/commentSelectionBuilder.ts` — detectCommentSelectionMode 新增 unknown+forum-or-comment → comment-selection
+- `src/content/index.ts` — content.metadata.title 同步更新
+- `docs/CURRENT_STATUS.md` / `docs/CHANGELOG_AGENT.md` / `docs/TEST_LOG.md` / `docs/ISSUES.md`
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限
+
+---
+
+## v0.4 Session 8.6.1：Comment Source Title Resolver Fix (2026-06-14)
+
+### 性质
+
+Bug 修复：修复 S8.6 中微博评论剪藏标题仍显示"微博正文 - 微博"等泛化平台标题的问题。不新增功能、权限、依赖。
+
+### 问题
+
+用户真实 Edge 测试反馈：S8.6 评论剪藏结构已改善，但微博标题依旧不正确，仍可能显示泛化平台标题而非原微博正文摘要。
+
+### 根因
+
+1. `findContentContainer` 无法区分原内容容器和评论区容器，返回的容器 textContent 混入了评论文字
+2. `isGenericPlatformTitle` 缺失，无法识别"微博正文"/"Weibo"等泛化标题
+3. 短标题回退逻辑仅基于字符长度 ≤5，不够精确
+
+### 修复
+
+1. **`isGenericPlatformTitle()`**：新增导出函数，识别"微博正文"/"微博"/"Weibo"/"weibo.com"及匹配 siteName 的泛化标题
+2. **`resolveSourceContainer()`**：替代 `findContentContainer`，返回不含评论区的原内容容器（优先 article > main > selector hint），使用 `isContainerCommentOnly` 轻量检查（仅检查容器自身 class/id，不递归检查后代）
+3. **`extractSourceText()`**：克隆元素后移除 `[class*="comment"]/[class*="reply"]/[class*="avatar"]` 子元素再提取文本，防止评论文字混入 sourceExcerpt
+4. **`extractSourceTitle()`** 重写：检测到泛化标题时用 source container 文本替代，Weibo 场景自动添加 "微博：" 前缀
+5. **`extractSourceMedia()`** 切换为 `resolveSourceContainer`
+6. **`extractSourceExcerpt()`** 切换为 `resolveSourceContainer`
+7. **`buildCommentClipContext()`**：新增 `source-title-unresolved` warning
+8. **`commentContextMarkdown`**：新增 source-title-unresolved 降级说明
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：36 files, 1509 tests passed (+11 new)
+- `npm run build`：success, 118 modules
+
+### 修改文件
+
+- `src/content/commentSelection/commentContextBuilder.ts` — 重构：新增 isGenericPlatformTitle / resolveSourceContainer / extractSourceText / isContainerCommentOnly；重写 extractSourceTitle / extractSourceExcerpt / extractSourceMedia / buildCommentClipContext；移除 findContentContainer
+- `src/content/commentSelection/commentContextMarkdown.ts` — 新增 source-title-unresolved 降级消息
+- `tests/comment-context-builder.test.ts` — 新增 11 tests（isGenericPlatformTitle 8 + Weibo excerpt exclusion + source-title-unresolved warning + Bilibili still works）
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
+## v0.4 Session 8.6：Comment Context Clip Foundation (2026-06-14)
+
+### 性质
+
+代码实现：为评论选区建立跨平台上下文剪藏基础能力。不新增权限、依赖、manifest 权限。不改变 Notion 链路。不改 Popup UI。
+
+### 问题
+
+1. 微博评论选区预览标题显示为"微博正文 - 微博"，没有正确识别原微博标题/正文摘要
+2. 预览里出现裸图片链接，结构不美观
+3. 评论剪藏缺少清晰的"原内容 + 评论作者 + 评论内容"结构
+
+### 实现
+
+**1. 新增 CommentClipContext 数据模型**
+
+- `CommentSourceMedia`：type (image/video/cover/poster/link) + url/alt/label
+- `CommentClipContext`：siteName/pageUrl/pageTitle/sourceTitle/sourceAuthor/sourceExcerpt/sourceMedia/selectedComment (author+text)/warnings/mode/reasons
+
+**2. 标题识别：`extractSourceTitle()`**
+
+优先级：content container heading → og:title → twitter:title → stripPlatformSuffix → 短标题时用 content text 摘要 → pageTitle fallback
+- 支持去除" - 微博"、" - 知乎"、" - Bilibili" 等平台后缀
+- 当清理后标题 ≤5 字符时，用 content container 前 50 字替代
+
+**3. 媒体识别：`extractSourceMedia()`**
+
+从页面已有 DOM 获取，不访问网络：
+- content container 中的 img（非评论区域、非头像、非小尺寸）
+- og:image / twitter:image
+- video poster
+- 最多 5 个，无媒体时为空数组
+
+**4. 评论作者识别：`resolveCommentAuthor()`**
+
+best-effort，不抓评论区：
+- 从选区祖先元素向上查找评论容器
+- 识别 strong/b 标签
+- author/user/name/username/display-name class
+- 带 /user/ /profile/ /author/ 的链接
+- @用户名 前缀解析
+- 过滤时间/日期/操作按钮（回复、赞、举报等）
+- 识别不到返回 undefined + warnings 含 author-unresolved
+
+**5. Markdown 输出格式：`formatCommentContextMarkdown()`**
+
+结构化输出：H1 sourceTitle → 平台/来源/作者 → 原内容（excerpt + media） → 选中评论（作者 + 文本） → 降级说明 → 免责声明
+
+**6. 集成**
+
+`content/index.ts` handleGetSelection：非 selection-generic 模式时，构建 CommentClipContext 并用新 Markdown 格式替换。同时更新 content.title 为 sourceTitle。
+
+### 安全约束
+
+- 不访问网络（无 fetch/XMLHttpRequest）
+- 不访问 chrome.storage
+- 不保存正文全文/评论全文/完整 DOM/真实用户数据
+- 不下载/转存图片
+- sourceMedia 只使用页面已有链接
+- 作者识别不上报
+
+### 修改文件
+
+- `src/content/commentSelection/commentSelection.types.ts` — 新增 CommentSourceMedia / CommentClipContext / CommentContextInput
+- `src/content/commentSelection/index.ts` — 新增 2 行 export
+- `src/content/index.ts` — handleGetSelection 集成 context builder + markdown
+
+### 新增文件
+
+- `src/content/commentSelection/commentContextBuilder.ts` — ~415 lines
+- `src/content/commentSelection/commentContextMarkdown.ts` — ~120 lines
+- `tests/comment-context-builder.test.ts` — 39 tests
+- `tests/comment-context-markdown.test.ts` — 33 tests
+- `docs/COMMENT_CONTEXT_CLIP_QA.md`
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：36 files, 1498 tests passed (+72 new)
+- `npm run build`：success, 118 modules
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
 ## v0.4 Session 8.5：Content Script Connection Failure Fix (2026-06-14)
 
 ### 性质

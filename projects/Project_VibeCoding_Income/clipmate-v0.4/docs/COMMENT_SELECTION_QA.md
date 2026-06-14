@@ -204,3 +204,12 @@
 | 5. 短视频标题/说明选区 | ⬜ | ⬜ | |
 | 6. AI 对话选区 | ⬜ | ⬜ | |
 | 7. 无选区 | ⬜ | ⬜ | |
+| 8. 评论上下文剪藏展示 (S8.6) | ⬜ | ⬜ | 详见 `COMMENT_CONTEXT_CLIP_QA.md` |
+
+---
+
+## v0.4 Session 8.6 更新
+
+- 评论选区 Markdown 输出格式已增强，新增 CommentClipContext 结构
+- 现在包含：平台名、sourceTitle、原内容摘要、媒体引用、评论作者、降级说明
+- 详细信息见 `COMMENT_CONTEXT_CLIP_QA.md`

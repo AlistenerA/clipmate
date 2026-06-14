@@ -48,9 +48,15 @@ export function detectCommentSelectionMode(input: CommentSelectionInput): Commen
   }
 
   if (selectionContext === 'article' || selectionContext === 'search-result' ||
-      selectionContext === 'navigation' || selectionContext === 'unknown') {
+      selectionContext === 'navigation') {
     return 'selection-generic'
   }
+
+  if (selectionContext === 'unknown' && pageType === 'forum-or-comment') {
+    return 'comment-selection'
+  }
+
+  return 'selection-generic'
 
   return 'selection-generic'
 }

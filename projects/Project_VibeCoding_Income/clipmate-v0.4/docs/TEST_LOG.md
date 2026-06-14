@@ -4,6 +4,181 @@
 
 ---
 
+## v0.4 Session 8.6.2 (2026-06-14)
+
+### 性质
+
+根因定位 + 最小修复 + debug summary。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：38 个测试文件，1528 个测试，全部通过 (+19 new)
+- `npm run build`：构建成功，118 modules
+
+### 新增测试
+
+| 文件 | 测试数 |
+|------|:---:|
+| `weibo-comment-detection.test.ts` | 9 |
+| `extraction-debug-summary.test.ts` | 10 |
+
+**weibo-comment-detection.test.ts (9):**
+- unknown + forum-or-comment → comment-selection
+- comment + forum-or-comment → forum-selection
+- unknown + article → selection-generic
+- unknown + video → selection-generic
+- unknown + search-results → selection-generic
+- unknown + ai-answer → ai-answer-selection
+- article + forum-or-comment → selection-generic
+- undefined selectionContext + forum-or-comment → comment-selection
+- undefined selectionContext + article → selection-generic
+
+**extraction-debug-summary.test.ts (10):**
+- no title text in summary
+- no selected text in summary
+- generic title bypass risk detected
+- comment-context markdown formatter
+- generic-selection markdown formatter
+- sourceTitleLooksGeneric detection
+- sourceTitleLooksGeneric false for resolved
+- length buckets validation
+- hasSelection flag
+- context warnings included
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts / package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- lint 0 ✅
+- 1528 tests pass ✅
+- build success ✅
+
+---
+
+## v0.4 Session 8.6.1 (2026-06-14)
+
+### 性质
+
+Comment Source Title Resolver Fix：修复微博泛化标题，新增 isGenericPlatformTitle / resolveSourceContainer。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：36 个测试文件，1509 个测试，全部通过 (+11 new)
+- `npm run build`：构建成功，118 modules
+
+### 新增测试（comment-context-builder.test.ts）
+
+- isGenericPlatformTitle (8): 微博正文/微博正文 - 微博/微博/Weibo/weibo.com match/normal title/empty/微博 - 随时随地发现新鲜事
+- Weibo source excerpt excludes comment text
+- source-title-unresolved warning when title still generic
+- Bilibili case still works with video heading
+
+### 更新测试
+
+- Weibo extractSourceTitle：expect "微博：" prefix
+- Weibo buildCommentClipContext：expect "微博：" prefix, not generic title
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts / package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1509 tests pass ✅
+- build success ✅
+- 旧 comment-context-builder tests 全部通过 ✅
+
+---
+
+## v0.4 Session 8.6 (2026-06-14)
+
+### 性质
+
+Comment Context Clip Foundation：新增 CommentClipContext 数据结构与 Markdown 增强。
+
+### 运行命令
+
+```bash
+npm run lint    # eslint src --ext .ts,.tsx
+npm run test    # vitest run
+npm run build   # tsc --noEmit && vite build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：36 个测试文件，1498 个测试，全部通过 (+72 new)
+- `npm run build`：构建成功，118 modules
+
+### 新增测试
+
+| 文件 | 测试数 |
+|------|:---:|
+| `comment-context-builder.test.ts` | 39 |
+| `comment-context-markdown.test.ts` | 33 |
+
+**comment-context-builder.test.ts (39 tests):**
+- extractSourceTitle (8): og:title 优先、twitter:title fallback、heading、短标题用 content、平台后缀消除、pageTitle fallback、Untitled、Bilibili 后缀
+- extractSourceExcerpt (4): 截断、短文本、空白清理、无 container
+- extractSourceMedia (7): content container 图片、过滤头像、avatar src 过滤、og:image fallback、max 5、video poster、无媒体空数组
+- resolveCommentAuthor (11): strong/b tag、walk-up 查找、class-based selector、@前缀、过滤回复/时间/日期/仅数字、undefined、null root、aria-label
+- buildCommentClipContext (9): site name from profile、Weibo content excerpt sourceTitle、Bilibili heading case、sourceExcerpt、no author warning、no-media warning、comment 仅选区文本、无 DOM reference、reasons 保留
+
+**comment-context-markdown.test.ts (33 tests):**
+- formatCommentContextMarkdown (26): H1 title、site name+URL、Unknown site、source author、no author line、source excerpt in 原内容 section、markdown image with alt、image without alt as type label、poster link、no media no image syntax、author 有/未识别、comment text verbatim、no other comments、author-unresolved/no-media warnings、warning escape、disclaimer footer、no warnings no degradation、title/author/excerpt/site name markdown escape、dot/dash escape、no DOM reference、no token/api_key/pageId、multiple media types、media placement order、forum-selection mode
+- Safety (4): no chrome./storage/document/fetch/XMLHttpRequest
+
+### 检查项
+
+- 未修改 clipmate-v0.1/ ✅
+- 未修改 clipmate-v0.2/ ✅
+- 未修改 clipmate-v0.3/ ✅
+- 未修改 .wolf/.opencode/.playwright-mcp ✅
+- 未修改 package.json / manifest.config.ts / package-lock.json ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未运行 npm install ✅
+- 未运行 npm run zip ✅
+- lint 0 ✅
+- 1498 tests pass ✅
+- build success ✅
+- 不访问 chrome API/storage/network ✅
+- 不保存正文/评论/完整 DOM/真实用户数据 ✅
+- 不下载/转存图片 ✅
+- 旧 commentSelection tests 继续通过 ✅
+
+---
+
 ## v0.4 Session 8.5 (2026-06-14)
 
 ### 性质

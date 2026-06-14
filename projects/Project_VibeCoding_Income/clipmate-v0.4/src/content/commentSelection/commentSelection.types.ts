@@ -39,3 +39,38 @@ export interface CommentSelectionInput {
   selectionContext?: SelectionContext
   selectionRoot?: Element | null
 }
+
+export interface CommentSourceMedia {
+  type: 'image' | 'video' | 'cover' | 'poster' | 'link'
+  url?: string
+  alt?: string
+  label?: string
+}
+
+export interface CommentClipContext {
+  siteName: string
+  pageUrl: string
+  pageTitle: string
+  sourceTitle: string
+  sourceAuthor?: string
+  sourceExcerpt?: string
+  sourceMedia: CommentSourceMedia[]
+  selectedComment: {
+    author?: string
+    text: string
+  }
+  warnings: string[]
+  mode: CommentSelectionMode
+  reasons: string[]
+}
+
+export interface CommentContextInput {
+  document: Document
+  pageTitle: string
+  pageUrl: string
+  siteProfileMatch?: SiteProfileMatch | null
+  selectionText: string
+  selectionRoot?: Element | null
+  mode: CommentSelectionMode
+  reasons: string[]
+}

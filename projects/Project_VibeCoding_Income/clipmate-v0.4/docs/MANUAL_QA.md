@@ -6,6 +6,18 @@
 
 ---
 
+## 评论上下文剪藏（Session 8.6 新增）
+
+⬜ **CQ01：Weibo 微信评论选区展示** — 操作：微博详情页选中一条评论，预期 sourceTitle 为原微博摘要而非"微博正文"，页面有图片时 media section 显示图片链接
+⬜ **CQ02：Bilibili 视频评论选区展示** — 操作：B 站视频页选中评论，预期 sourceTitle 为视频标题
+⬜ **CQ03：普通带评论博客选区展示** — 操作：带评论的博客页选中评论，预期有标题、来源 URL
+⬜ **CQ04：作者识别不到降级** — 操作：在无用户名标识的评论区选中评论，预期显示"评论者：未识别"和降级说明
+⬜ **CQ05：selection-generic 不受影响** — 操作：普通文章页选区，预期不触发 comment context 路径
+
+> 详细场景见 `docs/COMMENT_CONTEXT_CLIP_QA.md`
+
+---
+
 ## 加载扩展
 
 ### Edge

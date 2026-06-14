@@ -4,6 +4,53 @@
 
 ---
 
+## v0.4 Session 8.6.2 状态
+
+- 根因定位完成：Weibo CSS Modules → classifyElementContext 'unknown' → selection-generic bypass
+- 修复 detectCommentSelectionMode：unknown + forum-or-comment → comment-selection
+- 新增 extractionDebugSummary 去内容化调试
+- lint 0 / 1528 tests pass / build success
+
+### Session 8.6.2 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS17c | Weibo 评论选区 selectionMode 为 selection-generic 导致绕过 comment context 路径 | major | unknown+forum-or-comment → comment-selection fallback |
+
+---
+
+## v0.4 Session 8.6.1 状态
+
+- 修复 S8.6 微博评论剪藏标题仍显示泛化平台标题的问题
+- 新增 isGenericPlatformTitle / resolveSourceContainer / extractSourceText
+- lint 0 / 1509 tests pass / build success
+- 当前无 blocker
+
+### Session 8.6.1 已修复
+
+| 编号 | 问题 | 级别 | 修复 |
+|:---:|------|:---:|:---:|
+| ✅ IS17b | 微博评论剪藏标题显示"微博正文 - 微博"而非原微博摘要 | major | isGenericPlatformTitle + resolveSourceContainer + extractSourceText 重构 |
+
+---
+
+## v0.4 Session 8.6 状态
+
+- 新增 CommentClipContext 评论上下文剪藏基础能力
+- lint 0 / 1498 tests pass / build success
+- 当前无 blocker
+- 详细 QA 文档见 `COMMENT_CONTEXT_CLIP_QA.md`
+
+### Session 8.6 新增限制
+
+| 编号 | 限制 | 级别 | 说明 |
+|:---:|------|:---:|------|
+| IS17 | 评论作者识别为 best-effort，无法保证 100% 识别 | minor | 基于 DOM heuristics，非标准站点可能失败 |
+| IS18 | sourceExcerpt 基于 content container textContent，可能含导航/按钮文字 | minor | 后续可增强文本区域选择 |
+| IS19 | 部分平台因反爬无法自动验证 DOM 结构 | minor | Xiaohongshu/Douyin 等 |
+
+---
+
 ## v0.4 Session 8.5 状态
 
 - 真实 Edge 微博测试发现 `Could not establish connection. Receiving end does not exist.` blocker

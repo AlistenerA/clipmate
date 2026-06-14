@@ -12,12 +12,14 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.5 已完成** — Content Script Connection Failure Fix。
+**v0.4 Session 8.6.2 已完成** — Low-token Extraction Debug & Website Reading Workflow。
 
-- 真实 Edge 微博测试发现 "Receiving end does not exist" 错误
-- 修复：友好错误提示 + 纯函数 error detection + 早期检测
-- 修复后：lint 0 / 1426 tests pass / build success
-- 下一步：ChatGPT 审查 → commit → 用户刷新微博详情页重新测试
+- 根因定位：微博 CSS Modules 导致 `classifyElementContext` 返回 `'unknown'` → `detectCommentSelectionMode` 返回 `'selection-generic'` → comment context 路径被跳过 → title 保持泛化标题
+- 修复：`selectionContext === 'unknown' && pageType === 'forum-or-comment'` → `'comment-selection'`
+- 新增 `buildExtractionDebugSummary` 去内容化调试函数（dev-only，测试调用）
+- 新增 `LOW_TOKEN_SITE_RECOGNITION_WORKFLOW.md` 网站识别工作流
+- 修复后：lint 0 / 1528 tests pass（+19 new）/ build success
+- **注意**：S8.6/S8.6.1/S8.6.2 暂不 commit，需用户真实 Edge 复测确认标题修复有效
 
 ---
 
@@ -52,6 +54,9 @@
 | Session 8.3 Playwright Site QA | ✅ 已完成 | Weibo/Bilibili profile 修正 |
 | Session 8.3.1 Stabilize QA Patch | ✅ 已完成 | ChatGPT 审查修正 |
 | Session 8.5 Connection Fix | ✅ 已完成 | 友好错误提示，微博 blocker 修复 |
+| Session 8.6 Comment Context Clip | ✅ 已完成 | CommentClipContext 数据结构 + Markdown 增强 |
+| Session 8.6.1 Source Title Fix | ✅ 已完成 | 微博泛化标题修复 + resolveSourceContainer |
+| Session 8.6.2 Debug & Mode Fix | ✅ 已完成 | 根因定位 + selection-generic bypass fix + debug summary |
 
 ---
 
@@ -82,6 +87,9 @@
 - [x] v0.4 Session 8.3：Playwright-assisted Site Classification & Comment Boundary QA
 - [x] v0.4 Session 8.3.1：Stabilize Playwright Site QA Patch
 - [x] v0.4 Session 8.5：Content Script Connection Failure Fix
+- [x] v0.4 Session 8.6：Comment Context Clip Foundation
+- [x] v0.4 Session 8.6.1：Comment Source Title Resolver Fix
+- [x] v0.4 Session 8.6.2：Low-token Extraction Debug & Website Reading Workflow
 
 ---
 
@@ -113,4 +121,4 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查本轮 Session 8.5 → commit → 用户刷新微博详情页并重新测试全文/选区剪藏。**
+**ChatGPT 审查 S8.6/S8.6.1/S8.6.2 → 用户真实 Edge 复测微博选区标题 → 确认修复有效后再 commit。**

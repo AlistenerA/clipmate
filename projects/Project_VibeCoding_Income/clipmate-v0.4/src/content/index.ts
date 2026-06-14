@@ -22,7 +22,8 @@ import {
 } from './intent'
 import {
   buildCommentSelectionDraft,
-  formatCommentSelectionMarkdown,
+  formatCommentContextMarkdown,
+  buildCommentClipContext,
 } from './commentSelection'
 import type { ExtractedContent } from '../shared/types/clip.types'
 import type { ClipMateMessage } from '../shared/types/message.types'
@@ -239,7 +240,19 @@ function handleGetSelection(): HandlerResult {
     })
 
     if (draft.mode !== 'selection-generic') {
-      content.markdown = formatCommentSelectionMarkdown(draft)
+      const context = buildCommentClipContext({
+        document,
+        pageTitle: content.title,
+        pageUrl: content.url,
+        siteProfileMatch,
+        selectionText: result.text,
+        selectionRoot: getSelectionRootElement(sel),
+        mode: draft.mode,
+        reasons: draft.reasons,
+      })
+      content.markdown = formatCommentContextMarkdown(context)
+      content.title = context.sourceTitle
+      content.metadata.title = context.sourceTitle
     }
 
     logger.info(`Selection: ${content.wordCount} words (${draft.mode})`)
