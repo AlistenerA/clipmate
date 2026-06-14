@@ -101,9 +101,9 @@ export function formatCommentContextMarkdown(context: CommentClipContext): strin
   lines.push('')
 
   lines.push('---')
-  lines.push('')
 
   if (context.warnings.length > 0) {
+    lines.push('')
     lines.push('> **降级说明**')
     for (const w of context.warnings) {
       if (w === 'author-unresolved') {
@@ -116,9 +116,9 @@ export function formatCommentContextMarkdown(context: CommentClipContext): strin
         lines.push(`> - ${escapeMd(w)}`)
       }
     }
-    lines.push('')
   }
 
+  lines.push('')
   lines.push('> 注：以上内容为网页选区评论剪藏，并非全文。')
 
   return lines.join('\n')

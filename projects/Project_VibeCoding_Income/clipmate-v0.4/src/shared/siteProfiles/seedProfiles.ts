@@ -55,8 +55,8 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     pageTypes: ['video'],
     priority: 20,
     selectorHints: {
-      contentContainer: '.video-desc-container, .video-info-detail',
-      commentContainer: '.reply-list, .comment-list',
+      contentContainer: '.video-info-container, .video-desc-container, .video-info-detail, .video-info-detail-list',
+      commentContainer: '[class*="message-inner-list__item"], .reply-list, .comment-list',
       videoPlayer: '#bilibiliPlayer, .bpx-player-video-wrap, .bpx-player-video-area',
       excludeSelector: '.bpx-player-danmaku, .bpx-player-sending-bar, .danmaku-wrap, .danmaku-container, .danmu-wrap, .danmu-container, .danmaku-info-row, .player-danmaku',
     },

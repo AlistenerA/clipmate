@@ -595,6 +595,41 @@ describe('seed profiles structural QA', () => {
     expect(videoPlayer).toContain('.bpx-player-video-wrap')
   })
 
+  // S8.9.3: B站 selector update based on Playwright observation
+  it('bilibili-video contentContainer includes .video-info-container', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    expect(bilibili!.selectorHints!.contentContainer).toContain('.video-info-container')
+  })
+
+  it('bilibili-video contentContainer retains legacy .video-desc-container and .video-info-detail', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    expect(bilibili!.selectorHints!.contentContainer).toContain('.video-desc-container')
+    expect(bilibili!.selectorHints!.contentContainer).toContain('.video-info-detail')
+  })
+
+  it('bilibili-video commentContainer includes [class*="message-inner-list__item"]', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    expect(bilibili!.selectorHints!.commentContainer).toContain('[class*="message-inner-list__item"]')
+  })
+
+  it('bilibili-video commentContainer retains legacy .reply-list and .comment-list', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    expect(bilibili!.selectorHints!.commentContainer).toContain('.reply-list')
+    expect(bilibili!.selectorHints!.commentContainer).toContain('.comment-list')
+  })
+
+  it('bilibili-video excludeSelector unchanged after selector update', () => {
+    const bilibili = SEED_PROFILES.find((p) => p.id === 'bilibili-video')
+    expect(bilibili).toBeDefined()
+    const excludeSel = bilibili!.selectorHints!.excludeSelector!
+    expect(excludeSel).toContain('danmaku')
+    expect(excludeSel).toContain('danmu')
+  })
+
   it('weibo-social profile has conservative comment handling without over-broad selectors', () => {
     const weibo = SEED_PROFILES.find((p) => p.id === 'weibo-social')
     expect(weibo).toBeDefined()

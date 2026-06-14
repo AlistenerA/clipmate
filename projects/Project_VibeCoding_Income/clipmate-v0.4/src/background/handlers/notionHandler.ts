@@ -79,7 +79,7 @@ export async function handleSaveToNotion(
   } catch (err) {
     const code =
       err instanceof Error ? err.message : 'NOTION_SAVE_FAILED'
-    logger.error(`Notion save failed: ${code}`)
+    logger.warn(`Notion save failed: ${code}`)
 
     if (isRetryUpdate) {
       const now = new Date().toISOString()

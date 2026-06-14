@@ -4,6 +4,55 @@
 
 ---
 
+## v0.4 Session 8.9：Comment Context Multi-site Resolver Pipeline (2026-06-14)
+
+### 性质
+
+架构重构 + 功能增强：建立 Comment Context Resolver Pipeline，统一评论剪藏输出格式，清洗微博 UI 噪声，消除重复包装。
+
+### 问题
+
+1. comment-context 输出与旧 selection markdown 重复包装（双 H1/双来源/双免责声明）
+2. 微博 sourceTitle/sourceExcerpt 混入"返回/公开/来自/关注/日期/转发/评论/点赞"等 UI 噪声
+3. 微博 sourceMedia 误收表情、头像、badge、svip、member、平台图标
+4. 国内其他评论型网站无统一处理策略
+
+### 架构决策
+
+- **D-v0.4-037**：CommentContextResolver Pipeline — 平台适配器 + 通用 fallback 结构。每个 resolver 通过 `match()` 判断是否适用，`resolve()` 返回 `Partial<CommentClipContext>`。Pipeline 自动选择最佳 resolver 并使用 fallback 填充缺失字段。
+- **D-v0.4-038**：comment-context 路径完全替换 content.markdown/contentText/contentHtml，不再保留旧 selection markdown。
+
+### 新增文件
+
+- `src/content/commentSelection/commentContextCleaners.ts` — 统一清洗函数（~200 lines）：cleanSourceText / isAuthorRelationLike / hasDateLeading / stripAuthorRelationPrefix / extractFirstTopicOrSentence / filterSourceMedia / isContainerCommentOnly
+- `src/content/commentSelection/commentContextResolvers.ts` — Pipeline 架构（~460 lines）：weiboResolver / bilibiliResolver / genericSocialCommentResolver + findResolver / resolveCommentContext
+- `tests/comment-context-cleaners.test.ts` — 39 tests
+- `tests/comment-context-resolvers.test.ts` — 19 tests
+
+### 修改文件
+
+- `src/content/commentSelection/commentContextBuilder.ts` — 重构：使用 cleaner 公共函数，保留 backward-compatible exports
+- `src/content/commentSelection/index.ts` — 新增 cleaner + resolver 导出
+- `src/content/index.ts` — handleGetSelection 中 comment-context 路径添加 contentText/contentHtml/content.description 同步覆盖，消除旧 markdown 泄漏
+- `docs/CURRENT_STATUS.md` — 更新
+- `docs/CHANGELOG_AGENT.md` — 本记录
+
+### 运行结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：40 files, 1596 tests passed (+58 new)
+- `npm run build`：success, 120 modules
+
+### 未修改
+
+- `clipmate-v0.1/`、`clipmate-v0.2/`、`clipmate-v0.3/`
+- `src/popup/`、`src/options/`、`src/background/`
+- `package.json` / `manifest.config.ts` / `package-lock.json`
+- Notion 保存主链路
+- 未新增依赖、未新增 manifest 权限、未运行 npm install
+
+---
+
 ## v0.4 Session 8.6.2：Low-token Extraction Debug & Mode Fix (2026-06-14)
 
 ### 性质

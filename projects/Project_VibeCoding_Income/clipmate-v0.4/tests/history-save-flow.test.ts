@@ -249,6 +249,57 @@ describe('handleSaveToNotion', () => {
     })
   })
 
+  // S8.9.4: console guard — expected failures must not call console.error
+  it('does not call console.error on NOTION_SAVE_FAILED', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      mockFetch(500)
+      setRawSettings(makeSettings())
+      await handleSaveToNotion(makePayload())
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('does not call console.error on NOTION_AUTH_FAILED', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      mockFetch(401)
+      setRawSettings(makeSettings())
+      await handleSaveToNotion(makePayload())
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('does not call console.error on NETWORK_ERROR', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      ;(globalThis as unknown as Record<string, unknown>).fetch = vi.fn(() =>
+        Promise.reject(new Error('NETWORK_ERROR'))
+      ) as unknown as typeof fetch
+      setRawSettings(makeSettings())
+      await handleSaveToNotion(makePayload())
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('does not call console.error on success', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      mockFetch(200)
+      setRawSettings(makeSettings())
+      await handleSaveToNotion(makePayload())
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
   it('uses pageId from payload not from settings', async () => {
     mockFetch(200)
     const payload = makePayload({

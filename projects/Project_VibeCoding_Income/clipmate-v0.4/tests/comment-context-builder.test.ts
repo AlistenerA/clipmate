@@ -783,4 +783,137 @@ describe('buildCommentClipContext', () => {
     })
     expect(context.reasons).toEqual(['selection-first', 'context=comment'])
   })
+
+  // ========== S8.8: Text cleaning ==========
+
+  it('cleans UI noise from Weibo sourceTitle', () => {
+    const { doc } = makeDom(
+      '<title>微博正文 - 微博</title>',
+      `<main>
+        <article class="feed-content">
+          <p>返回 公开 今天天气真好适合出去走走 来自 微博直播平台 2024-01-15 13:45 关注</p>
+          <img src="/photo.jpg" alt="photo" />
+        </article>
+        <div class="comment-list">
+          <div class="comment-item">
+            <strong>Alice</strong>
+            <p id="sel">确实不错</p>
+          </div>
+        </div>
+      </main>`,
+    )
+    const sel = doc.querySelector('#sel')
+    const context = buildCommentClipContext({
+      document: doc,
+      pageTitle: '微博正文',
+      pageUrl: 'https://weibo.com/status/12345',
+      siteProfileMatch: makeSiteProfileMatch(),
+      selectionText: '确实不错',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.sourceTitle).toContain('今天天气真好')
+    expect(context.sourceTitle).not.toContain('返回')
+    expect(context.sourceTitle).not.toContain('公开')
+    expect(context.sourceTitle).not.toContain('来自')
+    expect(context.sourceTitle).not.toContain('2024')
+    expect(context.sourceTitle).not.toContain('关注')
+    expect(context.sourceTitle).not.toContain('微博直播平台')
+  })
+
+  it('cleans UI noise from sourceExcerpt', () => {
+    const { doc } = makeDom(
+      '<title>微博正文 - 微博</title>',
+      `<main>
+        <article class="feed-content">
+          <p>返回 公开 源内容正文文本 来自 微博直播平台 2024-01-15 关注 转发 12 评论 3 点赞 25 分享</p>
+        </article>
+        <div class="comment-item"><strong>C</strong><p id="sel">OK</p></div>
+      </main>`,
+    )
+    const sel = doc.querySelector('#sel')
+    const context = buildCommentClipContext({
+      document: doc,
+      pageTitle: '微博正文',
+      pageUrl: 'https://weibo.com/status/12345',
+      siteProfileMatch: makeSiteProfileMatch(),
+      selectionText: 'OK',
+      selectionRoot: sel,
+      mode: 'comment-selection',
+      reasons: [],
+    })
+    expect(context.sourceExcerpt).toContain('源内容')
+    expect(context.sourceExcerpt).not.toContain('返回')
+    expect(context.sourceExcerpt).not.toContain('公开')
+    expect(context.sourceExcerpt).not.toContain('来自')
+    expect(context.sourceExcerpt).not.toContain('2024')
+    expect(context.sourceExcerpt).not.toContain('关注')
+    expect(context.sourceExcerpt).not.toContain('转发')
+    expect(context.sourceExcerpt).not.toContain('点赞')
+  })
+
+  // ========== S8.8: Weibo media filtering ==========
+
+  it('filters face/emoji/badge images from sourceMedia', () => {
+    const { doc } = makeDom(
+      '',
+      `<main><article>
+        <img src="https://face.t.sinajs.cn/t4/appstyle/expression/ext/normal/pc/2025_weizui_org.png" alt="[开学季]" width="24" height="24" />
+        <img src="https://h5.sinaimg.cn/upload/2015/09/25/3/timeline_card_small_svip_default.png" width="40" height="40" />
+        <img src="https://h5.sinaimg.cn/upload/2015/09/25/3/timeline_card_small_member_default.png" class="member-badge" width="40" height="40" />
+        <img src="https://tvax1.sinaimg.cn/crop.0.0.512.512.180/abcd.jpg" width="100" height="100" class="avatar" />
+        <img src="https://wx1.sinaimg.cn/large/008abcd.jpg" width="600" height="800" alt="nice photo" />
+      </article></main>`,
+    )
+    const result = extractSourceMedia(doc, null, null)
+    const urls = result.map((m) => m.url || '')
+    expect(urls.some((u) => u.includes('wx1.sinaimg.cn/large'))).toBe(true)
+    expect(result.find((m) => m.url?.includes('face.t.sinajs.cn'))).toBeUndefined()
+    expect(result.find((m) => m.url?.includes('svip'))).toBeUndefined()
+    expect(result.find((m) => m.url?.includes('member'))).toBeUndefined()
+    expect(result.find((m) => m.url?.includes('crop'))).toBeUndefined()
+  })
+
+  it('keeps large sina images but filters crop/avatar variants', () => {
+    const { doc } = makeDom(
+      '',
+      `<main><article>
+        <img src="https://wx2.sinaimg.cn/mw690/008xyz.jpg" width="690" height="500" alt="photo" />
+        <img src="https://tvax2.sinaimg.cn/crop.0.0.180.180.50/abc.jpg" width="50" height="50" alt="head" />
+      </article></main>`,
+    )
+    const result = extractSourceMedia(doc, null, null)
+    const urls = result.map((m) => m.url || '')
+    expect(urls.some((u) => u.includes('mw690'))).toBe(true)
+    expect(result.find((m) => m.url?.includes('crop'))).toBeUndefined()
+  })
+
+  it('filters emoji alt patterns from sourceMedia', () => {
+    const { doc } = makeDom(
+      '',
+      `<main><article>
+        <img src="https://wx1.sinaimg.cn/emoji/abc.jpg" alt="[太开心]" width="64" height="64" />
+        <img src="https://wx1.sinaimg.cn/large/photo.jpg" width="600" height="400" alt="nice" />
+      </article></main>`,
+    )
+    const result = extractSourceMedia(doc, null, null)
+    const urls = result.map((m) => m.url || '')
+    expect(urls.some((u) => u.includes('large/photo'))).toBe(true)
+    expect(result.find((m) => m.url?.includes('emoji'))).toBeUndefined()
+  })
+
+  it('non-Weibo media are not filtered by Weibo rules', () => {
+    const dom = new JSDOM(
+      `<!DOCTYPE html><html><body><main>
+        <div class="video-info-detail">
+          <img src="/video-cover.jpg" width="400" height="225" alt="video cover" />
+        </div>
+      </main></body></html>`,
+      { url: 'https://bilibili.com/video/123' },
+    )
+    const result = extractSourceMedia(dom.window.document, null, null)
+    expect(result.length).toBe(1)
+    expect(result[0].url).toContain('video-cover.jpg')
+  })
 })

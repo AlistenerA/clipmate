@@ -289,3 +289,34 @@ describe('comment context markdown safety', () => {
     expect(src).not.toContain('XMLHttpRequest')
   })
 })
+
+// ========== S8.8: single H1 / source / disclaimer ==========
+
+describe('comment context markdown single wrapping', () => {
+  it('has exactly one H1', () => {
+    const context = makeContext({ sourceTitle: 'Test Title' })
+    const md = formatCommentContextMarkdown(context)
+    const h1Count = (md.match(/^# (?!##)/gm) || []).length
+    expect(h1Count).toBe(1)
+  })
+
+  it('has exactly one source line', () => {
+    const context = makeContext({ pageUrl: 'https://example.com' })
+    const md = formatCommentContextMarkdown(context)
+    const sourceCount = (md.match(/^来源：/gm) || []).length
+    expect(sourceCount).toBe(1)
+  })
+
+  it('has exactly one disclaimer footer', () => {
+    const context = makeContext()
+    const md = formatCommentContextMarkdown(context)
+    const disclaimerCount = (md.match(/^> 注：以上内容为网页选区评论剪藏，并非全文。/gm) || []).length
+    expect(disclaimerCount).toBe(1)
+  })
+
+  it('does not contain old selection disclaimer', () => {
+    const context = makeContext()
+    const md = formatCommentContextMarkdown(context)
+    expect(md).not.toContain('以下内容为网页选区摘录')
+  })
+})

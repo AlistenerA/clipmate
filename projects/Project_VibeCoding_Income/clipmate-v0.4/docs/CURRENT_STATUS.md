@@ -12,14 +12,14 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.6.2 已完成** — Low-token Extraction Debug & Website Reading Workflow。
+**v0.4 Session 8.9.3 已完成** — Bilibili Selector Patch & Resolver Guard。
 
-- 根因定位：微博 CSS Modules 导致 `classifyElementContext` 返回 `'unknown'` → `detectCommentSelectionMode` 返回 `'selection-generic'` → comment context 路径被跳过 → title 保持泛化标题
-- 修复：`selectionContext === 'unknown' && pageType === 'forum-or-comment'` → `'comment-selection'`
-- 新增 `buildExtractionDebugSummary` 去内容化调试函数（dev-only，测试调用）
-- 新增 `LOW_TOKEN_SITE_RECOGNITION_WORKFLOW.md` 网站识别工作流
-- 修复后：lint 0 / 1528 tests pass（+19 new）/ build success
-- **注意**：S8.6/S8.6.1/S8.6.2 暂不 commit，需用户真实 Edge 复测确认标题修复有效
+基于 S8.9.2 Playwright 观察发现 B站旧 selector（`.video-info-detail`、`.reply-list`、`.comment-list`）在真实页面中 0 命中，本轮更新：
+- `seedProfiles.ts` bilibili-video：`contentContainer` 新增 `.video-info-container`，`commentContainer` 新增 `[class*="message-inner-list__item"]`，旧 selector 保留兼容
+- `bilibiliResolver`：新增 `_哔哩哔哩_bilibili` / `_哔哩哔哩` 后缀 cleanup，新增 `.video-info-title` heading 查找，新增 `h1` 作为 title fallback
+- 测试：+7（5 selector + 2 title cleanup），总 1603 pass / 40 files / lint 0 / build success
+
+*S8.9 完成情况：1596 tests pass / lint 0 / build success。S8.9.2 为只读 Playwright 观察。*
 
 ---
 
@@ -57,6 +57,8 @@
 | Session 8.6 Comment Context Clip | ✅ 已完成 | CommentClipContext 数据结构 + Markdown 增强 |
 | Session 8.6.1 Source Title Fix | ✅ 已完成 | 微博泛化标题修复 + resolveSourceContainer |
 | Session 8.6.2 Debug & Mode Fix | ✅ 已完成 | 根因定位 + selection-generic bypass fix + debug summary |
+| Session 8.8 Markdown Cleanup | ✅ 已完成 | S8.9 替代 |
+| Session 8.9 Resolver Pipeline | ✅ 已完成 | Comment Context Resolver + Cleaners
 
 ---
 
@@ -90,6 +92,7 @@
 - [x] v0.4 Session 8.6：Comment Context Clip Foundation
 - [x] v0.4 Session 8.6.1：Comment Source Title Resolver Fix
 - [x] v0.4 Session 8.6.2：Low-token Extraction Debug & Website Reading Workflow
+- [x] v0.4 Session 8.8：Comment Context Markdown Cleanup & Media Filter
 
 ---
 
@@ -121,4 +124,4 @@
 
 ## 下一阶段建议
 
-**ChatGPT 审查 S8.6/S8.6.1/S8.6.2 → 用户真实 Edge 复测微博选区标题 → 确认修复有效后再 commit。**
+**ChatGPT 审查 S8.8 → 用户重新加载 dist 人工复测微博评论剪藏输出清洗效果 → commit。**

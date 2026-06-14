@@ -251,8 +251,11 @@ function handleGetSelection(): HandlerResult {
         reasons: draft.reasons,
       })
       content.markdown = formatCommentContextMarkdown(context)
+      content.contentText = content.markdown
+      content.contentHtml = ''
       content.title = context.sourceTitle
       content.metadata.title = context.sourceTitle
+      content.description = context.sourceExcerpt || ''
     }
 
     logger.info(`Selection: ${content.wordCount} words (${draft.mode})`)
