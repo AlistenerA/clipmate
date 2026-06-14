@@ -168,3 +168,4 @@
 - Link Card Popup UI 未实现
 - Tag Search UX 延后到 v0.5
 - Better History Config 延后到 v0.5
+- Playwright-assisted QA 是可选辅助链路，B 站复测仍以用户真实扩展操作为准

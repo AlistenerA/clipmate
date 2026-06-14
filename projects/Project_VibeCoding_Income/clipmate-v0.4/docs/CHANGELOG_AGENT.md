@@ -4,6 +4,36 @@
 
 ---
 
+## v0.4 Session 8.2：Playwright QA Workflow Integration (2026-06-14)
+
+### 性质
+
+Docs-only workflow 接入。不修改 src/tests/package/manifest。不新增依赖或权限。不修改 `.playwright-mcp`。
+
+### 完成内容
+
+- 新增 `docs/PLAYWRIGHT_QA_WORKFLOW.md`：Playwright 使用边界、执行链路、输出格式
+- `docs/WORKFLOW_RULES.md` 新增第 13 节：Playwright QA 辅助规则
+- `docs/AGENT_CONTEXT.md` 新增 Playwright QA 辅助段落，更新当前阶段
+- `docs/MANUAL_QA.md` 已知限制补充 Playwright 辅助 QA 说明
+- `docs/RELEASE_CHECKLIST.md` 新增 Playwright 辅助 QA 检查项
+- `docs/CHANGELOG_AGENT.md` / `docs/TEST_LOG.md` / `docs/CURRENT_STATUS.md` / `docs/ISSUES.md` 更新
+
+### 约束边界
+
+- 未修改 `.playwright-mcp` 配置
+- 未新增依赖
+- 未修改 package.json / manifest.config.ts / package-lock.json
+- 未修改 src/ / tests/
+- 不访问隐私页面、不记录 token/page id、不替代人工 QA
+
+### 运行结果
+
+- 本轮 docs-only，未运行 lint/test/build/zip
+- 未运行 npm install / npx playwright install
+
+---
+
 ## v0.4 Session 8.1：Bilibili Video Page Manual QA Fix (2026-06-14)
 
 ### 性质

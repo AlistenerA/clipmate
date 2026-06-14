@@ -70,8 +70,13 @@ clipmate-v0.4/
 
 详细规则见 `docs/WORKFLOW_RULES.md`。
 
+## Playwright QA 辅助
+
+当前项目允许在 QA 阶段使用 Playwright 作为观察和复现辅助工具，但默认不作为功能开发入口。涉及页面访问、截图、DOM 观察时，必须遵守 `docs/PLAYWRIGHT_QA_WORKFLOW.md`。Playwright 不替代用户最终人工 QA。
+
 ## 当前阶段
 
 v0.4 Session 0 — 工作区创建与规划（已完成）。
+Session 8.2 — Playwright QA Workflow Integration（本轮）。
 
-下一步：等待 ChatGPT 审查本 Session 输出后，进入 Session 1 Page Type Detector。
+下一步：ChatGPT 审查后，用户重新加载 dist/ 并结合 Playwright 辅助和真实浏览器操作复测 B 站视频页。

@@ -4,6 +4,15 @@
 
 ---
 
+## v0.4 Session 8.2 状态
+
+- Playwright QA workflow 已文档化（`docs/PLAYWRIGHT_QA_WORKFLOW.md`）
+- 当前无 blocker
+- B 站 S8.1 修复已提交（commit `e071bc1`），需用户真实浏览器复测
+- Playwright-assisted QA 不替代人工 QA
+
+---
+
 ## v0.4 Session 8.1 状态
 
 - 当前无 blocker

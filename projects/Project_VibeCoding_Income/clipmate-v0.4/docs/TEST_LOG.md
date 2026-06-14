@@ -4,6 +4,28 @@
 
 ---
 
+## v0.4 Session 8.2 (2026-06-14)
+
+### 性质
+
+Docs-only workflow update（Playwright QA Workflow Integration）。
+
+### 运行命令
+
+未运行。原因：本轮不涉及 src/tests/package/manifest 变更。
+
+### 检查项
+
+- 未修改 src/ ✅
+- 未修改 tests/ ✅
+- 未修改 package.json / manifest.config.ts ✅
+- 未新增依赖 ✅
+- 未新增 manifest 权限 ✅
+- 未修改 `.playwright-mcp` ✅
+- 未运行 npm install / npx playwright install ✅
+
+---
+
 ## v0.4 Session 8.1 (2026-06-14)
 
 ### 运行命令

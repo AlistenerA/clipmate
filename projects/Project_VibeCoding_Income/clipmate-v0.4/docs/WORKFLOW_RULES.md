@@ -337,6 +337,18 @@ git log --oneline -5
 
 ---
 
+## 13. Playwright QA 辅助规则
+
+- 只在用户明确允许时使用 Playwright
+- 不访问隐私页面
+- 不记录 token/page id/账号信息
+- 不保存完整 DOM/正文/评论
+- 不替代用户最终人工 QA
+- 不修改 `.playwright-mcp` 配置
+- 详情见 `docs/PLAYWRIGHT_QA_WORKFLOW.md`
+
+---
+
 ## 12. 适用边界
 
 本规则适用于所有 ClipMate 后续版本，但不是不可变法律。后续如果用户明确更改项目策略，可以更新本文件。

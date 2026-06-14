@@ -12,17 +12,12 @@
 
 ## 当前阶段
 
-**v0.4 Session 8.1 已完成** — Bilibili Video Page Manual QA Fix。
+**v0.4 Session 8.2 已完成** — Playwright QA Workflow Integration。
 
-- **问题**：人工 QA 发现 B 站视频页全文剪藏会抓取弹幕内容，选区剪藏检测不到或不正确
-- **修复**：
-  - 新增 `excludeSelector` 到 SiteProfileSelectorHints，bilibili-video profile 添加弹幕排除选择器
-  - `NOISE_CSS_KEYWORDS` 新增 `danmaku`/`danmu`/`弹幕` 关键词
-  - `preCleanDocument` 接受可选 `excludeSelectors` 参数
-  - `handleExtractFullpage` 调用 `matchSiteProfile` 传递 excludeSelectors
-  - 选区提取器增强：`getSelectionText` 去除零宽字符，`getSelectionHtml` 添加错误处理，`extractSelection` 在 html 提取失败时提供兜底
-- 测试：新增 24 个测试（danmu 过滤 + 选区鲁棒性 + profile 结构验证）
-- 下一步：ChatGPT 审查 → commit → 用户人工复测 B 站视频页
+- Session 8.1 Bilibili QA fix 已完成并 commit（`e071bc1`）
+- Session 8.2 docs-only：新增 `PLAYWRIGHT_QA_WORKFLOW.md`，更新 WORKFLOW_RULES / AGENT_CONTEXT / MANUAL_QA / RELEASE_CHECKLIST / CHANGELOG_AGENT / TEST_LOG / ISSUES
+- 本轮未修改 src/tests/package/manifest，未新增依赖，未修改 .playwright-mcp
+- 下一步：ChatGPT 审查 → commit → 用户重载 dist/ + Playwright 辅助复测 B 站视频页
 
 ---
 
@@ -52,7 +47,8 @@
 | Session 6.1 Anti-Slop Review | ✅ 已完成 | ChatGPT 审查通过 |
 | Session 7 Docs, QA, Version, Package | ✅ 已完成 | 本轮，待 ChatGPT 审查 |
 | Session 8 Robustness Check and Release | ✅ 已完成 | Session 8 (只读审查，通过) |
-| Session 8.1 Bilibili QA Fix | ✅ 已完成 | 本轮 |
+| Session 8.1 Bilibili QA Fix | ✅ 已完成 | commit e071bc1 |
+| Session 8.2 Playwright QA Integration | ✅ 已完成 | 本轮 docs-only |
 
 ---
 
@@ -79,6 +75,7 @@
 - [x] v0.4 Session 7：Docs, Manual QA, Version Bump to 0.4.0, Package
 - [x] v0.4 Session 8：Release Robustness Review（只读审查，通过）
 - [x] v0.4 Session 8.1：Bilibili Video Page Manual QA Fix
+- [x] v0.4 Session 8.2：Playwright QA Workflow Integration
 
 ---
 

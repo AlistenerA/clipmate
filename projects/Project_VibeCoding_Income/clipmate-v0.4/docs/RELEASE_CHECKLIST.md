@@ -81,6 +81,13 @@
 - [ ] 确认 storage 结构无变更
 - [ ] 确认 4 次 Anti-Slop Review 全部通过
 
+### Playwright 辅助 QA 检查
+- [ ] 是否只访问用户允许页面
+- [ ] 是否未记录 token/page id
+- [ ] 是否未保存完整 DOM/正文/评论
+- [ ] 是否未把 Playwright 结果误写成商店审核通过
+- [ ] 详情见 `docs/PLAYWRIGHT_QA_WORKFLOW.md`
+
 ---
 
 ## 提交前 Git Checklist
