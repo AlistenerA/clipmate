@@ -13,18 +13,28 @@
 
 ## 当前阶段
 
-**v0.5 Session 4 已完成** — Popup / History Lightweight Image Metadata。
+**v0.5 Session 5 已完成** — Manual QA and Site Cases。
 
-在 Popup 和 History 中轻量展示文章图片信息：
-- `ExtractedContent` 和 `ClipHistoryItem` 新增 `imageCount` / `firstImageUrl` / `skippedImageCount` 可选字段
-- fullpage 提取路径自动附加 image 元数据（通过 `attachImageMetadata()`）
-- selection / comment-context mode：imageCount=0，不显示图片信息
-- Popup StatusBar：图片>0 时显示紫色「图片 N」徽章
-- HistoryItem：fullpage 且 imageCount>0 时显示紫色「图片 N」标签
-- 保存/重试/失败路径均保留 image 元数据（updateHistoryItem merge 自动保留）
-- 18 个新测试。lint 0 / 1828 tests pass / build success。
+使用 12 个场景（52 个 fixture QA 测试）验证了 v0.5 文章图片保存全链路：
+- 新闻文章：多图片 + caption + figure/figcaption + 噪声过滤 ✅
+- 博客文章：figure/figcaption + alt/title + avatar/logo 过滤 ✅
+- 技术文档：截图 + icon/favicon/emoji/spinner 过滤 + code block 不受影响 ✅
+- CSDN-like：懒加载（Turndown img rule 处理 data-src/data-original）+ srcset + avatar/badge 过滤 ✅
+- 重复图片去重 ✅
+- logo/avatar/badge/emoji/sprite/thumb/qr-code/tracking pixel 噪声过滤 ✅
+- Markdown 中图文顺序保持 ✅
+- Notion image block 与 paragraph 顺序保持 ✅
+- Popup/History 图片元数据传递 ✅
+- selection/comment-context 不错误继承 fullpage 图片信息 ✅
+- data:/blob: URI / 过小尺寸图片 / 空 alt 边缘处理 ✅
+- 全链路 smoke test ✅
 
-*下一步：v0.5 Session 5 — Manual QA and Site Cases。*
+**QA 发现**：
+- `extractArticleImages.getBestSrc` 不处理 data-src/data-original 懒加载属性（Turndown img rule 正确处理）
+- `markdownToContentBlocks` 当前仅输出 paragraph/image blocks（不处理 heading）
+- "ad-banner" class 不在已知噪声 class 列表中（广告图类名多样性是已知局限）
+
+*下一步：v0.5 Session 6 — Release Readiness。*
 
 ---
 
@@ -37,7 +47,7 @@
 | Session 2 | ✅ 已完成 | Markdown Image Preservation |
 | Session 3 | ✅ 已完成 | Notion External Image Blocks |
 | Session 4 | ✅ 已完成 | Popup/History Lightweight Image Metadata |
-| Session 5 | ⏳ 待开始 | Manual QA and Site Cases |
+| Session 5 | ✅ 已完成 | Manual QA and Site Cases |
 | Session 6 | ⏳ 待开始 | Release Readiness |
 
 ---
@@ -49,3 +59,4 @@
 - [x] v0.5 Session 2：Markdown Image Preservation
 - [x] v0.5 Session 3：Notion External Image Blocks
 - [x] v0.5 Session 4：Popup/History Lightweight Image Metadata
+- [x] v0.5 Session 5：Manual QA and Site Cases

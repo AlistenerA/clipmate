@@ -2,6 +2,67 @@
 
 ---
 
+## v0.5 Session 5：Manual QA and Site Cases (2026-06-14)
+
+### 性质
+
+使用 12 个站点场景的 fixture QA 验证 v0.5 文章图片保存全链路（提取→Markdown→Notion blocks→Popup/History 元数据）。未执行真实网页 QA、未执行真实 Notion save。不开发新功能，只做 QA + 测试补充 + 文档更新。
+
+### 新增文件
+
+- `tests/image-site-cases.test.ts` — 52 个 QA 场景测试
+
+### 测试覆盖
+
+| 场景 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 新闻文章 | 7 | 多图 + caption + figure/figcaption + 相对 URL + 噪声过滤 + 元数据 |
+| 博客文章 | 5 | figure/figcaption + alt/title + avatar/logo 过滤 + heading/code block 保持 |
+| 技术文档 | 5 | 截图 + icon/favicon/emoji/spinner 过滤 + code block 不受影响 |
+| CSDN-like | 7 | 懒加载（Turndown data-src/data-original）+ srcset + avatar/badge 过滤 |
+| 图片去重 | 3 | extractArticleImages + Markdown + Notion blocks 去重 |
+| 噪声过滤 | 4 | logo/avatar/badge/emoji/sprite/thumb/qr/pixel 全过滤 |
+| Markdown 图文顺序 | 2 | 文本-图片交错顺序保持 |
+| Notion blocks 顺序 | 3 | paragraph-image 交替 + external type 校验 |
+| Popup/History 元数据 | 4 | buildHistoryInput + 成功/失败保存路径 |
+| selection 回归 | 4 | selection/comment-context 不继承 fullpage 图片信息 |
+| 边缘情况 | 5 | data:/blob: URI / 过小尺寸 / 空 alt |
+| 全链路 smoke | 2 | extract→markdown→blocks→metadata 集成 |
+
+### QA 发现
+
+- `extractArticleImages.getBestSrc` 不处理 data-src/data-original 懒加载属性（Turndown img rule 正确处理）
+- `markdownToContentBlocks` 当前仅输出 paragraph/image blocks（不处理 heading_2 等）
+- "ad-banner" class 不在已知噪声 class 列表中（广告图类名多样性，已知局限）
+
+### 修改文件
+
+- `docs/CURRENT_STATUS.md` — Session 5 完成 + Session 进度更新
+- `docs/CHANGELOG_AGENT.md` — 本轮记录
+- `docs/TEST_LOG.md` — 新增测试记录
+- `docs/ISSUES.md` — QA 发现记录
+- `docs/DECISIONS.md` — 新增 D-v0.5-018 / D-v0.5-019
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未修改 `../../opencode.json`
+- 未修改 `package.json` / `manifest.config.ts` version
+- 未新增依赖、未新增权限
+- 未修改源码（`src/` 目录无变更）
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未执行真实 Notion save
+- 未修改已有测试
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：46 files, 1880 tests pass（新增 52 个）
+- `npm run build`：成功
+
+---
+
 ## v0.5 Session 4：Popup / History Lightweight Image Metadata (2026-06-14)
 
 ### 性质

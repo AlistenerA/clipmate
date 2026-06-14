@@ -2,6 +2,55 @@
 
 ---
 
+## v0.5 Session 5 (2026-06-14)
+
+### 性质
+
+Manual QA and Site Cases — fixture QA 测试。未执行真实网页 QA、未执行真实 Notion save。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：46 个测试文件，1880 个测试，全部通过（新增 52 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-site-cases.test.ts, 52 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 新闻文章 | 7 | 多图 + caption + figure/figcaption + 相对 URL + 噪声过滤 + Markdown + Notion blocks + 元数据 |
+| 博客文章 | 5 | figure/figcaption + alt/title + avatar/logo 过滤 + heading 保持 |
+| 技术文档 | 5 | 截图 + icon/favicon/emoji/spinner 过滤 + code block 不受影响 + Notion blocks |
+| CSDN-like | 7 | 懒加载 Turndown（data-src/data-original）+ srcset + avatar/badge 过滤 + Markdown 顺序 |
+| 图片去重 | 3 | extractArticleImages 去重 + Markdown 去重 + Notion blocks 去重 |
+| 噪声过滤 | 4 | logo/avatar/badge/emoji/sprite/thumb/qr-code/pixel 全过滤 + skip reasons |
+| Markdown 图文顺序 | 2 | 文本-图片交错顺序 + Notion blocks paragraph-image 顺序 |
+| Notion blocks 顺序 | 3 | paragraph-image 交替 + 精确数量 + external type 校验 |
+| Popup/History 元数据 | 4 | buildHistoryInput + 成功保存 + 失败保存 + undefined handling |
+| selection 回归 | 4 | selection 无图片语法 + imageCount=0 + comment-context 不受影响 + 零图片页面 |
+| 边缘情况 | 5 | data:/blob: URI 过滤 + 空 alt + 过小尺寸 + Markdown 降级 + Notion paragraph 降级 |
+| 全链路 smoke | 2 | extract→markdown→blocks→metadata 集成 |
+
+### 已有测试
+
+- 1828 个已有测试全部通过，无新增失败、无删除、无降低
+
+### QA 发现（记录到 ISSUES.md）
+
+- `extractArticleImages.getBestSrc` 不处理 data-src/data-original 懒加载属性（Turndown img rule 正确处理）— IS29
+- `markdownToContentBlocks` 当前仅输出 paragraph/image blocks — IS30
+- "ad-banner" class 不在已知噪声 class 列表中 — IS31
+
+---
+
 ## v0.5 Session 4 (2026-06-14)
 
 ### 性质
