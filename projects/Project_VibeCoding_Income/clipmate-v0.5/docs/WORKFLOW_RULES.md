@@ -349,6 +349,109 @@ git log --oneline -5
 
 ---
 
+## 14. Windows PowerShell 工具命令兼容规则
+
+本项目主要在 Windows PowerShell / OpenCode 环境中执行。Agent 不应默认假设 Linux/macOS shell 工具可用。
+
+### 命令优先级
+
+1. Git 命令可以直接使用。
+2. 文件搜索、敏感扫描、危险 API 扫描优先使用 PowerShell 原生命令：
+   - `Get-ChildItem`
+   - `Select-String`
+   - `Where-Object`
+   - `Test-Path`
+3. `rg` 只有在以下命令都成功后才允许使用：
+   - `where.exe rg`
+   - `rg --version`
+4. `grep`、`sed`、`awk`、`xargs` 默认不要使用。
+5. OpenCode 的 Grep/Glob 工具如果报错一次，立即切换 PowerShell，不要反复尝试。
+
+### rg 不可用时的替代命令
+
+源码搜索：
+
+```powershell
+Get-ChildItem clipmate-v0.5/src,clipmate-v0.5/tests -Recurse -File |
+  Where-Object { $_.FullName -notmatch '\\(node_modules|dist|build|coverage|\.git)\\' } |
+  Select-String -Pattern "pattern"
+```
+
+敏感信息扫描：
+
+```powershell
+Get-ChildItem clipmate-v0.5/src,clipmate-v0.5/tests,clipmate-v0.5/docs -Recurse -File |
+  Where-Object { $_.FullName -notmatch '\\(node_modules|dist|build|coverage|\.git)\\' } |
+  Select-String -Pattern "ntn_|secret_|Bearer|api_key|apikey|api-key|password|passwd|notionPageId|page_id|pageId|C:\\Users|typora-user-images"
+```
+
+危险 API 扫描：
+
+```powershell
+Get-ChildItem clipmate-v0.5/src,clipmate-v0.5/tests -Recurse -File |
+  Where-Object { $_.FullName -notmatch '\\(node_modules|dist|build|coverage|\.git)\\' } |
+  Select-String -Pattern "fetch\(|XMLHttpRequest|FileReader|canvas|toDataURL|createObjectURL|chrome\.scripting|localStorage|sessionStorage|cookie"
+```
+
+未跟踪文件和构建产物检查：
+
+```powershell
+git ls-files --others --exclude-standard
+
+git ls-files --others --exclude-standard |
+  Select-String -Pattern "node_modules|dist|build|coverage|\.zip|\.env|\.wolf|\.opencode|\.playwright-mcp"
+```
+
+### 失败处理规则
+
+如果出现以下情况：
+
+* `rg is not recognized`
+* `grep` 不可用
+* Glob/Grep 工具报错
+* `CommandNotFoundException`
+* PowerShell 乱码错误
+
+Agent 必须：
+
+1. 停止继续使用失败命令。
+2. 改用 PowerShell `Get-ChildItem + Select-String`。
+3. 在最终输出中说明已使用 PowerShell fallback。
+4. 不得把命令失败当成"无命中"。
+5. 不得为了搜索工具问题运行 `npm install`。
+
+### 安装规则
+
+Agent 不得自动安装 `rg`、`grep`、Chocolatey、Scoop、Winget 包，除非用户明确要求。
+
+如果用户手动安装 ripgrep，可使用：
+
+```powershell
+winget install BurntSushi.ripgrep.MSVC
+```
+
+安装后需要重新打开终端，并验证：
+
+```powershell
+where.exe rg
+rg --version
+```
+
+### 每轮输出要求
+
+当本轮涉及搜索或安全扫描时，最终输出应说明：
+
+```text
+【搜索工具状态】
+- rg 是否可用：
+- 是否使用 PowerShell fallback：
+- 是否有命令失败：
+- 失败命令是否已替代：
+- 是否把失败误判为无命中：
+```
+
+---
+
 ## 12. 适用边界
 
 本规则适用于所有 ClipMate 后续版本，但不是不可变法律。后续如果用户明确更改项目策略，可以更新本文件。
