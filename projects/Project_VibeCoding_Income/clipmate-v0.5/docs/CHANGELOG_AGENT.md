@@ -2,6 +2,38 @@
 
 ---
 
+## v0.5.2：CCTV-like Image Source Recovery & Markdown Profile Compatibility (2026-06-17)
+
+### 性质
+
+用户测试 CCTV 新闻页发现正文图片全部丢失，同时 Obsidian / Typora Markdown 输出存在 `**加粗**正文` 紧贴导致的渲染兼容问题。本轮做最小修复，不新增权限、不下载/上传/缓存图片。
+
+### 修改文件
+
+- `src/content/extractors/articleImages.ts` — `getBestSrc()` 统一读取 `src`、`currentSrc`、`data-src`、`data-original`、`data-lazy-src`、`srcset`、`picture source` 和 `video poster`；placeholder/noise src 会让位给真实懒加载图片
+- `src/content/parser/htmlToMarkdown.ts` — Markdown 图片转换复用 `getBestSrc()`；新增 video poster Markdown fallback；Markdown 层也应用 ancestor 噪声过滤
+- `src/shared/markdown/formatWithProfile.ts` — profile 输出层为 `**bold**text` 补安全空格，跳过 fenced code blocks
+- `package.json` / `manifest.config.ts` / `package-lock.json` — ClipMate 根版本 0.5.1 → 0.5.2
+- `docs/CURRENT_STATUS.md` / `docs/AGENT_CONTEXT.md` / `docs/TEST_LOG.md` / `docs/ISSUES.md` / `docs/DECISIONS.md` — 更新本轮状态、测试和决策
+
+### 测试
+
+- `npx vitest run tests/article-images.test.ts tests/markdown-images.test.ts tests/markdown-profiles.test.ts`：3 files, 169 tests pass
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 files, 1941 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.5.2
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未新增依赖、未新增 manifest 权限
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未修改 Popup/Options UI
+- 未引入 Save to Notion 的私有接口或 cookie 依赖
+
+---
+
 ## v0.5.1：Architecture Foundation (2026-06-17)
 
 ### 性质

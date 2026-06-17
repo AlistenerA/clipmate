@@ -76,6 +76,54 @@ describe('htmlToMarkdown - image deduplication', () => {
   })
 })
 
+describe('htmlToMarkdown - lazy and CCTV-like images', () => {
+  it('keeps lazy data-src article image when src is a placeholder', () => {
+    const md = htmlToMarkdown(`
+      <article>
+        <p>Before image</p>
+        <img
+          src="https://example.com/transparent.png"
+          data-src="https://p1.img.cctvpic.com/article/photo.jpg"
+          alt="Carbon fiber production"
+          width="960"
+          height="540"
+        />
+        <p>After image</p>
+      </article>
+    `)
+
+    expect(md).toContain('Before image')
+    expect(md).toContain('![Carbon fiber production](https://p1.img.cctvpic.com/article/photo.jpg)')
+    expect(md).toContain('After image')
+    expect(md).not.toContain('transparent.png')
+  })
+
+  it('keeps video poster as a readable image fallback', () => {
+    const md = htmlToMarkdown(`
+      <article>
+        <video poster="https://p1.img.cctvpic.com/video-cover.jpg" width="960" height="540"></video>
+      </article>
+    `)
+
+    expect(md).toContain('![image](https://p1.img.cctvpic.com/video-cover.jpg)')
+  })
+
+  it('filters related recommendation images by ancestor while keeping body images', () => {
+    const md = htmlToMarkdown(`
+      <article>
+        <p>Article body</p>
+        <img data-original="https://p1.img.cctvpic.com/body-photo.jpg" alt="Body photo" width="900" height="500" />
+        <section class="latest-recommend">
+          <img data-original="https://p1.img.cctvpic.com/recommend-thumb.jpg" alt="Recommendation" width="300" height="160" />
+        </section>
+      </article>
+    `)
+
+    expect(md).toContain('![Body photo](https://p1.img.cctvpic.com/body-photo.jpg)')
+    expect(md).not.toContain('recommend-thumb.jpg')
+  })
+})
+
 describe('htmlToMarkdown - alt text fallback', () => {
   it('uses "image" as default alt when empty', () => {
     const md = htmlToMarkdown('<img src="https://example.com/photo.jpg" />')

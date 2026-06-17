@@ -69,12 +69,31 @@ function formatTagLine(tags: string[], style: string): string {
   }
 }
 
+function normalizeStrongBoundarySpacing(markdown: string): string {
+  const lines = markdown.split('\n')
+  let inFence = false
+
+  return lines.map((line) => {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence
+      return line
+    }
+
+    if (inFence) return line
+
+    return line.replace(
+      /\*\*([^*\n]+)\*\*(?=[A-Za-z0-9\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff])/g,
+      '**$1** ',
+    )
+  }).join('\n')
+}
+
 export function formatMarkdownWithProfile(
   input: FormatMarkdownInput,
   target: MarkdownTarget,
 ): string {
   const profile = getMarkdownProfile(target)
-  const body = cleanMarkdown(input.bodyMarkdown)
+  const body = normalizeStrongBoundarySpacing(cleanMarkdown(input.bodyMarkdown))
   const parts: string[] = []
   const createdAt = input.createdAt ?? new Date().toISOString()
 

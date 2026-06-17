@@ -7,7 +7,7 @@ export interface ArticleImageCandidate {
   height?: number
   sourceUrl?: string
   index: number
-  origin: 'img' | 'picture' | 'figure' | 'srcset'
+  origin: 'img' | 'picture' | 'figure' | 'srcset' | 'poster'
 }
 
 export interface ArticleImageExtractionOptions {
@@ -140,23 +140,21 @@ function isTrackingPixel(width: number, height: number, url: string): boolean {
   return false
 }
 
-function getBestSrc(el: HTMLImageElement): string | undefined {
-  const candidates: (string | null)[] = [
-    el.getAttribute('src'),
-    el.getAttribute('currentSrc'),
-    el.src || null,
-    (el as HTMLImageElement & { currentSrc?: string }).currentSrc ?? null,
-  ]
-  for (const c of candidates) {
-    if (c && c.trim()) {
-      return c.trim()
-    }
-  }
-  return undefined
-}
+const IMAGE_SOURCE_ATTRIBUTES = [
+  'src',
+  'currentSrc',
+  'data-src',
+  'data-original',
+  'data-lazy-src',
+  'data-lazy',
+  'data-actualsrc',
+  'data-original-src',
+  'data-image',
+  'data-img',
+  'data-url',
+]
 
-function getSrcsetCandidate(el: HTMLImageElement): string | undefined {
-  const srcset = el.getAttribute('srcset')
+function parseSrcsetCandidate(srcset: string | undefined | null): string | undefined {
   if (!srcset) return undefined
 
   const parts = srcset.split(',').map((s) => s.trim()).filter(Boolean)
@@ -190,6 +188,57 @@ function getSrcsetCandidate(el: HTMLImageElement): string | undefined {
 
   candidates.sort((a, b) => b.descriptor - a.descriptor)
   return candidates[0].url
+}
+
+function getSrcsetCandidate(el: Element): string | undefined {
+  return parseSrcsetCandidate(el.getAttribute('srcset'))
+    || parseSrcsetCandidate(el.getAttribute('data-srcset'))
+}
+
+function getPictureSourceCandidates(el: Element): string[] {
+  const parent = el.parentElement
+  if (!parent || parent.tagName !== 'PICTURE') return []
+
+  return Array.from(parent.querySelectorAll('source'))
+    .map((source) => getSrcsetCandidate(source) || source.getAttribute('src'))
+    .filter((src): src is string => Boolean(src?.trim()))
+}
+
+function getVideoPosterCandidate(el: Element): string | undefined {
+  if (el.tagName !== 'VIDEO') return undefined
+  return el.getAttribute('poster')?.trim() || undefined
+}
+
+function getBestSrc(el: Element): string | undefined {
+  const domImage = el as HTMLImageElement & { currentSrc?: string }
+  const candidates: string[] = []
+
+  const poster = getVideoPosterCandidate(el)
+  if (poster) candidates.push(poster)
+
+  for (const attr of IMAGE_SOURCE_ATTRIBUTES) {
+    const value = el.getAttribute(attr)
+    if (value?.trim()) candidates.push(value.trim())
+  }
+
+  if (domImage.src) candidates.push(domImage.src)
+  if (domImage.currentSrc) candidates.push(domImage.currentSrc)
+
+  const srcsetCandidate = getSrcsetCandidate(el)
+  if (srcsetCandidate) candidates.push(srcsetCandidate)
+
+  candidates.push(...getPictureSourceCandidates(el))
+
+  const unique = candidates
+    .map((candidate) => candidate.trim())
+    .filter(Boolean)
+    .filter((candidate, index, arr) => arr.indexOf(candidate) === index)
+
+  const usable = unique.find((candidate) =>
+    !isDataUri(candidate) && !isBlobUri(candidate) && !isNoiseUrl(candidate),
+  )
+
+  return usable || unique[0]
 }
 
 function resolveUrl(src: string, pageUrl?: string): string {
@@ -243,6 +292,8 @@ function findNearestSourceUrl(): string | undefined {
 }
 
 function determineOrigin(el: Element): ArticleImageCandidate['origin'] {
+  if (el.tagName === 'VIDEO') return 'poster'
+
   let parent = el.parentElement
   for (let depth = 0; depth < 5 && parent; depth++) {
     const tag = parent.tagName
@@ -251,6 +302,10 @@ function determineOrigin(el: Element): ArticleImageCandidate['origin'] {
     parent = parent.parentElement
   }
   return 'img'
+}
+
+function getLoggingSrc(el: Element): string | undefined {
+  return getBestSrc(el) || el.getAttribute('src') || el.getAttribute('poster') || undefined
 }
 
 export function extractArticleImages(
@@ -267,7 +322,7 @@ export function extractArticleImages(
   const skipped: Array<{ url?: string; reason: string }> = []
   const seenUrls = new Set<string>()
 
-  const imgElements = root.querySelectorAll('img')
+  const imgElements = root.querySelectorAll('img, video[poster]')
 
   let totalFound = 0
   let index = 0
@@ -276,17 +331,18 @@ export function extractArticleImages(
     totalFound++
 
     if (isNoiseByClassName(img) || isNoiseByAttribute(img) || isNoiseByAncestor(img)) {
-      skipped.push({ url: img.src || undefined, reason: 'noise_class_or_attr' })
+      skipped.push({ url: getLoggingSrc(img), reason: 'noise_class_or_attr' })
       continue
     }
 
     const rawWidth = img.getAttribute('width')
     const rawHeight = img.getAttribute('height')
-    const width = rawWidth ? parseInt(rawWidth, 10) : (img.naturalWidth || 0)
-    const height = rawHeight ? parseInt(rawHeight, 10) : (img.naturalHeight || 0)
+    const domImage = img as HTMLImageElement
+    const width = rawWidth ? parseInt(rawWidth, 10) : (domImage.naturalWidth || 0)
+    const height = rawHeight ? parseInt(rawHeight, 10) : (domImage.naturalHeight || 0)
 
-    if (isTrackingPixel(width, height, img.src || img.getAttribute('src') || '')) {
-      skipped.push({ url: img.src || undefined, reason: 'tracking_pixel' })
+    if (isTrackingPixel(width, height, getLoggingSrc(img) || '')) {
+      skipped.push({ url: getLoggingSrc(img), reason: 'tracking_pixel' })
       continue
     }
 

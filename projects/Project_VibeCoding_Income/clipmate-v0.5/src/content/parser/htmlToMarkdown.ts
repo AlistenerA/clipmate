@@ -4,18 +4,19 @@ import { preserveMathHtml } from '../../shared/markdown/formulaPreserve'
 import { cleanMarkdownCodeBlocks } from '../../shared/markdown/codeBlockCleaner'
 import {
   isSafeLinkHref,
-  isLikelyImageUrl,
   sanitizeMarkdownCell,
   normalizeImageMarkdown,
 } from '../../shared/markdown/mediaLinkTableNormalizer'
 import {
   isNoiseByClassName,
   isNoiseByAttribute,
+  isNoiseByAncestor,
   isNoiseUrl,
   isTrackingPixel,
   isDataUri,
   isBlobUri,
   resolveUrl,
+  getBestSrc,
 } from '../extractors/articleImages'
 
 const turndown = new TurndownService({
@@ -34,43 +35,13 @@ turndown.addRule('strikethrough', {
 turndown.addRule('img', {
   filter: 'img',
   replacement: (_content, node) => {
-    const el = node as HTMLImageElement
-
-    if (isNoiseByClassName(el) || isNoiseByAttribute(el)) return ''
-
-    const rawWidth = el.getAttribute('width')
-    const rawHeight = el.getAttribute('height')
-    const width = rawWidth ? parseInt(rawWidth, 10) : 0
-    const height = rawHeight ? parseInt(rawHeight, 10) : 0
-
-    const srcCandidates = [
-      el.getAttribute('src'),
-      el.getAttribute('currentSrc'),
-      el.getAttribute('data-src'),
-      el.getAttribute('data-original'),
-      el.getAttribute('data-lazy-src'),
-      el.getAttribute('data-lazy'),
-      el.src,
-      (el as HTMLImageElement & { currentSrc?: string }).currentSrc,
-    ]
-
-    const bestSrc = srcCandidates.find((s) => isLikelyImageUrl(s)) ?? undefined
-
-    if (bestSrc) {
-      if (isDataUri(bestSrc) || isBlobUri(bestSrc)) return ''
-      if (isNoiseUrl(bestSrc)) return ''
-    }
-
-    if (isTrackingPixel(width, height, bestSrc || el.src || el.getAttribute('src') || '')) return ''
-
-    if (width > 0 && width < 60) return ''
-    if (height > 0 && height < 40) return ''
-
-    const resolvedSrc = bestSrc && imagePageUrl ? resolveUrl(bestSrc, imagePageUrl) : bestSrc
-    const alt = el.getAttribute('alt')?.trim() || 'image'
-
-    return normalizeImageMarkdown({ src: resolvedSrc, alt })
+    return markdownForMediaElement(node as Element)
   },
+})
+
+turndown.addRule('videoPoster', {
+  filter: (node) => node.nodeName === 'VIDEO' && Boolean((node as HTMLElement).getAttribute('poster')),
+  replacement: (_content, node) => markdownForMediaElement(node as Element),
 })
 
 turndown.addRule('figure', {
@@ -94,6 +65,32 @@ turndown.addRule('figure', {
     return content
   },
 })
+
+function markdownForMediaElement(el: Element): string {
+  if (isNoiseByClassName(el) || isNoiseByAttribute(el) || isNoiseByAncestor(el)) return ''
+
+  const rawWidth = el.getAttribute('width')
+  const rawHeight = el.getAttribute('height')
+  const width = rawWidth ? parseInt(rawWidth, 10) : 0
+  const height = rawHeight ? parseInt(rawHeight, 10) : 0
+
+  const bestSrc = getBestSrc(el)
+
+  if (bestSrc) {
+    if (isDataUri(bestSrc) || isBlobUri(bestSrc)) return ''
+    if (isNoiseUrl(bestSrc)) return ''
+  }
+
+  if (isTrackingPixel(width, height, bestSrc || '')) return ''
+
+  if (width > 0 && width < 60) return ''
+  if (height > 0 && height < 40) return ''
+
+  const resolvedSrc = bestSrc && imagePageUrl ? resolveUrl(bestSrc, imagePageUrl) : bestSrc
+  const alt = el.getAttribute('alt')?.trim() || el.getAttribute('title')?.trim() || 'image'
+
+  return normalizeImageMarkdown({ src: resolvedSrc, alt })
+}
 
 turndown.addRule('anchor', {
   filter: 'a',

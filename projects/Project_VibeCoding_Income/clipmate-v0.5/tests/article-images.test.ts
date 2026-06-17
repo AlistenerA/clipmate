@@ -104,6 +104,61 @@ describe('extractArticleImages', () => {
       expect(result.images).toHaveLength(1)
       expect(result.images[0].url).toBe('https://example.com/photo-800w.jpg')
     })
+
+    it('uses lazy data-src when src is only a placeholder', () => {
+      const doc = createDocument(`
+        <img
+          src="https://example.com/transparent.png"
+          data-src="https://cdn.example.com/cctv/content-photo.jpg"
+          alt="CCTV content photo"
+          width="800"
+          height="450"
+        />
+      `)
+      const result = extractArticleImages(doc)
+
+      expect(result.images).toHaveLength(1)
+      expect(result.images[0].url).toBe('https://cdn.example.com/cctv/content-photo.jpg')
+      expect(result.images[0].alt).toBe('CCTV content photo')
+    })
+
+    it('uses best srcset candidate when src is missing', () => {
+      const doc = createDocument(`
+        <img
+          srcset="https://cdn.example.com/photo-480.jpg 480w, https://cdn.example.com/photo-960.jpg 960w"
+          alt="High resolution photo"
+        />
+      `)
+      const result = extractArticleImages(doc)
+
+      expect(result.images).toHaveLength(1)
+      expect(result.images[0].url).toBe('https://cdn.example.com/photo-960.jpg')
+    })
+
+    it('uses picture source when img source is unavailable', () => {
+      const doc = createDocument(`
+        <picture>
+          <source srcset="https://cdn.example.com/picture-1200.webp 1200w, https://cdn.example.com/picture-600.webp 600w" />
+          <img alt="Picture fallback" />
+        </picture>
+      `)
+      const result = extractArticleImages(doc)
+
+      expect(result.images).toHaveLength(1)
+      expect(result.images[0].url).toBe('https://cdn.example.com/picture-1200.webp')
+      expect(result.images[0].origin).toBe('picture')
+    })
+
+    it('extracts video poster as an image candidate', () => {
+      const doc = createDocument(`
+        <video poster="https://cdn.example.com/video-cover.jpg" width="960" height="540"></video>
+      `)
+      const result = extractArticleImages(doc)
+
+      expect(result.images).toHaveLength(1)
+      expect(result.images[0].url).toBe('https://cdn.example.com/video-cover.jpg')
+      expect(result.images[0].origin).toBe('poster')
+    })
   })
 
   describe('figure/figcaption extraction', () => {
@@ -594,6 +649,14 @@ describe('getBestSrc', () => {
     const dom = new JSDOM('<img src="data:image/png;base64,abc" />')
     const img = dom.window.document.querySelector('img')!
     expect(getBestSrc(img)).toBe('data:image/png;base64,abc')
+  })
+
+  it('prefers a real lazy image over a placeholder src', () => {
+    const dom = new JSDOM(`
+      <img src="https://example.com/spacer.gif" data-original="https://example.com/real-photo.jpg" />
+    `)
+    const img = dom.window.document.querySelector('img')!
+    expect(getBestSrc(img)).toBe('https://example.com/real-photo.jpg')
   })
 
   it('returns blob URI (filtered later by extractArticleImages)', () => {

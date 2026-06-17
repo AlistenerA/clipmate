@@ -354,6 +354,28 @@ describe('formatMarkdownWithProfile', () => {
       expect(result).not.toContain('**a****b**')
     })
 
+    it('adds a safe space after bold text before CJK text for Markdown editors', () => {
+      const input = { ...testInput, bodyMarkdown: '**央视网消息：**近日发布新消息。' }
+      const result = formatMarkdownWithProfile(input, 'obsidian')
+      expect(result).toContain('**央视网消息：** 近日发布新消息。')
+    })
+
+    it('adds a safe space after bold text before Latin text', () => {
+      const input = { ...testInput, bodyMarkdown: '**Note:**Important detail.' }
+      const result = formatMarkdownWithProfile(input, 'typora')
+      expect(result).toContain('**Note:** Important detail.')
+    })
+
+    it('does not rewrite bold-like text inside fenced code blocks', () => {
+      const input = {
+        ...testInput,
+        bodyMarkdown: '```md\n**Note:**Important detail.\n```\n\n**Note:**Important detail.',
+      }
+      const result = formatMarkdownWithProfile(input, 'typora')
+      expect(result).toContain('```md\n**Note:**Important detail.\n```')
+      expect(result).toContain('**Note:** Important detail.')
+    })
+
     it('Notion profile output matches legacy formatCopyMarkdown structure', () => {
       const result = formatMarkdownWithProfile(testInput, 'notion')
       const idxTitle = result.indexOf('# 测试文章')

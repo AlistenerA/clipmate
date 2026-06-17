@@ -2,6 +2,42 @@
 
 ---
 
+## v0.5.2 (2026-06-17)
+
+### 性质
+
+CCTV-like Image Source Recovery & Markdown Profile Compatibility 测试。覆盖懒加载图片候选统一、video poster fallback、推荐区图片过滤、Obsidian/Typora 加粗边界空格兼容，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/article-images.test.ts tests/markdown-images.test.ts tests/markdown-profiles.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/article-images.test.ts tests/markdown-images.test.ts tests/markdown-profiles.test.ts`：3 个测试文件，169 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 个测试文件，1941 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.2
+
+### 新增/更新测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Article image source candidates | 5 | placeholder `src` + `data-src/data-original`、`srcset`、`picture source`、`video poster` |
+| Markdown CCTV-like images | 3 | lazy article image、video poster fallback、推荐区 ancestor 过滤 |
+| Markdown profile spacing | 3 | CJK/Latin 粗体边界空格、fenced code block 不改写 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
 ## v0.5.1 (2026-06-17)
 
 ### 性质

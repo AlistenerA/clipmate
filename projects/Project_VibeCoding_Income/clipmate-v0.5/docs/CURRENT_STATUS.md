@@ -13,18 +13,17 @@
 
 ## 当前阶段
 
-**v0.5.1 已完成** — v0.5.x Architecture Foundation。
+**v0.5.2 已完成** — CCTV-like Image Source Recovery & Markdown Profile Compatibility。
 
-架构底座完成：
-- 新增 `src/features/capture`：统一 ClipDraft 创建、正文读取、可保存判断
-- 新增 `src/features/session`：引入 ClipSession、保存生命周期纯函数和 session → Notion payload 转换
-- 新增 `src/features/notion`：集中生成 NotionSavePlan，把校验和 blocks 构建从 background IO 中拆出
-- Popup 保存和草稿缓存入口已改用新 capture/session 边界
-- Background Notion handler 已改用 save plan，行为保持兼容
-- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.1
-- lint 0 / test 1930 pass / build 成功，dist/manifest.json version = 0.5.1
+本轮修复：
+- 统一图片候选读取逻辑，覆盖 `src` / `currentSrc` / `data-src` / `data-original` / `data-lazy-src` / `srcset` / `picture source` / `video poster`
+- 修复 CCTV-like 页面正文图片因 placeholder `src` 或懒加载属性导致丢失的问题
+- Markdown 转换复用同一图片候选规则，并继续过滤推荐区、热榜、侧栏等噪声图片
+- 复制 Markdown 的 profile 输出会在 `**加粗**正文` 之间补安全空格，改善 Obsidian / Typora 渲染兼容
+- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.2
+- lint 0 / test 1941 pass / build 成功，dist/manifest.json version = 0.5.2
 
-*下一步：沿 v0.5.x 继续逐个功能接入新底座；每完成一个功能点递增 patch 版本 0.0.1。*
+*下一步：执行 v0.5.3 Popup 保存体验优化，支持保存前编辑标题、保存摘要区和重复保存提示。*
 
 ---
 
@@ -42,6 +41,7 @@
 | Session 5.2 | ✅ 已完成 | Image Caption Placement & Markdown Image Layout Polish |
 | Session 6 | ✅ 已完成 | Release Readiness |
 | v0.5.1 | ✅ 已完成 | Architecture Foundation |
+| v0.5.2 | ✅ 已完成 | CCTV-like 图片候选修复与 Markdown profile 兼容 |
 
 ---
 
@@ -57,3 +57,4 @@
 - [x] v0.5 Session 5.2：Image Caption Placement & Markdown Image Layout Polish
 - [x] v0.5 Session 6：Release Readiness
 - [x] v0.5.1：Architecture Foundation
+- [x] v0.5.2：CCTV-like Image Source Recovery & Markdown Profile Compatibility
