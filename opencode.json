@@ -72,10 +72,9 @@
       "type": "local",
       "command": [
         "npx", "-y", "@playwright/mcp@latest",
-        "--headless",
-        "--isolated"
+        "--user-data-dir=C:\\Users\\20499\\AppData\\Local\\ClipMateQA\\playwright-profile"
       ],
-      "enabled": false,
+      "enabled": true,
       "timeout": 60000
     },
 
@@ -109,7 +108,7 @@
   },
 
   "tools": {
-    "playwright_*": false,
+    "playwright_*": true,
     "npm_*": false,
     "docker_*": false
   },
