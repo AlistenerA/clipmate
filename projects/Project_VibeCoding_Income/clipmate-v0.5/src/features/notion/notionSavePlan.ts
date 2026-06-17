@@ -1,6 +1,11 @@
 import { buildNotionBlocks } from '../../platforms/notion/blocks'
 import type { ClipMateSettingsV2 } from '../../shared/types/settings.types'
 import type { SaveToNotionPayload } from '../../shared/types/message.types'
+import {
+  createFigureAssetsFromMarkdown,
+  createImageAssetQualityReport,
+  type ImageAssetQualityReport,
+} from '../assets'
 import { getDraftBodyText } from '../capture'
 
 interface BlockObjectRequest {
@@ -18,6 +23,7 @@ export interface NotionSavePlan {
   sourceHistoryId?: string
   targetId?: string
   targetName?: string
+  assetReport: ImageAssetQualityReport
 }
 
 export type NotionSavePlanResult =
@@ -41,6 +47,12 @@ export function createNotionSavePlan(
     return { success: false, error: 'CONTENT_EMPTY' }
   }
 
+  const assets = createFigureAssetsFromMarkdown(contentText, payload.draft.content.url)
+  const assetReport = createImageAssetQualityReport(assets, {
+    target: 'notion',
+    fileUploadExternalImport: 'candidate',
+  })
+
   return {
     success: true,
     plan: {
@@ -48,6 +60,7 @@ export function createNotionSavePlan(
       pageId: payload.pageId,
       blocks: buildNotionBlocks(payload.draft),
       contentText,
+      assetReport,
       isRetryUpdate:
         Boolean(payload.sourceHistoryId) && payload.historyWriteMode === 'update',
       sourceHistoryId: payload.sourceHistoryId,

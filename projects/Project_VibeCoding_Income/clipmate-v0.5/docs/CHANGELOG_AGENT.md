@@ -2,6 +2,43 @@
 
 ---
 
+## v0.6.0：Asset Pipeline Foundation (2026-06-17)
+
+### 性质
+
+v0.6 架构主线第一步。建立图片 asset pipeline 的纯函数底座和质量报告，不改变现有保存行为，不新增权限，不接入 Notion File Upload。
+
+### 新增文件
+
+- `src/features/assets/assetPipeline.ts` — 定义 `ClipAsset` / `FigureAsset` / `ImageSaveStrategy` / `ImageAssetQualityReport`，支持图片 strategy 选择和质量报告
+- `src/features/assets/index.ts` — assets feature barrel export
+- `tests/asset-pipeline.test.ts` — 10 个 asset pipeline / Notion save plan asset report 测试
+- `docs/V0.6_ASSET_PIPELINE.md` — v0.6 asset pipeline 说明
+
+### 修改文件
+
+- `src/features/notion/notionSavePlan.ts` — `NotionSavePlan` 增加 `assetReport`，报告 Markdown 图片的 ready / candidate / blocked 状态
+- `package.json` / `manifest.config.ts` / `package-lock.json` — ClipMate 根版本 0.5.3 → 0.6.0
+- `docs/CURRENT_STATUS.md` / `docs/AGENT_CONTEXT.md` / `docs/TEST_LOG.md` / `docs/ISSUES.md` / `docs/DECISIONS.md` — 更新本轮状态、测试和决策
+
+### 测试
+
+- `npx vitest run tests/asset-pipeline.test.ts tests/architecture-foundation.test.ts`：2 files, 18 tests pass
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 files, 1959 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.6.0
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未新建 `clipmate-v0.6/`，避免一次性复制 200+ tracked files 与依赖重装
+- 未新增依赖、未新增 manifest 权限
+- 未启用 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未改变 Notion blocks 的 external image / paragraph fallback 行为
+
+---
+
 ## v0.5.3：Popup Save Summary & Duplicate Save Hints (2026-06-17)
 
 ### 性质

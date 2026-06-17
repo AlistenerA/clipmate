@@ -2,6 +2,43 @@
 
 ---
 
+## v0.6.0 (2026-06-17)
+
+### 性质
+
+Asset Pipeline Foundation 测试。覆盖 article image candidates → figure assets、Markdown 图片去重、Notion/Markdown 保存策略、File Upload external import 候选状态、失败原因和 Notion save plan `assetReport`。
+
+### 运行命令
+
+```bash
+npx vitest run tests/asset-pipeline.test.ts tests/architecture-foundation.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/asset-pipeline.test.ts tests/architecture-foundation.test.ts`：2 个测试文件，18 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 个测试文件，1959 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.6.0
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Asset creation | 2 | article image candidates、Markdown 图片去重 |
+| Image save strategy | 5 | Notion external ready、proxy/resize candidate、data/blob/relative blocked、Markdown reference、direct URL predicate |
+| Quality report | 1 | ready / candidate / blocked 统计与 issue reason |
+| Notion save plan assetReport | 2 | assetReport 挂载、File Upload candidate 报告 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
 ## v0.5.3 (2026-06-17)
 
 ### 性质

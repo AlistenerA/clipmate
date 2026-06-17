@@ -13,17 +13,18 @@
 
 ## 当前阶段
 
-**v0.5.3 已完成** — Popup Save Summary & Duplicate Save Hints。
+**v0.6.0 已完成** — Asset Pipeline Foundation。
 
 本轮修复：
-- Popup 支持保存前编辑剪藏标题，复制 Markdown 和保存 Notion 均使用编辑后的标题
-- 旧的有限正文预览区替换为保存摘要区：站点 icon、来源、字数、图片数和重复保存提示
-- 保留原文 / 预览主区域作为 Markdown 主预览，避免重复 UI
-- 重复保存提示基于本地 saved history 中的同 URL 最近记录，不扩大存储范围
-- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.3
-- lint 0 / test 1949 pass / build 成功，dist/manifest.json version = 0.5.3
+- 新增 `features/assets`，建立 `ClipAsset` / `FigureAsset` / `ImageSaveStrategy` / `ImageAssetQualityReport`
+- 支持从 article image candidates 和 Markdown 图片语法生成 figure assets
+- Notion save plan 现在携带 `assetReport`，可报告 ready / candidate / blocked 图片数量和失败原因
+- Notion File Upload external import 仅作为候选策略评估，不默认启用、不新增 manifest 权限
+- v0.6.0 继续在 `clipmate-v0.5/` 目录推进，避免为 minor foundation 做不可审查的大规模目录复制
+- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.6.0
+- lint 0 / test 1959 pass / build 成功，dist/manifest.json version = 0.6.0
 
-*下一步：进入 v0.6 Asset Pipeline foundation，建立 ClipAsset / FigureAsset / ImageSaveStrategy 与图片保存质量报告底座。*
+*下一步：执行 v0.7 Tutorial Mode foundation，建立 ClipMode / ClipDocument，并保留标题层级、公式、代码块、表格、callout、图片题注、视频链接元数据。*
 
 ---
 
@@ -43,6 +44,7 @@
 | v0.5.1 | ✅ 已完成 | Architecture Foundation |
 | v0.5.2 | ✅ 已完成 | CCTV-like 图片候选修复与 Markdown profile 兼容 |
 | v0.5.3 | ✅ 已完成 | Popup 保存摘要、可编辑标题与重复保存提示 |
+| v0.6.0 | ✅ 已完成 | Asset Pipeline foundation |
 
 ---
 
@@ -60,3 +62,4 @@
 - [x] v0.5.1：Architecture Foundation
 - [x] v0.5.2：CCTV-like Image Source Recovery & Markdown Profile Compatibility
 - [x] v0.5.3：Popup Save Summary & Duplicate Save Hints
+- [x] v0.6.0：Asset Pipeline Foundation
