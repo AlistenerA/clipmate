@@ -17,7 +17,10 @@ import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/stor
 import { formatMarkdownWithProfile } from '../shared/markdown/formatWithProfile'
 import { resolveSelectedTarget } from './utils/targetSelection'
 import { ERROR_MESSAGES } from '../shared/constants/defaults'
-import type { ClipMode, ClipDraft, MarkdownTarget } from '../shared/types/clip.types'
+import { createClipDraft } from '../features/capture'
+import { createClipSession, createSaveToNotionPayloadFromSession } from '../features/session'
+import { generateId } from '../shared/utils/id'
+import type { ClipMode, MarkdownTarget } from '../shared/types/clip.types'
 import type { ClipMateSettingsV2 } from '../shared/types/settings.types'
 
 export default function App() {
@@ -78,13 +81,11 @@ export default function App() {
 
   useEffect(() => {
     if (!content) return
-    const draft: ClipDraft = {
-      title: content.title,
+    const draft = createClipDraft({
+      content,
       tags,
       note,
-      mode: content.mode,
-      content,
-    }
+    })
     saveLastClipDraft(draft)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- use createdAt as identity to avoid infinite loop
   }, [content?.metadata?.createdAt, tags, note])
@@ -154,19 +155,21 @@ export default function App() {
     }
 
     clearResult()
-    const draft: ClipDraft = {
-      title: content.title,
+    const draft = createClipDraft({
+      content,
       tags,
       note,
-      mode: content.mode,
-      content,
-    }
-    saveToNotion({
-      draft,
-      targetId: target.id,
-      targetName: target.name,
-      pageId: target.pageId,
     })
+    const session = createClipSession({
+      id: generateId(),
+      draft,
+      target: {
+        id: target.id,
+        name: target.name,
+        pageId: target.pageId,
+      },
+    })
+    saveToNotion(createSaveToNotionPayloadFromSession(session))
   }, [content, settings, selectedTargetId, tags, note, saveToNotion, clearResult])
 
   const openOptions = useCallback(() => {

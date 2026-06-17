@@ -13,17 +13,18 @@
 
 ## 当前阶段
 
-**v0.5 Session 6 已完成** — Release Readiness。
+**v0.5.1 已完成** — v0.5.x Architecture Foundation。
 
-发布前准备工作完成：
-- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.0
-- zip 脚本更新为 clipmate-v0.5.zip
-- 发布文档更新：README / STORE_LISTING / PRIVACY_POLICY / PERMISSION_JUSTIFICATION / TEST_PLAN / RELEASE_CHECKLIST
-- 安全扫描通过（无 Token/API Key 泄露、无危险 API、无远程代码风险）
-- lint 0 / test 1922 pass / build 成功 / zip 生成 clipmate-v0.5.zip (146KB)
-- 已知限制记录完整（external image URL、Notion File Upload 未接入、image block 居中不支持等）
+架构底座完成：
+- 新增 `src/features/capture`：统一 ClipDraft 创建、正文读取、可保存判断
+- 新增 `src/features/session`：引入 ClipSession、保存生命周期纯函数和 session → Notion payload 转换
+- 新增 `src/features/notion`：集中生成 NotionSavePlan，把校验和 blocks 构建从 background IO 中拆出
+- Popup 保存和草稿缓存入口已改用新 capture/session 边界
+- Background Notion handler 已改用 save plan，行为保持兼容
+- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.1
+- lint 0 / test 1930 pass / build 成功，dist/manifest.json version = 0.5.1
 
-*下一步：等待用户 ChatGPT 审查，审查通过后由用户决定 commit 和 push。*
+*下一步：沿 v0.5.x 继续逐个功能接入新底座；每完成一个功能点递增 patch 版本 0.0.1。*
 
 ---
 
@@ -40,6 +41,7 @@
 | Session 5.1 | ✅ 已完成 | Sina Image Pollution Guard & Notion Image URL Compatibility |
 | Session 5.2 | ✅ 已完成 | Image Caption Placement & Markdown Image Layout Polish |
 | Session 6 | ✅ 已完成 | Release Readiness |
+| v0.5.1 | ✅ 已完成 | Architecture Foundation |
 
 ---
 
@@ -54,3 +56,4 @@
 - [x] v0.5 Session 5.1：Sina Image Pollution Guard & Notion Image URL Compatibility
 - [x] v0.5 Session 5.2：Image Caption Placement & Markdown Image Layout Polish
 - [x] v0.5 Session 6：Release Readiness
+- [x] v0.5.1：Architecture Foundation

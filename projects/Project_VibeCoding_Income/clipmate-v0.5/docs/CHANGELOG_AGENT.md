@@ -2,6 +2,48 @@
 
 ---
 
+## v0.5.1：Architecture Foundation (2026-06-17)
+
+### 性质
+
+v0.5.x 架构级底座更新。以 Save to Notion 参考项目的会话/目标/保存编排思路为参考，但保持 ClipMate 官方 Notion API、最小权限、可测试纯函数边界。
+
+### 新增文件
+
+- `src/features/capture/clipDraft.ts` — ClipDraft 创建、正文读取、可保存判断
+- `src/features/capture/index.ts` — capture feature barrel export
+- `src/features/session/clipSession.ts` — ClipSession、状态转换、session → SaveToNotionPayload
+- `src/features/session/index.ts` — session feature barrel export
+- `src/features/notion/notionSavePlan.ts` — NotionSavePlan 生成、保存前校验、blocks 构建
+- `src/features/notion/index.ts` — notion feature barrel export
+- `tests/architecture-foundation.test.ts` — 8 个架构底座测试
+- `docs/V0.5_X_ARCHITECTURE.md` — v0.5.x 架构说明
+
+### 修改文件
+
+- `src/popup/App.tsx` — 草稿缓存和保存入口改用 `createClipDraft()`；保存时创建 `ClipSession` 并转换为 Notion payload
+- `src/background/handlers/notionHandler.ts` — 用 `createNotionSavePlan()` 承接 token/page/content 校验、blocks 构建和 retry 元数据
+- `package.json` / `manifest.config.ts` / `package-lock.json` — ClipMate 根版本 0.5.0 → 0.5.1
+- `docs/CURRENT_STATUS.md` / `docs/AGENT_CONTEXT.md` / `docs/TEST_LOG.md` / `docs/ISSUES.md` / `docs/DECISIONS.md` — 更新本轮状态、测试和决策
+
+### 测试
+
+- `npx vitest run tests/architecture-foundation.test.ts`：1 file, 8 tests pass
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 files, 1930 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.5.1
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未新增依赖、未新增 manifest 权限
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未引入 Save to Notion 的私有接口或 cookie 依赖
+- 未 git add / commit / push
+
+---
+
 ## v0.5 Session 6：Release Readiness (2026-06-14)
 
 ### 性质

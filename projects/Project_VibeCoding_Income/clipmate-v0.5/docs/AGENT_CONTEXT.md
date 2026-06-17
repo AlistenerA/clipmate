@@ -22,6 +22,16 @@
 v0.5.0 优先使用 public image URL + Notion external image block。
 不下载图片、不上传图片、不做截图、不做 OCR。
 
+## v0.5.x 续作规则
+
+v0.5.0 发布准备完成后，架构级更新继续留在 `clipmate-v0.5/` 目录下，以 v0.5.x patch 版本推进。
+
+- 每完成一个可验证功能点，版本号递增 0.0.1
+- 旧版本目录 `clipmate-v0.1/` 到 `clipmate-v0.4/` 仍禁止修改
+- Save to Notion 参考项目只作为架构参考，不能无审查复制第三方代码
+- 不采用非官方 Notion 私有接口、cookie 依赖或新增权限，除非先完成安全/隐私评估
+- 当前 v0.5.1 已建立 `features/capture`、`features/session`、`features/notion` 三个底座模块
+
 ## Session 规划
 
 | Session | 内容 | 代码 |
@@ -33,3 +43,4 @@ v0.5.0 优先使用 public image URL + Notion external image block。
 | 4 | Popup/History Lightweight Image Metadata | 图片数量/首图 |
 | 5 | Manual QA and Site Cases | QA |
 | 6 | Release Readiness | 版本号/build/审查 |
+| v0.5.1 | Architecture Foundation | capture/session/notion 分层底座 |

@@ -1,47 +1,33 @@
 import { getSettings, addHistoryItem, updateHistoryItem } from '../../shared/storage/storage'
 import { appendBlocks } from '../../platforms/notion/client'
-import { buildNotionBlocks } from '../../platforms/notion/blocks'
 import { formatCopyMarkdown } from '../../shared/utils/formatMarkdown'
 import type { SaveToNotionPayload, SaveToNotionResponse } from '../../shared/types/message.types'
 import { logger } from '../../shared/utils/logger'
+import { createNotionSavePlan } from '../../features/notion'
 
 export async function handleSaveToNotion(
   payload: SaveToNotionPayload,
 ): Promise<SaveToNotionResponse> {
-  const { draft, targetId, targetName, pageId, sourceHistoryId, historyWriteMode } = payload
+  const { draft } = payload
   const settings = await getSettings()
+  const planResult = createNotionSavePlan(settings, payload)
 
-  if (!settings.notionToken) {
-    return { success: false, error: 'NOTION_TOKEN_MISSING' }
-  }
-  if (!pageId) {
-    return { success: false, error: 'NOTION_PAGE_ID_MISSING' }
-  }
-
-  const contentText =
-    draft.content?.markdown || draft.content?.contentText || ''
-  if (!contentText.trim()) {
-    return { success: false, error: 'CONTENT_EMPTY' }
-  }
-
-  const isRetryUpdate =
-    sourceHistoryId && historyWriteMode === 'update'
-
-  const blocks = buildNotionBlocks(draft)
+  if (!planResult.success) return planResult
+  const { plan } = planResult
 
   try {
-    await appendBlocks(settings.notionToken, pageId, blocks)
-    logger.info(`Saved ${blocks.length} blocks to Notion`)
+    await appendBlocks(plan.token, plan.pageId, plan.blocks)
+    logger.info(`Saved ${plan.blocks.length} blocks to Notion`)
 
-    if (isRetryUpdate) {
+    if (plan.isRetryUpdate && plan.sourceHistoryId) {
       const now = new Date().toISOString()
-      await updateHistoryItem(sourceHistoryId, {
+      await updateHistoryItem(plan.sourceHistoryId, {
         saveStatus: 'saved',
         savedAt: now,
-        targetId,
-        targetName,
+        targetId: plan.targetId,
+        targetName: plan.targetName,
         errorCode: undefined,
-   	updatedAt: now,
+        updatedAt: now,
       })
     } else if (settings.saveHistoryEnabled) {
       const fullMarkdown = formatCopyMarkdown(
@@ -62,11 +48,11 @@ export async function handleSaveToNotion(
         mode: draft.mode,
         tags: draft.tags,
         notePreview: draft.note.slice(0, 100),
-        contentPreview: contentText.slice(0, 100),
+        contentPreview: plan.contentText.slice(0, 100),
         markdown: fullMarkdown,
         wordCount: draft.content.wordCount,
-        targetId,
-        targetName,
+        targetId: plan.targetId,
+        targetName: plan.targetName,
         saveStatus: 'saved',
         savedAt: now,
         siteName: meta?.siteName,
@@ -85,9 +71,9 @@ export async function handleSaveToNotion(
       err instanceof Error ? err.message : 'NOTION_SAVE_FAILED'
     logger.warn(`Notion save failed: ${code}`)
 
-    if (isRetryUpdate) {
+    if (plan.isRetryUpdate && plan.sourceHistoryId) {
       const now = new Date().toISOString()
-      await updateHistoryItem(sourceHistoryId, {
+      await updateHistoryItem(plan.sourceHistoryId, {
         saveStatus: 'failed',
         errorCode: code,
         updatedAt: now,
@@ -110,11 +96,11 @@ export async function handleSaveToNotion(
         mode: draft.mode,
         tags: draft.tags,
         notePreview: draft.note.slice(0, 100),
-        contentPreview: contentText.slice(0, 100),
+        contentPreview: plan.contentText.slice(0, 100),
         markdown: fullMarkdown,
         wordCount: draft.content.wordCount,
-        targetId,
-        targetName,
+        targetId: plan.targetId,
+        targetName: plan.targetName,
         saveStatus: 'failed',
         errorCode: code,
         siteName: meta?.siteName,

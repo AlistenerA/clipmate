@@ -2,6 +2,42 @@
 
 ---
 
+## v0.5.1 (2026-06-17)
+
+### 性质
+
+Architecture Foundation 测试。覆盖 capture/session/notion 三个新 feature 边界，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/architecture-foundation.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/architecture-foundation.test.ts`：1 个测试文件，8 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 个测试文件，1930 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.1
+
+### 新增测试覆盖 (tests/architecture-foundation.test.ts, 8 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Capture draft | 3 | createClipDraft、正文读取 fallback、空正文不可保存 |
+| Clip session | 3 | 创建 session、状态转换、session → SaveToNotionPayload |
+| Notion save plan | 2 | token/page/content 校验、有效 payload 生成 blocks 和 retry metadata |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
 ## v0.5 Session 6 (2026-06-14)
 
 ### 性质
