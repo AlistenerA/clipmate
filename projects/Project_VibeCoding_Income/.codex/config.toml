@@ -1,0 +1,34 @@
+# Project-scoped Codex configuration for ClipMate work.
+#
+# Keep this file conservative: it should make future sessions easier to orient
+# without making Codex startup depend on network downloads or optional MCPs.
+
+project_doc_max_bytes = 65536
+project_doc_fallback_filenames = [
+  "../docs/CODEX_MIGRATION.md",
+  "../docs/PROJECT_MEMORY.md",
+]
+
+# Optional MCP templates.
+#
+# Enable these only after confirming the package is available locally or the
+# current session is allowed to download it. Browser QA can still be done with
+# the installed Playwright skills in Codex.
+
+[mcp_servers.playwright]
+enabled = false
+command = "npx"
+args = [
+  "-y",
+  "@playwright/mcp@0.0.76",
+  "--user-data-dir=C:\\Users\\20499\\AppData\\Local\\ClipMateQA\\codex-playwright-profile",
+]
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+
+[mcp_servers.context7]
+enabled = false
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+startup_timeout_sec = 30
+tool_timeout_sec = 120

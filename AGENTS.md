@@ -75,6 +75,38 @@ API Key 配置在**系统环境变量**（MCP server 优先读取）和项目根
 | WebFetch | ~500-2,000 | 80% |
 | Playwright | ~5,000-15,000 | 20%（仅交互）|
 
+## Chrome/Edge 插件开发工作流
+
+本仓库用于迭代 ClipMate 等 Chrome/Edge 插件。开发时默认读取当前最新版本目录（如 `projects/Project_VibeCoding_Income/clipmate-v0.5`）、上一个版本目录和 `other source/` 参考插件代码。`other source/` 仅作架构与实现参考，禁止无审查地整段复制第三方插件代码。
+
+### 工程规则
+
+- 优先遵循现有项目技术栈、目录结构、脚本和 UI 风格。
+- Manifest V3 插件重点检查：权限最小化、host permissions、content scripts、service worker 生命周期、异步消息返回、`chrome.runtime.lastError`、storage schema 迁移、CSP、剪贴板/用户数据隐私。
+- 涉及依赖/API/浏览器行为时必须查官方或主源文档；优先 `context7`、`gh_grep`、`package-registry`、WebFetch，只有需要交互/截图/真实 DOM 时才用 Playwright。
+- 涉及安全、权限、隐私、远程 API、token、剪贴板、用户内容时，必须进行安全和威胁建模检查。
+
+### 浏览器验证
+
+- 需要查看网页元素、DOM、样式、控制台、网络或扩展运行状态时，使用 Playwright MCP。
+- 插件 UI 或行为变化后，先构建，再加载 unpacked `dist` 或项目约定输出目录验证。
+- 覆盖 popup/options/content script 的核心路径，并检查空状态、错误状态、长内容、权限不足和控制台错误。
+- Chrome/Edge 差异相关问题需要分别说明验证浏览器；无法验证时明确说明原因。
+
+### 版本完成标准
+
+每完成一个版本，默认执行：
+
+1. 运行必要的 lint/typecheck/test/build。
+2. 本地生成版本归档或 zip，遵循项目已有版本命名。
+3. 检查 `git status`，只纳入本次有意修改。
+4. commit 并 push 到 GitHub；需要 PR 时创建或更新 PR。
+5. 如 GitHub Actions 失败，先读日志再修复，优先只重跑失败任务。
+
+### 远程服务器配置
+
+只有在用户提供或本机已配置 SSH host/key/目标路径时才连接远程服务器。远程改动前先确认目标环境，备份配置文件，避免输出 secrets，使用幂等命令，改完检查服务状态和日志。缺少凭据时不要假装能连接，直接说明需要的信息。
+
 ## Token 用量与费用查询
 
 安装 `token-monitor` 插件后台追踪。统计文件：`%USERPROFILE%\.config\opencode\token-stats.json`

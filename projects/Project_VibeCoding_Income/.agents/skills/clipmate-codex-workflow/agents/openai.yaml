@@ -1,0 +1,4 @@
+interface:
+  display_name: "ClipMate Codex Workflow"
+  short_description: "Continue ClipMate browser-extension development in Codex."
+  default_prompt: "Use this workflow to inspect ClipMate, plan the next version, validate browser-extension behavior, and prepare release archives safely."
