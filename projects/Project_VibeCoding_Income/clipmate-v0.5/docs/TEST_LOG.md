@@ -2,6 +2,41 @@
 
 ---
 
+## v0.5.3 (2026-06-17)
+
+### 性质
+
+Popup Save Summary & Duplicate Save Hints 测试。覆盖同 URL saved history 检索、失败记录过滤、最近保存排序、重复保存时间提示，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/popup-recent-history.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/popup-recent-history.test.ts`：1 个测试文件，8 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：50 个测试文件，1949 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.3
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Recent history lookup | 4 | 空 URL、无匹配、失败记录过滤、最近 saved 记录排序 |
+| Duplicate hint formatting | 4 | 刚刚、分钟、小时、天数提示 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
 ## v0.5.2 (2026-06-17)
 
 ### 性质

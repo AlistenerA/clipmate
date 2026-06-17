@@ -13,17 +13,17 @@
 
 ## 当前阶段
 
-**v0.5.2 已完成** — CCTV-like Image Source Recovery & Markdown Profile Compatibility。
+**v0.5.3 已完成** — Popup Save Summary & Duplicate Save Hints。
 
 本轮修复：
-- 统一图片候选读取逻辑，覆盖 `src` / `currentSrc` / `data-src` / `data-original` / `data-lazy-src` / `srcset` / `picture source` / `video poster`
-- 修复 CCTV-like 页面正文图片因 placeholder `src` 或懒加载属性导致丢失的问题
-- Markdown 转换复用同一图片候选规则，并继续过滤推荐区、热榜、侧栏等噪声图片
-- 复制 Markdown 的 profile 输出会在 `**加粗**正文` 之间补安全空格，改善 Obsidian / Typora 渲染兼容
-- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.2
-- lint 0 / test 1941 pass / build 成功，dist/manifest.json version = 0.5.2
+- Popup 支持保存前编辑剪藏标题，复制 Markdown 和保存 Notion 均使用编辑后的标题
+- 旧的有限正文预览区替换为保存摘要区：站点 icon、来源、字数、图片数和重复保存提示
+- 保留原文 / 预览主区域作为 Markdown 主预览，避免重复 UI
+- 重复保存提示基于本地 saved history 中的同 URL 最近记录，不扩大存储范围
+- 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.5.3
+- lint 0 / test 1949 pass / build 成功，dist/manifest.json version = 0.5.3
 
-*下一步：执行 v0.5.3 Popup 保存体验优化，支持保存前编辑标题、保存摘要区和重复保存提示。*
+*下一步：进入 v0.6 Asset Pipeline foundation，建立 ClipAsset / FigureAsset / ImageSaveStrategy 与图片保存质量报告底座。*
 
 ---
 
@@ -42,6 +42,7 @@
 | Session 6 | ✅ 已完成 | Release Readiness |
 | v0.5.1 | ✅ 已完成 | Architecture Foundation |
 | v0.5.2 | ✅ 已完成 | CCTV-like 图片候选修复与 Markdown profile 兼容 |
+| v0.5.3 | ✅ 已完成 | Popup 保存摘要、可编辑标题与重复保存提示 |
 
 ---
 
@@ -58,3 +59,4 @@
 - [x] v0.5 Session 6：Release Readiness
 - [x] v0.5.1：Architecture Foundation
 - [x] v0.5.2：CCTV-like Image Source Recovery & Markdown Profile Compatibility
+- [x] v0.5.3：Popup Save Summary & Duplicate Save Hints

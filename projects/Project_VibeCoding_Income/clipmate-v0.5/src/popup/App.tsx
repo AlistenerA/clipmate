@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import ClipModeToggle from './components/ClipModeToggle'
-import ContentPreview from './components/ContentPreview'
+import SaveSummary from './components/SaveSummary'
 import TagEditor from './components/TagEditor'
 import NoteEditor from './components/NoteEditor'
 import StatusBar from './components/StatusBar'
@@ -13,15 +13,16 @@ import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
 import { useCopyMarkdown } from './hooks/useCopyMarkdown'
 import { useSaveToNotion } from './hooks/useSaveToNotion'
-import { getSettings, saveLastClipDraft, getLastClipDraft } from '../shared/storage/storage'
+import { getSettings, saveLastClipDraft, getLastClipDraft, getHistory } from '../shared/storage/storage'
 import { formatMarkdownWithProfile } from '../shared/markdown/formatWithProfile'
 import { resolveSelectedTarget } from './utils/targetSelection'
+import { findMostRecentSavedHistoryByUrl } from './utils/recentHistory'
 import { ERROR_MESSAGES } from '../shared/constants/defaults'
 import { createClipDraft } from '../features/capture'
 import { createClipSession, createSaveToNotionPayloadFromSession } from '../features/session'
 import { generateId } from '../shared/utils/id'
 import type { ClipMode, MarkdownTarget } from '../shared/types/clip.types'
-import type { ClipMateSettingsV2 } from '../shared/types/settings.types'
+import type { ClipHistoryItem, ClipMateSettingsV2 } from '../shared/types/settings.types'
 
 export default function App() {
   const { tab } = useCurrentTab()
@@ -36,6 +37,8 @@ export default function App() {
   const [selectedTargetId, setSelectedTargetId] = useState<string>('')
   const [mdTarget, setMdTarget] = useState<MarkdownTarget>('notion')
   const [showPreview, setShowPreview] = useState(true)
+  const [draftTitle, setDraftTitle] = useState('')
+  const [recentHistory, setRecentHistory] = useState<ClipHistoryItem | null>(null)
   const initRef = useRef(false)
 
   useEffect(() => {
@@ -65,7 +68,17 @@ export default function App() {
       }
 
       if (draft?.content && draft.content.url && activeUrl === draft.content.url) {
-        setContent(draft.content)
+        const restoredTitle = draft.title || draft.content.title
+        const restoredContent = {
+          ...draft.content,
+          title: restoredTitle,
+          metadata: {
+            ...draft.content.metadata,
+            title: restoredTitle,
+          },
+        }
+        setContent(restoredContent)
+        setDraftTitle(restoredTitle)
         setTags(draft.tags)
         setNote(draft.note)
         setMode(draft.mode)
@@ -81,14 +94,39 @@ export default function App() {
 
   useEffect(() => {
     if (!content) return
+    const title = draftTitle.trim() || content.title
     const draft = createClipDraft({
       content,
       tags,
       note,
+      title,
     })
     saveLastClipDraft(draft)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- use createdAt as identity to avoid infinite loop
-  }, [content?.metadata?.createdAt, tags, note])
+  }, [content?.metadata?.createdAt, tags, note, draftTitle])
+
+  useEffect(() => {
+    if (!content) {
+      setDraftTitle('')
+      setRecentHistory(null)
+      return
+    }
+    setDraftTitle(content.title)
+  }, [content])
+
+  const refreshRecentHistory = useCallback(async () => {
+    if (!content?.url) {
+      setRecentHistory(null)
+      return
+    }
+
+    const history = await getHistory()
+    setRecentHistory(findMostRecentSavedHistoryByUrl(history, content.url))
+  }, [content?.url])
+
+  useEffect(() => {
+    refreshRecentHistory()
+  }, [refreshRecentHistory, saved])
 
   const statusLabel: 'idle' | 'loading' | 'success' | 'error' = loading
     ? 'loading'
@@ -100,9 +138,10 @@ export default function App() {
 
   const displayMarkdown = useMemo(() => {
     if (!content) return ''
+    const title = draftTitle.trim() || content.title
     return formatMarkdownWithProfile(
       {
-        title: content.title,
+        title,
         url: content.url,
         tags,
         note,
@@ -113,7 +152,7 @@ export default function App() {
       },
       mdTarget,
     )
-  }, [content, tags, note, mdTarget])
+  }, [content, tags, note, mdTarget, draftTitle])
 
   useEffect(() => {
     resetCopy()
@@ -155,10 +194,12 @@ export default function App() {
     }
 
     clearResult()
+    const title = draftTitle.trim() || content.title
     const draft = createClipDraft({
       content,
       tags,
       note,
+      title,
     })
     const session = createClipSession({
       id: generateId(),
@@ -170,7 +211,7 @@ export default function App() {
       },
     })
     saveToNotion(createSaveToNotionPayloadFromSession(session))
-  }, [content, settings, selectedTargetId, tags, note, saveToNotion, clearResult])
+  }, [content, settings, selectedTargetId, tags, note, draftTitle, saveToNotion, clearResult])
 
   const openOptions = useCallback(() => {
     chrome.runtime.openOptionsPage()
@@ -193,13 +234,15 @@ export default function App() {
         disabled={loading}
       />
 
-      <div className="max-h-48 overflow-y-auto border border-gray-100 rounded p-2.5 bg-gray-50">
-        <ContentPreview
-          content={content}
-          loading={loading}
-          error={error}
-        />
-      </div>
+      <SaveSummary
+        content={content}
+        loading={loading}
+        error={error}
+        title={draftTitle}
+        onTitleChange={setDraftTitle}
+        disabled={loading}
+        recentHistory={recentHistory}
+      />
 
       <StatusBar
         mode={mode}

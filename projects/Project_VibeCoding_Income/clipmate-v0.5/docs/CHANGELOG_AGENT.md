@@ -2,6 +2,43 @@
 
 ---
 
+## v0.5.3：Popup Save Summary & Duplicate Save Hints (2026-06-17)
+
+### 性质
+
+优化 Popup 保存体验。支持保存前编辑标题，将原有限正文预览替换为保存摘要区，并基于本地历史记录提示同 URL 重复保存。不新增权限、不改变 Notion API 策略。
+
+### 新增文件
+
+- `src/popup/components/SaveSummary.tsx` — 保存摘要组件，展示站点 icon、可编辑标题、来源、字数、图片数和重复保存提示
+- `src/popup/utils/recentHistory.ts` — 从本地 history 中查找同 URL 最近 saved 记录并格式化时间提示
+- `tests/popup-recent-history.test.ts` — 8 个 recent history 单元测试
+
+### 修改文件
+
+- `src/popup/App.tsx` — 接入保存摘要、可编辑标题、保存草稿标题、复制 Markdown 标题和 Notion 保存标题；保存成功后刷新重复保存提示
+- `src/popup/components/ContentPreview.tsx` — 删除旧的有限正文预览组件，避免与主 Markdown 原文/预览区域重复
+- `package.json` / `manifest.config.ts` / `package-lock.json` — ClipMate 根版本 0.5.2 → 0.5.3
+- `docs/CURRENT_STATUS.md` / `docs/AGENT_CONTEXT.md` / `docs/TEST_LOG.md` / `docs/ISSUES.md` / `docs/DECISIONS.md` — 更新本轮状态、测试和决策
+
+### 测试
+
+- `npx vitest run tests/popup-recent-history.test.ts`：1 file, 8 tests pass
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：50 files, 1949 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.5.3
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未新增依赖、未新增 manifest 权限
+- 未接入 Notion File Upload API
+- 未下载/上传/缓存图片
+- 未修改 Options/History 页面结构
+- 未引入 Save to Notion 的私有接口或 cookie 依赖
+
+---
+
 ## v0.5.2：CCTV-like Image Source Recovery & Markdown Profile Compatibility (2026-06-17)
 
 ### 性质

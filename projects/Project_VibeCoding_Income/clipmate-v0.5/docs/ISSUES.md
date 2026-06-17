@@ -2,14 +2,14 @@
 
 ---
 
-## v0.5.2 状态（图片候选与 Markdown profile 修复）
+## v0.5.3 状态（Popup 保存体验优化）
 
-v0.5.2 完成 CCTV-like 图片丢失与 Markdown profile 渲染兼容修复。
+v0.5.3 完成 Popup 保存摘要、保存前标题编辑和同 URL 重复保存提示。
 
-- 1941 个测试全部通过
+- 1949 个测试全部通过
 - lint 0 errors, 0 warnings
 - build 成功
-- dist/manifest.json version = 0.5.2
+- dist/manifest.json version = 0.5.3
 - manifest 权限无变更
 
 ---
@@ -36,6 +36,9 @@ v0.5.2 完成 CCTV-like 图片丢失与 Markdown profile 渲染兼容修复。
 | IS37 | ClipSession 生命周期暂未持久化，也未替换现有 popup hook 状态 | minor | v0.5.1 底座限制，后续功能接入时推进 |
 | IS38 | CCTV-like 页面正文图片因 placeholder src / lazy source / video poster 丢失 | major | ✅ v0.5.2 修复 |
 | IS39 | Obsidian/Typora 中 `**加粗**正文` 紧贴导致渲染兼容问题 | medium | ✅ v0.5.2 修复 |
+| IS40 | Popup 有限正文预览与主 Markdown 预览重复 | medium | ✅ v0.5.3 替换为保存摘要 |
+| IS41 | 保存前不能编辑剪藏标题 | medium | ✅ v0.5.3 修复 |
+| IS42 | 同一 URL 重复保存前缺少提醒 | minor | ✅ v0.5.3 基于 saved history 提示 |
 
 ---
 
