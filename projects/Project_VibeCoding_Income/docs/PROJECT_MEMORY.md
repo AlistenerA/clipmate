@@ -20,11 +20,11 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.5`.
-- v0.5 goal: article image saving via external image URLs.
-- v0.5 has extensive tests; prior docs recorded lint, tests, build, and zip passing.
-- During Codex migration on 2026-06-17, lint passed and tests passed after escalation. Build could not be re-verified because the required escalation was rejected.
+- Active version: `clipmate-v0.6`.
+- v0.6 goal: asset pipeline foundation on top of article image saving via external image URLs.
+- v0.6 has extensive tests; latest recorded checks passed lint, full tests, build, and local zip archive.
 - `clipmate-v0.1` through `clipmate-v0.4` should remain frozen unless explicitly requested.
+- `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` at the user's request, so there is no standalone v0.5 directory after this migration.
 - `other source/4.0.13` exists as reference code and should remain read-only input.
 
 ## Current Git Awareness
@@ -59,7 +59,7 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
-- Create `clipmate-v0.6` from `clipmate-v0.5` if the next feature set is versioned.
+- Create `clipmate-v0.7` from `clipmate-v0.6` on a new `codex/` branch for tutorial mode.
 - Review known v0.5 watch-list items in `docs/PROJECT_ARCHITECTURE.md`.
 - Use `other source/` to compare mature clipping, Notion, or browser-extension patterns.
 - Add browser QA for real pages and real Notion saves before declaring the next version complete.

@@ -1,4 +1,4 @@
-# CURRENT_STATUS.md — ClipMate v0.5 当前进度
+# CURRENT_STATUS.md — ClipMate v0.6 当前进度
 
 > 每轮 agent 从这里续接。
 >
@@ -7,7 +7,7 @@
 > - `clipmate-v0.2/` = v0.2 稳定快照，禁止修改
 > - `clipmate-v0.3/` = v0.3 稳定快照，禁止修改
 > - `clipmate-v0.4/` = v0.4 稳定基线，禁止修改
-> - `clipmate-v0.5/` = 当前 v0.5 开发目录
+> - `clipmate-v0.6/` = 当前 v0.6 开发目录
 
 ---
 
@@ -21,6 +21,8 @@
 - Notion save plan 现在携带 `assetReport`，可报告 ready / candidate / blocked 图片数量和失败原因
 - Notion File Upload external import 仅作为候选策略评估，不默认启用、不新增 manifest 权限
 - v0.6.0 继续在 `clipmate-v0.5/` 目录推进，避免为 minor foundation 做不可审查的大规模目录复制
+- 用户明确要求后，当前版本目录已由 `clipmate-v0.5/` 正式迁移为 `clipmate-v0.6/`
+- 本地归档脚本更新为生成 `clipmate-v0.6.zip`
 - 版本号统一：package.json / manifest.config.ts / package-lock.json → 0.6.0
 - lint 0 / test 1959 pass / build 成功，dist/manifest.json version = 0.6.0
 
@@ -28,7 +30,7 @@
 
 ---
 
-## v0.5 Session 进度
+## v0.5/v0.6 Session 进度
 
 | Session | 状态 | 描述 |
 |:---:|:---:|------|

@@ -2,6 +2,34 @@
 
 ---
 
+## v0.6.0 Folder Promotion (2026-06-17)
+
+### 性质
+
+版本目录迁移验证。确认 `clipmate-v0.5/` 已迁移为 `clipmate-v0.6/`，版本号保持 0.6.0，并生成本地 v0.6 zip 归档。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 个测试文件，1959 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.6.0
+- `npm run zip`：成功，生成本地 `clipmate-v0.6.zip`
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时可能触发 `Access is denied`，需按规则用同一命令在沙箱外重跑。
+
+---
+
 ## v0.6.0 (2026-06-17)
 
 ### 性质

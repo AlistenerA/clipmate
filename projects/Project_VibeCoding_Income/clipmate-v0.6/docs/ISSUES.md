@@ -11,6 +11,7 @@ v0.6.0 完成图片 asset pipeline 底座和 Notion save plan 图片质量报告
 - build 成功
 - dist/manifest.json version = 0.6.0
 - manifest 权限无变更
+- 当前目录已迁移为 `clipmate-v0.6/`
 
 ---
 
@@ -41,7 +42,7 @@ v0.6.0 完成图片 asset pipeline 底座和 Notion save plan 图片质量报告
 | IS42 | 同一 URL 重复保存前缺少提醒 | minor | ✅ v0.5.3 基于 saved history 提示 |
 | IS43 | 图片保存缺少统一 asset / strategy / quality report 抽象 | major | ✅ v0.6.0 建立底座 |
 | IS44 | Notion proxy/resize 图片 URL 缺少 File Upload 候选评估 | medium | ✅ v0.6.0 只做候选策略，不启用 |
-| IS45 | v0.6 是否新建目录可能导致一次性大规模复制和依赖重装 | minor | ✅ v0.6.0 决定继续在 clipmate-v0.5 小步推进 |
+| IS45 | v0.6 是否新建目录可能导致一次性大规模复制和依赖重装 | minor | ✅ 用户要求后已迁移为 clipmate-v0.6 |
 
 ---
 

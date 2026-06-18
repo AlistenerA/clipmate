@@ -1,15 +1,16 @@
-# ClipMate v0.5 Project Architecture
+# ClipMate v0.6 Project Architecture
 
 Last updated: 2026-06-17.
 
 ## Product Shape
 
-ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.5` focuses on article image preservation by sending external image URLs to Notion, without downloading, uploading, caching, OCR, or screenshots.
+ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.6` keeps v0.5 article image preservation and adds an asset pipeline foundation for image save strategy and quality reporting, without downloading, uploading, caching, OCR, or screenshots.
 
 ## Repository Map
 
-- `clipmate-v0.5/`: active version and source of truth for current development.
+- `clipmate-v0.6/`: active version and source of truth for current development.
 - `clipmate-v0.1/` to `clipmate-v0.4/`: frozen historical versions.
+- `clipmate-v0.5/`: promoted/renamed to `clipmate-v0.6` by user instruction; no standalone v0.5 directory remains.
 - `other source/`: reference plugin code for comparison.
 - `测试文档/`: test notes and artifacts from previous work.
 - `docs/`: project-level Codex migration, architecture, and memory docs.
@@ -42,17 +43,18 @@ flowchart LR
 
 ## Main Entry Points
 
-- `clipmate-v0.5/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
-- `clipmate-v0.5/src/background/index.ts`: runtime message dispatch; currently handles `SAVE_TO_NOTION`.
-- `clipmate-v0.5/src/background/handlers/notionHandler.ts`: validates payloads, builds Notion blocks, appends to Notion, and writes success/failure history.
-- `clipmate-v0.5/src/content/index.ts`: full-page extraction, selection extraction, comment-context extraction, low-confidence fallback, and image metadata attachment.
-- `clipmate-v0.5/src/content/parser/htmlToMarkdown.ts`: HTML to Markdown conversion, image Markdown preservation, formulas, tables, links, and cleanup.
-- `clipmate-v0.5/src/content/extractors/articleImages.ts`: article image discovery, URL resolution, noise filtering, and metadata counts.
-- `clipmate-v0.5/src/platforms/notion/blocks.ts`: Markdown to Notion block conversion, including external image block fallback.
-- `clipmate-v0.5/src/platforms/notion/client.ts`: Notion request batching and error-code mapping.
-- `clipmate-v0.5/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
-- `clipmate-v0.5/src/popup/App.tsx`: popup workflow, extraction mode, preview/original tabs, copy/save actions, and draft persistence.
-- `clipmate-v0.5/src/options/App.tsx`: settings and history UI.
+- `clipmate-v0.6/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
+- `clipmate-v0.6/src/background/index.ts`: runtime message dispatch; currently handles `SAVE_TO_NOTION`.
+- `clipmate-v0.6/src/background/handlers/notionHandler.ts`: validates payloads, builds Notion blocks, appends to Notion, and writes success/failure history.
+- `clipmate-v0.6/src/content/index.ts`: full-page extraction, selection extraction, comment-context extraction, low-confidence fallback, and image metadata attachment.
+- `clipmate-v0.6/src/content/parser/htmlToMarkdown.ts`: HTML to Markdown conversion, image Markdown preservation, formulas, tables, links, and cleanup.
+- `clipmate-v0.6/src/content/extractors/articleImages.ts`: article image discovery, URL resolution, noise filtering, and metadata counts.
+- `clipmate-v0.6/src/features/assets/assetPipeline.ts`: asset model, image save strategy selection, and image quality reports.
+- `clipmate-v0.6/src/platforms/notion/blocks.ts`: Markdown to Notion block conversion, including external image block fallback.
+- `clipmate-v0.6/src/platforms/notion/client.ts`: Notion request batching and error-code mapping.
+- `clipmate-v0.6/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
+- `clipmate-v0.6/src/popup/App.tsx`: popup workflow, extraction mode, preview/original tabs, copy/save actions, and draft persistence.
+- `clipmate-v0.6/src/options/App.tsx`: settings and history UI.
 
 ## Core Data Flows
 
@@ -78,7 +80,7 @@ Notion saving:
 4. Blocks are appended in batches.
 5. History is written or updated with status and lightweight image metadata.
 
-Image handling in v0.5:
+Image handling in v0.6:
 
 1. Content extraction resolves article image URLs relative to the page.
 2. No binary image content is stored or uploaded.
@@ -87,9 +89,10 @@ Image handling in v0.5:
 5. Unsupported or risky image URLs fall back to paragraph text.
 6. Image block failures should not block body text saving.
 
-## Durable v0.5 Decisions
+## Durable v0.5/v0.6 Decisions
 
-- Keep image support URL-only.
+- Keep active image support URL-only.
+- File Upload external import remains a candidate strategy only until explicit review and QA.
 - Do not add image download/upload/cache/OCR/screenshot behavior in v0.5.
 - Keep extraction pure where possible: no network, storage, or Chrome API dependency in image extraction helpers.
 - Store only lightweight history metadata: `imageCount`, `firstImageUrl`, and `skippedImageCount`.

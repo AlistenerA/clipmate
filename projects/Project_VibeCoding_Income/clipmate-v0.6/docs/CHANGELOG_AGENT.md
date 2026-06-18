@@ -2,6 +2,34 @@
 
 ---
 
+## v0.6.0：Version Folder Promotion & Archive Script (2026-06-17)
+
+### 性质
+
+按用户新的版本隔离规则，将当前已完成的 v0.6 从 `clipmate-v0.5/` 正式迁移为 `clipmate-v0.6/`，并更新活跃版本文档与本地归档命名。
+
+### 修改文件
+
+- `clipmate-v0.5/` → `clipmate-v0.6/` — 版本目录迁移
+- `package.json` — zip 脚本从 `clipmate-v0.5.zip` 更新为 `clipmate-v0.6.zip`
+- `docs/CURRENT_STATUS.md` / `docs/AGENT_CONTEXT.md` — 当前目录和 v0.6 续作规则更新
+- 项目级 `docs/PROJECT_MEMORY.md` / `docs/CODEX_MIGRATION.md` / `docs/PROJECT_ARCHITECTURE.md` — 当前活跃版本更新为 `clipmate-v0.6`
+
+### 测试
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 files, 1959 tests pass
+- `npm run build`：成功，dist/manifest.json version = 0.6.0
+- `npm run zip`：成功，生成本地 `clipmate-v0.6.zip`
+
+### 未修改
+
+- 未修改 `clipmate-v0.1/` / `clipmate-v0.2/` / `clipmate-v0.3/` / `clipmate-v0.4/`
+- 未新增依赖、未新增 manifest 权限
+- 未提交 `dist/` / `node_modules/` / zip
+
+---
+
 ## v0.6.0：Asset Pipeline Foundation (2026-06-17)
 
 ### 性质

@@ -1,8 +1,8 @@
-# AGENT_CONTEXT.md — ClipMate v0.5
+# AGENT_CONTEXT.md — ClipMate v0.6
 
 ## 当前开发版本
 
-**clipmate-v0.5/** — 当前唯一开发目录。v0.6.0 继续在该目录推进，以保持可测试小步提交；不修改 v0.1-v0.4。
+**clipmate-v0.6/** — 当前唯一开发目录。v0.5 已按用户要求迁移为 v0.6 目录；不修改 v0.1-v0.4。
 
 ## 历史/稳定版本（禁止修改）
 
@@ -10,24 +10,26 @@
 - `clipmate-v0.2/` — 稳定公开发布
 - `clipmate-v0.3/` — 稳定公开发布
 - `clipmate-v0.4/` — v0.4 稳定基线（Site Profiles and Scenario Modes）
+- `clipmate-v0.5/` — 已迁移为 `clipmate-v0.6/`，不再作为独立目录存在
 
-## v0.5 主目标
+## v0.6 主目标
 
-**Article Image Saving（文章图片保存）**
+**Asset Pipeline Foundation（图片资源保存底座）**
 
-让 ClipMate 在剪藏文章时更好保留正文中的关键图片，生成可读的 Markdown 图片语法，在 Notion 中显示为 external image block。
+在 v0.5 文章图片保存能力上，建立 `ClipAsset` / `FigureAsset` / `ImageSaveStrategy` / `assetReport`，为后续更可靠的图片保存、教程模式和导出适配器打底。
 
-## v0.5 版本定位
+## v0.6 版本定位
 
-v0.5.0 优先使用 public image URL + Notion external image block。
-不下载图片、不上传图片、不做截图、不做 OCR。
+v0.6.0 仍优先使用 public image URL + Notion external image block。
+不下载图片、不上传图片、不做截图、不做 OCR；Notion File Upload 仅作为候选策略记录。
 
-## v0.5.x 续作规则
+## v0.6+ 续作规则
 
-v0.5.0 发布准备完成后，架构级更新继续留在 `clipmate-v0.5/` 目录下，以 v0.5.x patch 版本推进。
+每个新的可发布 0.x 大版本必须新建 `codex/` 分支和新的版本目录，从上一稳定目录复制后开发；旧目录冻结。
 
-- 每完成一个可验证功能点，版本号递增 0.0.1
+- 每完成一个可验证大版本，版本号递增 0.1.0
 - 旧版本目录 `clipmate-v0.1/` 到 `clipmate-v0.4/` 仍禁止修改
+- v0.7 起保留 `clipmate-v0.6/` 冻结目录，并在新分支中创建 `clipmate-v0.7/`
 - Save to Notion 参考项目只作为架构参考，不能无审查复制第三方代码
 - 不采用非官方 Notion 私有接口、cookie 依赖或新增权限，除非先完成安全/隐私评估
 - 当前 v0.6.0 已建立 `features/capture`、`features/session`、`features/notion`、`features/assets` 四个底座模块；`NotionSavePlan` 携带图片质量报告，但实际保存仍沿用现有 external URL / paragraph fallback 行为

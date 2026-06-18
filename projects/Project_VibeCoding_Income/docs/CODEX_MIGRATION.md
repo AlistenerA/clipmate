@@ -7,8 +7,9 @@ This document converts the earlier opencode workflow into a Codex-native workflo
 ## Current Baseline
 
 - Active product: ClipMate, a Manifest V3 browser extension for clipping web content into Notion.
-- Current working version: `clipmate-v0.5`.
+- Current working version: `clipmate-v0.6`.
 - Frozen historical versions: `clipmate-v0.1` through `clipmate-v0.4`; use them for comparison only.
+- `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` by explicit user instruction.
 - Reference code: `other source/`; treat all files there as read-only design references, not as code to copy blindly.
 - Historical planning material exists under the archived ChatGPT/session files. Use it for intent and lessons learned, but let the current code and current docs win when they conflict.
 
@@ -37,7 +38,7 @@ The project `.codex/config.toml` raises project-doc context size and includes di
 1. Orient first.
    - Check `git status --short`.
    - Identify the active version directory and whether the task affects code, UX, permissions, storage, tests, docs, build output, archive output, or GitHub state.
-   - Read `clipmate-v0.5/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
+   - Read the active version docs, currently `clipmate-v0.6/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
 
 2. Accept user input in the lightweight future mode.
    - The user will usually provide feature ideas, bug descriptions, screenshots, or reference code.
@@ -73,7 +74,8 @@ The project `.codex/config.toml` raises project-doc context size and includes di
 - Completed versions must have a local archive plus GitHub push.
 - Use explicit staging, never `git add .`.
 - Keep `other source/`, `.opencode/`, `.playwright-mcp/`, `.wolf/`, and generated scratch artifacts out of release commits unless the user explicitly says they are part of the deliverable.
-- When creating the next version, copy forward from the current stable version into a new isolated directory such as `clipmate-v0.6`, then make version-local changes there.
+- When creating the next version, first create/switch to a new `codex/` branch, then copy forward from the current stable version into a new isolated directory such as `clipmate-v0.7`, then make version-local changes there.
+- Completed publishable major versions should keep a local zip archive, but generated zip files remain untracked unless the user explicitly asks to commit release artifacts.
 
 ## Remote Server Policy
 
