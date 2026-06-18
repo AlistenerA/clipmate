@@ -56,7 +56,7 @@ describe('buildNotionBlocks', () => {
 
     const urlBlock = blocks.find(
       (b) =>
-        b.type === 'paragraph' &&
+        b.type === 'callout' &&
         JSON.stringify(b).includes('https://example.com/article/1'),
     )
     expect(urlBlock).toBeDefined()
@@ -69,7 +69,6 @@ describe('buildNotionBlocks', () => {
 
     const hasUrlBlock = blocks.some(
       (b) =>
-        b.type === 'paragraph' &&
         JSON.stringify(b).includes('来源：'),
     )
     expect(hasUrlBlock).toBe(false)
@@ -81,7 +80,7 @@ describe('buildNotionBlocks', () => {
 
     const tagBlock = blocks.find(
       (b) =>
-        b.type === 'paragraph' &&
+        b.type === 'callout' &&
         JSON.stringify(b).includes('#技术'),
     )
     expect(tagBlock).toBeDefined()
@@ -103,7 +102,7 @@ describe('buildNotionBlocks', () => {
     const draft = makeDraft({ note: '重要备注' })
     const blocks = buildNotionBlocks(draft)
 
-    const noteBlock = blocks.find((b) => b.type === 'callout')
+    const noteBlock = blocks.find((b) => b.type === 'callout' && JSON.stringify(b).includes('📝'))
     expect(noteBlock).toBeDefined()
     const callout = (noteBlock as Record<string, unknown>).callout as Record<string, unknown>
     expect(callout.icon).toEqual({ emoji: '📝' })
@@ -115,7 +114,7 @@ describe('buildNotionBlocks', () => {
     draft.content.url = ''
     const blocks = buildNotionBlocks(draft)
 
-    const callouts = blocks.filter((b) => b.type === 'callout')
+    const callouts = blocks.filter((b) => b.type === 'callout' && JSON.stringify(b).includes('📝'))
     expect(callouts.length).toBeGreaterThanOrEqual(3)
 
     for (const calloutBlock of callouts) {
@@ -140,7 +139,7 @@ describe('buildNotionBlocks', () => {
     const draft = makeDraft({ note: '   ' })
     const blocks = buildNotionBlocks(draft)
 
-    const hasNoteBlock = blocks.some((b) => b.type === 'callout')
+    const hasNoteBlock = blocks.some((b) => b.type === 'callout' && JSON.stringify(b).includes('📝'))
     expect(hasNoteBlock).toBe(false)
   })
 

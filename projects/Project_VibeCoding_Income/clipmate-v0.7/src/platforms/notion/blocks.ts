@@ -9,6 +9,7 @@ interface BlockObjectRequest {
 }
 
 const MAX_TEXT_LENGTH = 2000
+const MAX_NESTED_BLOCKS = 100
 
 const IMAGE_MARKDOWN_RE = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/
 
@@ -160,6 +161,44 @@ function calloutIcon(kind: Extract<ClipDocumentBlock, { type: 'callout' }>['kind
   }
 }
 
+function tutorialTableBlocks(block: Extract<ClipDocumentBlock, { type: 'table' }>): BlockObjectRequest[] {
+  const width = Math.max(block.header.length, ...block.rows.map((row) => row.length), 0)
+  if (width === 0) return []
+
+  const makeRow = (row: string[]) => ({
+    object: 'block',
+    type: 'table_row',
+    table_row: {
+      cells: Array.from({ length: width }, (_, index) =>
+        chunkText(row[index] || '').flatMap(richText),
+      ),
+    },
+  })
+
+  const hasHeader = block.header.length > 0
+  const dataRowsPerTable = hasHeader ? MAX_NESTED_BLOCKS - 1 : MAX_NESTED_BLOCKS
+  const rowGroups = block.rows.length > 0
+    ? Array.from(
+      { length: Math.ceil(block.rows.length / dataRowsPerTable) },
+      (_, index) => block.rows.slice(index * dataRowsPerTable, (index + 1) * dataRowsPerTable),
+    )
+    : [[]]
+
+  return rowGroups.map((rows) => ({
+    object: 'block',
+    type: 'table',
+    table: {
+      table_width: width,
+      has_column_header: hasHeader,
+      has_row_header: false,
+      children: [
+        ...(hasHeader ? [makeRow(block.header)] : []),
+        ...rows.map(makeRow),
+      ],
+    },
+  }))
+}
+
 function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
   switch (block.type) {
     case 'heading': {
@@ -183,7 +222,7 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
         },
       }))
     case 'formula':
-      if (block.expression.length > 1000) {
+      if (!block.expression.trim() || block.expression.length > 1000) {
         return textBlocks(`$$\n${block.expression}\n$$`, paragraphBlock)
       }
       return [{
@@ -191,30 +230,8 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
         type: 'equation',
         equation: { expression: block.expression },
       }]
-    case 'table': {
-      const rows = [block.header, ...block.rows]
-      const width = Math.max(...rows.map((row) => row.length), 0)
-      if (width === 0) return []
-      const children = rows.map((row) => ({
-        object: 'block',
-        type: 'table_row',
-        table_row: {
-          cells: Array.from({ length: width }, (_, index) =>
-            chunkText(row[index] || '').flatMap(richText),
-          ),
-        },
-      }))
-      return [{
-        object: 'block',
-        type: 'table',
-        table: {
-          table_width: width,
-          has_column_header: block.header.length > 0,
-          has_row_header: false,
-          children,
-        },
-      }]
-    }
+    case 'table':
+      return tutorialTableBlocks(block)
     case 'callout':
       return textBlocks(block.markdown, (chunk) => ({
         object: 'block',
@@ -225,7 +242,7 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
         },
       }))
     case 'figure': {
-      const image = tryImageBlock(block.url, block.caption || block.alt)
+      const image = tryImageBlock(block.url, block.caption || '')
       return image ? [image] : [paragraphBlock(`![${block.alt}](${block.url})`)]
     }
     case 'video':
@@ -247,6 +264,68 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
 
 export function clipDocumentToNotionBlocks(document: ClipDocument): BlockObjectRequest[] {
   return document.blocks.flatMap(tutorialBlockToNotion)
+}
+
+function modeLabel(mode: ClipDraft['mode']): string {
+  if (mode === 'selection') return '选区'
+  if (mode === 'tutorial') return '教程'
+  return '全文'
+}
+
+function formatMetadataTime(value?: string): string | undefined {
+  if (!value) return undefined
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value.slice(0, 32)
+  return date.toISOString().slice(0, 16).replace('T', ' ')
+}
+
+function metadataHeaderBlock(draft: ClipDraft): BlockObjectRequest {
+  const meta = draft.content.metadata
+  const rows: string[] = []
+  if (meta.siteName) rows.push(`站点：${meta.siteName}`)
+  if (meta.author) rows.push(`作者：${meta.author}`)
+  const publishedAt = formatMetadataTime(meta.publishedAt)
+  if (publishedAt) rows.push(`发布：${publishedAt}`)
+  rows.push(`模式：${modeLabel(draft.mode)}`)
+  const clippedAt = formatMetadataTime(meta.createdAt)
+  if (clippedAt) rows.push(`剪藏：${clippedAt}`)
+  if (draft.tags.length > 0) rows.push(`标签：${draft.tags.map((tag) => `#${tag}`).join(' ')}`)
+
+  const url = draft.content.url?.trim()
+  const headerRichText: ReturnType<typeof richText> = []
+  if (url && /^https?:\/\//i.test(url)) {
+    let label = url
+    try {
+      label = new URL(url).hostname || url
+    } catch {
+      label = url
+    }
+    headerRichText.push(...richText('来源：'))
+    headerRichText.push({
+      type: 'text',
+      text: { content: label.slice(0, MAX_TEXT_LENGTH), link: { url } },
+      annotations: {
+        bold: false,
+        italic: false,
+        strikethrough: false,
+        underline: false,
+        code: false,
+        color: 'default',
+      },
+    })
+    if (rows.length > 0) headerRichText.push(...richText('\n'))
+  }
+  if (rows.length > 0) headerRichText.push(...richText(rows.join('\n')))
+
+  return {
+    object: 'block',
+    type: 'callout',
+    callout: {
+      rich_text: headerRichText,
+      icon: { emoji: '🔖' },
+      color: 'gray_background',
+    },
+  }
 }
 
 export function markdownToContentBlocks(contentText: string): BlockObjectRequest[] {
@@ -312,39 +391,7 @@ export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
     heading_2: { rich_text: richText(title) },
   })
 
-  const url = draft.content?.url || ''
-  if (url) {
-    const displayUrl = `来源：${url}`.slice(0, MAX_TEXT_LENGTH)
-    blocks.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [
-          {
-            type: 'text',
-            text: { content: displayUrl, link: { url } },
-          },
-        ],
-      },
-    })
-  }
-
-  if (draft.tags.length > 0) {
-    const tagText = draft.tags.map((t) => `#${t}`).join(' ').slice(0, MAX_TEXT_LENGTH - 3)
-    blocks.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [
-          {
-            type: 'text',
-            text: { content: `标签：${tagText}` },
-            annotations: { color: 'blue' },
-          },
-        ],
-      },
-    })
-  }
+  blocks.push(metadataHeaderBlock(draft))
 
   const noteText = draft.note.trim()
   if (noteText) {

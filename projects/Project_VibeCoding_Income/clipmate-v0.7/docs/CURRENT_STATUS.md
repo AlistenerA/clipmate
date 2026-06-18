@@ -11,7 +11,7 @@
 
 ## 当前阶段
 
-**v0.7.1 结构保真修复完成，继续推进 v0.7.x 人工测试修复线。**
+**v0.7.2 Notion 保存韧性修复完成，继续推进 v0.7.x 视频与诊断修复线。**
 
 已完成：
 
@@ -27,15 +27,18 @@
 - v0.7.1 兼容 `* * *` 分隔线，BBC 无障碍图片题注统一为“题注：”。
 - v0.7.1 Popup 预览渲染安全 HTTP(S) 图片，失败时显示文字降级。
 - v0.7.1 草稿持久化与 Notion 保存显式使用当前 UI mode，修复教程 History 误记全文的竞态。
+- v0.7.2 标准 author / published time 元数据进入统一的 Notion `🔖` 头部，来源、站点、模式、剪藏时间和标签不再散落。
+- v0.7.2 教程大表按 Notion 100 children 限制拆分，空公式降级为文本，无题注图片不再用 alt 冒充 caption。
+- v0.7.2 区分 Notion 400/409/429/5xx，并向 Popup/History 返回短错误码、HTTP 状态和失败批次。
 
 ## 自动化验证
 
 - `npm run lint`：通过，0 errors。
 - 定向测试：2 files / 5 tests 通过。
-- `npm run test`：54 files / 1971 tests 全部通过。
+- `npm run test`：55 files / 1979 tests 全部通过。
 - `npm run build`：通过，132 modules transformed。
-- `dist/manifest.json`：version = 0.7.1。
-- `npm run zip`：通过，生成本地 `clipmate-v0.7.zip`（156899 bytes，仅 dist 产物）。
+- `dist/manifest.json`：version = 0.7.2。
+- `npm run zip`：通过，生成本地 `clipmate-v0.7.zip`（158029 bytes，仅 dist 产物）。
 
 ## 人工验收
 
@@ -52,6 +55,6 @@
 
 本轮后续：
 
-1. v0.7.2 修复 Notion 原生块兼容、元数据头部与短错误码。
-2. v0.7.3 收敛视频页输出和测试专用未知资源诊断，并评估手动图片插入边界。
+1. v0.7.3 收敛视频页输出和测试专用未知资源诊断，并评估手动图片插入边界。
+2. 用真实 Notion 测试页复测 heading/code/equation/table/image、BBC 保存和新错误码。
 3. 人工通过后冻结 v0.7；v0.8 另建分支和 `clipmate-v0.8/`。

@@ -37,4 +37,12 @@ export interface SaveToNotionPayload {
 
 export type SaveToNotionResponse =
   | { success: true }
-  | { success: false; error: string }
+  | {
+    success: false
+    error: string
+    details?: {
+      httpStatus?: number
+      apiCode?: string
+      batch?: number
+    }
+  }

@@ -39,6 +39,12 @@ describe('Notion error messages', () => {
     )
   })
 
+  it('maps structured Notion API failures to concise Chinese messages', () => {
+    expect(ERROR_MESSAGES.NOTION_VALIDATION_ERROR).toContain('内容格式')
+    expect(ERROR_MESSAGES.NOTION_CONFLICT).toContain('正被更新')
+    expect(ERROR_MESSAGES.NOTION_SERVICE_UNAVAILABLE).toContain('暂时不可用')
+  })
+
   it('NOTION_SAVE_FAILED maps to Chinese message', () => {
     expect(ERROR_MESSAGES.NOTION_SAVE_FAILED).toBe(
       '保存失败，请稍后重试',
@@ -59,6 +65,9 @@ describe('Notion error codes', () => {
     expect(ErrorCodes.NOTION_AUTH_FAILED).toBe('NOTION_AUTH_FAILED')
     expect(ErrorCodes.NOTION_PAGE_NOT_FOUND).toBe('NOTION_PAGE_NOT_FOUND')
     expect(ErrorCodes.NOTION_RATE_LIMITED).toBe('NOTION_RATE_LIMITED')
+    expect(ErrorCodes.NOTION_VALIDATION_ERROR).toBe('NOTION_VALIDATION_ERROR')
+    expect(ErrorCodes.NOTION_CONFLICT).toBe('NOTION_CONFLICT')
+    expect(ErrorCodes.NOTION_SERVICE_UNAVAILABLE).toBe('NOTION_SERVICE_UNAVAILABLE')
     expect(ErrorCodes.NETWORK_ERROR).toBe('NETWORK_ERROR')
     expect(ErrorCodes.NOTION_SAVE_FAILED).toBe('NOTION_SAVE_FAILED')
     expect(ErrorCodes.CONTENT_EMPTY).toBe('CONTENT_EMPTY')

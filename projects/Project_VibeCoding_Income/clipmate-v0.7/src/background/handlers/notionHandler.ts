@@ -4,6 +4,15 @@ import { formatCopyMarkdown } from '../../shared/utils/formatMarkdown'
 import type { SaveToNotionPayload, SaveToNotionResponse } from '../../shared/types/message.types'
 import { logger } from '../../shared/utils/logger'
 import { createNotionSavePlan } from '../../features/notion'
+import { NotionApiError } from '../../platforms/notion/client'
+
+function formatHistoryErrorCode(code: string, error?: NotionApiError): string {
+  const parts = [code]
+  if (error?.details.batch) parts.push(`B${error.details.batch}`)
+  if (error?.details.httpStatus) parts.push(`HTTP${error.details.httpStatus}`)
+  if (error?.details.apiCode) parts.push(error.details.apiCode)
+  return parts.join('|')
+}
 
 export async function handleSaveToNotion(
   payload: SaveToNotionPayload,
@@ -67,15 +76,17 @@ export async function handleSaveToNotion(
 
     return { success: true }
   } catch (err) {
-    const code =
-      err instanceof Error ? err.message : 'NOTION_SAVE_FAILED'
-    logger.warn(`Notion save failed: ${code}`)
+    const notionError = err instanceof NotionApiError ? err : undefined
+    const code = notionError?.code ||
+      (err instanceof Error ? err.message : 'NOTION_SAVE_FAILED')
+    const historyErrorCode = formatHistoryErrorCode(code, notionError)
+    logger.warn(`Notion save failed: ${historyErrorCode}`)
 
     if (plan.isRetryUpdate && plan.sourceHistoryId) {
       const now = new Date().toISOString()
       await updateHistoryItem(plan.sourceHistoryId, {
         saveStatus: 'failed',
-        errorCode: code,
+        errorCode: historyErrorCode,
         updatedAt: now,
       })
     } else if (settings.saveHistoryEnabled) {
@@ -102,7 +113,7 @@ export async function handleSaveToNotion(
         targetId: plan.targetId,
         targetName: plan.targetName,
         saveStatus: 'failed',
-        errorCode: code,
+        errorCode: historyErrorCode,
         siteName: meta?.siteName,
         siteIconUrl: meta?.siteIconUrl,
         themeColor: meta?.themeColor,
@@ -113,6 +124,6 @@ export async function handleSaveToNotion(
       })
     }
 
-    return { success: false, error: code }
+    return { success: false, error: code, details: notionError?.details }
   }
 }

@@ -10,6 +10,8 @@ export interface ClipMetadata {
   description: string
   siteName: string
   createdAt: string
+  author?: string
+  publishedAt?: string
   siteIconUrl?: string
   themeColor?: string
 }

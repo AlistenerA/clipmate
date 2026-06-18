@@ -2,6 +2,41 @@
 
 ---
 
+## v0.7.2 Notion Save Resilience (2026-06-19)
+
+### 自动化命令
+
+```pwsh
+npm run test -- --run tests/v072-notion-resilience.test.ts tests/tutorial-notion-blocks.test.ts tests/notion-blocks.test.ts tests/notion-client.test.ts tests/notion-errors.test.ts tests/history-save-flow.test.ts tests/history-retry-flow.test.ts
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- 定向测试：7 files / 83 tests 通过。
+- lint：通过，0 errors。
+- 完整测试：55 files / 1979 tests 全部通过。
+- build：通过，132 modules transformed，`dist/manifest.json` version = 0.7.2。
+- zip：通过，`clipmate-v0.7.zip` 为 158029 bytes，仅包含构建产物；zip 保持 untracked。
+- 官方文档页面 HTTP 200：block、append children、status codes 三页均成功读取并核对相关契约。
+
+### 新增/更新测试
+
+- 标准作者、发布日期元数据提取。
+- Notion 合并元数据 callout 的来源、作者、日期、模式与标签。
+- 205 行数据表拆成 3 张表，任一 nested children 不超过 100。
+- 无题注图片 caption 为空。
+- Popup 短错误文案包含 code / batch / HTTP status。
+- 400 response 只保留安全 `code`，不把响应 message 带入错误对象或 UI。
+
+### 人工测试状态
+
+- 未使用真实 Token/Page ID，未向用户 Notion 写入数据。
+- 待复测 BBC 文章保存失败时的新错误摘要；该摘要可判断是 block schema、权限、限流还是服务端问题。
+
 ## v0.7.1 Tutorial Fidelity & Preview Fixes (2026-06-19)
 
 ### 自动化命令

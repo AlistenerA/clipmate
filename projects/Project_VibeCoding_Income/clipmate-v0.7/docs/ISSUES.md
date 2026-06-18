@@ -2,6 +2,17 @@
 
 ---
 
+## v0.7.2 Notion 保存修复
+
+| 编号 | 问题 | 级别 | 状态 |
+|:---:|---|:---:|:---:|
+| IS56 | 来源、作者、日期、标签头部散落且可能重复 | medium | v0.7.2 合并为单一 metadata callout |
+| IS57 | 大表可能超过 Notion 单数组 100 children 限制 | major | v0.7.2 自动拆表并重复表头 |
+| IS58 | 无题注图片用 alt 作为 Notion caption | minor | v0.7.2 教程 figure 已修复 |
+| IS59 | Notion 400/409/5xx 均显示 `NOTION_SAVE_FAILED` | major | v0.7.2 已结构化；待真实 BBC 保存复测 |
+
+---
+
 ## v0.7.1 人工测试修复
 
 | 编号 | 问题 | 级别 | 状态 |
@@ -19,7 +30,7 @@
 | 编号 | 问题 | 级别 | 状态 |
 |:---:|---|:---:|:---:|
 | IS46 | 教程模式真实页面结构可能被 Readability 或站点 DOM 差异影响 | major | 待 Chrome/Edge 人工 QA |
-| IS47 | Notion equation/table/bookmark 对边界输入的实际 API 接受度 | major | 自动化结构通过，待真实 Notion QA |
+| IS47 | Notion equation/table/bookmark 对边界输入的实际 API 接受度 | major | v0.7.2 增加 table limit/错误定位，待真实 Notion QA |
 | IS48 | 外部图片防盗链或失效 URL 可能导致 Notion 图片不显示 | major | v0.6 已知限制，正文不得受阻 |
 | IS49 | 视频链接仅保存元数据，不下载视频或抓取字幕 | minor | 设计边界 |
 | IS50 | 当前浏览器自动化连接受 Windows 沙箱限制 | minor | 已提供人工 fixture 与风险测试文档 |

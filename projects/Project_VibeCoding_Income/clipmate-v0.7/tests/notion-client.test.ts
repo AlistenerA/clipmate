@@ -69,12 +69,34 @@ describe('appendBlocks error handling', () => {
     ).rejects.toThrow('NOTION_RATE_LIMITED')
   })
 
-  it('throws NOTION_SAVE_FAILED on 500', async () => {
+  it('throws NOTION_SERVICE_UNAVAILABLE on 500', async () => {
     vi.stubGlobal('fetch', mockFetch(500, false))
 
     await expect(
       appendBlocks(TOKEN, PAGE_ID, makeBlocks(1)),
-    ).rejects.toThrow('NOTION_SAVE_FAILED')
+    ).rejects.toThrow('NOTION_SERVICE_UNAVAILABLE')
+  })
+
+  it('preserves safe validation details and batch number', async () => {
+    vi.stubGlobal('fetch', mockFetch(400, false, {
+      code: 'validation_error',
+      message: 'must not be copied into UI',
+    }))
+
+    try {
+      await appendBlocks(TOKEN, PAGE_ID, makeBlocks(1))
+      expect.fail('expected appendBlocks to throw')
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: 'NOTION_VALIDATION_ERROR',
+        details: {
+          httpStatus: 400,
+          apiCode: 'validation_error',
+          batch: 1,
+        },
+      })
+      expect(JSON.stringify(error)).not.toContain('must not be copied into UI')
+    }
   })
 
   it('throws NETWORK_ERROR when fetch rejects', async () => {
@@ -142,5 +164,22 @@ describe('appendBlocks batching', () => {
     ).rejects.toThrow('NOTION_RATE_LIMITED')
 
     expect(failThenOk).toHaveBeenCalledTimes(1)
+  })
+
+  it('reports the failing batch without leaking response content', async () => {
+    const secondBatchFails = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({}) })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ code: 'validation_error', message: 'private block content' }),
+      })
+    vi.stubGlobal('fetch', secondBatchFails)
+
+    await expect(appendBlocks(TOKEN, PAGE_ID, makeBlocks(150))).rejects.toMatchObject({
+      code: 'NOTION_VALIDATION_ERROR',
+      details: { batch: 2, httpStatus: 400 },
+    })
   })
 })

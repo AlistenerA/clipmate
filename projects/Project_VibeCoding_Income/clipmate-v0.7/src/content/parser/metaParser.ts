@@ -9,6 +9,8 @@ export interface PageMeta {
   title: string
   description: string
   siteName: string
+  author?: string
+  publishedAt?: string
   siteIconUrl?: string
   themeColor?: string
 }
@@ -53,6 +55,16 @@ export function parseMetadata(doc: Document): PageMeta {
   }
 
   const pageUrl = doc.URL || ''
+  const author =
+    getMetaContent('author') ||
+    getMetaContent('article:author', true) ||
+    getMetaContent('byl')
+  const publishedAt =
+    getMetaContent('article:published_time', true) ||
+    getMetaContent('datePublished') ||
+    getMetaContent('date') ||
+    doc.querySelector('time[datetime]')?.getAttribute('datetime')?.trim() ||
+    ''
 
   return {
     url: pageUrl,
@@ -60,6 +72,8 @@ export function parseMetadata(doc: Document): PageMeta {
     description:
       getMetaContent('og:description', true) || getMetaContent('description') || '',
     siteName: getMetaContent('og:site_name', true) || '',
+    author: author || undefined,
+    publishedAt: publishedAt || undefined,
     siteIconUrl: extractSiteIconUrl(doc, pageUrl),
     themeColor: extractThemeColor(doc),
   }

@@ -2,6 +2,37 @@
 
 ---
 
+## v0.7.2：Notion Save Resilience (2026-06-19)
+
+### 修复
+
+- 解析标准 author、`article:published_time` / `datePublished` / `time[datetime]` 元数据。
+- 用单一 `🔖` callout 合并来源、站点、作者、发布日期、模式、剪藏时间与标签，减少重复头部行。
+- 教程 table 超过 100 个嵌套 children 时拆成多张表并重复表头。
+- 空 equation 降级为文本；教程图片无实际题注时输出空 caption，不再用 alt 冒充题注。
+- Notion 客户端区分 validation、conflict、rate limit、service unavailable，返回失败批次和 HTTP 状态。
+- Popup 显示“简短原因 + 错误代码”，History 保存同一短摘要；不保存或显示 API 错误正文。
+
+### 官方文档核对
+
+- Notion Append block children：单次最多 100 个 child block。
+- Notion status codes：400 `validation_error`、409 `conflict_error`、429 `rate_limited`。
+- Notion table：`table_width` 在创建后不能通过 API 修改。
+
+### 版本与边界
+
+- package/manifest/package-lock 版本更新为 0.7.2。
+- 未新增依赖、manifest 权限、host permission 或 storage schema。
+- 继续使用官方 Notion API；未采用参考插件的 cookie、私有接口或页面脚本注入方案。
+
+### 验证
+
+- 新增 `tests/v072-notion-resilience.test.ts`，5 个测试；Notion client 新增 2 个错误定位测试。
+- `npm run lint` 通过。
+- 55 files / 1979 tests 全通过。
+- `npm run build` 通过，132 modules transformed。
+- 真实 Notion 保存需要用户测试 Integration 和目标页面，仍为人工发布门禁。
+
 ## v0.7.1：Tutorial Fidelity & Preview Fixes (2026-06-19)
 
 ### 修复

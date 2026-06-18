@@ -200,7 +200,7 @@ describe('handleSaveToNotion retry update mode', () => {
     expect(history[0]).toMatchObject({
       id: 'history-retry-2',
       saveStatus: 'failed',
-      errorCode: 'NOTION_AUTH_FAILED',
+      errorCode: 'NOTION_AUTH_FAILED|B1|HTTP401',
     })
   })
 

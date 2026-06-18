@@ -8,6 +8,46 @@ interface NotionBlock {
   [key: string]: unknown
 }
 
+export interface NotionErrorDetails {
+  httpStatus?: number
+  apiCode?: string
+  batch?: number
+}
+
+export class NotionApiError extends Error {
+  constructor(
+    public code: string,
+    public details: NotionErrorDetails = {},
+  ) {
+    super(code)
+    this.name = 'NotionApiError'
+  }
+
+  withBatch(batch: number): NotionApiError {
+    return new NotionApiError(this.code, { ...this.details, batch })
+  }
+}
+
+function safeApiCode(value: unknown): string | undefined {
+  return typeof value === 'string' && /^[a-z0-9_]{1,64}$/i.test(value)
+    ? value
+    : undefined
+}
+
+function errorCodeForResponse(status: number, apiCode?: string): string {
+  if (status === 401 || status === 403 || apiCode === 'unauthorized' || apiCode === 'restricted_resource') {
+    return 'NOTION_AUTH_FAILED'
+  }
+  if (status === 404 || apiCode === 'object_not_found') return 'NOTION_PAGE_NOT_FOUND'
+  if (status === 409 || apiCode === 'conflict_error') return 'NOTION_CONFLICT'
+  if (status === 429 || apiCode === 'rate_limited') return 'NOTION_RATE_LIMITED'
+  if (status === 400 || apiCode === 'validation_error' || apiCode === 'invalid_json') {
+    return 'NOTION_VALIDATION_ERROR'
+  }
+  if (status >= 500) return 'NOTION_SERVICE_UNAVAILABLE'
+  return 'NOTION_SAVE_FAILED'
+}
+
 async function makeRequest(token: string, url: string, body: unknown): Promise<void> {
   let response: Response
   try {
@@ -21,23 +61,21 @@ async function makeRequest(token: string, url: string, body: unknown): Promise<v
       body: JSON.stringify(body),
     })
   } catch (err) {
-    const fetchMsg = err instanceof Error ? err.message : String(err)
-    console.warn(`[ClipMate] Notion fetch failed: ${fetchMsg}`)
-    throw new Error('NETWORK_ERROR')
+    console.warn('[ClipMate] Notion request failed before receiving a response')
+    throw new NotionApiError('NETWORK_ERROR')
   }
 
   if (!response.ok) {
-    console.warn(`[ClipMate] Notion API ${response.status}: ${response.statusText}`)
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('NOTION_AUTH_FAILED')
+    let apiCode: string | undefined
+    try {
+      const body = await response.json() as { code?: unknown }
+      apiCode = safeApiCode(body?.code)
+    } catch {
+      apiCode = undefined
     }
-    if (response.status === 404) {
-      throw new Error('NOTION_PAGE_NOT_FOUND')
-    }
-    if (response.status === 429) {
-      throw new Error('NOTION_RATE_LIMITED')
-    }
-    throw new Error('NOTION_SAVE_FAILED')
+    const code = errorCodeForResponse(response.status, apiCode)
+    console.warn(`[ClipMate] Notion API request failed: ${code} (HTTP ${response.status})`)
+    throw new NotionApiError(code, { httpStatus: response.status, apiCode })
   }
 }
 
@@ -50,6 +88,13 @@ export async function appendBlocks(
 
   for (let i = 0; i < blocks.length; i += BATCH_SIZE) {
     const batch = blocks.slice(i, i + BATCH_SIZE)
-    await makeRequest(token, url, { children: batch })
+    try {
+      await makeRequest(token, url, { children: batch })
+    } catch (error) {
+      if (error instanceof NotionApiError) {
+        throw error.withBatch(Math.floor(i / BATCH_SIZE) + 1)
+      }
+      throw error
+    }
   }
 }

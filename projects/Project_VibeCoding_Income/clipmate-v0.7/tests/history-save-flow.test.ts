@@ -215,7 +215,7 @@ describe('handleSaveToNotion', () => {
     expect(history).toHaveLength(1)
     expect(history[0]).toMatchObject({
       saveStatus: 'failed',
-      errorCode: 'NOTION_AUTH_FAILED',
+      errorCode: 'NOTION_AUTH_FAILED|B1|HTTP401',
       targetId: 'target-1',
       targetName: 'Test Target',
     })
@@ -245,7 +245,7 @@ describe('handleSaveToNotion', () => {
     expect(history).toHaveLength(1)
     expect(history[0]).toMatchObject({
       saveStatus: 'failed',
-      errorCode: 'NETWORK_ERROR',
+      errorCode: 'NETWORK_ERROR|B1',
     })
   })
 
