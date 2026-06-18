@@ -1,13 +1,14 @@
 # ClipMate Codex Migration Workflow
 
-Last updated: 2026-06-17.
+Last updated: 2026-06-18.
 
 This document converts the earlier opencode workflow into a Codex-native workflow for continuing the Chrome and Edge extension project. It is intentionally operational: future Codex sessions should use it to decide what to read, what to verify, and when a version is ready to archive and push.
 
 ## Current Baseline
 
 - Active product: ClipMate, a Manifest V3 browser extension for clipping web content into Notion.
-- Current working version: `clipmate-v0.6`.
+- Current working version: `clipmate-v0.7` on `codex/clipmate-v0.7-tutorial-mode`.
+- Frozen release baseline: `clipmate-v0.6`.
 - Frozen historical versions: `clipmate-v0.1` through `clipmate-v0.4`; use them for comparison only.
 - `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` by explicit user instruction.
 - Reference code: `other source/`; treat all files there as read-only design references, not as code to copy blindly.
@@ -38,7 +39,7 @@ The project `.codex/config.toml` raises project-doc context size and includes di
 1. Orient first.
    - Check `git status --short`.
    - Identify the active version directory and whether the task affects code, UX, permissions, storage, tests, docs, build output, archive output, or GitHub state.
-   - Read the active version docs, currently `clipmate-v0.6/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
+   - Read the active version docs, currently `clipmate-v0.7/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
 
 2. Accept user input in the lightweight future mode.
    - The user will usually provide feature ideas, bug descriptions, screenshots, or reference code.
@@ -91,8 +92,9 @@ Codex App remote SSH work requires a concrete host alias in `~/.ssh/config`, suc
 
 ## Current Verification Snapshot
 
-On 2026-06-17, while preparing the Codex migration:
+On 2026-06-18, while preparing the v0.7 automated release candidate:
 
-- `npm run lint` in `clipmate-v0.5` passed.
-- `npm run test` initially hit a Windows sandbox access-denied problem; after approved escalation it passed with 48 test files and 1922 tests.
-- `npm run build` hit the same sandbox access-denied problem. The escalation request was rejected by the approval reviewer, so build was not re-verified in this migration pass. Earlier v0.5 docs record a passing build and zip, but future release work should run build again.
+- `npm run lint` in `clipmate-v0.7` passed.
+- `npm run test` passed with 53 test files and 1966 tests after approved Windows sandbox escalation.
+- `npm run build` passed with 132 transformed modules.
+- Browser automation could not start because the Windows sandbox rejected the browser process; use `clipmate-v0.7/docs/V0.7_MANUAL_RISK_QA.md` for the remaining Chrome/Edge/Notion gate.

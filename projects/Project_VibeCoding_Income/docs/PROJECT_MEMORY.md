@@ -1,6 +1,6 @@
 # ClipMate Project Memory
 
-Last updated: 2026-06-17.
+Last updated: 2026-06-18.
 
 Use this as the compact handoff for future Codex sessions.
 
@@ -20,9 +20,10 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.6`.
-- v0.6 goal: asset pipeline foundation on top of article image saving via external image URLs.
-- v0.6 has extensive tests; latest recorded checks passed lint, full tests, build, and local zip archive.
+- Active version: `clipmate-v0.7` on `codex/clipmate-v0.7-tutorial-mode`.
+- v0.7 goal: Tutorial Mode with a versioned `ClipDocument` and native Notion structure mapping.
+- v0.7 automated candidate passes lint, 53 files / 1966 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
+- `clipmate-v0.6` is the frozen v0.6 Asset Pipeline release directory and has a local untracked archive.
 - `clipmate-v0.1` through `clipmate-v0.4` should remain frozen unless explicitly requested.
 - `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` at the user's request, so there is no standalone v0.5 directory after this migration.
 - `other source/4.0.13` exists as reference code and should remain read-only input.
@@ -53,13 +54,15 @@ Future sessions should re-check status before editing because this can change.
 - MV3 background service worker lifetime and async `sendResponse` behavior are easy to regress.
 - Notion token, page ID, and history data are sensitive; never print secrets.
 - Extension permissions should remain minimal.
-- Image saving is URL-only in v0.5; do not quietly introduce binary upload or caching.
+- Image saving remains URL-only; video support is link metadata only. Do not quietly introduce binary upload, downloading, subtitles, or caching.
 - Reference plugin code can guide design but should not be copied blindly.
 - Pure function tests are not enough for popup/background/content-script integration; verify the actual end-to-end route when behavior changes.
 
 ## Next Likely Work
 
-- Create `clipmate-v0.7` from `clipmate-v0.6` on a new `codex/` branch for tutorial mode.
+- Run `clipmate-v0.7/docs/V0.7_MANUAL_RISK_QA.md` in Chrome, Edge, and a real Notion test page.
+- Fix any P0 findings inside the v0.7 branch before marking human QA complete.
+- After v0.7 is accepted, create a new branch and `clipmate-v0.8` directory for SaveTargetAdapter work.
 - Review known v0.5 watch-list items in `docs/PROJECT_ARCHITECTURE.md`.
 - Use `other source/` to compare mature clipping, Notion, or browser-extension patterns.
 - Add browser QA for real pages and real Notion saves before declaring the next version complete.
