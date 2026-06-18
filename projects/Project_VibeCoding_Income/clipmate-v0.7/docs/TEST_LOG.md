@@ -2,6 +2,41 @@
 
 ---
 
+## v0.7.1 Tutorial Fidelity & Preview Fixes (2026-06-19)
+
+### 自动化命令
+
+```pwsh
+npm run test -- --run tests/v071-tutorial-fidelity.test.ts tests/clip-document.test.ts tests/markdown-preview.test.ts
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- 定向测试：3 files / 49 tests 通过。
+- 首次全量测试发现题注规范误影响普通站点；收窄为 BBC 无障碍前缀后，5 files / 186 个受影响回归测试通过。
+- lint：通过，0 errors。
+- 完整测试：54 files / 1971 tests 全部通过。
+- build：通过，132 modules transformed，`dist/manifest.json` version = 0.7.1。
+- zip：通过，`clipmate-v0.7.zip` 为 156899 bytes，仅包含构建产物；zip 保持 untracked。
+- Vitest/Vite 在 Windows 沙箱内仍因父目录读取权限失败，使用相同命令在批准环境重跑；未把沙箱失败记为测试失败。
+
+### 新测试
+
+- Runoob TypeScript `example_code` 转 fenced code。
+- LaTeX 代码语言推断与换行保真。
+- BBC 图片题注无障碍前缀规范。
+- `* * *` 分隔线在预览和 `ClipDocument` 中一致识别。
+- 图片预览仅接受 HTTP(S)，拒绝 `data:` / `javascript:`。
+
+### 人工测试状态
+
+- 内置浏览器连接仍被 Windows 沙箱拒绝，未冒充真实 Popup / Edge QA。
+- 待重新加载 v0.7.1 unpacked 扩展验证：远程图片成功、图片防盗链失败降级、教程 History 标签。
+
 ## v0.7.0 Tutorial Mode (2026-06-18)
 
 ### 自动化命令

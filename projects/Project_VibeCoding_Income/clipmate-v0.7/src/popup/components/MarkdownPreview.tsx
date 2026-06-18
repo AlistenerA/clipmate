@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import {
   parseMarkdownPreview,
   sanitizePreviewText,
   isSafePreviewHref,
+  isSafePreviewImageSrc,
 } from '../../shared/markdown/markdownPreview'
 import type {
   InlineSegment,
@@ -10,6 +12,31 @@ import type {
 
 interface Props {
   markdown: string
+}
+
+function PreviewImage({ src, alt, compact = false }: { src: string; alt: string; compact?: boolean }) {
+  const [failed, setFailed] = useState(false)
+  const safe = isSafePreviewImageSrc(src)
+  if (!safe || failed) {
+    return (
+      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500">
+        图片无法预览{alt ? `：${alt}` : ''}
+      </span>
+    )
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt || '网页图片'}
+      referrerPolicy="no-referrer"
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className={compact
+        ? 'inline-block max-w-full max-h-24 rounded border border-gray-200 align-middle'
+        : 'block max-w-full max-h-52 mx-auto rounded border border-gray-200 object-contain'}
+    />
+  )
 }
 
 function InlineRenderer({ segment }: { segment: InlineSegment }) {
@@ -42,12 +69,7 @@ function InlineRenderer({ segment }: { segment: InlineSegment }) {
       return <span className="text-gray-500 line-through">{segment.text}</span>
     }
     case 'image':
-      return (
-        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500">
-          <span>image</span>
-          {segment.alt && <span>{segment.alt}</span>}
-        </span>
-      )
+      return <PreviewImage src={segment.src} alt={segment.alt} compact />
     case 'formula':
       return (
         <span className="px-1 text-xs font-mono text-purple-700 bg-purple-50 rounded">
@@ -160,14 +182,12 @@ function BlockRenderer({ block }: { block: MarkdownPreviewBlock }) {
       )
 
     case 'image': {
-      const displayUrl =
-        block.url.length > 60 ? block.url.slice(0, 57) + '...' : block.url
       return (
-        <div className="my-1 flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded text-xs text-gray-500">
-          <span className="text-base leading-none">image</span>
-          <span className="truncate">
-            {block.alt || block.url ? `${block.alt || displayUrl}` : ''}
-          </span>
+        <div className="my-2">
+          <PreviewImage src={block.url} alt={block.alt} />
+          {block.alt && (
+            <div className="mt-1 text-center text-xs text-gray-500">{block.alt}</div>
+          )}
         </div>
       )
     }

@@ -2,6 +2,30 @@
 
 ---
 
+## v0.7.1：Tutorial Fidelity & Preview Fixes (2026-06-19)
+
+### 修复
+
+- 识别 Runoob `example_code` 与同类代码容器，保留 `<br>` 换行并保守推断 TypeScript、LaTeX、Python、Java 语言。
+- Markdown 预览与 `ClipDocument` 同时识别带空格的 thematic break，避免 `* * *` 显示为杂点。
+- BBC `图像加注文字，` 无障碍前缀规范为 `题注：`，其他站点题注保持原样。
+- Popup 对安全 HTTP(S) 图片显示实际预览，使用 `no-referrer` 和懒加载；不安全或加载失败时降级为文字。
+- Popup 持久化草稿和保存 Notion 时显式传入当前 mode，避免教程模式 History 被竞态写成全文。
+
+### 版本与边界
+
+- package/manifest/package-lock 版本更新为 0.7.1。
+- 未新增依赖、manifest 权限、host permission 或 storage schema。
+- 未修改 v0.6 及历史版本目录。
+
+### 验证
+
+- 新增 `tests/v071-tutorial-fidelity.test.ts`，5 个回归测试。
+- `npm run lint` 通过。
+- 54 files / 1971 tests 全通过。
+- `npm run build` 通过，132 modules transformed。
+- 浏览器运行仍被 Windows 沙箱拒绝，真实 Popup 图片加载保留为人工 QA。
+
 ## v0.7.0：Tutorial Mode Document Model (2026-06-18)
 
 ### 新增

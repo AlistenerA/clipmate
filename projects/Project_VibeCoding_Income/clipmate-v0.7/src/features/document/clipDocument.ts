@@ -112,6 +112,14 @@ function parseTableRow(line: string): string[] {
   return value.split('|').map((cell) => cell.trim())
 }
 
+function isDividerLine(line: string): boolean {
+  const trimmed = line.trim()
+  return /^(?:-{3,}|\*{3,}|_{3,})$/.test(trimmed) ||
+    /^(?:-\s*){3,}$/.test(trimmed) ||
+    /^(?:\*\s*){3,}$/.test(trimmed) ||
+    /^(?:_\s*){3,}$/.test(trimmed)
+}
+
 function normalizeCalloutKind(value: string): ClipCalloutBlock['kind'] {
   switch (value.toLowerCase()) {
     case 'note':
@@ -230,7 +238,7 @@ function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
       continue
     }
 
-    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(trimmed)) {
+    if (isDividerLine(trimmed)) {
       flushParagraph()
       blocks.push({ type: 'divider' })
       index++

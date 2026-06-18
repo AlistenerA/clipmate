@@ -50,19 +50,85 @@ turndown.addRule('figure', {
     const el = node as HTMLElement
     const caption = el.querySelector('figcaption')
     if (caption) {
-      const capText = caption.textContent?.trim()
-      if (capText) {
-        const lines = content.trim().split('\n')
+      const rawCaption = caption.textContent?.trim()
+      if (rawCaption) {
+        const preferredCaption = caption.querySelector('[data-testid="caption-paragraph"]')
+          ?.textContent?.trim()
+        const hasVerbosePrefix = /^(?:图像|图片)(?:加注文字|说明)[，,:：]/.test(rawCaption)
+        const shouldNormalizeLabel = Boolean(preferredCaption) || hasVerbosePrefix
+        const cleanCaption = shouldNormalizeLabel
+          ? (preferredCaption || rawCaption)
+            .replace(/^(?:图像|图片)(?:加注文字|说明)[，,:：]\s*/, '')
+            .trim()
+          : rawCaption
+        const capText = shouldNormalizeLabel && cleanCaption
+          ? `题注：${cleanCaption}`
+          : cleanCaption
+        const normalizedContent = shouldNormalizeLabel && capText
+          ? content.replace(rawCaption, capText)
+          : content
+        const lines = normalizedContent.trim().split('\n')
         for (let i = lines.length - 1; i >= 0; i--) {
           if (lines[i].trim() === capText) {
             lines[i] = '*' + capText + '*'
             return lines.join('\n')
           }
         }
-        return content.trimEnd() + '\n*' + capText + '*'
+        if (capText) return normalizedContent.trimEnd() + '\n*' + capText + '*'
       }
     }
     return content
+  },
+})
+
+function codeTextWithBreaks(node: Node): string {
+  let result = ''
+  for (const child of node.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      result += child.textContent || ''
+    } else if (child.nodeName === 'BR') {
+      result += '\n'
+    } else {
+      result += codeTextWithBreaks(child)
+    }
+  }
+  return result
+}
+
+function inferCodeLanguage(el: Element, code: string): string | undefined {
+  const explicit = [
+    el.getAttribute('data-language'),
+    el.getAttribute('data-lang'),
+    el.getAttribute('lang'),
+    el.className,
+  ].filter(Boolean).join(' ')
+  const explicitMatch = /(?:language|lang|brush|highlight-source)[-:\s]+([a-z0-9+#.-]+)/i.exec(explicit)
+  if (explicitMatch) return explicitMatch[1].toLowerCase()
+
+  if (/\\(?:documentclass|begin|end|section|usepackage)\b/.test(code)) return 'latex'
+  if (/\b(?:interface|enum|namespace)\s+\w+|\b(?:const|let|var)\s+\w+\s*:\s*[A-Za-z_$]/.test(code)) {
+    return 'typescript'
+  }
+  if (/^\s*(?:python\s+)?(?:def|from|import)\s+\w+/m.test(code)) return 'python'
+  if (/^\s*(?:public|private|protected)?\s*(?:class|interface)\s+\w+/m.test(code)) return 'java'
+  return undefined
+}
+
+turndown.addRule('siteCodeContainer', {
+  filter: (node) => {
+    if (!(node instanceof Element)) return false
+    const classes = node.getAttribute('class') || ''
+    return /(?:^|\s)(?:example_code|codehilite|syntaxhighlighter)(?:\s|$)/i.test(classes)
+  },
+  replacement: (_content, node) => {
+    const el = node as Element
+    const code = codeTextWithBreaks(el)
+      .replace(/\u00a0/g, ' ')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/^\s*\n|\n\s*$/g, '')
+    if (!code.trim()) return ''
+    const language = inferCodeLanguage(el, code) || ''
+    return `\n\n\`\`\`${language}\n${code}\n\`\`\`\n\n`
   },
 })
 

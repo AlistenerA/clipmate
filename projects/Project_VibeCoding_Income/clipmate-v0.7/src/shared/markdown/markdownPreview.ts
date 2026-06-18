@@ -109,6 +109,16 @@ export function isSafePreviewHref(href: string | undefined | null): boolean {
   return true
 }
 
+export function isSafePreviewImageSrc(src: string | undefined | null): boolean {
+  if (!src) return false
+  try {
+    const url = new URL(src.trim())
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export function sanitizePreviewText(text: string): string {
   return text.replace(/<[^>]*>/g, '')
 }
@@ -250,6 +260,14 @@ function parseImageLine(line: string): { alt: string; url: string } | null {
   return { alt: sanitizePreviewText(match[1]), url }
 }
 
+function isDividerLine(line: string): boolean {
+  const trimmed = line.trim()
+  return /^(?:-{3,}|\*{3,}|_{3,})$/.test(trimmed) ||
+    /^(?:-\s*){3,}$/.test(trimmed) ||
+    /^(?:\*\s*){3,}$/.test(trimmed) ||
+    /^(?:_\s*){3,}$/.test(trimmed)
+}
+
 function collectParagraphLines(
   lines: string[],
   start: number,
@@ -261,7 +279,7 @@ function collectParagraphLines(
     if (line.trim() === '') break
     if (line.trimStart().startsWith('```')) break
     if (/^#{1,6}\s/.test(line)) break
-    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line.trim())) break
+    if (isDividerLine(line)) break
     if (line.startsWith('>')) break
     if (/^[-*+]\s/.test(line)) break
     if (/^\d+\.\s/.test(line)) break
@@ -318,7 +336,7 @@ export function parseMarkdownPreview(markdown: string): MarkdownPreviewBlock[] {
       continue
     }
 
-    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line.trim())) {
+    if (isDividerLine(line)) {
       blocks.push({ type: 'hr' })
       i++
       continue
@@ -381,7 +399,7 @@ export function parseMarkdownPreview(markdown: string): MarkdownPreviewBlock[] {
         type: 'image',
         alt: image.alt,
         url: image.url,
-        safe: isSafePreviewHref(image.url),
+        safe: isSafePreviewImageSrc(image.url),
       })
       i++
       continue

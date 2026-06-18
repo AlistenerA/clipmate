@@ -100,10 +100,11 @@ export default function App() {
       tags,
       note,
       title,
+      mode,
     })
     saveLastClipDraft(draft)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- use createdAt as identity to avoid infinite loop
-  }, [content?.metadata?.createdAt, tags, note, draftTitle])
+  }, [content?.metadata?.createdAt, tags, note, draftTitle, mode])
 
   useEffect(() => {
     if (!content) {
@@ -206,6 +207,7 @@ export default function App() {
       tags,
       note,
       title,
+      mode,
     })
     const session = createClipSession({
       id: generateId(),
@@ -217,7 +219,7 @@ export default function App() {
       },
     })
     saveToNotion(createSaveToNotionPayloadFromSession(session))
-  }, [content, settings, selectedTargetId, tags, note, draftTitle, saveToNotion, clearResult])
+  }, [content, settings, selectedTargetId, tags, note, draftTitle, mode, saveToNotion, clearResult])
 
   const openOptions = useCallback(() => {
     chrome.runtime.openOptionsPage()
