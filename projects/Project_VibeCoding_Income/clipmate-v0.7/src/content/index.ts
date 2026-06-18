@@ -31,9 +31,13 @@ import type { ClipMateMessage } from '../shared/types/message.types'
 import { extractArticleImages } from './extractors/articleImages'
 import {
   appendVideoLinkMetadata,
+  collectUnknownResourceDiagnostics,
   createClipDocument,
+  extractVideoPageSummary,
+  formatVideoPageMarkdown,
   type ClipVideoLinkInput,
 } from '../features/document'
+import { getVideoProvider } from '../shared/media/videoUrl'
 
 function extractMathJaxFormulas(doc: Document): void {
   const scripts = doc.querySelectorAll('script[type^="math/tex"]')
@@ -142,20 +146,6 @@ function attachImageMetadata(content: ExtractedContent, contentHtml: string, pag
   }
 }
 
-function getVideoProvider(url: string): string | undefined {
-  try {
-    const hostname = new URL(url).hostname.replace(/^www\./, '')
-    if (hostname.includes('youtube.com') || hostname === 'youtu.be') return 'YouTube'
-    if (hostname.includes('bilibili.com')) return 'Bilibili'
-    if (hostname.includes('vimeo.com')) return 'Vimeo'
-    if (hostname.includes('youku.com')) return 'Youku'
-    if (hostname.includes('qq.com')) return 'Tencent Video'
-    return hostname || undefined
-  } catch {
-    return undefined
-  }
-}
-
 function collectTutorialVideoLinks(doc: Document, pageUrl: string): ClipVideoLinkInput[] {
   const links: ClipVideoLinkInput[] = []
   const seen = new Set<string>()
@@ -203,17 +193,56 @@ function collectTutorialVideoLinks(doc: Document, pageUrl: string): ClipVideoLin
 function finalizeFullpageContent(
   content: ExtractedContent,
   mode: 'fullpage' | 'tutorial',
+  sourceDocument: Document = document,
 ): ExtractedContent {
   content.mode = mode
   if (mode !== 'tutorial') return content
 
-  const videoLinks = collectTutorialVideoLinks(document, content.url || document.URL)
-  content.markdown = appendVideoLinkMetadata(content.markdown, videoLinks)
+  const pageUrl = content.url || sourceDocument.URL
+  const videoPage = extractVideoPageSummary(sourceDocument, {
+    title: content.title,
+    url: pageUrl,
+    description: content.description,
+  })
+  const videoLinks: ClipVideoLinkInput[] = videoPage
+    ? [{
+        url: videoPage.url,
+        title: videoPage.title,
+        provider: videoPage.provider,
+        source: 'markdown',
+      }]
+    : collectTutorialVideoLinks(sourceDocument, pageUrl)
+
+  if (videoPage) {
+    content.title = videoPage.title
+    content.url = videoPage.url
+    content.description = videoPage.description
+    content.metadata = {
+      ...content.metadata,
+      title: videoPage.title,
+      url: videoPage.url,
+      description: videoPage.description,
+    }
+    content.markdown = formatVideoPageMarkdown(videoPage)
+    content.contentText = [videoPage.description, videoPage.commentCount]
+      .filter(Boolean)
+      .join('\n')
+    content.contentHtml = ''
+    content.wordCount = countWords(content.contentText)
+    content.imageCount = 0
+    content.firstImageUrl = undefined
+    content.skippedImageCount = 0
+  } else {
+    content.markdown = appendVideoLinkMetadata(content.markdown, videoLinks)
+  }
+
+  const unknownResources = collectUnknownResourceDiagnostics(sourceDocument, pageUrl)
   content.clipDocument = createClipDocument({
     title: content.title,
     url: content.url,
     markdown: content.markdown,
     videoLinks,
+    unknownResources,
   })
   return content
 }

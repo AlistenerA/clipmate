@@ -192,6 +192,26 @@ function BlockRenderer({ block }: { block: MarkdownPreviewBlock }) {
       )
     }
 
+    case 'video':
+      return (
+        <div className="my-2 rounded border border-blue-100 bg-blue-50 px-2.5 py-2">
+          <div className="text-[11px] font-medium text-blue-700">
+            {block.provider || '视频'}
+          </div>
+          {block.safe ? (
+            <a
+              href={block.url}
+              rel="noreferrer noopener"
+              className="mt-0.5 block text-xs font-semibold text-blue-900 underline"
+            >
+              {block.title}
+            </a>
+          ) : (
+            <span className="mt-0.5 block text-xs text-gray-500">视频链接不可用</span>
+          )}
+        </div>
+      )
+
     case 'hr':
       return <hr className="my-2 border-gray-200" />
 

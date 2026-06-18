@@ -4,6 +4,16 @@
 
 ---
 
+## v0.7.3 决策（2026-06-19）
+
+- 已知视频播放页优先使用 canonical URL 与页面 meta，替换通用 Readability 正文，避免相关推荐污染。
+- 视频摘要只保留标题、原视频 URL、精简描述和可读取的评论数；没有评论数时省略，不推测或请求私有 API。
+- Notion native video 只用于 YouTube、Vimeo 和直接视频文件 URL；Bilibili/Youku/腾讯视频先降级 bookmark。
+- 未知资源是 `ClipDocument.diagnostics` 的可选测试字段，不属于 `blocks`，因此不会进入复制或 Notion 保存。
+- 手动图片点选需要有生命周期完整的页面覆盖层和 session id，不以临时按钮塞入 v0.7.3，移入 v0.8 P0。
+
+---
+
 ## v0.5 Session 0 决策
 
 ### D-v0.5-001：v0.5 从 v0.4 稳定基线复制创建独立目录

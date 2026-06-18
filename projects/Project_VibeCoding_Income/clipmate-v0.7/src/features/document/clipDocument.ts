@@ -1,3 +1,6 @@
+import { isKnownVideoUrl } from '../../shared/media/videoUrl'
+import type { UnknownResourceDiagnostic } from './tutorialDiagnostics'
+
 export type ClipDocumentBlock =
   | ClipHeadingBlock
   | ClipParagraphBlock
@@ -77,6 +80,9 @@ export interface ClipDocument {
   url: string
   sourceMarkdown: string
   blocks: ClipDocumentBlock[]
+  diagnostics?: {
+    unknownResources: UnknownResourceDiagnostic[]
+  }
   stats: {
     headingCount: number
     codeBlockCount: number
@@ -93,12 +99,12 @@ export interface CreateClipDocumentInput {
   url: string
   markdown: string
   videoLinks?: ClipVideoLinkInput[]
+  unknownResources?: UnknownResourceDiagnostic[]
 }
 
 const IMAGE_RE = /^!\[([^\]]*)\]\((.+)\)\s*$/
 const CAPTION_RE = /^\*([^*]+)\*\s*$/
 const VIDEO_LINK_RE = /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)\s*$/i
-const VIDEO_HOST_RE = /(?:youtube\.com|youtu\.be|vimeo\.com|bilibili\.com|youku\.com|qq\.com\/x\/cover)/i
 
 function isTableSeparator(line: string): boolean {
   const trimmed = line.trim()
@@ -291,7 +297,7 @@ function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
     }
 
     const videoLink = VIDEO_LINK_RE.exec(trimmed)
-    if (videoLink && (/video/i.test(videoLink[1]) || VIDEO_HOST_RE.test(videoLink[2]))) {
+    if (videoLink && (/video/i.test(videoLink[1]) || isKnownVideoUrl(videoLink[2]))) {
       flushParagraph()
       blocks.push({
         type: 'video',
@@ -333,6 +339,9 @@ export function createClipDocument(input: CreateClipDocumentInput): ClipDocument
     url: input.url,
     sourceMarkdown: input.markdown,
     blocks,
+    diagnostics: input.unknownResources?.length
+      ? { unknownResources: input.unknownResources }
+      : undefined,
     stats: {
       headingCount: count('heading'),
       codeBlockCount: count('code'),

@@ -2,6 +2,19 @@
 
 ---
 
+## v0.7.3 自动验证（2026-06-19）
+
+- `npm run lint`：通过，0 errors。
+- 定向回归：4 files / 53 tests 通过。
+- `npm run test`：56 files / 1984 tests 通过。
+- `npm run build`：通过，136 modules transformed。
+- Browser Plugin：Windows 沙箱拒绝启动，未完成真实扩展 UI 与真实 Notion 自动化。
+- 安全边界：诊断仅记录资源 kind、短 label、HTTP(S) URL；不记录资源内容，不进入保存 blocks。
+- 威胁检查：页面 DOM 视为不可信输入；provider 使用精确 host 后缀，资源最多 12 条、label 最长 120 字，React 默认转义；未使用 HTML 注入、cookie、长期 storage 或新增网络权限。
+- `npm run zip`：通过，候选包 160440 bytes；`dist/manifest.json` 为 0.7.3，权限仍为 `storage`、`activeTab` 和 Notion API host。
+
+---
+
 ## v0.7.2 Notion Save Resilience (2026-06-19)
 
 ### 自动化命令

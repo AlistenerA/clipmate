@@ -90,6 +90,14 @@ export interface PreviewHr {
   type: 'hr'
 }
 
+export interface PreviewVideo {
+  type: 'video'
+  title: string
+  url: string
+  provider?: string
+  safe: boolean
+}
+
 export type MarkdownPreviewBlock =
   | PreviewHeading
   | PreviewParagraph
@@ -98,6 +106,7 @@ export type MarkdownPreviewBlock =
   | PreviewCode
   | PreviewTable
   | PreviewImage
+  | PreviewVideo
   | PreviewHr
 
 export function isSafePreviewHref(href: string | undefined | null): boolean {
@@ -260,6 +269,18 @@ function parseImageLine(line: string): { alt: string; url: string } | null {
   return { alt: sanitizePreviewText(match[1]), url }
 }
 
+function parseVideoLine(line: string): PreviewVideo | null {
+  const match = line.trim().match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/i)
+  if (!match || !isKnownVideoUrl(match[2])) return null
+  return {
+    type: 'video',
+    title: sanitizePreviewText(match[1]) || '打开原视频',
+    url: match[2],
+    provider: getVideoProvider(match[2]),
+    safe: isSafePreviewHref(match[2]),
+  }
+}
+
 function isDividerLine(line: string): boolean {
   const trimmed = line.trim()
   return /^(?:-{3,}|\*{3,}|_{3,})$/.test(trimmed) ||
@@ -286,6 +307,7 @@ function collectParagraphLines(
     if (line.includes('|') && i + 1 < lines.length && isTableSeparatorRow(lines[i + 1]))
       break
     if (parseImageLine(line)) break
+    if (parseVideoLine(line)) break
     parts.push(line)
     i++
   }
@@ -405,6 +427,13 @@ export function parseMarkdownPreview(markdown: string): MarkdownPreviewBlock[] {
       continue
     }
 
+    const video = parseVideoLine(line)
+    if (video) {
+      blocks.push(video)
+      i++
+      continue
+    }
+
     const { text: paraText, next } = collectParagraphLines(lines, i)
 
     if (next <= i) {
@@ -428,3 +457,4 @@ export function parseMarkdownPreview(markdown: string): MarkdownPreviewBlock[] {
 
   return blocks
 }
+import { getVideoProvider, isKnownVideoUrl } from '../media/videoUrl'

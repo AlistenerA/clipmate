@@ -8,6 +8,7 @@ import ActionButtons from './components/ActionButtons'
 import TargetSelector from './components/TargetSelector'
 import MarkdownTargetSelector from './components/MarkdownTargetSelector'
 import MarkdownPreview from './components/MarkdownPreview'
+import TutorialDiagnostics from './components/TutorialDiagnostics'
 import { useCurrentTab } from './hooks/useCurrentTab'
 import { useExtractContent } from './hooks/useExtractContent'
 import { useClipDraft } from './hooks/useClipDraft'
@@ -258,6 +259,12 @@ export default function App() {
         modeLabel={statusLabel}
         imageCount={content?.imageCount}
       />
+
+      {mode === 'tutorial' && content?.clipDocument?.diagnostics?.unknownResources && (
+        <TutorialDiagnostics
+          resources={content.clipDocument.diagnostics.unknownResources}
+        />
+      )}
 
       <TagEditor tags={tags} onAdd={addTag} onRemove={removeTag} disabled={loading} />
       <NoteEditor note={note} onChange={setNote} disabled={loading} />

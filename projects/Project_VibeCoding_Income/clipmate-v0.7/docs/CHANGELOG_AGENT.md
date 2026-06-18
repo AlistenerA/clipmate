@@ -2,6 +2,17 @@
 
 ---
 
+## v0.7.3 视频页与测试诊断（2026-06-19）
+
+- 已知视频页使用 canonical URL、meta description 和公开 DOM 评论数生成精简摘要。
+- Popup 新增视频卡片；Notion 对 YouTube/Vimeo/direct video 输出 video block，其他 provider 输出 bookmark。
+- 新增教程模式未知资源诊断面板，诊断数据与复制、Notion blocks、History 正文隔离。
+- 新增 `tests/v073-video-diagnostics.test.ts`，覆盖视频摘要、普通文章旁路、预览卡片、Notion provider 降级和诊断隔离。
+- 版本号更新为 0.7.3；未新增依赖或权限。
+- 手动图片点选已规划到 `docs/V0.8_PLAN.md` 的 P0 Asset Picker。
+
+---
+
 ## v0.7.2：Notion Save Resilience (2026-06-19)
 
 ### 修复

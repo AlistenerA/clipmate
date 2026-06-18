@@ -6,8 +6,8 @@
 
 - 分支：`codex/clipmate-v0.7-tutorial-mode`
 - 目录：`clipmate-v0.7/`
-- 版本：`0.7.2`
-- 状态：结构保真与 Notion 保存韧性修复已完成并通过自动化验证；视频页和测试诊断继续在 v0.7.x 修复。
+- 版本：`0.7.3`
+- 状态：v0.7.1-v0.7.3 小版本修复已完成并通过自动化验证；等待真实浏览器与 Notion 候选验收。
 
 ## 冻结版本
 
@@ -32,6 +32,10 @@ Tutorial Mode Document Model：
 - `src/platforms/notion/blocks.ts`：教程结构到原生 Notion blocks。
 - `src/popup/components/ClipModeToggle.tsx`：三段模式选择。
 - `manual-fixtures/tutorial-mode.html`：人工测试样例页。
+- `src/features/document/videoPage.ts`：已知视频页四字段摘要。
+- `src/shared/media/videoUrl.ts`：视频 URL/provider 统一规则。
+- `src/features/document/tutorialDiagnostics.ts`：仅教程模式使用的未知资源诊断。
+- `docs/V0.8_PLAN.md`：v0.8 路线图，P0 为 Asset Picker。
 
 ## 不变边界
 
@@ -44,7 +48,7 @@ Tutorial Mode Document Model：
 
 - v0.7.1 已修复站点代码容器、分隔线、BBC 题注、Popup 图片预览和教程 History mode 竞态。
 - v0.7.2 已修复 Notion 合并头部、大表拆分、图片空题注和结构化错误反馈。
-- 下一提交必须从 v0.7.3 开始，不得改写 v0.7.1 / v0.7.2 提交边界。
+- 不得改写 v0.7.1 / v0.7.2 / v0.7.3 提交边界；新的补丁必须独立提交。
 - 人工测试发现的问题继续在 v0.7 分支和目录小步修复，每个 patch 独立验证和 commit。
 - v0.7 人工验收完成后冻结目录并保留本地 zip。
 - v0.8 必须从 v0.7 稳定提交创建新 `codex/` 分支和 `clipmate-v0.8/` 目录。

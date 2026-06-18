@@ -1,6 +1,7 @@
 import type { ClipDraft } from '../../shared/types/clip.types'
 import type { ClipDocument, ClipDocumentBlock } from '../../features/document'
 import { parseNotionRichText } from './notionRichText'
+import { isNotionEmbeddableVideoUrl } from '../../shared/media/videoUrl'
 
 interface BlockObjectRequest {
   object: 'block'
@@ -247,6 +248,17 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
     }
     case 'video':
       if (!isValidExternalImageUrl(block.url)) return [paragraphBlock(block.url)]
+      if (isNotionEmbeddableVideoUrl(block.url)) {
+        return [{
+          object: 'block',
+          type: 'video',
+          video: {
+            type: 'external',
+            external: { url: block.url },
+            caption: block.title ? richText(block.title) : [],
+          },
+        }]
+      }
       return [{
         object: 'block',
         type: 'bookmark',

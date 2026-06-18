@@ -41,7 +41,7 @@ describe('tutorial Notion blocks', () => {
       'table',
       'callout',
       'image',
-      'bookmark',
+      'video',
     ]))
     expect(JSON.stringify(blocks)).toContain('Expected result')
     expect(JSON.stringify(blocks)).toContain('Video demo')
