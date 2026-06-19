@@ -2,6 +2,17 @@
 
 ---
 
+## v0.8.4 代码识别修复
+
+| 编号 | 问题 | 级别 | 状态 |
+|:---:|---|:---:|:---:|
+| IS85 | 一行/两行短代码在 Readability 后退化成正文 | major | Readability 前规范为 `pre/code`，自动化通过 |
+| IS86 | SyntaxHighlighter 用布局 table 表示代码，被误识别为数据表 | major | 已按 code cell 行提取并移除 gutter |
+| IS87 | 无语言短代码仅靠少量正则，JS/TS 等相似语言不稳定 | major | highlight.js fast path + 本地 ML 低置信度复核 |
+| IS88 | ML 浏览器包包含未使用 Node loader，Vite 给出 externalization 警告 | minor | 自定义 loader 已构建，待浏览器运行时复测 |
+
+---
+
 ## v0.8.3 人工测试修复
 
 | 编号 | 问题 | 级别 | 状态 |

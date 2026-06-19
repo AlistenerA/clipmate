@@ -4,6 +4,16 @@
 
 ---
 
+## v0.8.4 决策（2026-06-19）
+
+- 代码块边界由 DOM 结构确定，ML 只补语言，不允许模型把任意普通段落升级为代码块。
+- fast path 仅注册 JavaScript、TypeScript、Python、Java、SQL、HTML/XML、CSS、Bash、JSON，减少短文本被冷门语言分流。
+- 低置信度模型在扩展 Popup 中懒加载，避免扩大 content script 体积和 `web_accessible_resources`。
+- 模型资源固定随扩展发布，不访问 CDN、遥测或第三方 API；加载失败时静默回退 fast path。
+- 依赖版本和完整模型文件纳入 lockfile/发布目录，旧版本目录继续冻结。
+
+---
+
 ## v0.8.3 决策（2026-06-19）
 
 - 全文和教程共用同一 Markdown 结构解析与 Notion block adapter，避免预览正确但保存链路另行降级。

@@ -2,6 +2,17 @@
 
 ---
 
+## v0.8.4 定向验证（2026-06-19）
+
+- 定向回归：3 files / 13 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run build`：通过，164 modules transformed；`dist/manifest.json` 为 0.8.4。
+- `dist/model/model.json` 为 242642 bytes，权重为 715908 bytes；低置信度动态 JS chunk 为 713.13 kB / gzip 189.61 kB。
+- 覆盖一行 Runoob-like 代码、SyntaxHighlighter HTML 布局表、限定语言 fast path、ML 注入路径和 Tutorial 同步。
+- Vite 对包内未使用的 Node 默认 loader 给出 browser externalization 警告；实际构造器只使用 ClipMate 注入的本地 fetch loader，最终浏览器回归继续检查运行时。
+
+---
+
 ## v0.8.3 定向验证（2026-06-19）
 
 - 定向回归：5 files / 135 tests 通过。

@@ -4,6 +4,7 @@ import { MESSAGE_TYPES } from '../../shared/constants/messageTypes'
 import { ERROR_MESSAGES } from '../../shared/constants/defaults'
 import type { ExtractedContent, ClipMode } from '../../shared/types/clip.types'
 import type { ExtractPageResponse, SelectionResponse } from '../../shared/types/message.types'
+import { enhanceExtractedContentCodeLanguages } from '../../shared/markdown/codeLanguageDetection'
 
 type ExtractResult = ExtractPageResponse | SelectionResponse
 
@@ -31,7 +32,9 @@ export function useExtractContent() {
       if (requestId !== requestIdRef.current) return
 
       if (result.success) {
-        setContent(result.data)
+        const enhanced = await enhanceExtractedContentCodeLanguages(result.data)
+        if (requestId !== requestIdRef.current) return
+        setContent(enhanced)
       } else {
         setError(ERROR_MESSAGES[result.error] || `提取失败（${result.error}）`)
         setContent(null)
@@ -68,8 +71,10 @@ export function useExtractContent() {
       if (requestId !== requestIdRef.current) return null
 
       if (selResult.success && (selResult.data.contentText || selResult.data.markdown)) {
-        setContent(selResult.data)
-        return { content: selResult.data, mode: 'selection' }
+        const enhanced = await enhanceExtractedContentCodeLanguages(selResult.data)
+        if (requestId !== requestIdRef.current) return null
+        setContent(enhanced)
+        return { content: enhanced, mode: 'selection' }
       }
 
       return { content: null, mode: 'fullpage' }

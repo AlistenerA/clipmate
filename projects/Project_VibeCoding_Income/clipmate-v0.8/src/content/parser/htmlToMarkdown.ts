@@ -19,6 +19,12 @@ import {
   getBestSrc,
 } from '../extractors/articleImages'
 import { normalizeImageDescription } from '../../shared/media/imageDescription'
+import {
+  codeTextFromLayout,
+  inferCodeLanguage,
+  isSyntaxHighlighterTable,
+  normalizeCodeText,
+} from './codeContainers'
 
 const turndown = new TurndownService({
   headingStyle: 'atx',
@@ -78,39 +84,6 @@ turndown.addRule('figure', {
   },
 })
 
-function codeTextWithBreaks(node: Node): string {
-  let result = ''
-  for (const child of node.childNodes) {
-    if (child.nodeType === Node.TEXT_NODE) {
-      result += child.textContent || ''
-    } else if (child.nodeName === 'BR') {
-      result += '\n'
-    } else {
-      result += codeTextWithBreaks(child)
-    }
-  }
-  return result
-}
-
-function inferCodeLanguage(el: Element, code: string): string | undefined {
-  const explicit = [
-    el.getAttribute('data-language'),
-    el.getAttribute('data-lang'),
-    el.getAttribute('lang'),
-    el.className,
-  ].filter(Boolean).join(' ')
-  const explicitMatch = /(?:language|lang|brush|highlight-source)[-:\s]+([a-z0-9+#.-]+)/i.exec(explicit)
-  if (explicitMatch) return explicitMatch[1].toLowerCase()
-
-  if (/\\(?:documentclass|begin|end|section|usepackage)\b/.test(code)) return 'latex'
-  if (/\b(?:interface|enum|namespace)\s+\w+|\b(?:const|let|var)\s+\w+\s*:\s*[A-Za-z_$]/.test(code)) {
-    return 'typescript'
-  }
-  if (/^\s*(?:python\s+)?(?:def|from|import)\s+\w+/m.test(code)) return 'python'
-  if (/^\s*(?:public|private|protected)?\s*(?:class|interface)\s+\w+/m.test(code)) return 'java'
-  return undefined
-}
-
 turndown.addRule('siteCodeContainer', {
   filter: (node) => {
     if (!(node instanceof Element)) return false
@@ -119,10 +92,7 @@ turndown.addRule('siteCodeContainer', {
   },
   replacement: (_content, node) => {
     const el = node as Element
-    const code = codeTextWithBreaks(el)
-      .replace(/\u00a0/g, ' ')
-      .replace(/[ \t]+\n/g, '\n')
-      .replace(/^\s*\n|\n\s*$/g, '')
+    const code = normalizeCodeText(codeTextFromLayout(el))
     if (!code.trim()) return ''
     const language = inferCodeLanguage(el, code) || ''
     return `\n\n\`\`\`${language}\n${code}\n\`\`\`\n\n`
@@ -188,7 +158,7 @@ function cellTextWithBreaks(el: HTMLElement): string {
 }
 
 turndown.addRule('table', {
-  filter: 'table',
+  filter: (node) => node.nodeName === 'TABLE' && !isSyntaxHighlighterTable(node),
   replacement: (_content, node) => {
     const el = node as HTMLTableElement
 
@@ -265,6 +235,17 @@ turndown.addRule('table', {
     }
 
     return lines.join('\n')
+  },
+})
+
+turndown.addRule('syntaxHighlighterTable', {
+  filter: (node) => isSyntaxHighlighterTable(node),
+  replacement: (_content, node) => {
+    const el = node as Element
+    const code = normalizeCodeText(codeTextFromLayout(el))
+    if (!code.trim()) return ''
+    const language = inferCodeLanguage(el, code) || ''
+    return `\n\n\`\`\`${language}\n${code}\n\`\`\`\n\n`
   },
 })
 

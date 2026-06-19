@@ -2,6 +2,17 @@
 
 ---
 
+## v0.8.4 混合代码识别（2026-06-19）
+
+- Readability 前将 `example_code`、`codehilite`、`syntaxhighlighter` 规范成标准 `pre/code`，一行短代码不再被压成正文。
+- 博客园/JB51 SyntaxHighlighter 的 gutter/code 布局表按代码行提取，移除行号并阻止误转 Markdown 数据表。
+- 加入限定 9 种常用语言的 highlight.js fast path；低置信度时在 Popup 内懒加载微软语言检测模型复核。
+- 模型 JSON/权重作为扩展本地静态资源进入 `dist/model/`，无外部模型请求、无新增权限或 web-accessible resource。
+- 教程 `ClipDocument` 与 Markdown 同步补齐语言，Notion code block 使用同一检测结果。
+- 版本号更新为 0.8.4；新增 `highlight.js@11.11.1` 与 `@vscode/vscode-languagedetection@1.0.23`。
+
+---
+
 ## v0.8.3 全文结构与图片语义修复（2026-06-19）
 
 - 全文 Markdown 改用既有 `ClipDocument` 结构解析器生成 Notion blocks，表格、标题、列表和代码不再压成普通段落。

@@ -18,7 +18,7 @@ describe('v0.8.2 human QA regressions', () => {
     `
 
     const extracted = extractFullpage(page)
-    expect(extracted?.content).toContain('example_code')
+    expect(extracted?.content).toContain('<pre><code class="language-typescript">')
     expect(htmlToMarkdown(extracted?.content || '')).toContain(
       '```typescript\nconst hello: string = "Hello"\nconsole.log(hello)\n```'
     )
