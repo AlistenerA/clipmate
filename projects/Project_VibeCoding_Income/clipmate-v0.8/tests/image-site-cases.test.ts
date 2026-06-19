@@ -719,7 +719,7 @@ const NOTION_ORDER_HTML = `
 `
 
 describe('Site Case 8: Notion image block and paragraph order', () => {
-  it('maintains block order: paragraph → image → paragraph interleaving', () => {
+  it('preserves the leading heading before paragraph and image blocks', () => {
     const articleEl = createDocument(NOTION_ORDER_HTML).querySelector('article')!
     const md = htmlToMarkdown(articleEl.innerHTML, 'https://example.com/guide')
     const blocks = markdownToContentBlocks(md)
@@ -730,7 +730,7 @@ describe('Site Case 8: Notion image block and paragraph order', () => {
       return b.type
     })
 
-    expect(blockOrder[0]).toBe('paragraph')
+    expect(blockOrder[0]).toBe('heading_1')
     expect(blockOrder.some(b => b === 'image')).toBe(true)
   })
 

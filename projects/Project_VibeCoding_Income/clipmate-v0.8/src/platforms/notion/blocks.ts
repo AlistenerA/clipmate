@@ -417,13 +417,28 @@ export function markdownToContentBlocks(contentText: string): BlockObjectRequest
   return parseMarkdownBlocks(contentText).flatMap(tutorialBlockToNotion)
 }
 
+function markdownToCommentContextBlocks(contentText: string): BlockObjectRequest[] {
+  return contentText
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .flatMap((paragraph) => {
+      const image = paragraph.match(/^!\[[^\]]*\]\((https?:\/\/[^\s)]+)(?:\s+"[^"]*")?\)$/i)
+      if (image) {
+        const imageBlock = tryImageBlock(image[1], '')
+        if (imageBlock) return [imageBlock]
+      }
+      return textBlocks(paragraph, paragraphBlock)
+    })
+}
+
 export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {
   const blocks: BlockObjectRequest[] = []
 
   if (draft.content?.clipMode === 'comment-context') {
     const contentText = draft.content?.markdown || draft.content?.contentText || ''
     if (contentText.trim()) {
-      blocks.push(...markdownToContentBlocks(contentText.trim()))
+      blocks.push(...markdownToCommentContextBlocks(contentText.trim()))
     }
     return blocks
   }

@@ -2,6 +2,19 @@
 
 ---
 
+## v0.8.3-v0.8.5 最终 QA（2026-06-19）
+
+- `npm run lint`：通过，0 errors。
+- `npm run test`：61 个测试文件，2010 个测试全部通过。
+- `npm run build`：通过，166 modules transformed。
+- `npm audit --omit=dev`：0 vulnerabilities。
+- `npm run zip`：946315 bytes，28 entries，包含 manifest、本地模型和权重，无父路径条目。
+- 完整 audit 的 8 项告警均来自 Vite/Vitest/jsdom 开发工具链，不进入生产依赖或扩展归档。
+- 静态检查未发现动态代码执行、token 日志、远程模型加载或用户内容进入静态 `innerHTML`。
+- 受当前 Windows 浏览器进程权限限制，未完成 Chrome/Edge 自动交互；未使用真实 Notion 凭据。
+
+---
+
 ## v0.8.5 定向验证（2026-06-19）
 
 - 定向回归：6 files / 132 tests 通过。

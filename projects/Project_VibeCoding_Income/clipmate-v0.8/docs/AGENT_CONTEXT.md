@@ -1,44 +1,33 @@
-# AGENT_CONTEXT.md - ClipMate v0.8
+# AGENT_CONTEXT.md - ClipMate v0.8 冻结交接
 
 更新日期：2026-06-19
 
-## 当前开发版本
+## 冻结基线
 
 - 目录：`clipmate-v0.8/`
-- 版本：`0.8.2`
-- 当前分支：`codex/clipmate-v0.8-asset-picker`
-- 状态：v0.8.1 Asset Picker 与 v0.8.2 教程结构修复均通过自动化；等待真实浏览器与 Notion 复测。
-
-## 冻结版本
-
-- `clipmate-v0.1/` 到 `clipmate-v0.4/`：历史快照。
-- `clipmate-v0.6/`：Asset Pipeline 稳定快照。
-- `clipmate-v0.7/`：Tutorial Mode 0.7.3 稳定基线，本轮禁止修改。
-
-## v0.8 主目标
-
-Asset Picker：
-
-- Popup 发起带 session id 的短生命周期图片选择会话。
-- content script 在当前页提供 Shadow DOM 覆盖层。
-- 选择结果安全合并到当前草稿、Markdown 与 Notion blocks。
-- Popup 支持预览、移除、排序和数量上限。
-- 不新增权限，不下载或上传图片，不读取 cookie，不建立站点级缓存。
+- 最终版本：`0.8.5`
+- 发布分支：`codex/clipmate-v0.8-asset-picker`
+- 状态：v0.8.3-v0.8.5 已开发并通过 lint、2010 项测试、正式构建和生产依赖审计。
 
 ## 关键实现
 
-- `src/content/assetPicker/assetPickerController.ts`：候选收集、覆盖层、事件与会话清理。
-- `src/features/assets/selectedImages.ts`：URL 安全、去重、排序、Markdown 幂等合并。
-- `src/popup/hooks/useAssetPicker.ts`：Popup 启动、恢复、取消和结果消费。
-- `src/popup/components/AssetPickerPanel.tsx`：图片列表管理 UI。
-- `src/platforms/notion/blocks.ts`：教程 ClipDocument 与手选图片合并去重。
-- `tests/v080-asset-picker.test.ts`：V0.8 核心自动化覆盖。
-- `manual-fixtures/asset-picker.html`：离线人工验收页。
-- `docs/V0.8_TEST_DOCUMENT.md`：完整测试与验收文档。
+- `src/platforms/notion/blocks.ts`：结构化 Markdown/ClipDocument 到 Notion block，评论上下文兼容路径。
+- `src/content/parser/codeContainers.ts`：代码容器预处理和 SyntaxHighlighter 布局表恢复。
+- `src/shared/markdown/codeLanguageDetection.ts`：DOM 提示、highlight.js、本地 ML 的混合代码语言识别。
+- `public/model/`：随扩展发布的模型 JSON 和权重，不访问远程模型服务。
+- `src/content/assetPicker/assetPickerController.ts`：视口变化下的悬停框同步与清理。
+- `src/shared/types/history.types.ts`、`src/options/components/HistoryTab.tsx`：动作类型、复制目标与安全 Notion 链接。
+- `tests/v083-human-qa-regressions.test.ts`、`tests/v084-code-detection.test.ts`、`tests/v085-interaction-history.test.ts`：本轮回归覆盖。
+
+## 安全边界
+
+- Notion token 仅保存在 `chrome.storage.local`，请求仅发往 manifest 中已有的 `https://api.notion.com/*`。
+- 模型和权重随扩展本地发布；不上传代码或用户页面内容到识别服务。
+- 不新增 cookie、下载、文件上传、远程代码、私有平台 API 或跨站 host 权限。
+- Shadow DOM 的 `innerHTML` 仅包含编译期静态模板，不插入页面或用户内容。
 
 ## 续作规则
 
-- V0.7 及更早目录继续冻结，任何修复只进入 V0.8。
-- 首先完成 Chrome、Edge 和真实 Notion 人工测试，发现 P0 问题后在 V0.8 独立修复。
-- 所有提交继续留在 `codex/clipmate-v0.8-asset-picker`，显式 stage V0.8 路径。
-- 不得提交 `node_modules`、`dist`、zip、测试截图、token 或用户内容。
+- v0.8.5 提交并推送后禁止继续修改本目录；后续开发进入 `clipmate-v0.9/`。
+- v0.8 只允许从冻结提交切出紧急修复分支，禁止继续叠加 v0.9 产品功能。
+- 不提交 `node_modules`、`dist`、zip、测试截图、token 或用户内容。
