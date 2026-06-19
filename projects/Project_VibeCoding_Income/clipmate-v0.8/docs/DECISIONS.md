@@ -4,6 +4,15 @@
 
 ---
 
+## v0.8.3 决策（2026-06-19）
+
+- 全文和教程共用同一 Markdown 结构解析与 Notion block adapter，避免预览正确但保存链路另行降级。
+- 图片 alt 是无障碍替代文本，不等同于题注；只有真实 figcaption 或显式 Markdown 题注进入 Notion caption。
+- 常见“插入图片描述”占位文本在提取层统一归一为空，不写入 Markdown、手选资源或 History。
+- metadata callout 的站点图标只接受长度受限的 HTTP(S) URL；其他协议回退本地 emoji。
+
+---
+
 ## v0.8.2 决策（2026-06-19）
 
 - Readability 保留 class，但只由 Turndown 的窄 allowlist 结构规则消费；Popup 不渲染来源 HTML。

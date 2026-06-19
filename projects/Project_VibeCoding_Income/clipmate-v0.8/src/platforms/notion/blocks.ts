@@ -1,5 +1,6 @@
 import type { ClipDraft } from '../../shared/types/clip.types'
 import type { ClipDocument, ClipDocumentBlock } from '../../features/document'
+import { parseMarkdownBlocks } from '../../features/document'
 import { parseNotionRichText } from './notionRichText'
 import { isNotionEmbeddableVideoUrl } from '../../shared/media/videoUrl'
 
@@ -11,10 +12,6 @@ interface BlockObjectRequest {
 
 const MAX_TEXT_LENGTH = 2000
 const MAX_NESTED_BLOCKS = 100
-
-const IMAGE_MARKDOWN_RE = /^!\[([^\]]*)\]\(([^)]+)\)\s*$/
-
-const ITALIC_CAPTION_RE = /^\*([^*]+)\*$/
 
 function chunkText(text: string): string[] {
   const chunks: string[] = []
@@ -54,13 +51,6 @@ function textBlocks(
   create: (chunk: string) => BlockObjectRequest
 ): BlockObjectRequest[] {
   return chunkText(text).map(create)
-}
-
-function splitParagraphs(contentText: string): string[] {
-  return contentText
-    .split(/\n\s*\n/)
-    .map((p) => p.trim().replace(/\n/g, ' '))
-    .filter((p) => p.length > 0)
 }
 
 function isValidExternalImageUrl(url: string): boolean {
@@ -407,60 +397,24 @@ function metadataHeaderBlock(draft: ClipDraft): BlockObjectRequest {
   }
   if (rows.length > 0) headerRichText.push(...richText(rows.join('\n')))
 
+  const siteIconUrl = meta.siteIconUrl?.trim()
+  const icon = siteIconUrl && isValidExternalImageUrl(siteIconUrl)
+    ? { type: 'external', external: { url: siteIconUrl } }
+    : { type: 'emoji', emoji: '🔖' }
+
   return {
     object: 'block',
     type: 'callout',
     callout: {
       rich_text: headerRichText,
-      icon: { emoji: '🔖' },
+      icon,
       color: 'gray_background'
     }
   }
 }
 
 export function markdownToContentBlocks(contentText: string): BlockObjectRequest[] {
-  const blocks: BlockObjectRequest[] = []
-  const paragraphs = splitParagraphs(contentText)
-
-  for (let i = 0; i < paragraphs.length; i++) {
-    const trimmed = paragraphs[i].trim()
-    const imageMatch = IMAGE_MARKDOWN_RE.exec(trimmed)
-
-    if (imageMatch) {
-      const alt = imageMatch[1] || ''
-      const rawUrl = imageMatch[2] || ''
-      let caption = alt.trim()
-
-      if (i + 1 < paragraphs.length) {
-        const nextTrimmed = paragraphs[i + 1].trim()
-        const captionMatch = ITALIC_CAPTION_RE.exec(nextTrimmed)
-        if (captionMatch) {
-          const captionText = captionMatch[1].trim()
-          if (captionText.length <= 200) {
-            caption = captionText
-            i++
-          }
-        }
-      }
-
-      const imageBlock = tryImageBlock(rawUrl, caption)
-      if (imageBlock) {
-        blocks.push(imageBlock)
-        continue
-      }
-    }
-
-    if (trimmed.length <= MAX_TEXT_LENGTH) {
-      blocks.push(paragraphBlock(trimmed))
-    } else {
-      const chunks = chunkText(trimmed)
-      for (const chunk of chunks) {
-        blocks.push(paragraphBlock(chunk))
-      }
-    }
-  }
-
-  return blocks
+  return parseMarkdownBlocks(contentText).flatMap(tutorialBlockToNotion)
 }
 
 export function buildNotionBlocks(draft: ClipDraft): BlockObjectRequest[] {

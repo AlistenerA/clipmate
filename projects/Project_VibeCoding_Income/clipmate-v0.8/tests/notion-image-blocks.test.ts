@@ -48,14 +48,12 @@ describe('markdownToContentBlocks — image conversion', () => {
     expect(img.external).toEqual({ url: 'https://example.com/cat.jpg' })
   })
 
-  it('uses alt text as image caption', () => {
+  it('keeps alt text out of the caption when the source has no real caption', () => {
     const blocks = markdownToContentBlocks('![一只猫](https://example.com/cat.jpg)')
 
     const img = (imageBlocksOnly(blocks)[0].image as Record<string, unknown>)
     const caption = img.caption as Array<Record<string, unknown>>
-    expect(caption).toHaveLength(1)
-    expect(caption[0].type).toBe('text')
-    expect((caption[0].text as Record<string, unknown>).content).toBe('一只猫')
+    expect(caption).toEqual([])
   })
 
   it('uses empty caption array when alt is empty', () => {

@@ -116,7 +116,7 @@ describe('Image caption layout — Notion blocks', () => {
     expect(caption[0].text.content).toBe('△特朗普（资料图）')
   })
 
-  it('image without following caption uses alt as caption', () => {
+  it('image without following caption does not promote alt text into a caption', () => {
     const md = `![Photo](https://example.com/img.jpg)`
     const blocks = markdownToContentBlocks(md)
 
@@ -125,8 +125,7 @@ describe('Image caption layout — Notion blocks', () => {
     const imgData = blocks[0].image as Record<string, unknown>
     const caption = imgData.caption as Array<Record<string, unknown>>
     expect(caption).toBeDefined()
-    expect(caption.length).toBeGreaterThan(0)
-    expect(caption[0].text.content).toBe('Photo')
+    expect(caption).toEqual([])
   })
 
   it('caption merged: no extra paragraph block for caption', () => {
@@ -147,16 +146,16 @@ describe('Image caption layout — Notion blocks', () => {
     expect(blocks[1].type).toBe('paragraph')
   })
 
-  it('long caption (>200 chars) uses alt as caption instead', () => {
+  it('long but valid source caption remains the caption', () => {
     const longText = 'A'.repeat(250)
     const md = `![Alt text](https://example.com/img.jpg)\n\n*${longText}*`
     const blocks = markdownToContentBlocks(md)
 
-    expect(blocks.length).toBe(2)
+    expect(blocks.length).toBe(1)
     expect(blocks[0].type).toBe('image')
     const imgData = blocks[0].image as Record<string, unknown>
     const caption = imgData.caption as Array<Record<string, unknown>>
-    expect(caption[0].text.content).toBe('Alt text')
+    expect(caption[0].text.content).toBe(longText)
   })
 
   it('italic text that does not follow image block stays as paragraph', () => {

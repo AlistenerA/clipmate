@@ -18,6 +18,7 @@ import {
   resolveUrl,
   getBestSrc,
 } from '../extractors/articleImages'
+import { normalizeImageDescription } from '../../shared/media/imageDescription'
 
 const turndown = new TurndownService({
   headingStyle: 'atx',
@@ -56,25 +57,21 @@ turndown.addRule('figure', {
           ?.textContent?.trim()
         const hasVerbosePrefix = /^(?:图像|图片)(?:加注文字|说明)[，,:：]/.test(rawCaption)
         const shouldNormalizeLabel = Boolean(preferredCaption) || hasVerbosePrefix
-        const cleanCaption = shouldNormalizeLabel
+        const cleanCaption = normalizeImageDescription(shouldNormalizeLabel
           ? (preferredCaption || rawCaption)
             .replace(/^(?:图像|图片)(?:加注文字|说明)[，,:：]\s*/, '')
             .trim()
-          : rawCaption
+          : rawCaption)
+        const contentWithoutCaption = content
+          .split('\n')
+          .filter((line) => line.trim() !== rawCaption && line.trim() !== cleanCaption)
+          .join('\n')
+          .trim()
+        if (!cleanCaption) return contentWithoutCaption
         const capText = shouldNormalizeLabel && cleanCaption
           ? `题注：${cleanCaption}`
           : cleanCaption
-        const normalizedContent = shouldNormalizeLabel && capText
-          ? content.replace(rawCaption, capText)
-          : content
-        const lines = normalizedContent.trim().split('\n')
-        for (let i = lines.length - 1; i >= 0; i--) {
-          if (lines[i].trim() === capText) {
-            lines[i] = '*' + capText + '*'
-            return lines.join('\n')
-          }
-        }
-        if (capText) return normalizedContent.trimEnd() + '\n*' + capText + '*'
+        return `${contentWithoutCaption}\n\n*${capText}*`
       }
     }
     return content
@@ -153,7 +150,8 @@ function markdownForMediaElement(el: Element): string {
   if (height > 0 && height < 40) return ''
 
   const resolvedSrc = bestSrc && imagePageUrl ? resolveUrl(bestSrc, imagePageUrl) : bestSrc
-  const alt = el.getAttribute('alt')?.trim() || el.getAttribute('title')?.trim() || ''
+  const alt = normalizeImageDescription(el.getAttribute('alt')) ||
+    normalizeImageDescription(el.getAttribute('title')) || ''
 
   return normalizeImageMarkdown({ src: resolvedSrc, alt })
 }

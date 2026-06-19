@@ -1,3 +1,5 @@
+import { normalizeImageDescription } from '../../shared/media/imageDescription'
+
 export interface ArticleImageCandidate {
   url: string
   alt?: string
@@ -260,7 +262,7 @@ function extractCaption(el: Element): string | undefined {
     if (parent.tagName === 'FIGURE') {
       const figcaption = parent.querySelector('figcaption')
       if (figcaption) {
-        const text = figcaption.textContent?.trim()
+        const text = normalizeImageDescription(figcaption.textContent)
         if (text) {
           return text.length <= 300 ? text : text.substring(0, 297) + '...'
         }
@@ -354,8 +356,8 @@ export function extractArticleImages(
 
     if (isDataUri(bestSrc)) {
       if (allowDataUri) {
-        const alt = img.getAttribute('alt')?.trim() || undefined
-        const title = img.getAttribute('title')?.trim() || undefined
+        const alt = normalizeImageDescription(img.getAttribute('alt'))
+        const title = normalizeImageDescription(img.getAttribute('title'))
         const caption = extractCaption(img)
         const sourceUrl = findNearestSourceUrl()
 
@@ -404,8 +406,8 @@ export function extractArticleImages(
 
     seenUrls.add(resolvedUrl)
 
-    const alt = img.getAttribute('alt')?.trim() || undefined
-    const title = img.getAttribute('title')?.trim() || undefined
+    const alt = normalizeImageDescription(img.getAttribute('alt'))
+    const title = normalizeImageDescription(img.getAttribute('title'))
     const caption = extractCaption(img)
     const sourceUrl = findNearestSourceUrl()
 

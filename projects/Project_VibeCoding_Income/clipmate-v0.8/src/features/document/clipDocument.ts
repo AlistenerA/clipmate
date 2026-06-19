@@ -165,7 +165,7 @@ function normalizeVideoLink(link: ClipVideoLinkInput): ClipVideoLinkInput | null
   }
 }
 
-function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
+export function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
   const lines = markdown.replace(/\r\n/g, '\n').split('\n')
   const blocks: ClipDocumentBlock[] = []
   let paragraph: string[] = []
@@ -310,15 +310,16 @@ function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
     const image = IMAGE_RE.exec(trimmed)
     if (image) {
       flushParagraph()
-      const nextLine = lines[index + 1]?.trim() || ''
-      const caption = CAPTION_RE.exec(nextLine)
+      let captionIndex = index + 1
+      while (captionIndex < lines.length && !lines[captionIndex].trim()) captionIndex++
+      const caption = CAPTION_RE.exec(lines[captionIndex]?.trim() || '')
       blocks.push({
         type: 'figure',
         alt: image[1].trim(),
         url: image[2].trim(),
         caption: caption?.[1].trim() || undefined,
       })
-      index += caption ? 2 : 1
+      index = caption ? captionIndex + 1 : index + 1
       continue
     }
 

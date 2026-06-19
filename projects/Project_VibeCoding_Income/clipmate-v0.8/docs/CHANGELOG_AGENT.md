@@ -2,6 +2,16 @@
 
 ---
 
+## v0.8.3 全文结构与图片语义修复（2026-06-19）
+
+- 全文 Markdown 改用既有 `ClipDocument` 结构解析器生成 Notion blocks，表格、标题、列表和代码不再压成普通段落。
+- 图片 alt 仅保留为替代文本，不再自动充当 Notion 题注；真实 figcaption 只输出一次。
+- 过滤“在这里插入图片描述”等站点占位文案，原文无题注时保持空 caption。
+- Notion metadata callout 优先使用经过 HTTP(S) 校验的网站图标，不安全或缺失 URL 回退书签 emoji。
+- 新增 v0.8.3 人工问题回归；版本号更新为 0.8.3，未新增权限、host permission 或远程请求。
+
+---
+
 ## v0.8.2 教程结构保真修复（2026-06-19）
 
 - Readability 开启 `keepClasses`，让 Runoob `example_code` 在完整提取链路中保留并转 fenced code。
