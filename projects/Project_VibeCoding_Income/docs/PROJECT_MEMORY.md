@@ -20,11 +20,11 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.8` v0.8.2 on `codex/clipmate-v0.8-asset-picker`.
-- v0.8.0 adds the Asset Picker: an in-page session overlay plus current-draft image preview, removal, ordering, Markdown integration, and tutorial Notion block integration.
-- v0.8.1 fixes Asset Picker result recovery, Popup handoff, mode cleanup, and overlay-card clicks found in human QA.
-- v0.8.2 fixes Runoob code class retention, numbered headings, native Notion lists, and empty image captions.
-- v0.8.2 passes lint, 58 files / 1998 tests, build, and local fixture HTTP smoke; Chrome/Edge plus real Notion retest remains for the user.
+- Active version: `clipmate-v0.9` v0.9.0 on `codex/clipmate-v0.9-page-aware`.
+- v0.9 adds page-aware mode recommendations, page-specific labels, primary-mode visibility, and guarded first-load auto-selection for confident video/AI pages.
+- Recommendations are local, explainable, optional, and user-overridable; they store no raw detector signals, DOM, body text, selection text, or URL.
+- v0.9 passes lint, 62 files / 2028 tests, build, and a Playwright Popup interaction covering auto-apply, more-modes expansion, and user override.
+- `clipmate-v0.8` is frozen at v0.8.5; its branch was pushed after completing structure, image semantics, hybrid code detection, Asset Picker interaction, and History fixes.
 - v0.7 goal: Tutorial Mode with a versioned `ClipDocument` and native Notion structure mapping.
 - v0.7 automated candidate passes lint, 53 files / 1966 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
 - `clipmate-v0.6` is the frozen v0.6 Asset Pipeline release directory and has a local untracked archive.
@@ -49,7 +49,7 @@ Future sessions should re-check status before editing because this can change.
 - Python may not be available as `python` on PATH. Codex bundled Python exists at `C:\Users\20499\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`.
 - `npm run test` and `npm run build` may hit sandbox access errors on Windows because Vite/Vitest attempt to inspect parent directories. Request escalation for the exact npm command if that happens.
 - Optional MCP templates are in `.codex/config.toml` but disabled by default.
-- Browser DOM and extension UI checks should use Codex Playwright skills or an enabled Playwright MCP.
+- Browser DOM and extension UI checks should prefer the in-app Browser; current Windows policy blocks that process, while the Playwright CLI fallback works.
 - Documentation research should use official docs and primary sources; use Context7 if enabled and relevant.
 - Remote server work requires a configured SSH host alias and explicit target from the user.
 
@@ -64,9 +64,8 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
-- Retest `clipmate-v0.8/docs/V0.8_TEST_DOCUMENT.md` against v0.8.2 in Chrome, Edge, and a real Notion test page.
-- Keep all V0.8 commits on `codex/clipmate-v0.8-asset-picker`; older version directories remain frozen.
-- Fix any P0 findings only inside `clipmate-v0.8` before marking human QA complete.
-- Review known v0.5 watch-list items in `docs/PROJECT_ARCHITECTURE.md`.
-- Use `other source/` to compare mature clipping, Notion, or browser-extension patterns.
-- Add browser QA for real pages and real Notion saves before declaring the next version complete.
+- Run Chrome and Edge unpacked smoke plus a real Notion test-page save before store submission.
+- Keep v0.8 and earlier directories frozen; normal follow-up changes enter `clipmate-v0.9`.
+- Calibrate page recommendations against real Bilibili, technical article, discussion, search, and AI pages.
+- Evaluate a separate video-collection data model only in v0.9.x; do not mix subtitles, private APIs, cookies, downloads, or DRM into the current mode recommender.
+- Review known watch-list items in `docs/PROJECT_ARCHITECTURE.md` when those surfaces are touched.

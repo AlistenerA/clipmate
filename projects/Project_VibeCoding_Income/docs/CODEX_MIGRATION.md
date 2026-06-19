@@ -7,9 +7,9 @@ This document converts the earlier opencode workflow into a Codex-native workflo
 ## Current Baseline
 
 - Active product: ClipMate, a Manifest V3 browser extension for clipping web content into Notion.
-- Current working version: `clipmate-v0.8` v0.8.2 on `codex/clipmate-v0.8-asset-picker`.
-- Current automated snapshot: v0.8.2 passes lint, 58 files / 1998 tests, build, and Asset Picker fixture HTTP smoke.
-- Frozen release baseline: `clipmate-v0.6`.
+- Current working version: `clipmate-v0.9` v0.9.0 on `codex/clipmate-v0.9-page-aware`.
+- Current automated snapshot: v0.9.0 passes lint, 62 files / 2028 tests, build, and local Playwright Popup interaction QA.
+- Frozen release baseline: `clipmate-v0.8` v0.8.5.
 - Frozen historical versions: `clipmate-v0.1` through `clipmate-v0.4`; use them for comparison only.
 - `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` by explicit user instruction.
 - Reference code: `other source/`; treat all files there as read-only design references, not as code to copy blindly.
@@ -40,7 +40,7 @@ The project `.codex/config.toml` raises project-doc context size and includes di
 1. Orient first.
    - Check `git status --short`.
    - Identify the active version directory and whether the task affects code, UX, permissions, storage, tests, docs, build output, archive output, or GitHub state.
-   - Read the active version docs, currently `clipmate-v0.8/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
+   - Read the active version docs, currently `clipmate-v0.9/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
 
 2. Accept user input in the lightweight future mode.
    - The user will usually provide feature ideas, bug descriptions, screenshots, or reference code.
@@ -92,6 +92,14 @@ Only configure remote servers when the user provides a target or an existing SSH
 Codex App remote SSH work requires a concrete host alias in `~/.ssh/config`, successful `ssh <host>`, Codex installed and authenticated on the remote host, and the host enabled in Codex Settings > Connections.
 
 ## Current Verification Snapshot
+
+On 2026-06-19, while completing v0.9.0:
+
+- `npm run lint` passed.
+- `npm run test` passed with 62 test files and 2028 tests.
+- `npm run build` passed with 168 transformed modules.
+- Playwright verified the real built Popup for video recommendation, first-load auto-apply, all-mode expansion, and persistent user override.
+- In-app Browser could not start under the Windows process policy; Playwright CLI was used as the documented fallback.
 
 On 2026-06-18, while preparing the v0.7 automated release candidate:
 

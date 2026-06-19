@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ClipMate v0.7 教程模式人工测试页" />
+    <title>ClipMate v0.7 教程模式测试</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; color: #18212b; background: #f4f6f8; }
+      main { width: min(760px, calc(100% - 32px)); margin: 32px auto; padding: 32px; background: white; }
+      h1, h2, h3 { line-height: 1.25; }
+      p, li { line-height: 1.75; }
+      pre { overflow: auto; padding: 16px; background: #111827; color: #f9fafb; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { padding: 8px 12px; border: 1px solid #cbd5e1; text-align: left; }
+      blockquote { margin: 20px 0; padding: 4px 16px; border-left: 4px solid #2563eb; background: #eff6ff; }
+      figure { margin: 24px 0; }
+      figure img { display: block; width: 640px; max-width: 100%; height: 240px; object-fit: cover; background: #e2e8f0; }
+      figcaption { margin-top: 8px; color: #475569; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article>
+        <h1>从零搭建一个教程文档</h1>
+        <p>这是 ClipMate v0.7 的人工测试样例。正文刻意包含多种教程结构，用于检查提取后是否仍保留层级、代码、公式、表格、提示块、图片题注和视频链接。测试时请同时观察 Popup 原文、预览、复制到 Markdown 的结果，以及保存到 Notion 后生成的块类型。</p>
+
+        <h2>第一步：准备环境</h2>
+        <p>先确认浏览器已加载 v0.7 的 dist 目录，并且扩展 Popup 中可以看到全文、选区、教程三个模式。切换到教程模式后应立即重新提取，旧的全文内容不应在加载期间继续可保存。</p>
+        <pre><code class="language-typescript">const mode = 'tutorial'
+console.log(`Clip mode: ${mode}`)</code></pre>
+
+        <h2>第二步：检查公式与表格</h2>
+        <p>下面的公式通过 MathJax 常见的 script 标记提供，提取后应成为独立公式，而不是被清理器删除。</p>
+        <script type="math/tex; mode=display">E = mc^2</script>
+
+        <table>
+          <thead>
+            <tr><th>结构</th><th>预期结果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>标题</td><td>保留层级</td></tr>
+            <tr><td>代码</td><td>保留语言</td></tr>
+            <tr><td>公式</td><td>Notion equation</td></tr>
+          </tbody>
+        </table>
+
+        <blockquote>
+          <p>[!TIP] 教程模式应把这段内容识别为提示块，并在 Notion 中保存为 callout。</p>
+        </blockquote>
+
+        <h3>第三步：检查图片题注</h3>
+        <figure>
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="笔记本电脑上的代码编辑器" width="640" height="240" />
+          <figcaption>教程模式测试图片：题注应进入图片 caption。</figcaption>
+        </figure>
+
+        <h3>第四步：检查视频链接元数据</h3>
+        <p>下面的视频地址只用于验证链接元数据。教程模式应在 Markdown 尾部增加 Video links，并在 Notion 中生成 bookmark；它不下载视频。</p>
+        <iframe title="教程演示视频" loading="lazy" src="https://www.youtube.com/embed/test-video-id"></iframe>
+
+        <p>最后再提供一段足够长的正文，以避免测试页被低置信度摘要逻辑误判为导航页。正常结果应包含本段以及前面的所有教程结构；如果只看到页面摘要、少量链接或空内容，请按测试文档记录为正文边界或 Readability 风险。</p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -1,14 +1,15 @@
-# ClipMate v0.8 Project Architecture
+# ClipMate v0.9 Project Architecture
 
 Last updated: 2026-06-19.
 
 ## Product Shape
 
-ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.8` adds a session-isolated Asset Picker so users can supplement automatic extraction with selected page images while retaining v0.7 Tutorial Mode.
+ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.9` adds local page-aware mode recommendations while retaining v0.8 Asset Picker and v0.7 Tutorial Mode.
 
 ## Repository Map
 
-- `clipmate-v0.8/`: active v0.8.2 version and source of truth for current development.
+- `clipmate-v0.9/`: active v0.9.0 version and source of truth for current development.
+- `clipmate-v0.8/`: frozen v0.8.5 release snapshot.
 - `clipmate-v0.7/`: frozen Tutorial Mode 0.7.3 baseline.
 - `clipmate-v0.6/`: frozen v0.6 Asset Pipeline release baseline.
 - `clipmate-v0.1/` to `clipmate-v0.4/`: frozen historical versions.
@@ -45,24 +46,26 @@ flowchart LR
 
 ## Main Entry Points
 
-- `clipmate-v0.8/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
-- `clipmate-v0.8/src/background/index.ts`: runtime message dispatch; currently handles `SAVE_TO_NOTION`.
-- `clipmate-v0.8/src/content/assetPicker/assetPickerController.ts`: page candidate collection, Shadow DOM overlay, session state, and cleanup.
-- `clipmate-v0.8/src/features/assets/selectedImages.ts`: selected-image safety, ordering, and Markdown integration.
-- `clipmate-v0.8/src/popup/hooks/useAssetPicker.ts`: Popup-to-tab session protocol and result consumption.
-- `clipmate-v0.8/src/features/document/clipDocument.ts`: Tutorial Mode document model and Markdown structure parser.
-- `clipmate-v0.8/src/content/index.ts`: extraction and Asset Picker message routing.
-- `clipmate-v0.8/src/platforms/notion/blocks.ts`: Markdown, ClipDocument, and selected-image Notion block conversion.
-- `clipmate-v0.8/src/background/handlers/notionHandler.ts`: validates payloads, builds Notion blocks, appends to Notion, and writes success/failure history.
-- `clipmate-v0.8/src/content/parser/htmlToMarkdown.ts`: HTML to Markdown conversion, image Markdown preservation, formulas, tables, links, and cleanup.
-- `clipmate-v0.8/src/content/extractors/articleImages.ts`: article image discovery, URL resolution, noise filtering, and picker candidate input.
-- `clipmate-v0.8/src/features/assets/assetPipeline.ts`: asset model, image save strategy selection, and image quality reports.
-- `clipmate-v0.8/src/platforms/notion/client.ts`: Notion request batching and error-code mapping.
-- `clipmate-v0.8/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
-- `clipmate-v0.8/src/popup/App.tsx`: popup workflow, Asset Picker integration, copy/save actions, and draft persistence.
-- `clipmate-v0.8/src/options/App.tsx`: settings and history UI.
+- `clipmate-v0.9/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
+- `clipmate-v0.9/src/shared/utils/pageTypeDetector.ts`: local document classification.
+- `clipmate-v0.9/src/shared/utils/pageAwareModes.ts`: mode recommendation, labels, and initial auto-apply guard.
+- `clipmate-v0.9/src/content/pageAwareness.ts`: sanitized DOM-to-recommendation adapter.
+- `clipmate-v0.9/src/content/index.ts`: extraction, PageAwareness attachment, and Asset Picker message routing.
+- `clipmate-v0.9/src/popup/App.tsx`: popup workflow, recommendation lifecycle, copy/save actions, and draft persistence.
+- `clipmate-v0.9/src/popup/components/ClipModeToggle.tsx`: page-aware recommendation and all-mode UI.
+- `clipmate-v0.9/src/platforms/notion/blocks.ts`: Markdown, ClipDocument, and selected-image Notion block conversion.
+- `clipmate-v0.9/src/background/handlers/notionHandler.ts`: validates payloads, appends Notion blocks, and writes history.
+- `clipmate-v0.9/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
 
 ## Core Data Flows
+
+Page-aware mode selection:
+
+1. Content script classifies the current document locally.
+2. A pure recommendation policy reduces classification to type, confidence, selection presence, mode IDs, and fixed reason text.
+3. Popup shows primary modes and keeps every mode reachable through “more modes”.
+4. Only confident video/AI pages without a selection can auto-apply once.
+5. Restored drafts, selected text, and explicit user mode changes take precedence.
 
 Full-page clipping:
 
