@@ -8,8 +8,8 @@ interface Props {
   error: string | null
   starting: boolean
   disabled?: boolean
-  onStart: () => void
-  onCancel: () => void
+  onStart: () => void | Promise<void>
+  onCancel: () => void | Promise<void>
   onRemove: (index: number) => void
   onMove: (fromIndex: number, toIndex: number) => void
 }

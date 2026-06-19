@@ -12,9 +12,12 @@
 
 ## 当前阶段
 
-**v0.8.0 Asset Picker 自动化候选完成，等待 Chrome、Edge 和真实 Notion 人工验收。**
+**v0.8.1 Asset Picker 人工测试修复已通过自动化，继续处理 v0.8.2 教程结构问题。**
 
 已完成：
+
+- v0.8.1 修复 completed session 提前消费、Popup 不自动关闭、模式切换残留和卡片遮罩点击问题。
+- v0.8.1 对正文大尺寸技术 logo 提供窄例外，不放宽站点 logo、头像或非 HTTP(S) URL。
 
 - Popup 可启动一次性页面图片选择会话，协议包含随机 session id。
 - content script 使用 Shadow DOM 工具条和独立定位框，不改写页面图片样式。
@@ -27,15 +30,15 @@
 - Markdown 只追加自动提取缺失的图片，移除后恢复原始 Markdown。
 - 教程模式 Notion blocks 追加手选图片，同时对 ClipDocument 已有 figure 去重。
 - 新增离线人工 fixture、启动脚本和 `docs/V0.8_TEST_DOCUMENT.md`。
-- 版本号统一为 0.8.0；未增加依赖、manifest 权限或 host permission。
+- 当前版本号为 0.8.1；未增加依赖、manifest 权限或 host permission。
 
 ## 自动化验证
 
 - `npm run lint`：通过，0 errors。
 - V0.8 定向测试：1 file / 7 tests 通过。
-- `npm run test`：57 files / 1991 tests 全部通过。
-- `npm run build`：通过，141 modules transformed。
-- `dist/manifest.json`：version = 0.8.0。
+- `npm run test`：57 files / 1994 tests 全部通过。
+- `npm run build`：通过，142 modules transformed。
+- `dist/manifest.json`：version = 0.8.1。
 - `npm run zip`：通过，生成 `clipmate-v0.8.zip`（166351 bytes / 25 entries，仅 dist 产物）。
 
 ## 人工验收

@@ -11,10 +11,10 @@ export function useExtractContent() {
   const [content, setContent] = useState<ExtractedContent | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const abortRef = useRef(false)
+  const requestIdRef = useRef(0)
 
   const extract = useCallback(async (mode: ClipMode) => {
-    abortRef.current = false
+    const requestId = ++requestIdRef.current
     setLoading(true)
     setError(null)
     setContent(null)
@@ -28,7 +28,7 @@ export function useExtractContent() {
 
       const result = await sendToActiveTab<ExtractResult>({ type: msgType })
 
-      if (abortRef.current) return
+      if (requestId !== requestIdRef.current) return
 
       if (result.success) {
         setContent(result.data)
@@ -37,26 +37,26 @@ export function useExtractContent() {
         setContent(null)
       }
     } catch (err) {
-      if (abortRef.current) return
+      if (requestId !== requestIdRef.current) return
       const normalized = normalizeContentScriptConnectionError(err)
       setError(normalized.message)
       setContent(null)
     } finally {
-      if (!abortRef.current) {
+      if (requestId === requestIdRef.current) {
         setLoading(false)
       }
     }
   }, [])
 
   const clear = useCallback(() => {
-    abortRef.current = true
+    requestIdRef.current++
     setContent(null)
     setError(null)
     setLoading(false)
   }, [])
 
   const tryExtractPrioritizeSelection = useCallback(async (): Promise<{ content: ExtractedContent | null; mode: ClipMode } | null> => {
-    abortRef.current = false
+    const requestId = ++requestIdRef.current
     setLoading(true)
     setError(null)
 
@@ -65,7 +65,7 @@ export function useExtractContent() {
         type: MESSAGE_TYPES.GET_SELECTION,
       })
 
-      if (abortRef.current) return null
+      if (requestId !== requestIdRef.current) return null
 
       if (selResult.success && (selResult.data.contentText || selResult.data.markdown)) {
         setContent(selResult.data)
@@ -74,14 +74,14 @@ export function useExtractContent() {
 
       return { content: null, mode: 'fullpage' }
     } catch (err) {
-      if (abortRef.current) return null
+      if (requestId !== requestIdRef.current) return null
       if (isContentScriptUnavailableError(err)) {
         const normalized = normalizeContentScriptConnectionError(err)
         setError(normalized.message)
       }
       return { content: null, mode: 'fullpage' }
     } finally {
-      if (!abortRef.current) {
+      if (requestId === requestIdRef.current) {
         setLoading(false)
       }
     }

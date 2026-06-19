@@ -3,7 +3,8 @@ import {
   applySelectedImagesToContent,
   formatSelectedImagesMarkdown,
   moveSelectedImage,
-  normalizeSelectedImages
+  normalizeSelectedImages,
+  resolveAssetPickerResultAction
 } from '../src/features/assets'
 import { AssetPickerController, collectAssetPickerCandidates } from '../src/content/assetPicker'
 import { buildNotionBlocks } from '../src/platforms/notion/blocks'
@@ -85,6 +86,23 @@ afterEach(() => {
 })
 
 describe('v0.8 selected image draft integration', () => {
+  it('waits for the restored draft before consuming a completed picker result', () => {
+    const state = {
+      sessionId: 'session-current',
+      pageUrl: 'https://example.com/article',
+      status: 'completed' as const,
+      selectedImages: [makeImage('https://cdn.example.com/added.jpg')],
+      candidateCount: 1,
+      maxSelection: 20
+    }
+
+    expect(resolveAssetPickerResultAction(state, null, state.pageUrl)).toBe('wait')
+    expect(resolveAssetPickerResultAction(state, makeContent(), state.pageUrl)).toBe('apply')
+    expect(resolveAssetPickerResultAction(state, makeContent(), 'https://example.com/other')).toBe(
+      'discard'
+    )
+  })
+
   it('normalizes safe URLs, removes duplicates, and enforces the limit', () => {
     const images = normalizeSelectedImages(
       [
@@ -172,6 +190,33 @@ describe('v0.8 page asset picker session', () => {
     ])
   })
 
+  it('keeps a large article logo available for explicit manual selection', () => {
+    document.body.innerHTML = `
+      <header><img src="https://cdn.example.com/site-logo.png" width="120" height="120"></header>
+      <article><img src="https://cdn.example.com/typescript-logo.jpg" width="100" height="100"></article>
+    `
+    const [headerLogo, articleLogo] = Array.from(document.querySelectorAll('img'))
+    setVisibleRect(headerLogo)
+    Object.defineProperty(articleLogo, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({
+        left: 20,
+        top: 20,
+        right: 120,
+        bottom: 120,
+        width: 100,
+        height: 100,
+        x: 20,
+        y: 20,
+        toJSON: () => ({})
+      })
+    })
+
+    expect(collectAssetPickerCandidates(document).map((candidate) => candidate.asset.url)).toEqual([
+      'https://cdn.example.com/typescript-logo.jpg'
+    ])
+  })
+
   it('selects an image, completes, and only consumes a matching session', () => {
     const [first] = preparePage()
     const controller = new AssetPickerController()
@@ -198,6 +243,24 @@ describe('v0.8 page asset picker session', () => {
     expect(controller.getState()?.sessionId).toBe('session-current')
     expect(controller.consume('session-current')).toBe(true)
     expect(controller.getState()).toBeNull()
+  })
+
+  it('selects the underlying image when a page card overlay receives the click', () => {
+    const [first] = preparePage()
+    const overlay = document.createElement('button')
+    first.parentElement?.appendChild(overlay)
+    setVisibleRect(overlay)
+    const controller = new AssetPickerController()
+    controller.start({ sessionId: 'session-overlay', maxSelection: 20 })
+
+    overlay.dispatchEvent(
+      new MouseEvent('click', { bubbles: true, cancelable: true, clientX: 30, clientY: 40 })
+    )
+
+    expect(controller.getState()?.selectedImages.map((image) => image.url)).toContain(
+      'https://cdn.example.com/a.jpg'
+    )
+    controller.cancel('session-overlay')
   })
 
   it('cancels with Escape and rejects stale cancellation IDs', () => {

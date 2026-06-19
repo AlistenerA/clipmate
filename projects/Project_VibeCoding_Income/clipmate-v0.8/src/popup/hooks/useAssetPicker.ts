@@ -32,7 +32,7 @@ export function useAssetPicker() {
     refresh()
   }, [refresh])
 
-  const start = useCallback(async (selectedImages: SelectedImageAsset[]) => {
+  const start = useCallback(async (selectedImages: SelectedImageAsset[]): Promise<boolean> => {
     setStarting(true)
     setError(null)
     try {
@@ -46,17 +46,20 @@ export function useAssetPicker() {
       })
       if (response.success) {
         setState(response.data)
+        return true
       } else {
         setError(pickerErrorMessage(response.error))
+        return false
       }
     } catch {
       setError('无法在当前页面启动图片选择，请刷新页面后重试')
+      return false
     } finally {
       setStarting(false)
     }
   }, [])
 
-  const cancel = useCallback(async () => {
+  const cancel = useCallback(async (): Promise<void> => {
     if (!state) return
     const response = await sendToActiveTab<AssetPickerResponse>({
       type: MESSAGE_TYPES.CANCEL_ASSET_PICKER,

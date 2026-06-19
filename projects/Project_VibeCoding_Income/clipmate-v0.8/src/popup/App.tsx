@@ -29,7 +29,11 @@ import { ERROR_MESSAGES } from '../shared/constants/defaults'
 import { createClipDraft } from '../features/capture'
 import { createClipSession, createSaveToNotionPayloadFromSession } from '../features/session'
 import { generateId } from '../shared/utils/id'
-import { applySelectedImagesToContent, moveSelectedImage } from '../features/assets'
+import {
+  applySelectedImagesToContent,
+  moveSelectedImage,
+  resolveAssetPickerResultAction
+} from '../features/assets'
 import type { ClipMode, MarkdownTarget } from '../shared/types/clip.types'
 import type { ClipHistoryItem, ClipMateSettingsV2 } from '../shared/types/settings.types'
 
@@ -189,14 +193,11 @@ export default function App() {
   useEffect(() => {
     if (!assetPickerState || consumedPickerSessionsRef.current.has(assetPickerState.sessionId))
       return
-    if (assetPickerState.status === 'active') return
+    const action = resolveAssetPickerResultAction(assetPickerState, content, tab?.url)
+    if (action === 'wait') return
 
     consumedPickerSessionsRef.current.add(assetPickerState.sessionId)
-    if (
-      assetPickerState.status === 'completed' &&
-      content &&
-      tab?.url === assetPickerState.pageUrl
-    ) {
+    if (action === 'apply') {
       setContent((current) =>
         current ? applySelectedImagesToContent(current, assetPickerState.selectedImages) : current
       )
@@ -210,12 +211,15 @@ export default function App() {
   }, [mode, extract, resetCopy])
 
   const handleModeChange = useCallback(
-    (nextMode: ClipMode) => {
+    async (nextMode: ClipMode) => {
+      if (assetPickerState?.status === 'active') {
+        await cancelAssetPicker()
+      }
       setMode(nextMode)
       resetCopy()
       extract(nextMode)
     },
-    [extract, resetCopy]
+    [assetPickerState?.status, cancelAssetPicker, extract, resetCopy]
   )
 
   const handleCopy = useCallback(() => {
@@ -224,9 +228,10 @@ export default function App() {
     }
   }, [displayMarkdown, copy])
 
-  const handleStartAssetPicker = useCallback(() => {
+  const handleStartAssetPicker = useCallback(async () => {
     if (!content) return
-    startAssetPicker(content.selectedImages || [])
+    const started = await startAssetPicker(content.selectedImages || [])
+    if (started) window.close()
   }, [content, startAssetPicker])
 
   const updateSelectedImages = useCallback(

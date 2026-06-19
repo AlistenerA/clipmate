@@ -2,6 +2,18 @@
 
 ---
 
+## v0.8.1 自动验证（2026-06-19）
+
+- `npm run test -- --run tests/v080-asset-picker.test.ts`：1 file / 10 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：57 files / 1994 tests 全部通过。
+- `npm run build`：通过，142 modules transformed；`dist/manifest.json` 为 0.8.1。
+- 新覆盖：completed session 等待草稿恢复、跨页结果丢弃、正文 logo 手选、卡片遮罩坐标回落。
+- 安全检查：URL 仍限 HTTP(S)，选择上限仍为 20；未增加下载、上传、cookie、远程 API、权限或长期站点缓存。
+- 真实 Chrome/Edge 的 Popup 自动关闭、VCG-like 图集与 Runoob logo 仍需重新加载 0.8.1 后人工复测。
+
+---
+
 ## v0.8.0 自动验证（2026-06-19）
 
 - `npm run test -- --run tests/v080-asset-picker.test.ts`：1 file / 7 tests 通过。

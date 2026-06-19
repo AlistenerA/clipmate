@@ -29,3 +29,11 @@ export {
   moveSelectedImage,
   normalizeSelectedImages
 } from './selectedImages'
+
+export {
+  resolveAssetPickerResultAction
+} from './assetPickerResult'
+
+export type {
+  AssetPickerResultAction
+} from './assetPickerResult'

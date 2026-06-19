@@ -4,6 +4,16 @@
 
 ---
 
+## v0.8.1 决策（2026-06-19）
+
+- completed picker result 在正文草稿和 active tab URL 均就绪前不得消费；cancelled result 可直接丢弃。
+- 启动选图后由扩展 Popup 主动 `window.close()`，避免覆盖层与 Popup 同时占据页面。
+- 手动选择比自动提取略宽松，但只例外放行正文容器内不小于 80x80 的 logo；头像、图标和页头品牌图继续过滤。
+- 点击回落只在已收集候选的可见矩形内匹配，不扩大 URL 来源，不读取页面外数据。
+- 模式切换先取消 active picker，异步提取以递增 request id 保证最后一次用户意图获胜。
+
+---
+
 ## v0.8.0 决策（2026-06-19）
 
 - Asset Picker 状态保留在 content script 页面内存中；完成后由重开的 Popup 按 session id 消费，不建立站点级长期缓存。

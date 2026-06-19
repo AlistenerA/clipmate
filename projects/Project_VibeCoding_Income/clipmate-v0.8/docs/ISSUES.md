@@ -2,6 +2,18 @@
 
 ---
 
+## v0.8.1 人工测试修复
+
+| 编号 | 问题 | 级别 | 状态 |
+|:---:|---|:---:|:---:|
+| IS70 | completed picker 在草稿恢复前被消费，Popup 重开显示 0/20 | blocker | 已修复，自动化通过，待 Chrome/Edge 复测 |
+| IS71 | 启动选图后 Popup 不自动关闭 | medium | 已修复，启动成功后关闭 Popup |
+| IS72 | VCG-like 图片卡片有候选但遮罩层导致无法点击 | major | 已增加候选矩形坐标回落，待真实站点复测 |
+| IS73 | Runoob 正文 TypeScript logo 被通用 logo 规则过滤 | medium | 正文大图手选例外已实现，站点 logo 仍过滤 |
+| IS74 | active picker 状态下切换模式不清理页面工具条 | major | 已修复，切换前取消会话 |
+
+---
+
 ## v0.8.0 Asset Picker
 
 | 编号 | 问题 | 级别 | 状态 |

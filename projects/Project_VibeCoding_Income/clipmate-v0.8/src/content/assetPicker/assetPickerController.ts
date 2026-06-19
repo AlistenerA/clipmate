@@ -14,6 +14,52 @@ interface PickerCandidate {
   asset: SelectedImageAsset
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+function isMeaningfulArticleLogo(element: Element, url: string): boolean {
+  if (!/logo/i.test(url)) return false
+  if (!element.closest('article, main, [role="main"], .article-body, .article-content, #content')) {
+    return false
+  }
+  if (/\b(?:avatar|profile|icon|favicon|badge|emoji|sprite|qr)\b/i.test(
+    `${element.id} ${element.getAttribute('class') || ''}`
+  )) {
+    return false
+  }
+  const rect = element.getBoundingClientRect()
+  return rect.width >= 80 && rect.height >= 80
+}
+
+function createManualLogoAsset(
+  element: Element,
+  url: string,
+  index: number,
+  pageUrl: string
+): SelectedImageAsset {
+  const width = Math.round(element.getBoundingClientRect().width)
+  const height = Math.round(element.getBoundingClientRect().height)
+  return normalizeSelectedImages([
+    {
+      id: '',
+      url,
+      alt: element.getAttribute('alt')?.trim() || undefined,
+      title: element.getAttribute('title')?.trim() || undefined,
+      width: width > 0 ? width : undefined,
+      height: height > 0 ? height : undefined,
+      sourceUrl: pageUrl,
+      index,
+      origin: element.closest('picture') ? 'picture' : 'img'
+    }
+  ])[0]
+}
+
 export function isElementVisibleForAssetPicker(element: Element): boolean {
   if (element.hasAttribute('hidden') || element.getAttribute('aria-hidden') === 'true') return false
 
@@ -43,7 +89,11 @@ export function collectAssetPickerCandidates(
     const rawUrl = getBestSrc(element)
     if (!rawUrl) return
     const url = resolveUrl(rawUrl, sourceDocument.URL)
-    const asset = assetByUrl.get(url)
+    const asset = assetByUrl.get(url) || (
+      isHttpUrl(url) && isMeaningfulArticleLogo(element, url)
+        ? createManualLogoAsset(element, url, candidates.length, sourceDocument.URL)
+        : undefined
+    )
     if (!asset || seen.has(url) || asset.origin === 'markdown') return
 
     seen.add(url)
@@ -209,7 +259,7 @@ export class AssetPickerController {
   }
 
   private handleMouseOver = (event: MouseEvent): void => {
-    const candidate = this.findCandidate(event.target)
+    const candidate = this.findCandidate(event.target, event.clientX, event.clientY)
     if (!this.hoverBox || !candidate) {
       this.hoverBox?.setAttribute('hidden', '')
       return
@@ -221,7 +271,7 @@ export class AssetPickerController {
   private handleDocumentClick = (event: MouseEvent): void => {
     if (!this.state || this.state.status !== 'active') return
     if (this.host && event.composedPath().includes(this.host)) return
-    const candidate = this.findCandidate(event.target)
+    const candidate = this.findCandidate(event.target, event.clientX, event.clientY)
     event.preventDefault()
     event.stopImmediatePropagation()
     if (!candidate) return
@@ -258,10 +308,28 @@ export class AssetPickerController {
     this.cancel()
   }
 
-  private findCandidate(target: EventTarget | null): PickerCandidate | undefined {
+  private findCandidate(
+    target: EventTarget | null,
+    clientX?: number,
+    clientY?: number
+  ): PickerCandidate | undefined {
     if (!(target instanceof Element) || target === this.host) return undefined
     const media = target.closest('img, video[poster]')
-    return media ? this.candidateByElement.get(media) : undefined
+    const direct = media ? this.candidateByElement.get(media) : undefined
+    if (direct) return direct
+    if (clientX == null || clientY == null) return undefined
+
+    return this.candidates
+      .filter((candidate) => {
+        const rect = candidate.element.getBoundingClientRect()
+        return clientX >= rect.left && clientX <= rect.right &&
+          clientY >= rect.top && clientY <= rect.bottom
+      })
+      .sort((left, right) => {
+        const leftRect = left.element.getBoundingClientRect()
+        const rightRect = right.element.getBoundingClientRect()
+        return leftRect.width * leftRect.height - rightRect.width * rightRect.height
+      })[0]
   }
 
   private updateUi(): void {
