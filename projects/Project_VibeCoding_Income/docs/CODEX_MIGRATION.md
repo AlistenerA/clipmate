@@ -7,7 +7,8 @@ This document converts the earlier opencode workflow into a Codex-native workflo
 ## Current Baseline
 
 - Active product: ClipMate, a Manifest V3 browser extension for clipping web content into Notion.
-- Current working version: `clipmate-v0.7` on `codex/clipmate-v0.7-tutorial-mode`.
+- Current working version: `clipmate-v0.8` on `codex/clipmate-v0.8-asset-picker`.
+- Current automated snapshot: V0.8 Asset Picker passes lint, 57 files / 1991 tests, and build.
 - Frozen release baseline: `clipmate-v0.6`.
 - Frozen historical versions: `clipmate-v0.1` through `clipmate-v0.4`; use them for comparison only.
 - `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` by explicit user instruction.
@@ -39,7 +40,7 @@ The project `.codex/config.toml` raises project-doc context size and includes di
 1. Orient first.
    - Check `git status --short`.
    - Identify the active version directory and whether the task affects code, UX, permissions, storage, tests, docs, build output, archive output, or GitHub state.
-   - Read the active version docs, currently `clipmate-v0.7/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
+   - Read the active version docs, currently `clipmate-v0.8/docs/CURRENT_STATUS.md`, `AGENT_CONTEXT.md`, `ISSUES.md`, `DECISIONS.md`, and relevant source files before editing.
 
 2. Accept user input in the lightweight future mode.
    - The user will usually provide feature ideas, bug descriptions, screenshots, or reference code.

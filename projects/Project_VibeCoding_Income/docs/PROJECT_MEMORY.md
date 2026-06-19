@@ -1,6 +1,6 @@
 # ClipMate Project Memory
 
-Last updated: 2026-06-18.
+Last updated: 2026-06-19.
 
 Use this as the compact handoff for future Codex sessions.
 
@@ -20,7 +20,9 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.7` on `codex/clipmate-v0.7-tutorial-mode`.
+- Active version: `clipmate-v0.8` on `codex/clipmate-v0.8-asset-picker`.
+- v0.8.0 adds the Asset Picker: an in-page session overlay plus current-draft image preview, removal, ordering, Markdown integration, and tutorial Notion block integration.
+- v0.8 automated candidate passes lint, 57 files / 1991 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
 - v0.7 goal: Tutorial Mode with a versioned `ClipDocument` and native Notion structure mapping.
 - v0.7 automated candidate passes lint, 53 files / 1966 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
 - `clipmate-v0.6` is the frozen v0.6 Asset Pipeline release directory and has a local untracked archive.
@@ -60,9 +62,9 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
-- Run `clipmate-v0.7/docs/V0.7_MANUAL_RISK_QA.md` in Chrome, Edge, and a real Notion test page.
-- Fix any P0 findings inside the v0.7 branch before marking human QA complete.
-- After v0.7 is accepted, create a new branch and `clipmate-v0.8` directory for SaveTargetAdapter work.
+- Run `clipmate-v0.8/docs/V0.8_TEST_DOCUMENT.md` in Chrome, Edge, and a real Notion test page.
+- Keep all V0.8 commits on `codex/clipmate-v0.8-asset-picker`; older version directories remain frozen.
+- Fix any P0 findings only inside `clipmate-v0.8` before marking human QA complete.
 - Review known v0.5 watch-list items in `docs/PROJECT_ARCHITECTURE.md`.
 - Use `other source/` to compare mature clipping, Notion, or browser-extension patterns.
 - Add browser QA for real pages and real Notion saves before declaring the next version complete.

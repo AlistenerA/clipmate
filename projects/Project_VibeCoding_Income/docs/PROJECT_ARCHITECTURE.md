@@ -1,14 +1,15 @@
-# ClipMate v0.7 Project Architecture
+# ClipMate v0.8 Project Architecture
 
-Last updated: 2026-06-18.
+Last updated: 2026-06-19.
 
 ## Product Shape
 
-ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.7` adds Tutorial Mode and a versioned `ClipDocument` so headings, code, formulas, tables, callouts, figures, and video link metadata can be mapped to native Notion blocks.
+ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.8` adds a session-isolated Asset Picker so users can supplement automatic extraction with selected page images while retaining v0.7 Tutorial Mode.
 
 ## Repository Map
 
-- `clipmate-v0.7/`: active version and source of truth for current development.
+- `clipmate-v0.8/`: active version and source of truth for current development.
+- `clipmate-v0.7/`: frozen Tutorial Mode 0.7.3 baseline.
 - `clipmate-v0.6/`: frozen v0.6 Asset Pipeline release baseline.
 - `clipmate-v0.1/` to `clipmate-v0.4/`: frozen historical versions.
 - `clipmate-v0.5/`: promoted/renamed to `clipmate-v0.6` by user instruction; no standalone v0.5 directory remains.
@@ -44,19 +45,22 @@ flowchart LR
 
 ## Main Entry Points
 
-- `clipmate-v0.7/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
-- `clipmate-v0.7/src/background/index.ts`: runtime message dispatch; currently handles `SAVE_TO_NOTION`.
-- `clipmate-v0.7/src/features/document/clipDocument.ts`: Tutorial Mode document model and Markdown structure parser.
-- `clipmate-v0.7/src/content/index.ts`: full-page, selection, and tutorial extraction message routing.
-- `clipmate-v0.7/src/platforms/notion/blocks.ts`: Markdown and ClipDocument to Notion block conversion.
-- `clipmate-v0.7/src/background/handlers/notionHandler.ts`: validates payloads, builds Notion blocks, appends to Notion, and writes success/failure history.
-- `clipmate-v0.7/src/content/parser/htmlToMarkdown.ts`: HTML to Markdown conversion, image Markdown preservation, formulas, tables, links, and cleanup.
-- `clipmate-v0.7/src/content/extractors/articleImages.ts`: article image discovery, URL resolution, noise filtering, and metadata counts.
-- `clipmate-v0.7/src/features/assets/assetPipeline.ts`: asset model, image save strategy selection, and image quality reports.
-- `clipmate-v0.7/src/platforms/notion/client.ts`: Notion request batching and error-code mapping.
-- `clipmate-v0.7/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
-- `clipmate-v0.7/src/popup/App.tsx`: popup workflow, three extraction modes, preview/original tabs, copy/save actions, and draft persistence.
-- `clipmate-v0.7/src/options/App.tsx`: settings and history UI.
+- `clipmate-v0.8/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
+- `clipmate-v0.8/src/background/index.ts`: runtime message dispatch; currently handles `SAVE_TO_NOTION`.
+- `clipmate-v0.8/src/content/assetPicker/assetPickerController.ts`: page candidate collection, Shadow DOM overlay, session state, and cleanup.
+- `clipmate-v0.8/src/features/assets/selectedImages.ts`: selected-image safety, ordering, and Markdown integration.
+- `clipmate-v0.8/src/popup/hooks/useAssetPicker.ts`: Popup-to-tab session protocol and result consumption.
+- `clipmate-v0.8/src/features/document/clipDocument.ts`: Tutorial Mode document model and Markdown structure parser.
+- `clipmate-v0.8/src/content/index.ts`: extraction and Asset Picker message routing.
+- `clipmate-v0.8/src/platforms/notion/blocks.ts`: Markdown, ClipDocument, and selected-image Notion block conversion.
+- `clipmate-v0.8/src/background/handlers/notionHandler.ts`: validates payloads, builds Notion blocks, appends to Notion, and writes success/failure history.
+- `clipmate-v0.8/src/content/parser/htmlToMarkdown.ts`: HTML to Markdown conversion, image Markdown preservation, formulas, tables, links, and cleanup.
+- `clipmate-v0.8/src/content/extractors/articleImages.ts`: article image discovery, URL resolution, noise filtering, and picker candidate input.
+- `clipmate-v0.8/src/features/assets/assetPipeline.ts`: asset model, image save strategy selection, and image quality reports.
+- `clipmate-v0.8/src/platforms/notion/client.ts`: Notion request batching and error-code mapping.
+- `clipmate-v0.8/src/shared/storage/storage.ts`: settings, targets, draft, and history persistence.
+- `clipmate-v0.8/src/popup/App.tsx`: popup workflow, Asset Picker integration, copy/save actions, and draft persistence.
+- `clipmate-v0.8/src/options/App.tsx`: settings and history UI.
 
 ## Core Data Flows
 
