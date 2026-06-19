@@ -7,7 +7,7 @@ export interface ReadabilityResult {
 
 export function extractFullpage(doc: Document): ReadabilityResult | null {
   try {
-    const article = new Readability(doc).parse()
+    const article = new Readability(doc, { keepClasses: true }).parse()
     if (!article) return null
     return {
       content: article.content || '',

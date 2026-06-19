@@ -47,6 +47,7 @@ describe('ClipDocument tutorial model', () => {
     expect(document.mode).toBe('tutorial')
     expect(document.stats).toEqual({
       headingCount: 2,
+      listCount: 0,
       codeBlockCount: 1,
       formulaCount: 1,
       tableCount: 1,

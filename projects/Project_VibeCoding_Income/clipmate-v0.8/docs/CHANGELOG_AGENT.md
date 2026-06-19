@@ -2,6 +2,17 @@
 
 ---
 
+## v0.8.2 教程结构保真修复（2026-06-19）
+
+- Readability 开启 `keepClasses`，让 Runoob `example_code` 在完整提取链路中保留并转 fenced code。
+- 修复 `1\.` 数字标题；只规范 heading 行，不改普通段落转义。
+- `ClipDocument` 新增 list block，Notion 输出原生 bulleted/numbered list item。
+- 无来源题注的自动图和手选图保持空 alt/caption，不再显示伪 `image` 或“网页图片”题注。
+- 新增 4 个截图回归测试，以及 22 图上限、无候选、失效外链三张离线 fixture。
+- 版本号更新为 0.8.2；未新增依赖、权限、host permission 或 storage schema。
+
+---
+
 ## v0.8.1 Asset Picker 可靠性修复（2026-06-19）
 
 - 修复 Popup 重开时先消费 completed session、后恢复草稿导致手选图片永久丢失的竞态。

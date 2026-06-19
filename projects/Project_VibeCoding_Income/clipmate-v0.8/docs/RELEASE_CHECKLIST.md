@@ -5,17 +5,18 @@
 ## 自动化门禁
 
 - [x] `npm run lint`：0 errors。
-- [x] `npm run test`：57 files / 1991 tests。
-- [x] `npm run build`：成功，141 modules transformed。
-- [x] V0.8 定向测试：7 tests。
-- [x] `dist/manifest.json` version = `0.8.0`。
-- [x] `npm run zip`：`clipmate-v0.8.zip`，166351 bytes / 25 entries，仅 dist 产物。
+- [x] `npm run test`：58 files / 1998 tests。
+- [x] `npm run build`：成功，142 modules transformed。
+- [x] v0.8.1 Asset Picker 定向测试：10 tests。
+- [x] v0.8.2 人工问题定向测试：4 tests。
+- [x] `dist/manifest.json` version = `0.8.2`。
+- [x] `npm run zip`：`clipmate-v0.8.zip`，166989 bytes / 25 entries，仅 dist 产物。
 
 ## 版本一致性
 
-- [x] `package.json` version = `0.8.0`。
-- [x] `package-lock.json` version = `0.8.0`。
-- [x] `manifest.config.ts` version = `0.8.0`。
+- [x] `package.json` version = `0.8.2`。
+- [x] `package-lock.json` version = `0.8.2`。
+- [x] `manifest.config.ts` version = `0.8.2`。
 - [x] `clipmate-v0.7/` 保持冻结，本轮代码只进入 `clipmate-v0.8/`。
 - [x] 切换到 `codex/clipmate-v0.8-asset-picker`。
 
@@ -29,7 +30,7 @@
 - [x] session id 与 page URL 防止旧 Popup 结果跨页污染。
 - [x] 覆盖层使用 Shadow DOM，不修改宿主图片样式；退出路径清理 DOM/监听器。
 - [x] 不读取 cookie、登录态或私有 API，不建立站点级长期缓存。
-- [ ] 提交前敏感信息扫描无 Token/API Key/真实 Page ID/真实用户数据。
+- [x] 提交前敏感信息扫描无真实 Token/API Key/Page ID/用户数据；命中项均为明确测试占位符。
 
 ## 人工 QA
 
@@ -47,7 +48,7 @@
 - [ ] `git status --short` 只包含 V0.8 和有意更新的项目级文档。
 - [ ] 不提交 dist、node_modules、zip、.env、测试截图或原始用户资料。
 - [ ] 精确 stage，不使用 `git add .`。
-- [ ] 提交信息：`feat: add v0.8 asset picker`。
+- [ ] 提交信息：`fix: preserve v0.8.2 tutorial structure`。
 - [x] 本地保留 `clipmate-v0.8.zip`。
 - [ ] 人工 QA 结果回填 `TEST_LOG.md` 和 `CURRENT_STATUS.md`。
 

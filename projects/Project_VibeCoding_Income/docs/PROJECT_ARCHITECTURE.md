@@ -8,7 +8,7 @@ ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, l
 
 ## Repository Map
 
-- `clipmate-v0.8/`: active version and source of truth for current development.
+- `clipmate-v0.8/`: active v0.8.2 version and source of truth for current development.
 - `clipmate-v0.7/`: frozen Tutorial Mode 0.7.3 baseline.
 - `clipmate-v0.6/`: frozen v0.6 Asset Pipeline release baseline.
 - `clipmate-v0.1/` to `clipmate-v0.4/`: frozen historical versions.
@@ -83,7 +83,7 @@ Tutorial clipping:
 1. Popup sends `EXTRACT_TUTORIAL` and clears stale extracted content.
 2. Content script reuses the full-page extraction boundary and preserves missing video link metadata from the original DOM.
 3. Markdown is parsed into a schema-versioned `ClipDocument`.
-4. Copy keeps Markdown structure; Notion save maps ClipDocument blocks to native Notion block types.
+4. Copy keeps Markdown structure; Notion save maps headings, lists, code, formulae, tables, callouts and media to native Notion block types.
 
 Notion saving:
 

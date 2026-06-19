@@ -91,7 +91,7 @@ function injectMissingImages(markdown: string, contentHtml: string, pageUrl: str
 
     const lines = ['\n---\n', '## Images\n']
     for (const img of missingImages) {
-      const alt = img.alt || 'image'
+      const alt = img.alt || ''
       lines.push(`![${alt}](${img.url})`)
       if (img.caption && img.caption !== img.alt) {
         lines.push(`*${img.caption}*`)

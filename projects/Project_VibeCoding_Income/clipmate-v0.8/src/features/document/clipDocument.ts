@@ -4,6 +4,7 @@ import type { UnknownResourceDiagnostic } from './tutorialDiagnostics'
 export type ClipDocumentBlock =
   | ClipHeadingBlock
   | ClipParagraphBlock
+  | ClipListBlock
   | ClipCodeBlock
   | ClipFormulaBlock
   | ClipTableBlock
@@ -21,6 +22,12 @@ export interface ClipHeadingBlock {
 export interface ClipParagraphBlock {
   type: 'paragraph'
   markdown: string
+}
+
+export interface ClipListBlock {
+  type: 'list'
+  ordered: boolean
+  items: string[]
 }
 
 export interface ClipCodeBlock {
@@ -85,6 +92,7 @@ export interface ClipDocument {
   }
   stats: {
     headingCount: number
+    listCount: number
     codeBlockCount: number
     formulaCount: number
     tableCount: number
@@ -251,6 +259,24 @@ function parseMarkdownBlocks(markdown: string): ClipDocumentBlock[] {
       continue
     }
 
+    const listItem = /^(?:[-*+]\s+|\d+\.\s+)(.+)$/.exec(line)
+    if (listItem) {
+      flushParagraph()
+      const ordered = /^\d+\./.test(line)
+      const items: string[] = []
+      while (index < lines.length) {
+        const itemLine = lines[index]
+        const itemMatch = ordered
+          ? /^\d+\.\s+(.+)$/.exec(itemLine)
+          : /^[-*+]\s+(.+)$/.exec(itemLine)
+        if (!itemMatch) break
+        items.push(itemMatch[1].trim())
+        index++
+      }
+      blocks.push({ type: 'list', ordered, items })
+      continue
+    }
+
     if (line.includes('|') && index + 1 < lines.length && isTableSeparator(lines[index + 1])) {
       flushParagraph()
       const header = parseTableRow(line)
@@ -344,6 +370,7 @@ export function createClipDocument(input: CreateClipDocumentInput): ClipDocument
       : undefined,
     stats: {
       headingCount: count('heading'),
+      listCount: count('list'),
       codeBlockCount: count('code'),
       formulaCount: count('formula'),
       tableCount: count('table'),

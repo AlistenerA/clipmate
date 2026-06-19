@@ -105,7 +105,7 @@ describe('htmlToMarkdown - lazy and CCTV-like images', () => {
       </article>
     `)
 
-    expect(md).toContain('![image](https://p1.img.cctvpic.com/video-cover.jpg)')
+    expect(md).toContain('![](https://p1.img.cctvpic.com/video-cover.jpg)')
   })
 
   it('filters related recommendation images by ancestor while keeping body images', () => {
@@ -125,9 +125,9 @@ describe('htmlToMarkdown - lazy and CCTV-like images', () => {
 })
 
 describe('htmlToMarkdown - alt text fallback', () => {
-  it('uses "image" as default alt when empty', () => {
+  it('keeps alt empty when the page provides no caption source', () => {
     const md = htmlToMarkdown('<img src="https://example.com/photo.jpg" />')
-    expect(md).toContain('![image](https://example.com/photo.jpg)')
+    expect(md).toContain('![](https://example.com/photo.jpg)')
   })
 
   it('uses provided alt text', () => {

@@ -2,6 +2,22 @@
 
 ---
 
+## v0.8.2 自动验证（2026-06-19）
+
+- 定向回归：5 files / 47 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：58 files / 1998 tests 全部通过。
+- `npm run build`：通过，142 modules transformed；`dist/manifest.json` 为 0.8.2。
+- `npm run zip`：通过，166989 bytes / 25 entries；含 manifest，无 src/tests/docs/node_modules/.env。
+- fixture HTTP smoke：主测试页、22 图页、无候选页、失效外链页和第 22 张 SVG 均返回 HTTP 200。
+- 首次定向测试发现 `* * *` 被新列表规则抢先解析；调整 divider 优先级后，v0.7.1 回归与 v0.8.2 新用例同时通过。
+- Browser Plugin 在 Windows 进程启动阶段被权限策略拒绝，未把 fixture HTTP smoke 冒充为真实浏览器交互。
+- 安全/威胁检查：页面 DOM 仍视为不可信；保留的 class 只进入 Turndown 结构识别，不作为 HTML 注入；列表文本继续经 Notion rich text 解析；URL 白名单、日志脱敏和权限边界未变。
+
+人工复测入口：`docs/V0.8_TEST_DOCUMENT.md`。
+
+---
+
 ## v0.8.1 自动验证（2026-06-19）
 
 - `npm run test -- --run tests/v080-asset-picker.test.ts`：1 file / 10 tests 通过。

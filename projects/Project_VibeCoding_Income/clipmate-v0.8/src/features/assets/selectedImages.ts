@@ -81,7 +81,7 @@ export function formatSelectedImagesMarkdown(
 
   const lines = ['## 已选图片']
   for (const image of missing) {
-    const alt = escapeMarkdownLabel(image.alt || image.title || '网页图片')
+    const alt = escapeMarkdownLabel(image.alt || image.title || '')
     lines.push(`![${alt}](${image.url})`)
     const caption =
       image.caption && image.caption !== image.alt ? escapeMarkdownLabel(image.caption) : ''

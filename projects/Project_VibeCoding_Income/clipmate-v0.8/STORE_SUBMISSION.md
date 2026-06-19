@@ -10,7 +10,7 @@
 |------|------|
 | Extension Name | ClipMate - 网页剪藏助手 |
 | English Name | ClipMate - Web Clipper for Notion |
-| Version | 0.8.0 |
+| Version | 0.8.2 |
 | Category | Productivity |
 | Visibility | Public |
 | Default Locale | zh_CN |
@@ -137,7 +137,7 @@ ClipMate 不收集任何个人数据，不使用远程服务器，不接入 AI A
 
 ## Manual QA Status
 
-⚠️ **待用户真实浏览器验证**。自动化测试 1383 tests 全部通过，lint 0，build success。手动 QA 清单见 `docs/MANUAL_QA.md`。各项尚未执行真实浏览器测试。
+⚠️ **v0.8.2 待用户复测**。自动化 58 files / 1998 tests 全部通过，lint 与 build 成功。v0.8.0 人工测试已发现的问题进入 v0.8.1/v0.8.2 修复；复测清单见 `docs/V0.8_TEST_DOCUMENT.md`。
 
 ## 隐私政策 URL
 

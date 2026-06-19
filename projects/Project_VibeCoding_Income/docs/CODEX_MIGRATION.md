@@ -7,8 +7,8 @@ This document converts the earlier opencode workflow into a Codex-native workflo
 ## Current Baseline
 
 - Active product: ClipMate, a Manifest V3 browser extension for clipping web content into Notion.
-- Current working version: `clipmate-v0.8` on `codex/clipmate-v0.8-asset-picker`.
-- Current automated snapshot: V0.8 Asset Picker passes lint, 57 files / 1991 tests, and build.
+- Current working version: `clipmate-v0.8` v0.8.2 on `codex/clipmate-v0.8-asset-picker`.
+- Current automated snapshot: v0.8.2 passes lint, 58 files / 1998 tests, build, and Asset Picker fixture HTTP smoke.
 - Frozen release baseline: `clipmate-v0.6`.
 - Frozen historical versions: `clipmate-v0.1` through `clipmate-v0.4`; use them for comparison only.
 - `clipmate-v0.5` was promoted/renamed to `clipmate-v0.6` by explicit user instruction.

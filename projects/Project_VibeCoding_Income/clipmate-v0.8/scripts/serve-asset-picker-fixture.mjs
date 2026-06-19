@@ -5,6 +5,9 @@ import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'manual-fixtures')
 const fixture = join(root, 'asset-picker.html')
+const limitFixture = join(root, 'asset-picker-limit.html')
+const emptyFixture = join(root, 'asset-picker-empty.html')
+const brokenFixture = join(root, 'asset-picker-broken.html')
 const port = 4175
 
 function fixtureImage(label, color) {
@@ -27,12 +30,31 @@ const images = new Map([
 
 const server = createServer((request, response) => {
   const path = new URL(request.url || '/', `http://127.0.0.1:${port}`).pathname
-  if (path === '/' || path === '/asset-picker.html') {
+  const page = path === '/' || path === '/asset-picker.html'
+    ? fixture
+    : path === '/asset-picker-limit.html'
+      ? limitFixture
+      : path === '/asset-picker-empty.html'
+        ? emptyFixture
+        : path === '/asset-picker-broken.html'
+          ? brokenFixture
+          : undefined
+  if (page) {
     response.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store'
     })
-    createReadStream(fixture).pipe(response)
+    createReadStream(page).pipe(response)
+    return
+  }
+
+  const limitImage = /^\/images\/limit-(\d{2})\.svg$/.exec(path)
+  if (limitImage) {
+    response.writeHead(200, {
+      'Content-Type': 'image/svg+xml; charset=utf-8',
+      'Cache-Control': 'no-store'
+    })
+    response.end(fixtureImage(`Limit ${limitImage[1]}`, '#2563eb'))
     return
   }
 

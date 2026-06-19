@@ -20,9 +20,11 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.8` on `codex/clipmate-v0.8-asset-picker`.
+- Active version: `clipmate-v0.8` v0.8.2 on `codex/clipmate-v0.8-asset-picker`.
 - v0.8.0 adds the Asset Picker: an in-page session overlay plus current-draft image preview, removal, ordering, Markdown integration, and tutorial Notion block integration.
-- v0.8 automated candidate passes lint, 57 files / 1991 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
+- v0.8.1 fixes Asset Picker result recovery, Popup handoff, mode cleanup, and overlay-card clicks found in human QA.
+- v0.8.2 fixes Runoob code class retention, numbered headings, native Notion lists, and empty image captions.
+- v0.8.2 passes lint, 58 files / 1998 tests, build, and local fixture HTTP smoke; Chrome/Edge plus real Notion retest remains for the user.
 - v0.7 goal: Tutorial Mode with a versioned `ClipDocument` and native Notion structure mapping.
 - v0.7 automated candidate passes lint, 53 files / 1966 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
 - `clipmate-v0.6` is the frozen v0.6 Asset Pipeline release directory and has a local untracked archive.
@@ -62,7 +64,7 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
-- Run `clipmate-v0.8/docs/V0.8_TEST_DOCUMENT.md` in Chrome, Edge, and a real Notion test page.
+- Retest `clipmate-v0.8/docs/V0.8_TEST_DOCUMENT.md` against v0.8.2 in Chrome, Edge, and a real Notion test page.
 - Keep all V0.8 commits on `codex/clipmate-v0.8-asset-picker`; older version directories remain frozen.
 - Fix any P0 findings only inside `clipmate-v0.8` before marking human QA complete.
 - Review known v0.5 watch-list items in `docs/PROJECT_ARCHITECTURE.md`.

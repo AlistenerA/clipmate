@@ -275,6 +275,16 @@ function tutorialBlockToNotion(block: ClipDocumentBlock): BlockObjectRequest[] {
     }
     case 'paragraph':
       return textBlocks(block.markdown, paragraphBlock)
+    case 'list': {
+      const type = block.ordered ? 'numbered_list_item' : 'bulleted_list_item'
+      return block.items.flatMap((item) =>
+        textBlocks(item, (chunk) => ({
+          object: 'block',
+          type,
+          [type]: { rich_text: richText(chunk) }
+        }))
+      )
+    }
     case 'code':
       return textBlocks(block.code, (chunk) => ({
         object: 'block',

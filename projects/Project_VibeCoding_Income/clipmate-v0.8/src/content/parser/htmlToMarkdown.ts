@@ -153,7 +153,7 @@ function markdownForMediaElement(el: Element): string {
   if (height > 0 && height < 40) return ''
 
   const resolvedSrc = bestSrc && imagePageUrl ? resolveUrl(bestSrc, imagePageUrl) : bestSrc
-  const alt = el.getAttribute('alt')?.trim() || el.getAttribute('title')?.trim() || 'image'
+  const alt = el.getAttribute('alt')?.trim() || el.getAttribute('title')?.trim() || ''
 
   return normalizeImageMarkdown({ src: resolvedSrc, alt })
 }
@@ -309,6 +309,10 @@ function splitImageCaptionGlue(md: string): string {
   )
 }
 
+function normalizeEscapedHeadingOrdinals(markdown: string): string {
+  return markdown.replace(/^(#{1,6}\s+\d+)\\\.(?=\s)/gm, '$1.')
+}
+
 export function htmlToMarkdown(html: string, pageUrl?: string): string {
   if (!html) return ''
   try {
@@ -320,7 +324,8 @@ export function htmlToMarkdown(html: string, pageUrl?: string): string {
     const captionFixed = splitImageCaptionGlue(deduped)
     const cleaned = cleanMarkdown(captionFixed)
     const withCleanCode = cleanMarkdownCodeBlocks(cleaned)
-    return cleanBlockFormulaTrailingDigits(withCleanCode)
+    const withCleanHeadingOrdinals = normalizeEscapedHeadingOrdinals(withCleanCode)
+    return cleanBlockFormulaTrailingDigits(withCleanHeadingOrdinals)
   } catch {
     return html.replace(/<[^>]+>/g, '')
   }

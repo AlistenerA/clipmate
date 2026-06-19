@@ -4,6 +4,16 @@
 
 ---
 
+## v0.8.2 决策（2026-06-19）
+
+- Readability 保留 class，但只由 Turndown 的窄 allowlist 结构规则消费；Popup 不渲染来源 HTML。
+- `ClipDocument` schemaVersion 继续为 1，新增 list union member 属于向后兼容的可选 block 类型。
+- 分隔线判定先于列表判定，避免 `* * *` 被识别成列表。
+- 图片 caption 只来自真实 alt/title/figcaption；无来源时为空，UI 的无障碍 fallback 不进入输出内容。
+- v0.8.x 到 0.8.2 后默认冻结；只有复测 P0/P1 才创建 0.8.3，页面感知模式进入 v0.9。
+
+---
+
 ## v0.8.1 决策（2026-06-19）
 
 - completed picker result 在正文草稿和 active tab URL 均就绪前不得消费；cancelled result 可直接丢弃。
