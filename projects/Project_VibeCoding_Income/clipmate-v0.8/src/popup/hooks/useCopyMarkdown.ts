@@ -9,12 +9,13 @@ export function useCopyMarkdown() {
     setError(null)
   }, [])
 
-  const copy = useCallback(async (markdown: string) => {
+  const copy = useCallback(async (markdown: string): Promise<boolean> => {
     setError(null)
     setCopied(false)
     try {
       await navigator.clipboard.writeText(markdown)
       setCopied(true)
+      return true
     } catch {
       try {
         const ta = document.createElement('textarea')
@@ -23,11 +24,14 @@ export function useCopyMarkdown() {
         ta.style.left = '-9999px'
         document.body.appendChild(ta)
         ta.select()
-        document.execCommand('copy')
+        const didCopy = document.execCommand('copy')
         document.body.removeChild(ta)
+        if (!didCopy) throw new Error('COPY_COMMAND_FAILED')
         setCopied(true)
+        return true
       } catch {
         setError('复制失败，请手动复制')
+        return false
       }
     }
   }, [])

@@ -5,6 +5,7 @@ import type { SaveToNotionPayload, SaveToNotionResponse } from '../../shared/typ
 import { logger } from '../../shared/utils/logger'
 import { createNotionSavePlan } from '../../features/notion'
 import { NotionApiError } from '../../platforms/notion/client'
+import { buildNotionPageUrl } from '../../platforms/notion/pageUrl'
 
 function formatHistoryErrorCode(code: string, error?: NotionApiError): string {
   const parts = [code]
@@ -36,6 +37,8 @@ export async function handleSaveToNotion(
         targetId: plan.targetId,
         targetName: plan.targetName,
         errorCode: undefined,
+        action: 'notion-save',
+        notionPageUrl: buildNotionPageUrl(plan.pageId),
         updatedAt: now,
       })
     } else if (settings.saveHistoryEnabled) {
@@ -71,6 +74,8 @@ export async function handleSaveToNotion(
         imageCount: draft.content.imageCount,
         firstImageUrl: draft.content.firstImageUrl,
         skippedImageCount: draft.content.skippedImageCount,
+        action: 'notion-save',
+        notionPageUrl: buildNotionPageUrl(plan.pageId),
       })
     }
 
@@ -121,6 +126,7 @@ export async function handleSaveToNotion(
         imageCount: draft.content.imageCount,
         firstImageUrl: draft.content.firstImageUrl,
         skippedImageCount: draft.content.skippedImageCount,
+        action: 'notion-save',
       })
     }
 

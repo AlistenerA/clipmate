@@ -1,5 +1,6 @@
 import type { ClipMateSettingsV2, NotionTarget, ClipHistoryItem } from '../types/settings.types'
-import type { ClipDraft, ClipMode, SaveStatus } from '../types/clip.types'
+import type { ClipDraft, ClipMode, MarkdownTarget, SaveStatus } from '../types/clip.types'
+import type { HistoryAction } from '../types/settings.types'
 import { STORAGE_KEYS, DEFAULT_SETTINGS_V2, MIN_HISTORY_LIMIT, MAX_HISTORY_LIMIT, MAX_MARKDOWN_LENGTH } from '../constants/defaults'
 import { generateId } from '../utils/id'
 import { migrateSettings } from '../utils/migration'
@@ -139,6 +140,9 @@ export interface CreateHistoryItemInput {
   imageCount?: number
   firstImageUrl?: string
   skippedImageCount?: number
+  action?: HistoryAction
+  markdownTarget?: MarkdownTarget
+  notionPageUrl?: string
 }
 
 export async function addHistoryItem(input: CreateHistoryItemInput): Promise<ClipHistoryItem> {
@@ -177,6 +181,9 @@ export async function addHistoryItem(input: CreateHistoryItemInput): Promise<Cli
       imageCount: input.imageCount,
       firstImageUrl: input.firstImageUrl,
       skippedImageCount: input.skippedImageCount,
+      action: input.action,
+      markdownTarget: input.markdownTarget,
+      notionPageUrl: input.notionPageUrl,
     }
 
     const history = await getHistoryRaw()

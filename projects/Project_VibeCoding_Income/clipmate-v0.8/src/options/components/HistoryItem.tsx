@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import type { ClipHistoryItem } from '../../shared/types/settings.types'
 import {
-  getHistoryStatusLabel,
   getHistoryStatusTone,
   formatHistoryTime,
   getHostname,
@@ -11,6 +10,9 @@ import {
   getSiteInitial,
   getHistorySummary,
   getStableSiteColor,
+  getHistoryActionLabel,
+  getMarkdownTargetLabel,
+  getSafeNotionPageUrl,
 } from '../utils/historyView'
 import type { HighlightToken } from '../utils/historyView'
 
@@ -43,7 +45,8 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
   const [copied, setCopied] = useState(false)
   const [iconError, setIconError] = useState(false)
   const tone = getHistoryStatusTone(item.saveStatus)
-  const canRetry = item.saveStatus === 'failed' || item.saveStatus === 'unsaved'
+  const isMarkdownCopy = item.action === 'markdown-copy'
+  const canRetry = !isMarkdownCopy && (item.saveStatus === 'failed' || item.saveStatus === 'unsaved')
   const domain = getHostname(item.url)
   const siteColor = getStableSiteColor(domain)
   const siteInitial = getSiteInitial(domain)
@@ -53,6 +56,7 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
   const urlTokens = highlightText(domain, query)
   const summaryTokens = highlightText(summary, query)
   const showIconImg = item.siteIconUrl && !iconError
+  const notionPageUrl = getSafeNotionPageUrl(item.notionPageUrl)
 
   const handleCopy = async () => {
     if (!item.markdown) return
@@ -97,7 +101,7 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
             <span
               className={`text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0 ${toneBadge[tone]}`}
             >
-              {getHistoryStatusLabel(item.saveStatus)}
+              {getHistoryActionLabel(item)}
             </span>
           </div>
 
@@ -148,6 +152,7 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
 
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1.5 text-xs text-gray-400">
             {item.targetName && <span>目标：{item.targetName}</span>}
+            {isMarkdownCopy && <span>格式：{getMarkdownTargetLabel(item.markdownTarget)}</span>}
             <span>{item.wordCount} 字</span>
             {(item.imageCount ?? 0) > 0 && item.mode !== 'selection' && (
               <span className="text-purple-500">图片 {item.imageCount}</span>
@@ -176,6 +181,16 @@ export default function HistoryItem({ item, query, onCopy, onDelete, onRetry }: 
           >
             重试保存
           </button>
+        )}
+        {!isMarkdownCopy && item.saveStatus === 'saved' && notionPageUrl && (
+          <a
+            className="text-xs px-2 py-1 rounded bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+            href={notionPageUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            打开 Notion
+          </a>
         )}
         <button
           className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors ml-auto"

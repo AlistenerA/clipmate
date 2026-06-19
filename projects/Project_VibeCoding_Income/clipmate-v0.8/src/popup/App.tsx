@@ -20,7 +20,8 @@ import {
   getSettings,
   saveLastClipDraft,
   getLastClipDraft,
-  getHistory
+  getHistory,
+  addHistoryItem
 } from '../shared/storage/storage'
 import { formatMarkdownWithProfile } from '../shared/markdown/formatWithProfile'
 import { resolveSelectedTarget } from './utils/targetSelection'
@@ -36,6 +37,7 @@ import {
 } from '../features/assets'
 import type { ClipMode, MarkdownTarget } from '../shared/types/clip.types'
 import type { ClipHistoryItem, ClipMateSettingsV2 } from '../shared/types/settings.types'
+import { buildHistoryInput } from './utils/historyPayload'
 
 export default function App() {
   const { tab } = useCurrentTab()
@@ -222,11 +224,20 @@ export default function App() {
     [assetPickerState?.status, cancelAssetPicker, extract, resetCopy]
   )
 
-  const handleCopy = useCallback(() => {
-    if (displayMarkdown) {
-      copy(displayMarkdown)
-    }
-  }, [displayMarkdown, copy])
+  const handleCopy = useCallback(async () => {
+    if (!displayMarkdown || !content) return
+    const didCopy = await copy(displayMarkdown)
+    if (!didCopy || !settings?.saveHistoryEnabled) return
+
+    const title = draftTitle.trim() || content.title
+    const draft = createClipDraft({ content, tags, note, title, mode })
+    const historyInput = buildHistoryInput(draft, undefined, 'unsaved', {
+      action: 'markdown-copy',
+      markdownTarget: mdTarget,
+      markdown: displayMarkdown,
+    })
+    await addHistoryItem({ ...historyInput, saveStatus: 'unsaved' })
+  }, [displayMarkdown, content, copy, settings?.saveHistoryEnabled, draftTitle, tags, note, mode, mdTarget])
 
   const handleStartAssetPicker = useCallback(async () => {
     if (!content) return

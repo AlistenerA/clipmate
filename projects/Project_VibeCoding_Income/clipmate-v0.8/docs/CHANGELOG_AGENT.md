@@ -2,6 +2,16 @@
 
 ---
 
+## v0.8.5 交互与 History 收口（2026-06-19）
+
+- Asset Picker 记录当前悬停候选和指针坐标；滚动/缩放时重算位置，图片仍在指针下时边框随图移动，离开后立即隐藏。
+- History 新增 `notion-save` / `markdown-copy` 行为元数据，复制记录标明 Notion、Obsidian、Typora 或通用 Markdown。
+- Notion 成功记录保存由 page ID 构造的页面链接；Options 仅渲染 HTTPS 且主机为 `notion.so` 的链接。
+- Markdown 复制仅在剪贴板写入成功且历史开关开启时记入 History，失败复制不产生误记录。
+- 版本号更新为 0.8.5；未新增权限、host permission、远程 API 或敏感历史字段。
+
+---
+
 ## v0.8.4 混合代码识别（2026-06-19）
 
 - Readability 前将 `example_code`、`codehilite`、`syntaxhighlighter` 规范成标准 `pre/code`，一行短代码不再被压成正文。

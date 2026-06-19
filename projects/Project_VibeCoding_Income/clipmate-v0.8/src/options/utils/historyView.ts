@@ -97,6 +97,37 @@ export function getModeLabel(mode: ClipMode): string {
   return mode === 'fullpage' ? '全文' : mode === 'selection' ? '选区' : '教程'
 }
 
+export function getMarkdownTargetLabel(target?: ClipHistoryItem['markdownTarget']): string {
+  switch (target) {
+    case 'obsidian':
+      return 'Obsidian Markdown'
+    case 'typora':
+      return 'Typora Markdown'
+    case 'generic':
+      return '通用 Markdown'
+    default:
+      return 'Notion Markdown'
+  }
+}
+
+export function getHistoryActionLabel(item: ClipHistoryItem): string {
+  return item.action === 'markdown-copy'
+    ? `已复制 ${getMarkdownTargetLabel(item.markdownTarget)}`
+    : getHistoryStatusLabel(item.saveStatus)
+}
+
+export function getSafeNotionPageUrl(value?: string): string | undefined {
+  if (!value) return undefined
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'https:') return undefined
+    if (url.hostname !== 'www.notion.so' && url.hostname !== 'notion.so') return undefined
+    return url.toString()
+  } catch {
+    return undefined
+  }
+}
+
 export type HighlightToken = string | { match: string }
 
 export function highlightText(text: string, query: string): HighlightToken[] {

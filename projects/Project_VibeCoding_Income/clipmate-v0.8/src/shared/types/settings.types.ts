@@ -1,4 +1,6 @@
-import type { ClipMode, SaveStatus } from './clip.types'
+import type { ClipMode, MarkdownTarget, SaveStatus } from './clip.types'
+
+export type HistoryAction = 'notion-save' | 'markdown-copy'
 
 export interface ClipMateSettings {
   notionToken: string
@@ -42,6 +44,9 @@ export interface ClipHistoryItem {
   imageCount?: number
   firstImageUrl?: string
   skippedImageCount?: number
+  action?: HistoryAction
+  markdownTarget?: MarkdownTarget
+  notionPageUrl?: string
 }
 
 export interface ClipMateSettingsV2 extends ClipMateSettings {

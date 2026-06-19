@@ -1,5 +1,5 @@
-import type { ClipDraft, ClipMode, SaveStatus } from '../../shared/types/clip.types'
-import type { NotionTarget } from '../../shared/types/settings.types'
+import type { ClipDraft, ClipMode, MarkdownTarget, SaveStatus } from '../../shared/types/clip.types'
+import type { HistoryAction, NotionTarget } from '../../shared/types/settings.types'
 
 export interface HistoryInput {
   title: string
@@ -20,12 +20,23 @@ export interface HistoryInput {
   imageCount?: number
   firstImageUrl?: string
   skippedImageCount?: number
+  action?: HistoryAction
+  markdownTarget?: MarkdownTarget
+  notionPageUrl?: string
+}
+
+export interface HistoryDetails {
+  action?: HistoryAction
+  markdownTarget?: MarkdownTarget
+  markdown?: string
+  notionPageUrl?: string
 }
 
 export function buildHistoryInput(
   draft: ClipDraft,
   target?: NotionTarget,
   saveStatus?: SaveStatus,
+  details: HistoryDetails = {},
 ): HistoryInput {
   const contentText = draft.content?.contentText || ''
   const meta = draft.content?.metadata
@@ -37,7 +48,7 @@ export function buildHistoryInput(
     tags: draft.tags,
     notePreview: draft.note.slice(0, 100),
     contentPreview: contentText.slice(0, 100),
-    markdown: draft.content.markdown,
+    markdown: details.markdown ?? draft.content.markdown,
     wordCount: draft.content.wordCount,
     targetId: target?.id,
     targetName: target?.name,
@@ -49,5 +60,8 @@ export function buildHistoryInput(
     imageCount: draft.content.imageCount,
     firstImageUrl: draft.content.firstImageUrl,
     skippedImageCount: draft.content.skippedImageCount,
+    action: details.action,
+    markdownTarget: details.markdownTarget,
+    notionPageUrl: details.notionPageUrl,
   }
 }

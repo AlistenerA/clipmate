@@ -127,6 +127,8 @@ export class AssetPickerController {
   private hoverBox: HTMLElement | null = null
   private selectionLayer: HTMLElement | null = null
   private counter: HTMLElement | null = null
+  private hoveredCandidate: PickerCandidate | null = null
+  private pointerPosition: { x: number; y: number } | null = null
 
   start(payload: StartAssetPickerPayload): AssetPickerSessionState | null {
     this.cleanupDom()
@@ -250,8 +252,8 @@ export class AssetPickerController {
     document.addEventListener('mouseover', this.handleMouseOver, true)
     document.addEventListener('click', this.handleDocumentClick, true)
     document.addEventListener('keydown', this.handleKeyDown, true)
-    window.addEventListener('scroll', this.renderSelectionBoxes, true)
-    window.addEventListener('resize', this.renderSelectionBoxes)
+    window.addEventListener('scroll', this.handleViewportChange, true)
+    window.addEventListener('resize', this.handleViewportChange)
     window.addEventListener('pagehide', this.handlePageLeave)
     window.addEventListener('popstate', this.handlePageLeave)
     window.addEventListener('hashchange', this.handlePageLeave)
@@ -259,13 +261,34 @@ export class AssetPickerController {
   }
 
   private handleMouseOver = (event: MouseEvent): void => {
+    this.pointerPosition = { x: event.clientX, y: event.clientY }
     const candidate = this.findCandidate(event.target, event.clientX, event.clientY)
     if (!this.hoverBox || !candidate) {
       this.hoverBox?.setAttribute('hidden', '')
+      this.hoveredCandidate = null
       return
     }
+    this.hoveredCandidate = candidate
     this.positionBox(this.hoverBox, candidate.element)
     this.hoverBox.toggleAttribute('hidden', false)
+  }
+
+  private handleViewportChange = (): void => {
+    this.renderSelectionBoxes()
+    this.refreshHoverBox()
+  }
+
+  private refreshHoverBox(): void {
+    if (!this.hoverBox || !this.hoveredCandidate || !this.pointerPosition) return
+    const rect = this.hoveredCandidate.element.getBoundingClientRect()
+    const { x, y } = this.pointerPosition
+    const pointerStillInside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+    if (!pointerStillInside || !isElementVisibleForAssetPicker(this.hoveredCandidate.element)) {
+      this.hoverBox.setAttribute('hidden', '')
+      this.hoveredCandidate = null
+      return
+    }
+    this.positionBox(this.hoverBox, this.hoveredCandidate.element)
   }
 
   private handleDocumentClick = (event: MouseEvent): void => {
@@ -369,8 +392,8 @@ export class AssetPickerController {
     document.removeEventListener('mouseover', this.handleMouseOver, true)
     document.removeEventListener('click', this.handleDocumentClick, true)
     document.removeEventListener('keydown', this.handleKeyDown, true)
-    window.removeEventListener('scroll', this.renderSelectionBoxes, true)
-    window.removeEventListener('resize', this.renderSelectionBoxes)
+    window.removeEventListener('scroll', this.handleViewportChange, true)
+    window.removeEventListener('resize', this.handleViewportChange)
     window.removeEventListener('pagehide', this.handlePageLeave)
     window.removeEventListener('popstate', this.handlePageLeave)
     window.removeEventListener('hashchange', this.handlePageLeave)
@@ -382,6 +405,8 @@ export class AssetPickerController {
     this.hoverBox = null
     this.selectionLayer = null
     this.counter = null
+    this.hoveredCandidate = null
+    this.pointerPosition = null
   }
 }
 
