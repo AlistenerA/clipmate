@@ -5,7 +5,4 @@ build/
 !release/**/*.zip
 .env
 .env.*
-.wolf/
-.opencode/
-.playwright-mcp/
 .DS_Store
