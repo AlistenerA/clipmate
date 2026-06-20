@@ -96,6 +96,30 @@ function matchesCssPattern(text: string, patterns: string[]): boolean {
   return patterns.some((kw) => lower.includes(kw.toLowerCase()))
 }
 
+function matchesNoiseIdentity(text: string, patterns: string[]): boolean {
+  const values = text.toLowerCase().split(/\s+/).filter(Boolean)
+  return patterns.some((pattern) => {
+    const normalized = pattern.toLowerCase()
+    if (Array.from(normalized).some((character) => character.charCodeAt(0) > 127)) {
+      return values.some((value) => value.includes(normalized))
+    }
+    return values.some((value) =>
+      value === normalized ||
+      value.startsWith(`${normalized}-`) ||
+      value.startsWith(`${normalized}_`) ||
+      value.endsWith(`-${normalized}`) ||
+      value.endsWith(`_${normalized}`) ||
+      value.includes(`-${normalized}-`) ||
+      value.includes(`_${normalized}_`)
+    )
+  })
+}
+
+function hasProtectedStructure(element: Element): boolean {
+  return element.matches('pre, code, table, figure, img, video, math') ||
+    element.querySelector('pre, code, table, figure, img, video, math') !== null
+}
+
 function getTextLength(element: Element): number {
   return (element.textContent || '').trim().length
 }
@@ -137,7 +161,8 @@ export function isLikelyNoiseElement(element: Element): boolean {
   const classText = getElementClassAttr(element)
   const idText = getElementIdAttr(element)
   const classAndId = [classText, idText].filter(Boolean).join(' ')
-  if (matchesCssPattern(classAndId, NOISE_CSS_KEYWORDS)) {
+  if (matchesNoiseIdentity(classAndId, NOISE_CSS_KEYWORDS)) {
+    if (hasProtectedStructure(element)) return false
     if (isArticleContainer(element)) return false
     if (getTextLength(element) > MIN_NOISE_TEXT_LENGTH_THRESHOLD) return false
     return true

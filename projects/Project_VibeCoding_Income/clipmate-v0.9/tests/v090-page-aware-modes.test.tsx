@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import ClipModeToggle from '../src/popup/components/ClipModeToggle'
+import StatusBar from '../src/popup/components/StatusBar'
 import {
   buildPageAwareness,
   getModeLabel,
@@ -241,5 +242,29 @@ describe('v0.9 page-aware mode UI', () => {
     )
     expect(html).toContain('页面推荐信息不可用')
     expect(html).not.toContain('推荐：')
+  })
+
+  it('shows one recommendation marker and adaptive status for specialized modes', () => {
+    const awareness = recommend({ pageType: 'video' })
+    const toggleHtml = renderToStaticMarkup(
+      <ClipModeToggle
+        mode="tutorial"
+        awareness={awareness}
+        disabled={false}
+        onModeChange={() => undefined}
+      />
+    )
+    const statusHtml = renderToStaticMarkup(
+      <StatusBar
+        mode="tutorial"
+        awareness={awareness}
+        wordCount={20}
+        modeLabel="success"
+      />
+    )
+
+    expect(toggleHtml).not.toContain('推荐：')
+    expect((toggleHtml.match(/aria-label="推荐模式"/g) || [])).toHaveLength(1)
+    expect(statusHtml).toContain('模式：自适应')
   })
 })

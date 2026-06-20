@@ -41,6 +41,12 @@ import {
 } from '../features/document'
 import { getVideoProvider } from '../shared/media/videoUrl'
 import { detectPageAwareness } from './pageAwareness'
+import { extractAiConversation, resolveAiConversationRole } from './aiConversation'
+import { normalizeSiteCodeContainers } from './parser/codeContainers'
+import {
+  selectBestExtractionCandidate,
+  type ExtractionCandidate,
+} from './extractors/extractionQuality'
 
 function extractMathJaxFormulas(doc: Document): void {
   const scripts = doc.querySelectorAll('script[type^="math/tex"]')
@@ -154,6 +160,34 @@ function attachImageMetadata(
   } catch {
     content.imageCount = 0
     content.skippedImageCount = 0
+  }
+}
+
+function extractSiteContainerCandidate(
+  doc: Document,
+  selector?: string,
+): ExtractionCandidate | null {
+  if (!selector) return null
+  normalizeSiteCodeContainers(doc)
+  const selectors = selector.split(',').map((item) => item.trim()).filter(Boolean)
+  const elements: Element[] = []
+  for (const item of selectors) {
+    try {
+      elements.push(...doc.querySelectorAll(item))
+    } catch {
+      continue
+    }
+  }
+  const element = elements
+    .filter((candidate) => (candidate.textContent || '').trim().length >= 200)
+    .sort((left, right) =>
+      (right.textContent || '').trim().length - (left.textContent || '').trim().length
+    )[0]
+  if (!element) return null
+  return {
+    id: 'site-container',
+    content: element.outerHTML,
+    textContent: (element.textContent || '').trim(),
   }
 }
 
@@ -282,9 +316,26 @@ function finalizeFullpageContent(
 
 function handleExtractFullpage(mode: 'fullpage' | 'tutorial' = 'fullpage'): HandlerResult {
   try {
-    const docClone = document.cloneNode(true) as Document
-    extractMathJaxFormulas(docClone)
-    cleanDocument(docClone)
+    const sourcePageType = classifyPageType(document)
+    const sourceProfileMatch = matchSiteProfile({ url: document.URL, pageType: sourcePageType })
+    if (mode === 'tutorial' && sourcePageType === 'ai-answer') {
+      const conversation = extractAiConversation(document, sourceProfileMatch)
+      if (conversation) {
+        const content = buildContent('fullpage', {
+          content: conversation.contentHtml,
+          textContent: conversation.textContent,
+        }, document)
+        content.markdown = conversation.markdown
+        content.imageCount = 0
+        content.skippedImageCount = 0
+        return { success: true, data: finalizeFullpageContent(content, mode) }
+      }
+    }
+
+    const conservativeDoc = document.cloneNode(true) as Document
+    extractMathJaxFormulas(conservativeDoc)
+    cleanDocument(conservativeDoc)
+    const docClone = conservativeDoc.cloneNode(true) as Document
 
     const pageType = classifyPageType(docClone)
     const siteProfileMatch = matchSiteProfile({
@@ -296,7 +347,22 @@ function handleExtractFullpage(mode: 'fullpage' | 'tutorial' = 'fullpage'): Hand
     const noiseRemoved = preCleanDocument(docClone, excludeSelectors)
     logger.info(`Pre-clean removed ${noiseRemoved} noise nodes`)
 
-    const extracted = extractFullpage(docClone)
+    let extracted = extractFullpage(docClone)
+
+    if (extracted) {
+      const candidates: ExtractionCandidate[] = [{ id: 'legacy', ...extracted }]
+      const conservative = extractFullpage(conservativeDoc.cloneNode(true) as Document)
+      if (conservative) candidates.push({ id: 'conservative', ...conservative })
+      const siteContainer = extractSiteContainerCandidate(
+        conservativeDoc.cloneNode(true) as Document,
+        siteProfileMatch?.profile.selectorHints?.contentContainer,
+      )
+      if (siteContainer) candidates.push(siteContainer)
+      const selected = selectBestExtractionCandidate(candidates)
+      if (selected) {
+        extracted = { content: selected.content, textContent: selected.textContent }
+      }
+    }
 
     if (!extracted) {
       logger.info('Readability failed, falling back to improved fallback')
@@ -442,6 +508,16 @@ function handleGetSelection(): HandlerResult {
       siteProfileMatch,
       selection: sel
     })
+
+    if (pageType === 'ai-answer' || siteProfileMatch?.profile.category === 'ai-chat') {
+      const role = resolveAiConversationRole(getSelectionRootElement(sel), document)
+      if (role) {
+        content.markdown = `## ${role === 'user' ? '用户' : '助手'}选区\n\n${content.markdown}`
+        content.contentText = result.text
+      }
+      logger.info(`Selection: ${content.wordCount} words (ai-answer)`)
+      return { success: true, data: attachPageAwareness(content, document) }
+    }
 
     const draft = buildCommentSelectionDraft({
       title: content.title,

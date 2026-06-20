@@ -1,4 +1,5 @@
 export {
+  canRestoreClipDraft,
   createClipDraft,
   getDraftBodyText,
   isDraftSaveable,

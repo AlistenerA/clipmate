@@ -27,7 +27,7 @@ import { formatMarkdownWithProfile } from '../shared/markdown/formatWithProfile'
 import { resolveSelectedTarget } from './utils/targetSelection'
 import { findMostRecentSavedHistoryByUrl } from './utils/recentHistory'
 import { ERROR_MESSAGES } from '../shared/constants/defaults'
-import { createClipDraft } from '../features/capture'
+import { canRestoreClipDraft, createClipDraft } from '../features/capture'
 import { createClipSession, createSaveToNotionPayloadFromSession } from '../features/session'
 import { generateId } from '../shared/utils/id'
 import {
@@ -84,6 +84,7 @@ export default function App() {
         chrome.tabs.query({ active: true, currentWindow: true })
       ])
       const activeUrl = tabsResult[0]?.url
+      const activeTabId = tabsResult[0]?.id
 
       const selResult = await tryExtractPrioritizeSelection()
 
@@ -94,7 +95,7 @@ export default function App() {
         return
       }
 
-      if (draft?.content && draft.content.url && activeUrl === draft.content.url) {
+      if (canRestoreClipDraft(draft, activeUrl, activeTabId)) {
         initialRecommendationHandledRef.current = true
         const restoredTitle = draft.title || draft.content.title
         const restoredContent = {
@@ -152,7 +153,8 @@ export default function App() {
       tags,
       note,
       title,
-      mode
+      mode,
+      sourceTabId: tab?.id
     })
     saveLastClipDraft(draft)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- use createdAt as identity to avoid infinite loop
@@ -163,7 +165,8 @@ export default function App() {
     tags,
     note,
     draftTitle,
-    mode
+    mode,
+    tab?.id
   ])
 
   useEffect(() => {
@@ -381,6 +384,7 @@ export default function App() {
         wordCount={content?.wordCount ?? 0}
         modeLabel={statusLabel}
         imageCount={content?.imageCount}
+        awareness={content?.pageAwareness}
       />
 
       <AssetPickerPanel

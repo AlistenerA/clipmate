@@ -44,13 +44,8 @@ export default function ClipModeToggle({ mode, awareness, onModeChange, disabled
   return (
     <section className="flex flex-col gap-1.5" aria-label="剪藏模式">
       {awareness ? (
-        <div className="flex items-center justify-between gap-2 text-[11px]">
+        <div className="flex items-center text-[11px]">
           <span className="font-medium text-gray-600">{getPageTypeLabel(awareness.pageType)}</span>
-          {recommendedMode ? (
-            <span className="text-blue-600">
-              推荐：{getModeLabel(recommendedMode, awareness)}
-            </span>
-          ) : null}
         </div>
       ) : null}
 

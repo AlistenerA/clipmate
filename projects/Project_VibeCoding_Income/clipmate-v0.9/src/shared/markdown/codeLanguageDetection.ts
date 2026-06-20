@@ -130,21 +130,39 @@ export async function enhanceMarkdownCodeLanguages(
   markdown: string,
   detector: CodeLanguageDetector = detectCodeLanguage,
 ): Promise<string> {
-  const matches = Array.from(markdown.matchAll(/```[ \t]*\n([\s\S]*?)\n```/g))
-  if (matches.length === 0) return markdown
+  const newline = markdown.includes('\r\n') ? '\r\n' : '\n'
+  const lines = markdown.split(/\r?\n/)
+  let changed = false
 
-  let result = ''
-  let cursor = 0
-  for (const match of matches) {
-    const index = match.index ?? 0
-    const detection = await detector(match[1])
-    result += markdown.slice(cursor, index)
-    result += detection.language
-      ? match[0].replace(/^```[ \t]*\n/, `\`\`\`${detection.language}\n`)
-      : match[0]
-    cursor = index + match[0].length
+  for (let index = 0; index < lines.length; index++) {
+    const opening = /^(\s*)(`{3,}|~{3,})(.*)$/.exec(lines[index])
+    if (!opening) continue
+
+    const indent = opening[1]
+    const marker = opening[2]
+    const info = opening[3].trim()
+    const markerChar = marker[0]
+    const closingPattern = new RegExp(`^\\s*${markerChar === '`' ? '`' : '~'}{${marker.length},}\\s*$`)
+    let closingIndex = index + 1
+    while (closingIndex < lines.length && !closingPattern.test(lines[closingIndex])) {
+      closingIndex++
+    }
+
+    if (closingIndex >= lines.length) continue
+
+    if (!info) {
+      const code = lines.slice(index + 1, closingIndex).join(newline)
+      const detection = await detector(code)
+      if (detection.language) {
+        lines[index] = `${indent}${marker}${detection.language}`
+        changed = true
+      }
+    }
+
+    index = closingIndex
   }
-  return result + markdown.slice(cursor)
+
+  return changed ? lines.join(newline) : markdown
 }
 
 export async function enhanceExtractedContentCodeLanguages(

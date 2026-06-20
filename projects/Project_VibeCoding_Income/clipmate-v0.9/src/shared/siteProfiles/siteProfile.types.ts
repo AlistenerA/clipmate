@@ -15,6 +15,11 @@ export interface SiteProfileSelectorHints {
   mainHeading?: string
   searchResultCard?: string
   excludeSelector?: string
+  conversationContainer?: string
+  conversationMessage?: string
+  userMessage?: string
+  assistantMessage?: string
+  transientMessage?: string
 }
 
 export interface SiteProfile {
@@ -24,6 +29,7 @@ export interface SiteProfile {
   domains: string[]
   pageTypes: PageType[]
   priority: number
+  pathPatterns?: string[]
   selectorHints?: SiteProfileSelectorHints
 }
 

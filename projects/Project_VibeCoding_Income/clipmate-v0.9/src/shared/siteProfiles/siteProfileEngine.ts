@@ -97,6 +97,17 @@ export function matchSiteProfile(
   for (const profile of list) {
     for (const domain of profile.domains) {
       if (!hostnameMatchesDomain(hostname, domain)) continue
+      if (profile.pathPatterns?.length) {
+        let pathname = ''
+        try {
+          pathname = new URL(input.url).pathname.toLowerCase()
+        } catch {
+          continue
+        }
+        if (!profile.pathPatterns.some((pattern) => pathname.includes(pattern.toLowerCase()))) {
+          continue
+        }
+      }
 
       const { confidence, reasons } = calcMatchConfidence(
         hostname,

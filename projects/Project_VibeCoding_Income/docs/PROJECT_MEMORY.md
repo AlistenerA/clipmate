@@ -1,6 +1,6 @@
 # ClipMate Project Memory
 
-Last updated: 2026-06-19.
+Last updated: 2026-06-20.
 
 Use this as the compact handoff for future Codex sessions.
 
@@ -20,10 +20,11 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Active version: `clipmate-v0.9` v0.9.0 on `codex/clipmate-v0.9-page-aware`.
-- v0.9 adds page-aware mode recommendations, page-specific labels, primary-mode visibility, and guarded first-load auto-selection for confident video/AI pages.
+- Frozen version: `clipmate-v0.9` v0.9.3 on `codex/clipmate-v0.9-page-aware`; no further features enter this release.
+- Store submission archive: `release-submissions/clipmate-v0.9.3-submission/`, including a minimal unpacked extension, root-manifest zip, release notes, listing draft, and review checklist.
+- v0.9.1-v0.9.3 adds tab-aware drafts, stateful code fences, multi-signal page candidates, ChatGPT/DeepSeek/Doubao conversation extraction, GitHub discussion routes, and quality-gated full-page candidates.
 - Recommendations are local, explainable, optional, and user-overridable; they store no raw detector signals, DOM, body text, selection text, or URL.
-- v0.9 passes lint, 62 files / 2028 tests, build, and a Playwright Popup interaction covering auto-apply, more-modes expansion, and user override.
+- v0.9.3 passes lint, 64 files / 2043 tests, build, and isolated Playwright Popup interaction covering adaptive auto-apply, recommendation deduplication, mode expansion, and user override.
 - `clipmate-v0.8` is frozen at v0.8.5; its branch was pushed after completing structure, image semantics, hybrid code detection, Asset Picker interaction, and History fixes.
 - v0.7 goal: Tutorial Mode with a versioned `ClipDocument` and native Notion structure mapping.
 - v0.7 automated candidate passes lint, 53 files / 1966 tests, and build; Chrome/Edge plus real Notion QA remains for the user.
@@ -64,8 +65,8 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
-- Run Chrome and Edge unpacked smoke plus a real Notion test-page save before store submission.
+- Run Chrome and Edge unpacked smoke against the exact submission directory plus a real Notion test-page save before portal upload.
 - Keep v0.8 and earlier directories frozen; normal follow-up changes enter `clipmate-v0.9`.
-- Calibrate page recommendations against real Bilibili, technical article, discussion, search, and AI pages.
+- Complete real Chrome/Edge/Notion acceptance against Bilibili, Runoob, GitHub Issue, Bing, and three AI conversation sites.
 - Evaluate a separate video-collection data model only in v0.9.x; do not mix subtitles, private APIs, cookies, downloads, or DRM into the current mode recommender.
 - Review known watch-list items in `docs/PROJECT_ARCHITECTURE.md` when those surfaces are touched.

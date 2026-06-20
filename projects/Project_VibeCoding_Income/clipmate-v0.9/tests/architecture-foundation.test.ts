@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  canRestoreClipDraft,
   createClipDraft,
   getDraftBodyText,
   isDraftSaveable,
@@ -83,6 +84,27 @@ describe('architecture foundation capture module', () => {
     })
 
     expect(isDraftSaveable(draft)).toBe(false)
+  })
+
+  it('restores drafts only for the originating tab and URL', () => {
+    const draft = createClipDraft({
+      content: makeContent(),
+      tags: [],
+      note: '',
+      sourceTabId: 41,
+    })
+
+    expect(canRestoreClipDraft(draft, draft.content.url, 41)).toBe(true)
+    expect(canRestoreClipDraft(draft, draft.content.url, 42)).toBe(false)
+    expect(canRestoreClipDraft(draft, 'https://example.com/other', 41)).toBe(false)
+  })
+
+  it('does not restore a legacy selection draft into a duplicate tab', () => {
+    const legacySelection = makeDraft({ mode: 'selection' })
+    const legacyFullpage = makeDraft({ mode: 'fullpage' })
+
+    expect(canRestoreClipDraft(legacySelection, legacySelection.content.url, 42)).toBe(false)
+    expect(canRestoreClipDraft(legacyFullpage, legacyFullpage.content.url, 42)).toBe(true)
   })
 })
 

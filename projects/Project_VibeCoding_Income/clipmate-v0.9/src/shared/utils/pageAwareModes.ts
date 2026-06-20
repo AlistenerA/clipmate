@@ -6,6 +6,7 @@ export interface PageModeRecommendationInput {
   confidence: number
   selectionPresent: boolean
   hasCodeBlock: boolean
+  technicalConfidence?: number
 }
 
 const MODE_ORDER: ClipMode[] = ['fullpage', 'selection', 'tutorial']
@@ -103,7 +104,7 @@ export function recommendPageModes(input: PageModeRecommendationInput): PageAwar
           ...base,
           recommendedMode: 'tutorial',
           primaryModes: uniqueModes('tutorial', 'fullpage', input.selectionPresent && 'selection'),
-          autoApply: false,
+          autoApply: (input.technicalConfidence ?? 0) >= 0.75 && !input.selectionPresent,
           reason: '检测到技术内容和代码块，教程模式更利于保留结构。'
         }
       }
@@ -139,12 +140,44 @@ export function buildPageAwareness(
   detection: PageTypeDetectionResult,
   selectionPresent: boolean
 ): PageAwareness {
-  return recommendPageModes({
+  const technicalConfidence = getTechnicalConfidence(detection)
+  const recommendation = recommendPageModes({
     pageType: detection.type,
     confidence: detection.confidence,
     selectionPresent,
-    hasCodeBlock: detection.signals.hasCodeBlock
+    hasCodeBlock: detection.signals.hasCodeBlock,
+    technicalConfidence,
   })
+  const characteristics: NonNullable<PageAwareness['characteristics']> = (detection.candidates || [])
+    .filter((candidate) => candidate.confidence >= 0.35)
+    .map((candidate) => ({ type: candidate.type, confidence: candidate.confidence }))
+  if (technicalConfidence > 0) {
+    characteristics.push({ type: 'technical', confidence: technicalConfidence })
+  }
+  return {
+    ...recommendation,
+    characteristics,
+    modeFamily: getModeFamily(recommendation.recommendedMode, recommendation),
+  }
+}
+
+function getTechnicalConfidence(detection: PageTypeDetectionResult): number {
+  const count = detection.signals.technicalCodeBlockCount ??
+    (detection.signals.hasCodeBlock ? 1 : 0)
+  if (count === 0) return 0
+
+  const domain = detection.signals.domain.toLowerCase()
+  const knownTechnicalDomain = [
+    'runoob.com', 'developer.mozilla.org', 'docs.microsoft.com',
+    'learn.microsoft.com', 'cnblogs.com', 'csdn.net',
+  ].some((candidate) => domain === candidate || domain.endsWith(`.${candidate}`))
+  const title = detection.signals.title.toLowerCase()
+  const titleSignal = /tutorial|教程|文档|开发|编程|typescript|javascript|python|代码/.test(title)
+
+  let confidence = count >= 2 ? 0.6 : 0.35
+  if (knownTechnicalDomain) confidence += 0.25
+  if (titleSignal) confidence += 0.15
+  return Math.min(Math.round(confidence * 100) / 100, 1)
 }
 
 export function getModeLabel(mode: ClipMode, awareness?: PageAwareness): string {
@@ -173,6 +206,26 @@ export function getPageTypeLabel(pageType: PageType): string {
     unknown: '普通页面'
   }
   return labels[pageType] || labels.unknown
+}
+
+export function getModeFamilyLabel(mode: ClipMode, awareness?: PageAwareness): string {
+  return getModeFamily(mode, awareness) === 'selection'
+    ? '选区'
+    : getModeFamily(mode, awareness) === 'adaptive'
+      ? '自适应'
+      : '全文'
+}
+
+export function getModeFamily(
+  mode: ClipMode,
+  awareness?: PageAwareness,
+): 'fullpage' | 'selection' | 'adaptive' {
+  if (mode === 'selection') return 'selection'
+  if (mode === 'tutorial') return 'adaptive'
+  if (awareness?.pageType === 'search-results' || awareness?.pageType === 'navigation') {
+    return 'adaptive'
+  }
+  return 'fullpage'
 }
 
 export function getAllClipModes(): ClipMode[] {

@@ -7,6 +7,8 @@ import {
   enhanceMarkdownCodeLanguages,
   type CodeLanguageDetector,
 } from '../src/shared/markdown/codeLanguageDetection'
+import { createClipDocument } from '../src/features/document'
+import { clipDocumentToNotionBlocks } from '../src/platforms/notion/blocks'
 import type { ExtractedContent } from '../src/shared/types/clip.types'
 
 const typescriptDetector: CodeLanguageDetector = async () => ({
@@ -103,5 +105,61 @@ describe('v0.8.4 hybrid code detection', () => {
       type: 'code',
       language: 'typescript',
     })
+  })
+
+  it('never treats a labeled block closing fence as a new opening fence', async () => {
+    const source = [
+      '```html',
+      '<main>demo</main>',
+      '```',
+      '',
+      '正文说明',
+      '',
+      '```css',
+      'main { display: block; }',
+      '```',
+      '',
+      '继续说明',
+      '',
+      '```',
+      'const ready = true',
+      '```',
+    ].join('\n')
+
+    const enhanced = await enhanceMarkdownCodeLanguages(source, typescriptDetector)
+
+    expect(enhanced).toContain('```html\n<main>demo</main>\n```\n\n正文说明')
+    expect(enhanced).toContain('```css\nmain { display: block; }\n```\n\n继续说明')
+    expect(enhanced).toContain('```typescript\nconst ready = true\n```')
+    expect(enhanced).not.toContain('```typescript\n\n正文说明')
+
+    const blocks = createClipDocument({
+      title: 'Adjacent code blocks',
+      url: 'https://example.com/tutorial',
+      markdown: enhanced,
+    }).blocks
+    expect(blocks.map((block) => block.type)).toEqual([
+      'code', 'paragraph', 'code', 'paragraph', 'code',
+    ])
+
+    const notionTypes = clipDocumentToNotionBlocks({
+      schemaVersion: 1,
+      mode: 'tutorial',
+      title: 'Adjacent code blocks',
+      url: 'https://example.com/tutorial',
+      sourceMarkdown: enhanced,
+      blocks,
+      stats: {
+        headingCount: 0,
+        listCount: 0,
+        codeBlockCount: 3,
+        formulaCount: 0,
+        tableCount: 0,
+        calloutCount: 0,
+        figureCount: 0,
+        videoCount: 0,
+      },
+    }).map((block) => block.type)
+    expect(notionTypes).toEqual(['code', 'paragraph', 'code', 'paragraph', 'code'])
   })
 })

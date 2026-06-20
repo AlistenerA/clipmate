@@ -1,13 +1,15 @@
-import type { ClipMode } from '../../shared/types/clip.types'
+import type { ClipMode, PageAwareness } from '../../shared/types/clip.types'
+import { getModeFamilyLabel } from '../../shared/utils/pageAwareModes'
 
 interface Props {
   mode: ClipMode
   wordCount: number
   modeLabel: 'idle' | 'loading' | 'success' | 'error'
   imageCount?: number
+  awareness?: PageAwareness
 }
 
-export default function StatusBar({ mode, wordCount, modeLabel, imageCount }: Props) {
+export default function StatusBar({ mode, wordCount, modeLabel, imageCount, awareness }: Props) {
   const hasImages = (imageCount ?? 0) > 0
   const statusText =
     modeLabel === 'loading'
@@ -27,7 +29,7 @@ export default function StatusBar({ mode, wordCount, modeLabel, imageCount }: Pr
           ? 'bg-green-50 text-green-600'
           : 'bg-gray-50 text-gray-400'
 
-  const modeText = mode === 'fullpage' ? '全文' : mode === 'selection' ? '选区' : '教程'
+  const modeText = getModeFamilyLabel(mode, awareness)
 
   return (
     <div className="flex items-center justify-between text-xs">

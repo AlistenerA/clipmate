@@ -195,6 +195,39 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     priority: 25,
     selectorHints: {
       contentContainer: '[data-message-author-role]',
+      conversationContainer: 'main',
+      conversationMessage: '[data-message-author-role]',
+      userMessage: '[data-message-author-role="user"]',
+      assistantMessage: '[data-message-author-role="assistant"]',
+    },
+  },
+  {
+    id: 'deepseek-ai-chat',
+    label: 'DeepSeek',
+    category: 'ai-chat',
+    domains: ['chat.deepseek.com'],
+    pageTypes: ['ai-answer'],
+    priority: 25,
+    selectorHints: {
+      contentContainer: '.ds-message',
+      conversationMessage: '.ds-message',
+      assistantMessage: '.ds-assistant-message-main-content',
+      transientMessage: '.ds-think-content, [class*="message-action"]',
+    },
+  },
+  {
+    id: 'doubao-ai-chat',
+    label: 'Doubao',
+    category: 'ai-chat',
+    domains: ['doubao.com'],
+    pageTypes: ['ai-answer'],
+    priority: 25,
+    selectorHints: {
+      contentContainer: '[class*="message-list"]',
+      conversationContainer: '[class*="message-list"]',
+      conversationMessage: '[class*="message-list"] > div',
+      userMessage: '[class*="send-msg-bubble"]',
+      transientMessage: '[class*="message-action"], [class*="suggest-message"]',
     },
   },
   {
@@ -240,6 +273,19 @@ export const SEED_PROFILES: readonly SiteProfile[] = [
     selectorHints: {
       contentContainer: '#content .article, #wrapper, .article',
       commentContainer: '.comment-item, .review-item',
+    },
+  },
+  {
+    id: 'github-discussion',
+    label: 'GitHub Discussion',
+    category: 'community',
+    domains: ['github.com'],
+    pageTypes: ['forum-or-comment'],
+    priority: 25,
+    pathPatterns: ['/issues/', '/pull/', '/discussions/'],
+    selectorHints: {
+      contentContainer: '#discussion_bucket, .js-issue-row, [data-testid="issue-body"]',
+      commentContainer: '.timeline-comment, .js-timeline-item, [data-testid="comment-header"]',
     },
   },
   {

@@ -2,6 +2,32 @@
 
 ---
 
+## v0.9.3 商店提交版验证（2026-06-20）
+
+- 冻结门禁重跑：`npm run lint` 通过；`npm run test` 64 files / 2043 tests 通过；`npm run build` 171 modules 通过。
+- 提交版 manifest：Manifest V3，version 0.9.3，permissions 仅 `storage` / `activeTab`，host permission 仅 Notion API。
+- manifest 引用完整性：Popup、Options、service worker、content script、4 个图标和 web accessible resources 全部存在。
+- zip：924131 bytes / 26 entries；根目录 `manifest.json` 恰好 1 个；禁止条目 0；危险或父路径条目 0。
+- zip SHA-256：`CE507BAF3E80E07F6EE778FDCCD6DDA0264F0651924FD67BCCFB5DA966318226`。
+- 动态代码扫描未命中 `eval(`、`new Function(`、远程动态 import 或远程 script 标签。
+- 严格敏感扫描未发现凭据值、私钥、内部工具名或本地绝对路径；命中项仅为公开文档中的 Token/密码说明、本地模型库 `.env` 运行环境 API 和 React 固有内部标识。
+- 首次压缩命令因工作目录已在 `extension/` 而路径多写一层失败；已用正确相对路径重跑，未将失败误判为成功。
+- 真实 Chrome/Edge 加载和真实 Notion 保存未在当前环境执行，保留为上传商店前人工门禁。
+
+## v0.9.1-v0.9.3 自动验证（2026-06-20）
+
+- v0.9.1 定向：35 tests，覆盖 fenced code opener/closer、HTML/CSS/JS 相邻保序、Notion blocks、tab-aware 草稿和模式标签。
+- v0.9.2 定向：6 tests，覆盖 DeepSeek/Doubao/ChatGPT、GitHub routes、技术文章阈值和脱敏候选。
+- v0.9.3 定向：5 tests，覆盖候选质量门禁、受保护结构、conversation 保留、comment/ad 精确清理。
+- fixture：Runoob、DeepSeek、豆包使用 `tests/fixtures/v092/` 脱敏 HTML；ChatGPT 和 GitHub 固化稳定 DOM/route 测试。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：64 files / 2043 tests 全部通过。
+- `npm run build`：通过，171 modules transformed；manifest 0.9.3。
+- Playwright 隔离 Popup QA：Bilibili-like 页面首次自适应、单一推荐提示、更多模式、手动全文覆盖均通过；控制台 0 error / 0 warning。
+- `npm run zip`：`clipmate-v0.9.3.zip` 为 951360 bytes / 28 entries；manifest 0.9.3，禁入目录/父路径条目为 0，SHA-256 `52849E3DF18F1A1344FD117C4D5A0C1446EE60AFDDE217C693A90047967D2B8B`。
+- Chrome 插件连接因 Windows `CreateProcessAsUserW failed 5` 不可用，按流程使用 Playwright fallback；未冒充真实扩展/登录态 QA。
+- 尚未验证真实 Chrome/Edge、同 URL 双标签页、Bilibili、Runoob、GitHub Issue、Bing、三种 AI 对话与真实 Notion 页面。
+
 ## v0.9.0 页面感知模式（2026-06-19）
 
 - 新增 `tests/v090-page-aware-modes.test.tsx`：18 tests。

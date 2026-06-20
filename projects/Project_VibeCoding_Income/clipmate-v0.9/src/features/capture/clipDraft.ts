@@ -6,6 +6,7 @@ export interface CreateClipDraftInput {
   note: string
   title?: string
   mode?: ClipMode
+  sourceTabId?: number
 }
 
 export function getDraftBodyText(draft: ClipDraft): string {
@@ -16,6 +17,16 @@ export function isDraftSaveable(draft: ClipDraft): boolean {
   return getDraftBodyText(draft).trim().length > 0
 }
 
+export function canRestoreClipDraft(
+  draft: ClipDraft | null | undefined,
+  activeUrl?: string,
+  activeTabId?: number,
+): draft is ClipDraft {
+  if (!draft?.content?.url || draft.content.url !== activeUrl) return false
+  if (draft.sourceTabId !== undefined) return draft.sourceTabId === activeTabId
+  return draft.mode !== 'selection'
+}
+
 export function createClipDraft(input: CreateClipDraftInput): ClipDraft {
   return {
     title: input.title || input.content.title,
@@ -23,5 +34,6 @@ export function createClipDraft(input: CreateClipDraftInput): ClipDraft {
     note: input.note,
     mode: input.mode || input.content.mode,
     content: input.content,
+    sourceTabId: input.sourceTabId,
   }
 }

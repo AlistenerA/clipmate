@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 export interface CurrentTab {
+  id?: number
   title: string
   url: string
   hostname: string
@@ -22,6 +23,7 @@ export function useCurrentTab() {
           hostname = ''
         }
         setTab({
+          id: t.id,
           title: t.title || '无标题',
           url: t.url,
           hostname,

@@ -7,6 +7,13 @@ export type PageType =
   | 'ai-answer'
   | 'unknown'
 
+export type PageCharacteristic = PageType | 'technical'
+
+export interface PageTypeCandidate {
+  type: PageType
+  confidence: number
+}
+
 export interface PageTypeDetectionSignals {
   url: string
   title: string
@@ -27,6 +34,7 @@ export interface PageTypeDetectionSignals {
   hasConversationPattern: boolean
   hasCodeBlock: boolean
   mainTextLength: number
+  technicalCodeBlockCount?: number
 }
 
 export interface PageTypeDetectionResult {
@@ -34,6 +42,7 @@ export interface PageTypeDetectionResult {
   confidence: number
   reasons: string[]
   signals: PageTypeDetectionSignals
+  candidates?: PageTypeCandidate[]
 }
 
 const MIN_ARTICLE_TEXT = 200
@@ -62,8 +71,33 @@ const VIDEO_TITLE_KEYWORDS = [
 
 const AI_TITLE_KEYWORDS = [
   'chat', 'assistant', 'ai', 'copilot', 'chatgpt',
-  'claude', 'gemini', 'bard', '对话', '问答', '助手',
+  'claude', 'gemini', 'bard', 'deepseek', 'doubao', '豆包',
+  '对话', '问答', '助手',
 ]
+
+const AI_DOMAINS = [
+  'chatgpt.com', 'chat.openai.com', 'chat.deepseek.com', 'deepseek.com',
+  'doubao.com', 'claude.ai', 'gemini.google.com', 'copilot.microsoft.com',
+]
+
+function hostnameMatches(hostname: string, domain: string): boolean {
+  return hostname === domain || hostname.endsWith(`.${domain}`)
+}
+
+function isKnownAiDomain(domain: string): boolean {
+  const normalized = domain.toLowerCase()
+  return AI_DOMAINS.some((candidate) => hostnameMatches(normalized, candidate))
+}
+
+function isKnownDiscussionRoute(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    if (!hostnameMatches(parsed.hostname.toLowerCase(), 'github.com')) return false
+    return /^\/[^/]+\/[^/]+\/(?:issues|pull|discussions)\/[^/]+/i.test(parsed.pathname)
+  } catch {
+    return false
+  }
+}
 
 type AssessorResult = { confidence: number; reasons: string[] }
 
@@ -106,6 +140,14 @@ function assessArticle(input: PageTypeDetectionSignals): AssessorResult {
   if (input.videoCount > 0 || input.iframeCount > 0) {
     score *= 0.5
     reasons.push('Video/iframe elements reduce article confidence')
+  }
+
+  if (isKnownAiDomain(input.domain) && input.hasConversationPattern) {
+    score *= 0.4
+    reasons.push('Known AI conversation reduces article confidence')
+  } else if (isKnownDiscussionRoute(input.url)) {
+    score *= 0.65
+    reasons.push('Known discussion route reduces article confidence')
   }
 
   const confidence = Math.min(Math.round((score / Math.max(weightSum, 1)) * 100) / 100, 1)
@@ -228,6 +270,12 @@ function assessForumOrComment(input: PageTypeDetectionSignals): AssessorResult {
 
   if (input.articleLikeScore < 1) { score += 0.5; weightSum += 0.5 }
 
+  if (isKnownDiscussionRoute(input.url)) {
+    score += 2
+    weightSum += 2
+    reasons.push('Known discussion route')
+  }
+
   const confidence = Math.round((score / Math.max(weightSum, 1)) * 100) / 100
   return { confidence, reasons }
 }
@@ -294,6 +342,12 @@ function assessAiAnswer(input: PageTypeDetectionSignals): AssessorResult {
   if (input.articleLikeScore < 2) { score += 0.3 }
   weightSum += 0.3
 
+  if (isKnownAiDomain(input.domain)) {
+    score += 2
+    weightSum += 2
+    reasons.push('Known AI conversation domain')
+  }
+
   const confidence = Math.round((score / Math.max(weightSum, 1)) * 100) / 100
   return { confidence, reasons }
 }
@@ -323,6 +377,9 @@ export function detectPageType(input: PageTypeDetectionSignals): PageTypeDetecti
       confidence: Math.round((1 - best.confidence) * 100) / 100,
       reasons: [`No strong signal detected. Best match: ${best.type} (${best.confidence.toFixed(2)})`],
       signals: input,
+      candidates: assessments
+        .map(({ type, confidence }) => ({ type, confidence }))
+        .sort((left, right) => right.confidence - left.confidence),
     }
   }
 
@@ -339,6 +396,9 @@ export function detectPageType(input: PageTypeDetectionSignals): PageTypeDetecti
     confidence: best.confidence,
     reasons: best.reasons,
     signals: input,
+    candidates: assessments
+      .map(({ type, confidence }) => ({ type, confidence }))
+      .sort((left, right) => right.confidence - left.confidence),
   }
 }
 
@@ -426,7 +486,15 @@ export function extractSignalsFromDocument(doc: Document): PageTypeDetectionSign
     } catch { /* ignore invalid selectors */ }
   }
 
-  const hasCodeBlock = doc.querySelectorAll('pre code, code[class*="language-"]').length > 0
+  const technicalCodeBlockCount = doc.querySelectorAll([
+    'pre code',
+    'code[class*="language-"]',
+    '.example_code',
+    '.syntaxhighlighter',
+    '[class*="highlight-source-"]',
+    '[class*="code-block"]',
+  ].join(', ')).length
+  const hasCodeBlock = technicalCodeBlockCount > 0
 
   const mainEl = doc.querySelector('main, article, [role="main"]')
   const mainTextLength = mainEl ? (mainEl.textContent || '').trim().length : textLength
@@ -451,6 +519,7 @@ export function extractSignalsFromDocument(doc: Document): PageTypeDetectionSign
     hasConversationPattern,
     hasCodeBlock,
     mainTextLength,
+    technicalCodeBlockCount,
   }
 }
 

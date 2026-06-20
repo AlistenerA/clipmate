@@ -4,6 +4,21 @@
 
 ---
 
+## v0.9.1-v0.9.3 决策（2026-06-20）
+
+- fenced code 语言增强必须解析围栏状态，只修改无语言 opener；Markdown、ClipDocument 与 Notion blocks 共享增强结果。
+- 草稿恢复以 URL 和 tab identity 共同判定；兼容旧全文草稿，但旧选区草稿缺少 tab id 时宁可不自动恢复。
+- UI 模式家族与内部 mode ID 分离；不迁移旧 History 或 storage schema。
+- 页面类型采用“主类型 + 脱敏候选”；路由、DOM 和可读性参与当前页判断，但原始信号不跨 content script 边界。
+- AI 对话按 DOM 顺序保留用户/助手完整轮次；角色选区直接保存选区和角色，不套评论模板或追加 OG 图片。
+- 技术文章只有多代码容器且置信度至少 0.75 才允许首次自动采用；任何选区、草稿或手动覆盖优先。
+- 全文多候选只在文本完整度、链接密度和受保护结构均通过质量门禁时替换旧提取；旧链路永久保底。
+- 噪声清理以精确 token/ARIA role 为主；不因 `content`、`comment`、`conversation` 等子串删除正文或受保护结构。
+- SingleFile 只作为设计研究，不复制 AGPL 代码；继续使用 `@mozilla/readability 0.6.0`，不增加完整离线归档。
+- v0.9.3 在 2026-06-20 冻结；提交版只保留生产运行文件和公开审核材料，后续不再混入功能开发。
+- 商店包将 Vite 生成的两个入口 HTML 规范到 zip 根目录并同步提交版 manifest，避免提交包出现开发命名的 `src/` 包装目录；未改变源码 manifest 权限或运行能力。
+- 生成物中的未引用 `icon-source.svg` 和 `icon-512.png` 不进入商店包；manifest 声明的 16/32/48/128 图标全部保留。
+
 ## v0.9.0 决策（2026-06-19）
 
 - 复用本地 Page Type Detector，不为模式推荐新增远程模型、遥测或站点 API。

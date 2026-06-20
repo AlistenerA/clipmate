@@ -1,14 +1,15 @@
 # ClipMate v0.9 Project Architecture
 
-Last updated: 2026-06-19.
+Last updated: 2026-06-20.
 
 ## Product Shape
 
-ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.9` adds local page-aware mode recommendations while retaining v0.8 Asset Picker and v0.7 Tutorial Mode.
+ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.9.3` adds local multi-signal page awareness, adaptive AI conversations, tab-aware drafts, and quality-gated full-page extraction while retaining v0.8 Asset Picker and v0.7 Tutorial Mode.
 
 ## Repository Map
 
-- `clipmate-v0.9/`: active v0.9.0 version and source of truth for current development.
+- `clipmate-v0.9/`: frozen v0.9.3 source of truth; only release-blocking fixes may reopen it.
+- `release-submissions/clipmate-v0.9.3-submission/`: isolated Chrome/Edge reviewer package and public submission materials.
 - `clipmate-v0.8/`: frozen v0.8.5 release snapshot.
 - `clipmate-v0.7/`: frozen Tutorial Mode 0.7.3 baseline.
 - `clipmate-v0.6/`: frozen v0.6 Asset Pipeline release baseline.
@@ -50,7 +51,9 @@ flowchart LR
 - `clipmate-v0.9/src/shared/utils/pageTypeDetector.ts`: local document classification.
 - `clipmate-v0.9/src/shared/utils/pageAwareModes.ts`: mode recommendation, labels, and initial auto-apply guard.
 - `clipmate-v0.9/src/content/pageAwareness.ts`: sanitized DOM-to-recommendation adapter.
-- `clipmate-v0.9/src/content/index.ts`: extraction, PageAwareness attachment, and Asset Picker message routing.
+- `clipmate-v0.9/src/content/index.ts`: multi-candidate extraction, AI conversation routing, PageAwareness attachment, and Asset Picker messages.
+- `clipmate-v0.9/src/content/aiConversation/`: ordered AI turns and role-aware selection extraction.
+- `clipmate-v0.9/src/content/extractors/extractionQuality.ts`: candidate scoring and protected-structure replacement gate.
 - `clipmate-v0.9/src/popup/App.tsx`: popup workflow, recommendation lifecycle, copy/save actions, and draft persistence.
 - `clipmate-v0.9/src/popup/components/ClipModeToggle.tsx`: page-aware recommendation and all-mode UI.
 - `clipmate-v0.9/src/platforms/notion/blocks.ts`: Markdown, ClipDocument, and selected-image Notion block conversion.
@@ -62,18 +65,19 @@ flowchart LR
 Page-aware mode selection:
 
 1. Content script classifies the current document locally.
-2. A pure recommendation policy reduces classification to type, confidence, selection presence, mode IDs, and fixed reason text.
+2. A pure recommendation policy reduces primary type and sanitized candidates to confidence, selection presence, mode IDs, and fixed reason text.
 3. Popup shows primary modes and keeps every mode reachable through “more modes”.
-4. Only confident video/AI pages without a selection can auto-apply once.
+4. Confident video/AI pages and technical articles at or above 0.75 can auto-apply once.
 5. Restored drafts, selected text, and explicit user mode changes take precedence.
 
 Full-page clipping:
 
 1. Popup asks the active tab content script for extraction.
 2. Content script clones and cleans the document.
-3. Readability and project heuristics identify article content.
-4. Markdown is generated and image metadata is attached.
-5. Popup stores draft changes and optionally saves through the background worker.
+3. Site containers, conservative Readability, and the legacy extractor produce candidates from cloned DOMs.
+4. A quality gate rejects candidates that lose protected headings, code, lists, tables, formulae, or images; legacy output remains the fallback.
+5. Markdown is generated and image metadata is attached.
+6. Popup stores draft changes and optionally saves through the background worker.
 
 Selection clipping:
 

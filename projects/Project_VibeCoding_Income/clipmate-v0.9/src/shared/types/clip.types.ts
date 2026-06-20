@@ -1,5 +1,5 @@
 import type { ClipDocument } from '../../features/document'
-import type { PageType } from '../utils/pageTypeDetector'
+import type { PageCharacteristic, PageType } from '../utils/pageTypeDetector'
 
 export type ClipMode = 'fullpage' | 'selection' | 'tutorial'
 
@@ -13,6 +13,11 @@ export interface PageAwareness {
   primaryModes: ClipMode[]
   autoApply: boolean
   reason: string
+  characteristics?: Array<{
+    type: PageCharacteristic
+    confidence: number
+  }>
+  modeFamily?: 'fullpage' | 'selection' | 'adaptive'
 }
 
 export interface ClipMetadata {
@@ -68,6 +73,7 @@ export interface ClipDraft {
   note: string
   mode: ClipMode
   content: ExtractedContent
+  sourceTabId?: number
 }
 
 export type MarkdownTarget = 'notion' | 'obsidian' | 'typora' | 'generic'
