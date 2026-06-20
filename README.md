@@ -1,183 +1,163 @@
-# ClipMate v0.5
+# ClipMate v0.9.3
 
-轻量级 Microsoft Edge / Chrome 浏览器扩展，一键将网页内容剪藏到 **Notion** 和 **Markdown**。
+[中文](#中文) | [English](#english)
 
-v0.5 定位为 **Article Image Saving（文章图片保存版）**，让 ClipMate 更好保留正文中的关键图片。
+## 中文
 
----
+ClipMate 是一款适用于 Google Chrome 和 Microsoft Edge 的 Manifest V3 网页剪藏扩展。它可以将当前网页整理为结构化 Markdown，或在用户明确操作后保存到用户自己的 Notion 页面。
 
-## v0.5 新特性：文章图片保存
+### 核心功能
 
-### Article Image Extraction
-从文章正文 DOM 中提取图片候选，支持 src/currentSrc/srcset 归一化、figure/figcaption 题注提取、相对 URL 解析。智能过滤 avatar/icon/logo/tracking pixel/emoji/sprite/data URI/blob URI 等噪声图片。
+- **全文剪藏**：提取正文并清理导航、广告、按钮等常见页面噪声。
+- **选区剪藏**：保存用户当前选择的文字及适用的上下文。
+- **教程模式**：尽量保留标题、列表、代码块、公式、表格、图片题注和视频链接。
+- **页面感知推荐**：在本地识别文章、技术页面、讨论、搜索/导航、视频及支持的 AI 对话页面，并给出可覆盖的模式建议。
+- **图片点选**：允许用户从当前页面补选图片，支持预览、移除和排序。
+- **Markdown 输出**：支持 Notion、Obsidian、Typora 和通用 Markdown 格式。
+- **Notion 保存**：支持多个目标页面、默认目标、标签和备注。
+- **本地历史**：可选保存剪藏历史，支持搜索、复制、失败重试、单条删除和全部清空。
 
-### Markdown Image Preservation
-Turndown img rule 增强，过滤噪声图片并去重。相对图片 URL 自动解析为绝对 URL。injectMissingImages 安全网在 Fullpage 末尾补充遗漏的正文图片。
+### 隐私与权限
 
-### Notion External Image Blocks
-Markdown 图片语法 `![alt](url)` 转换为 Notion `image` block（type: external）。兼容性过滤（代理/resize 型 URL 降级为 paragraph block）。图片 block 转换失败不影响正文保存。支持 image.caption 合并，自动识别图片后紧跟的题注。
+ClipMate 不使用自有服务器，不包含广告、遥测或远程执行代码，也不会把网页内容发送给外部 AI 服务。
 
-### Lightweight Image Metadata
-Popup 和 History 中轻量展示图片数量提示（imageCount / firstImageUrl / skippedImageCount），不下载/上传/缓存图片，不保存完整 URL 列表。
+- `storage`：在浏览器本地保存设置、Notion 配置、当前草稿和可选历史。
+- `activeTab`：在用户打开 Popup 时识别当前标签页并完成剪藏交互。
+- `<all_urls>` 内容脚本：让用户可以在其选择的普通网页上使用通用剪藏功能。
+- `https://api.notion.com/*`：仅在用户主动保存时调用 Notion 官方 API。
 
----
+完整说明见 [隐私政策](PRIVACY_POLICY.md)。
 
-## v0.4 继承能力（站点适配与场景模式）
+### 获取与加载
 
-### Page Type Detector
-通用页面类型检测器，自动识别 7 种页面类型：article（文章）、search-results（搜索）、navigation（导航）、forum-or-comment（论坛/评论）、video（视频）、ai-answer（AI 回复）、unknown。
-
-### Site Profile Engine
-结构化站点规则引擎，19 个 seed profiles 覆盖搜索、长视频、短视频、社交/社区、AI 对话 6 类站点。
-
-### Navigation Summary Mode
-导航页安全摘要模式：搜索结果页/导航页/低正文高链接页自动触发，生成安全摘要而非无意义地提取导航噪音。
-
-### Comment / Selection Clip Mode
-7 种选区上下文识别（selection-generic / comment-selection / forum-selection 等）。有选区时走选区流程，不自动抓取整页评论楼层。
-
-### Site Visual Metadata
-站点视觉元数据安全提取器：favicon 优先级提取、themeColor 安全归一化。纯函数 cache strategy，不访问网络。
-
-### Link Card Preview Core
-链接卡片预览：类型定义、builder、Markdown serializer。安全 URL 归一化，拒绝危险协议。不访问目标 URL。
-
----
-
-## v0.3 继承能力（内容保真增强）
-
-- **Markdown Target Profiles**：Notion / Obsidian / Typora / Generic Markdown 四种输出格式
-- **LaTeX 公式保留**：保护数学公式文本不被 Markdown 清理破坏
-- **Code Block Cleaner**：清理代码块 UI 噪音（复制按钮/行号/语言标签）
-- **Image / Link / Table Normalization**：图片多候补 src、链接安全过滤、表格规范化
-- **Safe Markdown Preview**：轻量纯函数解析器，不执行 HTML/脚本
-- **Article Boundary Guard**：DOM 预清理 + 置信度评估 + 尾部截断 + 低置信兜底
-
----
-
-## v0.2 继承能力
-
-### 剪藏
-- **全文剪藏**：基于 Mozilla Readability 引擎
-- **选区剪藏**：选中文字后一键提取
-- **标签和备注**：剪藏时添加
-- **复制 Markdown**：一键生成完整 Markdown
-
-### Notion 集成
-- **保存到 Notion**：通过 Notion API 追加到你的 Notion 页面
-- **多 Notion 目标页面**：新增/编辑/删除/设置默认
-- **Popup 选择保存目标**
-
-### 本地剪藏历史
-- 自动写入本地历史，默认保留 100 条
-- 按标题/URL/标签/正文/备注搜索
-- 复制 Markdown / 重试保存
-- 可关闭历史记录
-
----
-
-## v0.5 已知限制
-
-- 使用 Notion external image block，不下载、不上传、不缓存图片
-- external image URL 依赖源站可访问性，部分外链图片可能因防盗链、代理 URL 或 Notion external image 限制而无法显示
-- 代理/resize/API 型图片 URL 可能在 Notion 中无法渲染，v0.5 会尽量过滤或降级为文本链接
-- 不接入 Notion File Upload API
-- Notion API 不支持由本扩展稳定设置 image block 居中
-- 仅支持 Notion，不支持飞书、语雀等平台
-- 手动 Token 配置（非 OAuth 登录）
-- 无 AI 摘要、AI 标签、OCR、截图回退等功能
-- 不支持 Notion Database 属性映射
-
----
-
-## 本地开发
-
-```pwsh
-# 安装依赖
-npm install
-
-# 启动开发模式（HMR）
-npm run dev
-
-# 代码检查
-npm run lint
-
-# 运行测试
-npm run test
-
-# 构建生产版本
-npm run build
-
-# 打包 zip
-npm run zip
-```
-
----
-
-## Edge / Chrome 加载扩展
-
-1. 运行 `npm run build`
-2. 打开 `edge://extensions` 或 `chrome://extensions`
-3. 开启「开发人员模式」
-4. 点击「加载解压缩的扩展」，选择 `clipmate-v0.5/dist/` 目录
-5. 扩展出现在列表中，工具栏出现 ClipMate 图标
-
----
-
-## 打包
-
-```pwsh
-npm run zip
-```
-
-生成 `clipmate-v0.5.zip`，仅包含 dist/ 构建产物，不包含源码、测试、文档、node_modules。
-
----
-
-## Notion 配置步骤
-
-1. 前往 [Notion Integrations](https://www.notion.so/my-integrations) 创建一个 Integration
-2. 在 Notion 中打开目标页面，点击右上角 `⋯` → `连接` → 添加你创建的 Integration
-3. 在 ClipMate 的 Options 页面填入 Token 和目标页面
-
----
-
-## 隐私说明
-
-- ClipMate **不收集、不存储、不传输**个人信息到外部服务器
-- Notion Token 仅存储在浏览器本地 `chrome.storage.local`
-- 剪藏内容仅在用户主动点击保存时直接发送到 Notion 官方 API
-- 图片采用 external image URL 方式插入 Notion，不下载/上传/缓存图片二进制
-- 本地 history 只保存剪藏历史和轻量图片元数据（imageCount / firstImageUrl / skippedImageCount），不记录完整图片 URL 列表
-- **不接入 AI API**，不传输用户内容到第三方 LLM
-- 不上传数据到自有服务器、不云同步、不做广告追踪
-- 不调用第三方 favicon API
-- 不远程加载或执行 JavaScript
-
----
-
-## 项目结构
+商店审核包位于：
 
 ```text
-clipmate-v0.5/
-├── docs/                     # 项目文档
-├── public/
-│   └── icons/                # 图标资源
-├── src/
-│   ├── manifest.config.ts    # Manifest V3 配置
-│   ├── background/           # Service Worker
-│   ├── content/              # Content Script（提取器/解析器/边界守护/意图/导航摘要/评论选区/图片提取）
-│   ├── popup/                # Popup UI (React)
-│   ├── options/              # Options 设置页 + History UI (React)
-│   ├── platforms/notion/     # Notion API 封装
-│   └── shared/               # 共享类型/存储/消息/Markdown/siteProfiles/siteVisual/linkCard
-├── tests/                    # 单元测试（1922 tests, 48 files）
-├── dist/                     # 构建产物
-└── package.json
+release/clipmate-v0.9.3-submission/clipmate-v0.9.3.zip
 ```
 
----
+开发者模式加载目录：
 
-## 技术栈
+```text
+release/clipmate-v0.9.3-submission/extension/
+```
 
-TypeScript · React 18 · Vite · @crxjs/vite-plugin · Tailwind CSS · Mozilla Readability · turndown · Vitest
+在 `chrome://extensions` 或 `edge://extensions` 中开启开发者模式，选择“加载已解压的扩展程序”，然后选择上述 `extension/` 目录。
+
+### 从源码构建
+
+```pwsh
+cd clipmate-v0.9
+npm ci
+npm run lint
+npm run test
+npm run build
+```
+
+生产构建输出到 `clipmate-v0.9/dist/`。
+
+### v0.9.3 验证结果
+
+- ESLint：通过。
+- Vitest：64 个测试文件、2043 项测试通过。
+- 生产构建：通过，Manifest V3 版本为 0.9.3。
+- 商店 zip：根目录直接包含唯一 `manifest.json`。
+
+### 已知限制
+
+- 仅支持直接保存到 Notion，使用手动配置的 Notion Integration Token，不支持 OAuth。
+- 外部图片通过原始 URL 保存；防盗链、鉴权、过期链接或源站限制可能导致图片无法显示。
+- 不提供图片二进制上传、OCR、截图回退、视频下载、字幕抓取或 Notion Database 属性映射。
+- 登录墙、封闭 Shadow DOM、虚拟列表和延迟动态渲染可能降低提取完整度。
+- 复杂合并单元格表格可能无法完全还原。
+
+### 仓库结构
+
+```text
+clipmate-v0.9/                         # v0.9.3 源码与自动化测试
+release/clipmate-v0.9.3-submission/   # 审核目录、上传 zip 与商店材料
+README.md                              # 中英双语项目说明
+PRIVACY_POLICY.md                      # 中英双语隐私政策
+```
+
+问题反馈：[GitHub Issues](https://github.com/AlistenerA/clipmate/issues)
+
+## English
+
+ClipMate is a Manifest V3 web-clipping extension for Google Chrome and Microsoft Edge. It turns content from the current webpage into structured Markdown and, only after an explicit user action, can save that content to the user's own Notion page.
+
+### Key features
+
+- **Full-page clipping**: extracts the main content and removes common navigation, advertising, and control noise.
+- **Selection clipping**: saves the user's current text selection with applicable context.
+- **Tutorial mode**: preserves headings, lists, code blocks, formulas, tables, image captions, and video links when available.
+- **Page-aware recommendations**: locally recognizes articles, technical pages, discussions, search/navigation pages, videos, and supported AI conversation pages. Recommendations are always user-overridable.
+- **Asset Picker**: lets users add page images, preview them, remove them, and reorder them.
+- **Markdown output**: supports Notion, Obsidian, Typora, and generic Markdown profiles.
+- **Notion saving**: supports multiple target pages, a default target, tags, and notes.
+- **Local history**: optional clipping history with search, copy, failed-save retry, individual deletion, and clear-all controls.
+
+### Privacy and permissions
+
+ClipMate does not use an operator-controlled server and contains no advertising, telemetry, or remotely executed code. It does not send page content to an external AI service.
+
+- `storage`: stores settings, Notion configuration, the current draft, and optional history locally in the browser.
+- `activeTab`: identifies the active tab and supports clipping after the user opens the Popup.
+- `<all_urls>` content script: enables general clipping on ordinary webpages selected by the user.
+- `https://api.notion.com/*`: calls the official Notion API only when the user initiates a save.
+
+See the complete [Privacy Policy](PRIVACY_POLICY.md).
+
+### Install or load
+
+The store-review package is located at:
+
+```text
+release/clipmate-v0.9.3-submission/clipmate-v0.9.3.zip
+```
+
+The unpacked extension directory is:
+
+```text
+release/clipmate-v0.9.3-submission/extension/
+```
+
+Enable Developer mode at `chrome://extensions` or `edge://extensions`, choose “Load unpacked,” and select the `extension/` directory above.
+
+### Build from source
+
+```pwsh
+cd clipmate-v0.9
+npm ci
+npm run lint
+npm run test
+npm run build
+```
+
+The production build is written to `clipmate-v0.9/dist/`.
+
+### v0.9.3 verification
+
+- ESLint: passed.
+- Vitest: 64 test files and 2043 tests passed.
+- Production build: passed; the Manifest V3 version is 0.9.3.
+- Store zip: contains exactly one `manifest.json` at its root.
+
+### Known limitations
+
+- Direct saving supports Notion only and uses a manually configured Notion Integration Token; OAuth is not available.
+- External images are saved by their original URLs. Hotlink protection, authentication, expired URLs, or source-site restrictions can prevent rendering.
+- Binary image upload, OCR, screenshot fallback, video download, subtitle extraction, and Notion Database property mapping are not included.
+- Login walls, closed Shadow DOM, virtualized lists, and late dynamic rendering can reduce extraction completeness.
+- Complex tables with merged cells may not be reproduced exactly.
+
+### Repository layout
+
+```text
+clipmate-v0.9/                         # v0.9.3 source and automated tests
+release/clipmate-v0.9.3-submission/   # review directory, upload zip, and store materials
+README.md                              # bilingual project documentation
+PRIVACY_POLICY.md                      # bilingual privacy policy
+```
+
+Support: [GitHub Issues](https://github.com/AlistenerA/clipmate/issues)

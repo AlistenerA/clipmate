@@ -2,6 +2,7 @@ node_modules/
 dist/
 build/
 *.zip
+!release/**/*.zip
 .env
 .env.*
 .wolf/
