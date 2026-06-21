@@ -20,7 +20,11 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 ## Current Code State
 
-- Current release candidate: `clipmate-v1.0/` v1.0.1 on `codex/clipmate-v1-license`, with production License API at `license.cydl.site`.
+- Current frozen candidate: `clipmate-v1.0.2/` v1.0.2 on `codex/clipmate-v1-license`; release verification is complete and Git closure is in progress.
+- v1.0.2 adds DOM-only clipping for Xiaohongshu `/explore/*` notes and Baidu Tieba `/p/*` topics: post body, ordered/deduplicated images, and at most 50 visible comments/replies. It removes page links except one canonical source URL and does not call private APIs or read cookies.
+- v1.0.2 passes lint, TypeScript, 70 files / 2067 tests and production build (186 modules). Its local production archive has 35 safe entries and SHA-256 `89C1E7B22D4BB3BABDE890816D8C2CAEFD6EFBC98000D948EE4FA3227EF41C5D`.
+- v1.0.2 production and staging builds both pass at 186 modules with isolated License hosts. Per the product owner's request to minimize nonessential v1.0.2 work, fresh built-extension and real Notion QA are retained as later spot checks rather than blocking subsequent development.
+- v1.0.1 source baseline remains in `clipmate-v1.0/`, with production License API at `license.cydl.site`.
 - License Server v1.0.0 is deployed under `/opt/license-server`, using isolated Python 3.11, loopback Gunicorn, Nginx HTTPS, SQLite backups and Certbot renewal hooks.
 - v1.0.1 passes lint, 69 files / 2060 tests, production and staging builds, Chrome 148 / Edge 149 extension QA, production API smoke, and production dependency audit with 0 vulnerabilities.
 - v1.0.1 purchase actions now open `https://ifdian.net/a/ClipMate/plan` and explicitly state that the server website is still under development; do not restore the temporary `www.cydl.site/clipmate` page until the user resumes website work.
@@ -57,6 +61,7 @@ Future sessions should re-check status before editing because this can change.
 - `npm run test` and `npm run build` may hit sandbox access errors on Windows because Vite/Vitest attempt to inspect parent directories. Request escalation for the exact npm command if that happens.
 - Optional MCP templates are in `.codex/config.toml` but disabled by default.
 - Browser DOM and extension UI checks should prefer the in-app Browser; current Windows policy blocks that process, while the Playwright CLI fallback works.
+- v1.0.2 Vite can fail when `node_modules` is a Junction to another version; a physical local dependency directory allowed the production build to complete. Do not publish `node_modules` or the `output/` dependency backup.
 - Documentation research should use official docs and primary sources; use Context7 if enabled and relevant.
 - Remote server work requires a configured SSH host alias and explicit target from the user.
 
@@ -71,6 +76,7 @@ Future sessions should re-check status before editing because this can change.
 
 ## Next Likely Work
 
+- Spot-check the frozen v1.0.2 package in a visible extension-loaded Chrome/Edge session when convenient: Xiaohongshu and Tieba preview, comment cap, canonical source link, Markdown copy and one real Notion save if credentials are available.
 - Run Chrome and Edge unpacked smoke against the exact submission directory plus a real Notion test-page save before portal upload.
 - Keep v0.8 and earlier directories frozen; normal follow-up changes enter `clipmate-v0.9`.
 - Complete real Chrome/Edge/Notion acceptance against Bilibili, Runoob, GitHub Issue, Bing, and three AI conversation sites.

@@ -1,0 +1,848 @@
+# TEST_LOG.md — ClipMate v1.0.2 测试记录
+
+## v1.0.2 初始化（2026-06-21）
+
+- 从 v1.0.1 工作区复制，排除 `node_modules`、`dist*`、ZIP 与用户图像资源。
+- package、lockfile、manifest 和 zip 名称更新为 `1.0.2`。
+- Playwright 约束：仅有头模式，登录由用户操作，观察产物不得包含完整 DOM、账号或敏感凭证。
+
+## v1.0.2 社区站点剪藏（2026-06-21）
+
+- Playwright CLI 使用有头 Chromium；用户手动登录小红书和百度贴吧后，只读取必要 selector、元素数量与脱敏结构。
+- 小红书观察确认笔记主体、swiper 轮播、父评论/嵌套回复与独立滚动容器；贴吧观察确认首楼、虚拟楼层列表和楼中楼结构。
+- 定向测试：`tests/v102-social-post-extraction.test.ts` + `tests/site-profile-engine.test.ts`，2 files / 87 tests，通过。
+- 覆盖：正文、图片顺序/去重、嵌套评论、虚拟滚动合并与滚动位置恢复、两站 50 条硬上限、查询参数移除、无关链接过滤和非目标路由回退。
+- `npm run lint`：通过。
+- `npx tsc --noEmit`：通过。
+- `npm run test`：70 files / 2067 tests，通过。
+- `npm run build:staging`：Windows 沙箱读取上级项目目录时 `Access is denied`，未将该环境失败记录为构建结果。
+- `npm run build`：通过，186 modules；production manifest version 1.0.2，权限与 License host 边界正确。
+- `npm run build:staging`：本地依赖副本后仍连续两次被同一父目录沙箱限制阻断，未取得有效 staging 结果。
+- `npm run zip`：成功；35 entries、单一根 manifest、0 unsafe entries、962406 bytes。
+- production zip SHA-256：`89C1E7B22D4BB3BABDE890816D8C2CAEFD6EFBC98000D948EE4FA3227EF41C5D`。
+- production dist 敏感凭据、私钥、远程动态 import/script 扫描：0 命中。
+- 获准环境重跑 `npm run build:staging`：通过，186 modules；manifest version 1.0.2，权限仅 `storage` / `activeTab` / `alarms`，host 仅 Notion 与 `https://cydl.site/*`。
+- built extension 浏览器 QA：未重复搭建新的登录态扩展环境；产品负责人明确要求缩减 v1.0.2 非必要环节，真实预览/Notion 保存保留为后续抽查，未冒充已验证。
+
+---
+
+---
+
+## 爱发电入口与 Python License GUI 验证（2026-06-21）
+
+- `npm run lint`：通过。
+- 定向 Vitest：`v101-license-auth` + `v101-license-ui` 共 2 files / 7 tests，通过。
+- 全量 Vitest：69 files / 2060 tests，通过。
+- production/staging build：各 183 modules，通过；production 仅 `license.cydl.site`，staging 仅 `cydl.site`。
+- production 产物扫描：包含 `https://ifdian.net/a/ClipMate/plan` 与开发中提示，不含旧 `https://www.cydl.site/clipmate`。
+- License Server 全量 pytest：19 tests，通过；其中 Python 管理工具 5 tests 覆盖默认值、Lifetime 门禁、备注 Base64、受保护文件写入、本地失败吊销和吊销失败人工处置提示。
+- Python `compileall`、模块导入、CLI help 和非法 `lifetime + days` 的无 SSH 门禁通过；验证过程中未连接生产服务器、未生成真实 Key。
+- GUI 使用标准库 Tkinter；Codex 捆绑 Python 的 Tcl 初始化文件不可用，当前环境无法创建真实窗口。需在带 Tcl/Tk 的标准 Windows Python 上补一次人工 GUI smoke。
+- 刷新 `clipmate-v1.0.1.zip`：35 entries、1 个根目录 manifest、0 unsafe paths、含爱发电 URL、不含旧 404 URL；SHA-256 `03E3FCA5D3AF847C5C504D12E471122F3A06EF2D4203A3E1D03A40E93C6FC7CD`。
+
+---
+
+## Windows License 管理脚本验证（2026-06-21）
+
+- Windows PowerShell 5.1 parser：0 syntax errors。
+- 本地参数门禁：Lifetime + Days 在 SSH 前拒绝；备注上限和数值范围由脚本/参数验证共同约束。
+- 生产 SSH 实测：Pro 1 天 Key 与 Lifetime Key 各生成 1 个，返回格式、套餐、设备数和 Key 正则校验通过。
+- 两个 smoke Key 均已在生产数据库吊销；Windows 临时 Key 文件和临时目录已删除。
+- 输出文件 ACL：关闭继承，仅当前 Windows 用户 SID 与 SYSTEM 为 Full Control；完整 Key 未输出到测试日志。
+- 人为制造 Windows 输出路径失败后，脚本返回明确错误并自动吊销刚生成的专用 smoke Key；远程掩码列表确认状态为 revoked。
+
+---
+
+## v1.0.1 开发验证（2026-06-21）
+
+- `npm run lint`：通过。
+- `tsc --noEmit`：通过。
+- 全量测试：68 files / 2058 tests，通过。
+- v1.0.1 定向测试：4 files / 15 tests，通过。
+- staging build：通过，182 modules；manifest version 1.0.1。
+- production build：通过，182 modules；manifest version 1.0.1。
+- staging permissions：`storage` / `activeTab` / `alarms`；License host 仅 `https://cydl.site/*`。
+- production License host 仅 `https://license.cydl.site/*`；产物扫描无测试 Key、JWT secret 或测试域名。
+- Onboarding HTML 进入构建，未作为 web accessible resource 暴露。
+- Browser 插件与 Node REPL 因缺少 `sandboxPolicy` 失败；Playwright CLI 启动 Chromium 因 `spawn EPERM` 失败，真实浏览器验收保留为发布门禁。
+- 后续在提升权限下成功加载 production `dist`：Chrome for Testing 148 和 Edge 149 均完成首次引导、无效 Key、真实激活、刷新和取消激活，0 page/console/service-worker errors。
+- Chrome 验证网络离线刷新后授权保持、原始 Key 不落盘；Notion 按钮进入官方 Integrations 路径并由官方重定向到 `app.notion.com`。
+- 同一扩展路径与 browser profile 从 v0.9.3 重启升级到 v1.0.1：extension ID 不变、Onboarding state absent、Popup 不跳转。
+- 视觉 QA：420x640 Onboarding 主操作可见且无横向溢出；1280x800 Options 免费/Pro 状态无横向溢出或遮挡。
+- `npm audit --omit=dev`：0 vulnerabilities。完整开发树有 5 项 Vite/Vitest/jsdom 工具链公告，不进入扩展归档；跨大版本修复留待独立兼容迁移。
+- `https://license.cydl.site/api` 真实激活链路通过；服务端访问日志与 Chrome 148 / Edge 149 请求一致。
+
+---
+
+## v0.9.3 商店提交版验证（2026-06-20）
+
+- 冻结门禁重跑：`npm run lint` 通过；`npm run test` 64 files / 2043 tests 通过；`npm run build` 171 modules 通过。
+- 提交版 manifest：Manifest V3，version 0.9.3，permissions 仅 `storage` / `activeTab`，host permission 仅 Notion API。
+- manifest 引用完整性：Popup、Options、service worker、content script、4 个图标和 web accessible resources 全部存在。
+- zip：924131 bytes / 26 entries；根目录 `manifest.json` 恰好 1 个；禁止条目 0；危险或父路径条目 0。
+- zip SHA-256：`CE507BAF3E80E07F6EE778FDCCD6DDA0264F0651924FD67BCCFB5DA966318226`。
+- 动态代码扫描未命中 `eval(`、`new Function(`、远程动态 import 或远程 script 标签。
+- 严格敏感扫描未发现凭据值、私钥、内部工具名或本地绝对路径；命中项仅为公开文档中的 Token/密码说明、本地模型库 `.env` 运行环境 API 和 React 固有内部标识。
+- 首次压缩命令因工作目录已在 `extension/` 而路径多写一层失败；已用正确相对路径重跑，未将失败误判为成功。
+- 真实 Chrome/Edge 加载和真实 Notion 保存未在当前环境执行，保留为上传商店前人工门禁。
+
+## v0.9.1-v0.9.3 自动验证（2026-06-20）
+
+- v0.9.1 定向：35 tests，覆盖 fenced code opener/closer、HTML/CSS/JS 相邻保序、Notion blocks、tab-aware 草稿和模式标签。
+- v0.9.2 定向：6 tests，覆盖 DeepSeek/Doubao/ChatGPT、GitHub routes、技术文章阈值和脱敏候选。
+- v0.9.3 定向：5 tests，覆盖候选质量门禁、受保护结构、conversation 保留、comment/ad 精确清理。
+- fixture：Runoob、DeepSeek、豆包使用 `tests/fixtures/v092/` 脱敏 HTML；ChatGPT 和 GitHub 固化稳定 DOM/route 测试。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：64 files / 2043 tests 全部通过。
+- `npm run build`：通过，171 modules transformed；manifest 0.9.3。
+- Playwright 隔离 Popup QA：Bilibili-like 页面首次自适应、单一推荐提示、更多模式、手动全文覆盖均通过；控制台 0 error / 0 warning。
+- `npm run zip`：`clipmate-v0.9.3.zip` 为 951360 bytes / 28 entries；manifest 0.9.3，禁入目录/父路径条目为 0，SHA-256 `52849E3DF18F1A1344FD117C4D5A0C1446EE60AFDDE217C693A90047967D2B8B`。
+- Chrome 插件连接因 Windows `CreateProcessAsUserW failed 5` 不可用，按流程使用 Playwright fallback；未冒充真实扩展/登录态 QA。
+- 尚未验证真实 Chrome/Edge、同 URL 双标签页、Bilibili、Runoob、GitHub Issue、Bing、三种 AI 对话与真实 Notion 页面。
+
+## v0.9.0 页面感知模式（2026-06-19）
+
+- 新增 `tests/v090-page-aware-modes.test.tsx`：18 tests。
+- 覆盖视频、AI、文章代码、普通文章、讨论、搜索、导航、未知页面。
+- 覆盖 DOM 到脱敏推荐接线、非法 storage 模式拒绝、旧草稿/用户覆盖守卫和 React 文本转义。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：62 files / 2028 tests 全部通过。
+- `npm run build`：通过，168 modules transformed。
+- `npm audit --omit=dev`：0 vulnerabilities；完整 audit 的 8 项告警均为开发工具链。
+- `npm run zip`：948206 bytes / 28 entries；manifest 0.9.0，包含本地模型和权重，无父路径条目。
+- Playwright：视频页自动进入教程；更多模式显示三项；点击全文后保持全文。
+- 控制台仅 preview favicon 404，无应用错误；截图写入授权通道中断，使用 DOM 快照作为证据。
+
+---
+
+## v0.8.3-v0.8.5 最终 QA（2026-06-19）
+
+- `npm run lint`：通过，0 errors。
+- `npm run test`：61 个测试文件，2010 个测试全部通过。
+- `npm run build`：通过，166 modules transformed。
+- `npm audit --omit=dev`：0 vulnerabilities。
+- `npm run zip`：946315 bytes，28 entries，包含 manifest、本地模型和权重，无父路径条目。
+- 完整 audit 的 8 项告警均来自 Vite/Vitest/jsdom 开发工具链，不进入生产依赖或扩展归档。
+- 静态检查未发现动态代码执行、token 日志、远程模型加载或用户内容进入静态 `innerHTML`。
+- 受当前 Windows 浏览器进程权限限制，未完成 Chrome/Edge 自动交互；未使用真实 Notion 凭据。
+
+---
+
+## v0.8.5 定向验证（2026-06-19）
+
+- 定向回归：6 files / 132 tests 通过。
+- `npm run lint`：通过，0 errors。
+- 覆盖滚动时悬停框跟随/退出、复制格式记录、Notion page ID 链接构造、外链协议/域名校验、保存/失败/重试历史回归。
+- 全量测试、最终 build、zip 与浏览器 QA 在 v0.8 冻结收口中执行。
+
+---
+
+## v0.8.4 定向验证（2026-06-19）
+
+- 定向回归：3 files / 13 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run build`：通过，164 modules transformed；`dist/manifest.json` 为 0.8.4。
+- `dist/model/model.json` 为 242642 bytes，权重为 715908 bytes；低置信度动态 JS chunk 为 713.13 kB / gzip 189.61 kB。
+- 覆盖一行 Runoob-like 代码、SyntaxHighlighter HTML 布局表、限定语言 fast path、ML 注入路径和 Tutorial 同步。
+- Vite 对包内未使用的 Node 默认 loader 给出 browser externalization 警告；实际构造器只使用 ClipMate 注入的本地 fetch loader，最终浏览器回归继续检查运行时。
+
+---
+
+## v0.8.3 定向验证（2026-06-19）
+
+- 定向回归：5 files / 135 tests 通过。
+- `npm run lint`：通过，0 errors。
+- 覆盖全文 Markdown 表格到 Notion 原生 table、真实题注去重、伪题注清理、网站图标与不安全 URL 回退。
+- 全量测试、构建、浏览器与真实 Notion 验证在 v0.8.x 最终冻结前统一执行。
+
+---
+
+## v0.8.2 自动验证（2026-06-19）
+
+- 定向回归：5 files / 47 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：58 files / 1998 tests 全部通过。
+- `npm run build`：通过，142 modules transformed；`dist/manifest.json` 为 0.8.2。
+- `npm run zip`：通过，166989 bytes / 25 entries；含 manifest，无 src/tests/docs/node_modules/.env。
+- fixture HTTP smoke：主测试页、22 图页、无候选页、失效外链页和第 22 张 SVG 均返回 HTTP 200。
+- 首次定向测试发现 `* * *` 被新列表规则抢先解析；调整 divider 优先级后，v0.7.1 回归与 v0.8.2 新用例同时通过。
+- Browser Plugin 在 Windows 进程启动阶段被权限策略拒绝，未把 fixture HTTP smoke 冒充为真实浏览器交互。
+- 安全/威胁检查：页面 DOM 仍视为不可信；保留的 class 只进入 Turndown 结构识别，不作为 HTML 注入；列表文本继续经 Notion rich text 解析；URL 白名单、日志脱敏和权限边界未变。
+
+人工复测入口：`docs/V0.8_TEST_DOCUMENT.md`。
+
+---
+
+## v0.8.1 自动验证（2026-06-19）
+
+- `npm run test -- --run tests/v080-asset-picker.test.ts`：1 file / 10 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npm run test`：57 files / 1994 tests 全部通过。
+- `npm run build`：通过，142 modules transformed；`dist/manifest.json` 为 0.8.1。
+- 新覆盖：completed session 等待草稿恢复、跨页结果丢弃、正文 logo 手选、卡片遮罩坐标回落。
+- 安全检查：URL 仍限 HTTP(S)，选择上限仍为 20；未增加下载、上传、cookie、远程 API、权限或长期站点缓存。
+- 真实 Chrome/Edge 的 Popup 自动关闭、VCG-like 图集与 Runoob logo 仍需重新加载 0.8.1 后人工复测。
+
+---
+
+## v0.8.0 自动验证（2026-06-19）
+
+- `npm run test -- --run tests/v080-asset-picker.test.ts`：1 file / 7 tests 通过。
+- `npm run lint`：通过，0 errors。
+- `npx tsc --noEmit`：通过。
+- `npm run test`：57 files / 1991 tests 全部通过。
+- `npm run build`：通过，141 modules transformed；`dist/manifest.json` 为 0.8.0。
+- `npm run zip`：通过，`clipmate-v0.8.zip` 为 166351 bytes / 25 entries；含 manifest，不含 src/tests/docs/node_modules。
+- 权限审查：仍为 `storage`、`activeTab` 与 `https://api.notion.com/*`，无新增依赖。
+- 自动化覆盖 URL 白名单、去重、上限、排序、Markdown 合并/清除、教程 Notion 去重、隐藏/噪声过滤、完成、Escape 和 session mismatch。
+- Chrome 控制在 Windows 沙箱启动阶段被拒绝，真实扩展 UI 未验证。
+- 真实 Notion 凭据未使用，external image 成功/失败矩阵未验证。
+- fixture 后台进程启动命令受当前执行审批额度限制，未完成 HTTP smoke test。
+
+人工测试入口：`docs/V0.8_TEST_DOCUMENT.md`。
+
+---
+
+## v0.7.3 自动验证（2026-06-19）
+
+- `npm run lint`：通过，0 errors。
+- 定向回归：4 files / 53 tests 通过。
+- `npm run test`：56 files / 1984 tests 通过。
+- `npm run build`：通过，136 modules transformed。
+- Browser Plugin：Windows 沙箱拒绝启动，未完成真实扩展 UI 与真实 Notion 自动化。
+- 安全边界：诊断仅记录资源 kind、短 label、HTTP(S) URL；不记录资源内容，不进入保存 blocks。
+- 威胁检查：页面 DOM 视为不可信输入；provider 使用精确 host 后缀，资源最多 12 条、label 最长 120 字，React 默认转义；未使用 HTML 注入、cookie、长期 storage 或新增网络权限。
+- `npm run zip`：通过，候选包 160440 bytes；`dist/manifest.json` 为 0.7.3，权限仍为 `storage`、`activeTab` 和 Notion API host。
+
+---
+
+## v0.7.2 Notion Save Resilience (2026-06-19)
+
+### 自动化命令
+
+```pwsh
+npm run test -- --run tests/v072-notion-resilience.test.ts tests/tutorial-notion-blocks.test.ts tests/notion-blocks.test.ts tests/notion-client.test.ts tests/notion-errors.test.ts tests/history-save-flow.test.ts tests/history-retry-flow.test.ts
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- 定向测试：7 files / 83 tests 通过。
+- lint：通过，0 errors。
+- 完整测试：55 files / 1979 tests 全部通过。
+- build：通过，132 modules transformed，`dist/manifest.json` version = 0.7.2。
+- zip：通过，`clipmate-v0.7.zip` 为 158029 bytes，仅包含构建产物；zip 保持 untracked。
+- 官方文档页面 HTTP 200：block、append children、status codes 三页均成功读取并核对相关契约。
+
+### 新增/更新测试
+
+- 标准作者、发布日期元数据提取。
+- Notion 合并元数据 callout 的来源、作者、日期、模式与标签。
+- 205 行数据表拆成 3 张表，任一 nested children 不超过 100。
+- 无题注图片 caption 为空。
+- Popup 短错误文案包含 code / batch / HTTP status。
+- 400 response 只保留安全 `code`，不把响应 message 带入错误对象或 UI。
+
+### 人工测试状态
+
+- 未使用真实 Token/Page ID，未向用户 Notion 写入数据。
+- 待复测 BBC 文章保存失败时的新错误摘要；该摘要可判断是 block schema、权限、限流还是服务端问题。
+
+## v0.7.1 Tutorial Fidelity & Preview Fixes (2026-06-19)
+
+### 自动化命令
+
+```pwsh
+npm run test -- --run tests/v071-tutorial-fidelity.test.ts tests/clip-document.test.ts tests/markdown-preview.test.ts
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- 定向测试：3 files / 49 tests 通过。
+- 首次全量测试发现题注规范误影响普通站点；收窄为 BBC 无障碍前缀后，5 files / 186 个受影响回归测试通过。
+- lint：通过，0 errors。
+- 完整测试：54 files / 1971 tests 全部通过。
+- build：通过，132 modules transformed，`dist/manifest.json` version = 0.7.1。
+- zip：通过，`clipmate-v0.7.zip` 为 156899 bytes，仅包含构建产物；zip 保持 untracked。
+- Vitest/Vite 在 Windows 沙箱内仍因父目录读取权限失败，使用相同命令在批准环境重跑；未把沙箱失败记为测试失败。
+
+### 新测试
+
+- Runoob TypeScript `example_code` 转 fenced code。
+- LaTeX 代码语言推断与换行保真。
+- BBC 图片题注无障碍前缀规范。
+- `* * *` 分隔线在预览和 `ClipDocument` 中一致识别。
+- 图片预览仅接受 HTTP(S)，拒绝 `data:` / `javascript:`。
+
+### 人工测试状态
+
+- 内置浏览器连接仍被 Windows 沙箱拒绝，未冒充真实 Popup / Edge QA。
+- 待重新加载 v0.7.1 unpacked 扩展验证：远程图片成功、图片防盗链失败降级、教程 History 标签。
+
+## v0.7.0 Tutorial Mode (2026-06-18)
+
+### 自动化命令
+
+```pwsh
+npm run lint
+npm run test -- --run tests/clip-document.test.ts tests/tutorial-notion-blocks.test.ts
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- lint：通过，0 errors。
+- 定向测试：2 files / 5 tests 通过。
+- 完整测试：53 files / 1966 tests 通过。
+- build：通过，132 modules transformed。
+- zip：通过，`clipmate-v0.7.zip` 为 156088 bytes / 23 entries，含 manifest，不含 src/tests/docs/node_modules/package/.env。
+- `qa:tutorial` fixture：本地 HTTP 200，标题、公式和视频测试节点均存在；验证后服务已停止。
+- 首次定向 Vitest 在 Windows 沙箱内因父目录读取权限失败；按项目规则在批准的沙箱外重跑后通过，未把失败误判为测试结果。
+- 首次 build 发现 History mode 未包含 `tutorial`；同步共享 `ClipMode` 后重跑通过。
+
+### 新测试
+
+- `tests/clip-document.test.ts`：结构保真、视频去重/协议安全、Markdown 视频元数据。
+- `tests/tutorial-notion-blocks.test.ts`：教程结构到 Notion 原生 block、教程草稿接入。
+
+### 人工测试状态
+
+- 本地浏览器自动化连接被 Windows 沙箱拒绝，未完成真实 Popup 点击与截图。
+- Chrome/Edge、真实 Notion 保存、外部图片与视频链接表现：待用户按 `V0.7_MANUAL_RISK_QA.md` 验收。
+
+---
+
+## v0.6.0 Folder Promotion (2026-06-17)
+
+### 性质
+
+版本目录迁移验证。确认 `clipmate-v0.5/` 已迁移为 `clipmate-v0.6/`，版本号保持 0.6.0，并生成本地 v0.6 zip 归档。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 个测试文件，1959 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.6.0
+- `npm run zip`：成功，生成本地 `clipmate-v0.6.zip`
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时可能触发 `Access is denied`，需按规则用同一命令在沙箱外重跑。
+
+---
+
+## v0.6.0 (2026-06-17)
+
+### 性质
+
+Asset Pipeline Foundation 测试。覆盖 article image candidates → figure assets、Markdown 图片去重、Notion/Markdown 保存策略、File Upload external import 候选状态、失败原因和 Notion save plan `assetReport`。
+
+### 运行命令
+
+```bash
+npx vitest run tests/asset-pipeline.test.ts tests/architecture-foundation.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/asset-pipeline.test.ts tests/architecture-foundation.test.ts`：2 个测试文件，18 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：51 个测试文件，1959 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.6.0
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Asset creation | 2 | article image candidates、Markdown 图片去重 |
+| Image save strategy | 5 | Notion external ready、proxy/resize candidate、data/blob/relative blocked、Markdown reference、direct URL predicate |
+| Quality report | 1 | ready / candidate / blocked 统计与 issue reason |
+| Notion save plan assetReport | 2 | assetReport 挂载、File Upload candidate 报告 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
+## v0.5.3 (2026-06-17)
+
+### 性质
+
+Popup Save Summary & Duplicate Save Hints 测试。覆盖同 URL saved history 检索、失败记录过滤、最近保存排序、重复保存时间提示，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/popup-recent-history.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/popup-recent-history.test.ts`：1 个测试文件，8 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：50 个测试文件，1949 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.3
+
+### 新增测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Recent history lookup | 4 | 空 URL、无匹配、失败记录过滤、最近 saved 记录排序 |
+| Duplicate hint formatting | 4 | 刚刚、分钟、小时、天数提示 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
+## v0.5.2 (2026-06-17)
+
+### 性质
+
+CCTV-like Image Source Recovery & Markdown Profile Compatibility 测试。覆盖懒加载图片候选统一、video poster fallback、推荐区图片过滤、Obsidian/Typora 加粗边界空格兼容，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/article-images.test.ts tests/markdown-images.test.ts tests/markdown-profiles.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/article-images.test.ts tests/markdown-images.test.ts tests/markdown-profiles.test.ts`：3 个测试文件，169 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 个测试文件，1941 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.2
+
+### 新增/更新测试覆盖
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Article image source candidates | 5 | placeholder `src` + `data-src/data-original`、`srcset`、`picture source`、`video poster` |
+| Markdown CCTV-like images | 3 | lazy article image、video poster fallback、推荐区 ancestor 过滤 |
+| Markdown profile spacing | 3 | CJK/Latin 粗体边界空格、fenced code block 不改写 |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
+## v0.5.1 (2026-06-17)
+
+### 性质
+
+Architecture Foundation 测试。覆盖 capture/session/notion 三个新 feature 边界，以及全量回归。
+
+### 运行命令
+
+```bash
+npx vitest run tests/architecture-foundation.test.ts
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npx vitest run tests/architecture-foundation.test.ts`：1 个测试文件，8 个测试，全部通过
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：49 个测试文件，1930 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.1
+
+### 新增测试覆盖 (tests/architecture-foundation.test.ts, 8 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Capture draft | 3 | createClipDraft、正文读取 fallback、空正文不可保存 |
+| Clip session | 3 | 创建 session、状态转换、session → SaveToNotionPayload |
+| Notion save plan | 2 | token/page/content 校验、有效 payload 生成 blocks 和 retry metadata |
+
+### 沙箱说明
+
+Vitest 和 Vite build 在当前 Windows 沙箱中读取 `vite.config.ts` 时触发 `Access is denied`，已按规则用同一命令在沙箱外重跑并通过。
+
+---
+
+## v0.5 Session 6 (2026-06-14)
+
+### 性质
+
+Release Readiness 测试。验证版本号变更后的构建和全量测试。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run zip
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 个测试文件，1922 个测试，全部通过
+- `npm run build`：构建成功，dist/manifest.json version = 0.5.0
+- `npm run zip`：成功，clipmate-v0.5.zip (146KB)
+
+### 测试文件列表（48 files, 1922 tests）
+
+所有已有测试全部通过，无新增失败、无删除、无降低。
+
+### 安全扫描
+- Token/API Key 扫描：0 真实泄露
+- 危险 API 扫描：0 发现
+- 远程代码风险扫描：0 发现
+
+---
+
+## v0.5 Session 5.2 (2026-06-14)
+
+### 性质
+
+Image Caption Placement & Markdown Image Layout Polish 测试。覆盖 Markdown 题注拆分、Notion image.caption 合并、selection 回归。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：48 个测试文件，1922 个测试，全部通过（新增 14 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-caption-layout.test.ts, 14 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| Markdown 题注拆分 | 6 | Sina-like glue 拆分、分行、正文保留、figure+figcaption、去重、无题注图片 |
+| Notion image.caption | 7 | 合并 caption、alt fallback、无题注、长 caption 截断、不紧跟图片的 italic 保留、混合场景 |
+| 回归 | 1 | selection/comment-context 不受影响 |
+
+### 已有测试
+
+- 1908 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
+## v0.5 Session 5.1 (2026-06-14)
+
+### 性质
+
+Sina Image Pollution Guard & Notion Image URL Compatibility 测试。覆盖正文防污染、祖先噪声检测、Notion URL 兼容性过滤、selection 回归。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：47 个测试文件，1908 个测试，全部通过（新增 28 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/sina-image-pollution.test.ts, 28 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 正文图片保留 | 3 | Sina 全页 4 张正文图 + article-only 提取 + fragment 提取 |
+| 噪声过滤 | 7 | n.sinaimg.cn/default 过滤、sinakd 过滤、k.sinaimg.cn 正文图保留、isNoiseUrl 单元测试 |
+| 祖先噪声检测 | 8 | recommend/hot-news/sidebar/related-articles/feed-card/trending 检测 + article 不应检测 + ranking |
+| Notion URL 兼容性 | 7 | body CDN 图片转 image block、api/resize URL 降级为 paragraph、混合场景、降级不阻断 |
+| Markdown 纯净度 | 2 | 正文 HTML 无污染 URL、article element 只含正文图 |
+| selection 回归 | 2 | selection 无图片语法、零图片 fragment 返回空 |
+
+### 已有测试
+
+- 1880 个已有测试全部通过，无新增失败、无删除、无降低
+
+### 已有测试调整
+
+- `image-site-cases.test.ts`：CSDN 推荐图期望从 >=2 调整为 >=1（推荐图现在被 ancestor 噪声检测正确过滤）
+- `sina-image-pollution.test.ts`：维度查询参数 URL 期望从 paragraph 改为 image（CDN 直接参数兼容）
+
+---
+
+## v0.5 Session 5 (2026-06-14)
+
+### 性质
+
+Manual QA and Site Cases — fixture QA 测试。未执行真实网页 QA、未执行真实 Notion save。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：46 个测试文件，1880 个测试，全部通过（新增 52 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-site-cases.test.ts, 52 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 新闻文章 | 7 | 多图 + caption + figure/figcaption + 相对 URL + 噪声过滤 + Markdown + Notion blocks + 元数据 |
+| 博客文章 | 5 | figure/figcaption + alt/title + avatar/logo 过滤 + heading 保持 |
+| 技术文档 | 5 | 截图 + icon/favicon/emoji/spinner 过滤 + code block 不受影响 + Notion blocks |
+| CSDN-like | 7 | 懒加载 Turndown（data-src/data-original）+ srcset + avatar/badge 过滤 + Markdown 顺序 |
+| 图片去重 | 3 | extractArticleImages 去重 + Markdown 去重 + Notion blocks 去重 |
+| 噪声过滤 | 4 | logo/avatar/badge/emoji/sprite/thumb/qr-code/pixel 全过滤 + skip reasons |
+| Markdown 图文顺序 | 2 | 文本-图片交错顺序 + Notion blocks paragraph-image 顺序 |
+| Notion blocks 顺序 | 3 | paragraph-image 交替 + 精确数量 + external type 校验 |
+| Popup/History 元数据 | 4 | buildHistoryInput + 成功保存 + 失败保存 + undefined handling |
+| selection 回归 | 4 | selection 无图片语法 + imageCount=0 + comment-context 不受影响 + 零图片页面 |
+| 边缘情况 | 5 | data:/blob: URI 过滤 + 空 alt + 过小尺寸 + Markdown 降级 + Notion paragraph 降级 |
+| 全链路 smoke | 2 | extract→markdown→blocks→metadata 集成 |
+
+### 已有测试
+
+- 1828 个已有测试全部通过，无新增失败、无删除、无降低
+
+### QA 发现（记录到 ISSUES.md）
+
+- `extractArticleImages.getBestSrc` 不处理 data-src/data-original 懒加载属性（Turndown img rule 正确处理）— IS29
+- `markdownToContentBlocks` 当前仅输出 paragraph/image blocks — IS30
+- "ad-banner" class 不在已知噪声 class 列表中 — IS31
+
+---
+
+## v0.5 Session 4 (2026-06-14)
+
+### 性质
+
+Popup / History Lightweight Image Metadata 测试。验证 imageCount / firstImageUrl / skippedImageCount 从提取到存储到展示的完整链路。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：45 个测试文件，1828 个测试，全部通过（新增 18 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/image-metadata.test.ts, 18 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| extractArticleImages 元数据 | 5 | imageCount、skippedImageCount、firstImageUrl、空页面、全噪声页面 |
+| buildHistoryInput 元数据 | 3 | 有 image 元数据、无元数据、selection mode imageCount=0 |
+| handleSaveToNotion 历史记录 | 5 | 成功保存带 image 元数据、失败保存带 image 元数据、无元数据、selection imageCount=0、retry 保留 image 元数据 |
+| type safety | 3 | firstImageUrl 不是长文本 blob、imageCount 安全整数、仅记录首图不记录全部 URL |
+| selection safety | 2 | selection 不含 fullpage 图片计数、fullpage 正确显示元数据 |
+
+### 已有测试
+
+- 1810 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
+## v0.5 Session 3 (2026-06-14)
+
+### 性质
+
+Notion External Image Blocks 测试。验证 `markdownToContentBlocks` 和 `buildNotionBlocks` 将 Markdown 图片语法 `![alt](url)` 转换为 Notion `image` block (type: external) 的能力，以及降级和兼容性。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：44 个测试文件，1810 个测试，全部通过（新增 29 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/notion-image-blocks.test.ts, 29 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| image block 基本转换 | 2 | standalone image → external block、external URL |
+| caption | 3 | alt → caption、空 alt → 空 caption、纯空白 alt → 空 caption |
+| 段落保持 | 2 | 纯文本段落、段落顺序保持（文本+图片交错） |
+| 多图片 | 2 | 3 张独立图片、重复图片均转换 |
+| data/blob URI 降级 | 2 | data: URI → paragraph、blob: URI → paragraph |
+| 非 http URL 降级 | 2 | 相对 URL → paragraph、协议相对 URL → paragraph |
+| 行内图片 | 1 | 段落内图片保持为 paragraph |
+| URL 边界 | 3 | 超长 URL 降级、空 URL 降级、带 query params |
+| 特殊字符 alt | 1 | 中文 + 括号 + 数字 |
+| 空内容 | 2 | 空字符串、纯空白 |
+| 降级不影响周围 | 1 | 失败的图片两侧段落不受影响 |
+| 纯文本无图片 | 1 | 无 image block 生成 |
+| fullpage 集成 | 4 | image blocks + chrome blocks 并存、selection callout、无图片时零 image、多图片 |
+| comment-context 集成 | 2 | image blocks 生成、无 chrome outer blocks |
+| data URI in fullpage | 1 | fullpage data URI 降级为 paragraph |
+
+### 已有测试
+
+- 1781 个已有测试全部通过，无新增失败、无删除、无降低
+- `notion-blocks.test.ts` (21 tests) 全部通过，comment-context behavior 未改变
+
+### 性质
+
+Markdown 图片保留测试。验证 Turndown `img` rule 的噪声过滤、去重、alt 兜底、相对 URL 解析，以及 `injectMissingImages` 安全网行为。不修改已有测试。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：43 个测试文件，1781 个测试，全部通过（新增 28 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/markdown-images.test.ts, 28 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 噪声过滤 | 11 | data/blob URI、avatar/icon/logo/emoji class、tracking pixel 1x1、noise id、noise URL pattern、small size |
+| 去重 | 1 | 重复 URL 只保留首次出现 |
+| alt fallback | 3 | 空 alt→"image"、给定 alt、空白 trim |
+| 相对 URL 解析 | 4 | pageUrl 解析、协议相对、绝对保留、无 pageUrl |
+| 无回归 | 5 | 文本段落、headings、links、空 HTML、纯空白 |
+| figure 支持 | 2 | 有效 figure 保留、噪声 figure 过滤 |
+| 非影响性 | 2 | 纯文本无图片语法、混合文本图片 |
+
+### 已有测试
+
+- 1753 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
+## v0.5 Session 1 (2026-06-14)
+
+### 性质
+
+新增文章图片候选提取模块测试，覆盖提取、过滤、去重、限制等全部功能路径。不修改已有测试。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：42 个测试文件，1753 个测试，全部通过（新增 62 个）
+- `npm run build`：构建成功
+
+### 新增测试覆盖 (tests/article-images.test.ts, 62 tests)
+
+| 分类 | 测试数 | 覆盖 |
+|------|:---:|------|
+| 基本提取 | 3 | 普通 img、无图片页面、空页面 |
+| 相对 URL 解析 | 4 | pageUrl 转换、协议相对、绝对保留、无 pageUrl |
+| srcset 支持 | 1 | srcset 存在时取 src |
+| figure/figcaption | 3 | caption 提取、无 img 跳过、混合场景 |
+| alt/title | 3 | alt 保留、title 去重、无 title |
+| 噪声过滤 - pixel | 2 | 1x1 pixel、URL pattern |
+| 噪声过滤 - class/id | 8 | avatar/icon/logo/favicon/emoji/sprite/badge/id |
+| data/blob URI | 3 | data 默认过滤、allowDataUri、blob 过滤 |
+| 去重 | 2 | 相同 URL、解析后去重 |
+| maxImages | 3 | 默认 20、自定义限制、未达限制 |
+| 最小尺寸 | 2 | 小于默认 min、零尺寸保留 |
+| stats | 1 | 混合结果统计 |
+| index | 1 | 顺序索引 |
+| sourceUrl | 2 | jsdom 环境、字段存在性 |
+| picture | 1 | picture 元素提取 |
+| resolveUrl 单元 | 4 | 相对、绝对、协议相对、无效 base |
+| isNoiseUrl 单元 | 8 | pixel/beacon/1x1/spacer/transparent/data/blob/正常 |
+| isTrackingPixel 单元 | 4 | 1x1/小尺寸+关键词/正常/小尺寸无关键词 |
+| getBestSrc 单元 | 3 | src、无 src、data/blob 通过 |
+| extractCaption 单元 | 3 | figure caption、无 figure、长文本截断 |
+
+### 已有测试
+
+- 1691 个已有测试全部通过，无新增失败、无删除、无降低
+
+---
+
+## v0.5 Session 0 (2026-06-14)
+
+### 性质
+
+从 clipmate-v0.4 稳定基线 (1850c64) 复制创建 clipmate-v0.5 开发目录。基线测试，未新增功能代码。
+
+### 运行命令
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+### 结果
+
+- `npm run lint`：0 errors, 0 warnings
+- `npm run test`：41 个测试文件，1691 个测试，全部通过
+- `npm run build`：构建成功
+
+### 检查项
+
+- clipmate-v0.5/ 从 v0.4 基线复制 ✅
+- node_modules 已安装 ✅
+- 基线测试全部通过 ✅
+- 未修改 v0.1/v0.2/v0.3/v0.4 ✅
+- 未修改 ../../opencode.json ✅

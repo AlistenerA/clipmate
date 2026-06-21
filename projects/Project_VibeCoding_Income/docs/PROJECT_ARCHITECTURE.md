@@ -2,13 +2,17 @@
 
 Last updated: 2026-06-21.
 
-## v1.0 License Extension
+## v1.0-v1.0.2 Extension
 
 `clipmate-v1.0/` adds a version-isolated License entitlement layer without
 changing the frozen v0.9.3 directory. Popup and Options call the MV3 Background
 Service Worker; the worker communicates only with the build-selected HTTPS
 License origin and stores a short-lived Token plus plan/features, never the raw
 License Key. Server-side plan features remain authoritative.
+
+`clipmate-v1.0.2/` adds a site-specialized social-post extraction layer for
+Xiaohongshu notes and Baidu Tieba topics. It reads only the current rendered
+DOM, emits one canonical source link, and caps visible comments/replies at 50.
 
 The Flask v1.0.0 service lives in `license-server-v1.0.0/` and is deployed via
 an isolated Python runtime, Gunicorn on loopback, Nginx TLS, SQLite WAL/backups,
@@ -17,10 +21,12 @@ release directory under `/opt/license-server/shared` and `/etc/license-server`.
 
 ## Product Shape
 
-ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v0.9.3` adds local multi-signal page awareness, adaptive AI conversations, tab-aware drafts, and quality-gated full-page extraction while retaining v0.8 Asset Picker and v0.7 Tutorial Mode.
+ClipMate is a Chrome and Edge Manifest V3 extension that extracts web content, lets the user edit tags/notes/Markdown in a popup, and saves the result to Notion. Version `v1.0.2` adds specialized Xiaohongshu/Tieba post and comment extraction while retaining the v1.0.1 License layer, v0.9.3 page awareness, v0.8 Asset Picker and v0.7 Tutorial Mode.
 
 ## Repository Map
 
+- `clipmate-v1.0.2/`: frozen community-site clipping baseline for subsequent v1.0.x development.
+- `clipmate-v1.0/`: v1.0.1 License and Onboarding baseline.
 - `clipmate-v0.9/`: frozen v0.9.3 source of truth; only release-blocking fixes may reopen it.
 - `release-submissions/clipmate-v0.9.3-submission/`: isolated Chrome/Edge reviewer package and public submission materials.
 - `clipmate-v0.8/`: frozen v0.8.5 release snapshot.
@@ -60,6 +66,8 @@ flowchart LR
 
 ## Main Entry Points
 
+- `clipmate-v1.0.2/src/content/socialPost/`: Xiaohongshu/Tieba route detection, DOM extraction, virtual comment collection and semantic output.
+- `clipmate-v1.0.2/src/content/index.ts`: specialized social-post routing before the existing generic extraction fallback.
 - `clipmate-v0.9/manifest.config.ts`: extension manifest, popup/options entry points, background worker, content script, permissions, and Notion host permission.
 - `clipmate-v0.9/src/shared/utils/pageTypeDetector.ts`: local document classification.
 - `clipmate-v0.9/src/shared/utils/pageAwareModes.ts`: mode recommendation, labels, and initial auto-apply guard.
@@ -86,11 +94,12 @@ Page-aware mode selection:
 Full-page clipping:
 
 1. Popup asks the active tab content script for extraction.
-2. Content script clones and cleans the document.
-3. Site containers, conservative Readability, and the legacy extractor produce candidates from cloned DOMs.
-4. A quality gate rejects candidates that lose protected headings, code, lists, tables, formulae, or images; legacy output remains the fallback.
-5. Markdown is generated and image metadata is attached.
-6. Popup stores draft changes and optionally saves through the background worker.
+2. Supported Xiaohongshu/Tieba routes first use the specialized live-DOM extractor, which restores any comment scroller position after bounded collection.
+3. Other pages clone and clean the document through the established generic path.
+4. Site containers, conservative Readability, and the legacy extractor produce candidates from cloned DOMs.
+5. A quality gate rejects candidates that lose protected headings, code, lists, tables, formulae, or images; legacy output remains the fallback.
+6. Markdown is generated and image metadata is attached.
+7. Popup stores draft changes and optionally saves through the background worker.
 
 Selection clipping:
 
