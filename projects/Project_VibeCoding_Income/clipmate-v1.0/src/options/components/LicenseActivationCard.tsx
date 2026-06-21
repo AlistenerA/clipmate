@@ -1,6 +1,6 @@
 // Version: v1.0.1
 import { useCallback, useEffect, useState } from 'react'
-import { PURCHASE_URL } from '../../pro/config'
+import LicensePurchasePrompt from '../../pro/components/LicensePurchasePrompt'
 import { activateLicense, deactivateLicense, refreshToken } from '../../pro/proAuth'
 import {
   LICENSE_STORAGE_KEYS,
@@ -146,37 +146,28 @@ export default function LicenseActivationCard() {
         </p>
       )}
 
-      <div className="flex flex-wrap gap-2">
-        {!auth && (
+      {!auth ? (
+        <LicensePurchasePrompt buttonLabel="查看升级方案" />
+      ) : (
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className="rounded bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 hover:bg-amber-100"
-            onClick={() => void chrome.tabs.create({ url: PURCHASE_URL })}
+            disabled={busy}
+            className="rounded bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-40"
+            onClick={() => void runAction(refreshToken, '授权状态已刷新')}
           >
-            查看升级方案
+            刷新授权
           </button>
-        )}
-        {auth && (
-          <>
-            <button
-              type="button"
-              disabled={busy}
-              className="rounded bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-40"
-              onClick={() => void runAction(refreshToken, '授权状态已刷新')}
-            >
-              刷新授权
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-40"
-              onClick={() => void handleDeactivate()}
-            >
-              取消激活
-            </button>
-          </>
-        )}
-      </div>
+          <button
+            type="button"
+            disabled={busy}
+            className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-40"
+            onClick={() => void handleDeactivate()}
+          >
+            取消激活
+          </button>
+        </div>
+      )}
     </section>
   )
 }

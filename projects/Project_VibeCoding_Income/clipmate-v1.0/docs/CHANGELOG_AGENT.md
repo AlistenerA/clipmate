@@ -1,5 +1,21 @@
 # CHANGELOG_AGENT.md — ClipMate v0.9 每轮修改记录
 
+## v1.0.1 爱发电入口与 Python License GUI（2026-06-21）
+
+- 将所有 Pro 升级入口统一改为 `https://ifdian.net/a/ClipMate/plan`，并显示服务器网站开发中、请前往爱发电支持的提示。
+- 新增共享 `LicensePurchasePrompt`，Options 激活卡和 ProGate 使用同一提示与跳转行为。
+- 新增 `scripts/clipmate_license_admin.py`，提供 Python CLI 和原生 Tkinter GUI；PowerShell 脚本继续保留。
+- Python 管理端复用 BatchMode SSH、Base64 传输、严格返回校验、Windows ACL 与本地失败自动远程吊销。
+- GUI 支持 SSH 目标、输出目录、套餐、设备数、有效期和备注配置，后台线程执行且不显示完整 Key。
+
+## v1.0.1 Windows License 管理脚本（2026-06-21）
+
+- 新增 `license-server-v1.0.0/scripts/New-ClipMateLicense.ps1`，支持 Pro/Lifetime、设备数、有效期、备注、SSH target 和本地输出目录。
+- 备注与远程 shell 脚本使用 Base64 安全传输；严格校验唯一 Key、套餐和设备数返回值。
+- 默认只显示掩码 Key，将完整 Key 保存为当前 Windows 用户与 SYSTEM 独占的 ACL 文件；`-PassThru` 为显式高级用法。
+- 服务器生成成功但本地校验、目录、文件或 ACL 失败时自动远程吊销，避免遗留未交付的有效 Key。
+- 新增 Windows 使用说明并更新服务端 README、运维文档和 v1.0.1 交接记录。
+
 ## v1.0.1 License foundation（2026-06-21）
 
 - 从冻结 v0.9.3 隔离创建 `clipmate-v1.0/`，版本更新到 1.0.1。

@@ -15,6 +15,12 @@ nginx -t
 certbot renew --dry-run --no-random-sleep-on-renew
 ```
 
+From Windows, prefer `python scripts/clipmate_license_admin.py` for the GUI or
+the same script with `create` for command-line use. The original
+`scripts/New-ClipMateLicense.ps1` remains available. Both validate the remote
+response and store the full key in a local ACL-restricted file. See
+`WINDOWS_KEY_GENERATION.md` for commands and security notes.
+
 Backups live under `/opt/license-server/shared/backups`. Restore only while the
 service is stopped, retain a copy of the replaced database, and check ownership
 before restarting.

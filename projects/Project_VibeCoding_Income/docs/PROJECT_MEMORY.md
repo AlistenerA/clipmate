@@ -22,7 +22,10 @@ ClipMate is a Chrome and Edge extension for clipping webpages into Notion. The u
 
 - Current release candidate: `clipmate-v1.0/` v1.0.1 on `codex/clipmate-v1-license`, with production License API at `license.cydl.site`.
 - License Server v1.0.0 is deployed under `/opt/license-server`, using isolated Python 3.11, loopback Gunicorn, Nginx HTTPS, SQLite backups and Certbot renewal hooks.
-- v1.0.1 passes lint, 68 files / 2058 tests, production and staging builds, Chrome 148 / Edge 149 extension QA, production API smoke, and production dependency audit with 0 vulnerabilities.
+- v1.0.1 passes lint, 69 files / 2060 tests, production and staging builds, Chrome 148 / Edge 149 extension QA, production API smoke, and production dependency audit with 0 vulnerabilities.
+- v1.0.1 purchase actions now open `https://ifdian.net/a/ClipMate/plan` and explicitly state that the server website is still under development; do not restore the temporary `www.cydl.site/clipmate` page until the user resumes website work.
+- Windows License administration now prefers a standard-library Python CLI/Tkinter GUI while retaining the PowerShell script; both use the existing SSH-only administration boundary, ACL-restricted files and failed-delivery revoke compensation.
+- Current v1.0.1 verification is 69 files / 2060 extension tests plus 19 License Server tests; the refreshed extension archive SHA-256 is `03E3FCA5D3AF847C5C504D12E471122F3A06EF2D4203A3E1D03A40E93C6FC7CD`.
 - Frozen version: `clipmate-v0.9` v0.9.3 on `codex/clipmate-v0.9-page-aware`; no further features enter this release.
 - Store submission archive: `release-submissions/clipmate-v0.9.3-submission/`, including a minimal unpacked extension, root-manifest zip, release notes, listing draft, and review checklist.
 - v0.9.1-v0.9.3 adds tab-aware drafts, stateful code fences, multi-signal page candidates, ChatGPT/DeepSeek/Doubao conversation extraction, GitHub discussion routes, and quality-gated full-page candidates.

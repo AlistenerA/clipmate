@@ -24,6 +24,13 @@ python generate_key.py revoke XXXX-XXXX-XXXX-XXXX
 The full key is printed once when created. `list` masks keys unless
 `--show-key` is supplied by an administrator.
 
+Windows administrators should use `python scripts/clipmate_license_admin.py`
+for the native GUI or `python scripts/clipmate_license_admin.py create ...`
+for automation. The original `scripts/New-ClipMateLicense.ps1` remains
+supported. Both implementations create keys over the configured SSH connection
+and save them to a local ACL-restricted file. See
+`docs/WINDOWS_KEY_GENERATION.md`.
+
 ## API
 
 - `GET /api/health`

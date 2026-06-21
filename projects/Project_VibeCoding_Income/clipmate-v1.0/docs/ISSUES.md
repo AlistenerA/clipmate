@@ -11,6 +11,9 @@
 | IS106 | production 完整测试与真实浏览器联调 | release | 已完成；Chrome 148 / Edge 149 与正式域名通过 |
 | IS107 | 默认沙箱不能创建 Chromium 进程 | environment | 提升权限 Playwright fallback 已完成真实扩展 QA；内置 Browser 元数据问题保留 |
 | IS108 | 生产依赖在线审计 | release | `--omit=dev` 0；开发树 5 项工具链公告列入后续 Vite/Vitest 大版本迁移 |
+| IS109 | Windows 人工 SSH 生成 Key 容易复制错误或泄露终端记录 | security | 新脚本严格解析返回并默认写入受限 ACL 文件，终端仅显示掩码 |
+| IS110 | 升级入口指向未开发网页并触发 404/安全软件警告 | major | 改为爱发电方案页并显示服务器网站开发中提示 |
+| IS111 | PowerShell 参数较长，不便日常人工配置发 Key | usability | 保留 PowerShell，新增共享安全逻辑的 Python CLI 与 Tkinter GUI |
 
 ---
 

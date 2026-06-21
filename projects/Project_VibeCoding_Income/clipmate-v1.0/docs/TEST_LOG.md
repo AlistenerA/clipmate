@@ -2,6 +2,31 @@
 
 ---
 
+## 爱发电入口与 Python License GUI 验证（2026-06-21）
+
+- `npm run lint`：通过。
+- 定向 Vitest：`v101-license-auth` + `v101-license-ui` 共 2 files / 7 tests，通过。
+- 全量 Vitest：69 files / 2060 tests，通过。
+- production/staging build：各 183 modules，通过；production 仅 `license.cydl.site`，staging 仅 `cydl.site`。
+- production 产物扫描：包含 `https://ifdian.net/a/ClipMate/plan` 与开发中提示，不含旧 `https://www.cydl.site/clipmate`。
+- License Server 全量 pytest：19 tests，通过；其中 Python 管理工具 5 tests 覆盖默认值、Lifetime 门禁、备注 Base64、受保护文件写入、本地失败吊销和吊销失败人工处置提示。
+- Python `compileall`、模块导入、CLI help 和非法 `lifetime + days` 的无 SSH 门禁通过；验证过程中未连接生产服务器、未生成真实 Key。
+- GUI 使用标准库 Tkinter；Codex 捆绑 Python 的 Tcl 初始化文件不可用，当前环境无法创建真实窗口。需在带 Tcl/Tk 的标准 Windows Python 上补一次人工 GUI smoke。
+- 刷新 `clipmate-v1.0.1.zip`：35 entries、1 个根目录 manifest、0 unsafe paths、含爱发电 URL、不含旧 404 URL；SHA-256 `03E3FCA5D3AF847C5C504D12E471122F3A06EF2D4203A3E1D03A40E93C6FC7CD`。
+
+---
+
+## Windows License 管理脚本验证（2026-06-21）
+
+- Windows PowerShell 5.1 parser：0 syntax errors。
+- 本地参数门禁：Lifetime + Days 在 SSH 前拒绝；备注上限和数值范围由脚本/参数验证共同约束。
+- 生产 SSH 实测：Pro 1 天 Key 与 Lifetime Key 各生成 1 个，返回格式、套餐、设备数和 Key 正则校验通过。
+- 两个 smoke Key 均已在生产数据库吊销；Windows 临时 Key 文件和临时目录已删除。
+- 输出文件 ACL：关闭继承，仅当前 Windows 用户 SID 与 SYSTEM 为 Full Control；完整 Key 未输出到测试日志。
+- 人为制造 Windows 输出路径失败后，脚本返回明确错误并自动吊销刚生成的专用 smoke Key；远程掩码列表确认状态为 revoked。
+
+---
+
 ## v1.0.1 开发验证（2026-06-21）
 
 - `npm run lint`：通过。

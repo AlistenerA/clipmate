@@ -18,6 +18,8 @@
 - `src/options/components/LicenseActivationCard.tsx`：激活 UI。
 - `src/onboarding/`：独立三步首次引导。
 - `vite.config.ts` / `manifest.config.ts`：staging/production 地址与权限同源生成。
+- `../license-server-v1.0.0/scripts/New-ClipMateLicense.ps1`：Windows 通过 SSH 生成 Key 并写入 ACL 受限文件。
+- `../license-server-v1.0.0/scripts/clipmate_license_admin.py`：推荐的 Windows Python CLI/Tkinter GUI，复用同一 SSH 与失败吊销边界。
 
 ## 不变量
 
@@ -33,3 +35,5 @@
 - production 依赖 audit 为 0 vulnerabilities。
 - v1.0.0 API contract 和 v1.0.1 entitlement/storage schema 进入冻结状态。
 - Vite/Vitest 大版本升级属于后续独立兼容迁移，不混入当前版本。
+- Windows 管理脚本已完成 PowerShell 5.1 与生产 SSH smoke；测试 Key 已吊销，脚本默认不打印完整 Key。
+- 临时购买入口固定为 `https://ifdian.net/a/ClipMate/plan`；服务器网站开发完成前不再跳转 `cydl.site` 页面。

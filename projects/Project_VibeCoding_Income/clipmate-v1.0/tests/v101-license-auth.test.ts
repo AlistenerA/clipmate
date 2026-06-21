@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createManifest } from '../manifest.config'
-import { OFFLINE_GRACE_MS } from '../src/pro/config'
+import { OFFLINE_GRACE_MS, PURCHASE_URL } from '../src/pro/config'
 import { isEntitlementUsable } from '../src/pro/proAuth'
 import type { LicenseAuthState } from '../src/pro/types'
 
@@ -22,6 +22,10 @@ function makeState(overrides: Partial<LicenseAuthState> = {}): LicenseAuthState 
 }
 
 describe('v1.0.1 License entitlement', () => {
+  it('routes upgrade traffic to the ClipMate Afdian plan page', () => {
+    expect(PURCHASE_URL).toBe('https://ifdian.net/a/ClipMate/plan')
+  })
+
   it('keeps entitlement during the seven-day offline grace', () => {
     const now = Date.now()
     const state = makeState({
