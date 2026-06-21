@@ -1,0 +1,11 @@
+# Version: v1.0.0
+[Unit]
+Description=Daily ClipMate License database backup
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

@@ -1,6 +1,19 @@
-# ClipMate v0.9 Project Architecture
+# ClipMate v1.0 Project Architecture
 
-Last updated: 2026-06-20.
+Last updated: 2026-06-21.
+
+## v1.0 License Extension
+
+`clipmate-v1.0/` adds a version-isolated License entitlement layer without
+changing the frozen v0.9.3 directory. Popup and Options call the MV3 Background
+Service Worker; the worker communicates only with the build-selected HTTPS
+License origin and stores a short-lived Token plus plan/features, never the raw
+License Key. Server-side plan features remain authoritative.
+
+The Flask v1.0.0 service lives in `license-server-v1.0.0/` and is deployed via
+an isolated Python runtime, Gunicorn on loopback, Nginx TLS, SQLite WAL/backups,
+systemd and Certbot deploy hooks. Production data and secrets are outside the
+release directory under `/opt/license-server/shared` and `/etc/license-server`.
 
 ## Product Shape
 

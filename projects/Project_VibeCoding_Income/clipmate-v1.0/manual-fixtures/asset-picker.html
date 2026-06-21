@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ClipMate v0.8 Asset Picker 人工测试页" />
+    <title>ClipMate v0.8 Asset Picker 测试</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; color: #172033; background: #eef2f7; }
+      main { width: min(840px, calc(100% - 32px)); margin: 32px auto; padding: 32px; background: white; }
+      h1, h2 { line-height: 1.25; }
+      p { line-height: 1.75; }
+      figure, .image-card { margin: 24px 0; }
+      img { display: block; width: 100%; max-height: 360px; object-fit: cover; border-radius: 10px; }
+      figcaption { margin-top: 8px; color: #526078; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .hidden-test { display: none; }
+      .avatar { width: 48px; height: 48px; border-radius: 999px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article>
+        <h1>Asset Picker 本地验收页</h1>
+        <p>用于验证 ClipMate v0.8 的页面图片点选、取消、排序、草稿恢复和安全过滤。蓝、紫、绿、橙四张大图应可点选；隐藏图、头像和追踪像素不应出现高亮。</p>
+
+        <figure>
+          <img src="/images/figure.svg" alt="蓝色正文示意图" width="960" height="540" />
+          <figcaption>蓝色图片题注：保存到 Markdown 和 Notion 时应作为 caption。</figcaption>
+        </figure>
+
+        <h2>懒加载与 picture</h2>
+        <div class="grid">
+          <div class="image-card">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-src="/images/lazy.svg" alt="紫色懒加载图" width="960" height="540" />
+          </div>
+          <picture class="image-card">
+            <source srcset="/images/picture.svg 960w" type="image/svg+xml" />
+            <img src="/images/picture.svg" alt="绿色 picture 图" width="960" height="540" />
+          </picture>
+        </div>
+
+        <div class="image-card">
+          <img src="/images/extra.svg" alt="橙色排序测试图" width="960" height="540" />
+        </div>
+
+        <img class="hidden-test" src="/images/hidden.svg" alt="隐藏图，不应可选" width="960" height="540" />
+        <img class="avatar" src="/images/avatar.svg" alt="头像噪声，不应可选" width="48" height="48" />
+        <img src="/tracking/pixel.gif" alt="追踪像素，不应可选" width="1" height="1" />
+      </article>
+    </main>
+  </body>
+</html>

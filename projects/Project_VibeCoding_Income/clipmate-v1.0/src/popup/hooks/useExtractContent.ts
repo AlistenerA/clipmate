@@ -1,0 +1,96 @@
+import { useState, useCallback, useRef } from 'react'
+import { sendToActiveTab, normalizeContentScriptConnectionError, isContentScriptUnavailableError } from '../../shared/messaging/sendMessage'
+import { MESSAGE_TYPES } from '../../shared/constants/messageTypes'
+import { ERROR_MESSAGES } from '../../shared/constants/defaults'
+import type { ExtractedContent, ClipMode } from '../../shared/types/clip.types'
+import type { ExtractPageResponse, SelectionResponse } from '../../shared/types/message.types'
+import { enhanceExtractedContentCodeLanguages } from '../../shared/markdown/codeLanguageDetection'
+
+type ExtractResult = ExtractPageResponse | SelectionResponse
+
+export function useExtractContent() {
+  const [content, setContent] = useState<ExtractedContent | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const requestIdRef = useRef(0)
+
+  const extract = useCallback(async (mode: ClipMode) => {
+    const requestId = ++requestIdRef.current
+    setLoading(true)
+    setError(null)
+    setContent(null)
+
+    try {
+      const msgType = mode === 'selection'
+        ? MESSAGE_TYPES.GET_SELECTION
+        : mode === 'tutorial'
+          ? MESSAGE_TYPES.EXTRACT_TUTORIAL
+          : MESSAGE_TYPES.EXTRACT_CURRENT_PAGE
+
+      const result = await sendToActiveTab<ExtractResult>({ type: msgType })
+
+      if (requestId !== requestIdRef.current) return
+
+      if (result.success) {
+        const enhanced = await enhanceExtractedContentCodeLanguages(result.data)
+        if (requestId !== requestIdRef.current) return
+        setContent(enhanced)
+      } else {
+        setError(ERROR_MESSAGES[result.error] || `提取失败（${result.error}）`)
+        setContent(null)
+      }
+    } catch (err) {
+      if (requestId !== requestIdRef.current) return
+      const normalized = normalizeContentScriptConnectionError(err)
+      setError(normalized.message)
+      setContent(null)
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setLoading(false)
+      }
+    }
+  }, [])
+
+  const clear = useCallback(() => {
+    requestIdRef.current++
+    setContent(null)
+    setError(null)
+    setLoading(false)
+  }, [])
+
+  const tryExtractPrioritizeSelection = useCallback(async (): Promise<{ content: ExtractedContent | null; mode: ClipMode } | null> => {
+    const requestId = ++requestIdRef.current
+    setLoading(true)
+    setError(null)
+
+    try {
+      const selResult = await sendToActiveTab<ExtractResult>({
+        type: MESSAGE_TYPES.GET_SELECTION,
+      })
+
+      if (requestId !== requestIdRef.current) return null
+
+      if (selResult.success && (selResult.data.contentText || selResult.data.markdown)) {
+        const enhanced = await enhanceExtractedContentCodeLanguages(selResult.data)
+        if (requestId !== requestIdRef.current) return null
+        setContent(enhanced)
+        return { content: enhanced, mode: 'selection' }
+      }
+
+      return { content: null, mode: 'fullpage' }
+    } catch (err) {
+      if (requestId !== requestIdRef.current) return null
+      if (isContentScriptUnavailableError(err)) {
+        const normalized = normalizeContentScriptConnectionError(err)
+        setError(normalized.message)
+      }
+      return { content: null, mode: 'fullpage' }
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setLoading(false)
+      }
+    }
+  }, [])
+
+  return { content, loading, error, extract, tryExtractPrioritizeSelection, clear, setContent }
+}

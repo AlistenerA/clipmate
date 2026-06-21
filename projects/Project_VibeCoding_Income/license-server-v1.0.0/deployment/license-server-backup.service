@@ -1,0 +1,18 @@
+# Version: v1.0.0
+[Unit]
+Description=Back up ClipMate License SQLite database
+After=license-server.service
+
+[Service]
+Type=oneshot
+User=license-server
+Group=license-server
+WorkingDirectory=/opt/license-server/current
+EnvironmentFile=/etc/license-server/license-server.env
+ExecStart=/opt/license-server/venv/bin/python backup_db.py
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/opt/license-server/shared
+UMask=0027
